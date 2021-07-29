@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "date-fns": "^2.23.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
@@ -18,7 +19,11 @@
     "@vue/compiler-sfc": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0"
+    "eslint-plugin-vue": "^7.0.0",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^8.0.0",
+    "version-bump-prompt": "^6.1.0",
+    "webpack": "^5.47.0"
   },
   "eslintConfig": {
     "root": true,

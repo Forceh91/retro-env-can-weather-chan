@@ -126,6 +126,7 @@ export default {
 #conditions_table {
   display: flex;
   flex-direction: column;
+  height: 100%;
 
   #title {
     #city {

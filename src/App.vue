@@ -1,14 +1,13 @@
 <template>
   <div id="body">
     <div id="main_screen">
-      <div id="top_bar">
-        <span>Some Text</span>
-      </div>
+      <div id="top_bar"></div>
       <div id="bottom_bar">
         <div id="clock">
           TIME <span>{{ currentTime }}</span>
         </div>
         <div id="date">{{ currentDate }}</div>
+        <div id="banner">Environment Canada Weather</div>
       </div>
     </div>
   </div>
@@ -79,11 +78,17 @@ export default {
     background: rgb(22, 90, 22);
     bottom: 0;
     display: flex;
+    flex-wrap: wrap;
     height: 100px;
     justify-content: center;
     padding: 10px 20%;
     position: absolute;
     width: 100%;
+
+    #banner {
+      text-align: center;
+      width: 100%;
+    }
 
     #clock,
     #date {
@@ -108,7 +113,7 @@ body {
 
 #app {
   background: #000;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: consolas;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;

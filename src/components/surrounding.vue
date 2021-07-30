@@ -1,11 +1,11 @@
 <template>
   <div id="surrounding">
-    <div id="title">{{ dateTime }}</div>
+    <div id="title">Latest Hourly Observations<br />{{ dateTime }}</div>
     <div v-if="!observations || !observations.length">No observations available</div>
     <div v-else id="observation_table">
       <div v-for="(observation, ix) in paginatedObservations" :key="`observation.${ix}`">
         <span v-html="padTitle(observation.city)"></span><span>{{ observation.observation.temp }}</span
-        >&nbsp;&nbsp;<span>{{ observation.observation.condition?.slice(0, 13) }}</span>
+        >&nbsp;&nbsp;<span>{{ trimCondition(observation.observation.condition) }}</span>
       </div>
     </div>
   </div>
@@ -78,6 +78,11 @@ export default {
       for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp`;
 
       return `${slicedTitle}${paddingString}&nbsp;&nbsp;&nbsp;`;
+    },
+
+    trimCondition(val) {
+      const squishedVal = val?.replace(/shower/g, "");
+      return squishedVal?.slice(0, 13);
     },
   },
 };

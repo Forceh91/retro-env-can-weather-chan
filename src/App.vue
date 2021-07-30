@@ -208,7 +208,7 @@ export default {
   background: darkblue;
   color: #fff;
   height: 480px;
-  font-size: 20px;
+  font-size: 21px;
   position: relative;
   text-transform: uppercase;
   width: 640px;
@@ -268,9 +268,14 @@ body {
   padding: 0;
 }
 
+@font-face {
+  font-family: "Star4000";
+  src: local("Star4000"), url(./fonts/star4000/Star4000.ttf) format("truetype");
+}
+
 #app {
   background: #000;
-  font-family: consolas;
+  font-family: "Star4000", consolas;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;

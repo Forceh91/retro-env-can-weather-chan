@@ -110,7 +110,7 @@ export default {
       const rise = riseSet.dateTime[1];
       const set = riseSet.dateTime[3];
 
-      return `Sunrise ${rise?.hour}:${rise?.minute} AM...Sunset ${this.pad(set?.hour % 12)}:${set?.minute} PM`;
+      return `Sunrise..${rise?.hour}:${rise?.minute} AM Sunset..${this.pad(set?.hour % 12)}:${set?.minute}PM`;
     },
   },
 

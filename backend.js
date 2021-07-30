@@ -18,6 +18,7 @@ app.get("/api/weather", async (req, res) => {
       current: weather.current,
       riseSet: weather.all.riseSet,
       observed: weather.date,
+      upcomingForecast: [...weather.all.forecast.entries()],
     });
   });
 });

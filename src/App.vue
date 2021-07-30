@@ -10,6 +10,13 @@
           :conditions="weather.currentConditions"
           :riseset="weather.riseSet"
         />
+        <forecast
+          v-if="isForecast"
+          :city="weather.city"
+          :observed="weather.observed"
+          :conditions="weather.currentConditions"
+          :forecast="weather.forecast"
+        />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -24,17 +31,20 @@
 
 <script>
 const FETCH_WEATHER_INTERVAL = 60 * 1000 * 1;
-const SCREENS = { CURRENT_CONDITIONS: { id: 1, length: 30 }, STATS: { id: 2, length: 15 } };
-const SCREEN_ROTATION = [SCREENS.CURRENT_CONDITIONS, SCREENS.STATS];
+const SCREENS = { CURRENT_CONDITIONS: { id: 1, length: 30 }, FORECAST: { id: 2, length: 160 } };
+const SCREEN_ROTATION = [SCREENS.CURRENT_CONDITIONS, SCREENS.FORECAST];
 
 import { format } from "date-fns";
+import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
+import forecast from "./components/forecast.vue";
 
 export default {
   name: "App",
-  components: { currentconditions },
+  components: { currentconditions, forecast },
   data() {
     return {
+      screenChanger: null,
       now: new Date(),
       rotationIndex: 0,
       currentScreen: SCREENS.CURRENT_CONDITIONS,
@@ -65,8 +75,8 @@ export default {
       return this.currentScreenID === SCREENS.CURRENT_CONDITIONS.id;
     },
 
-    isStats() {
-      return this.currentScreenID === SCREENS.STATS.id;
+    isForecast() {
+      return this.currentScreenID === SCREENS.FORECAST.id;
     },
   },
 
@@ -79,11 +89,26 @@ export default {
       this.getWeather();
     }, FETCH_WEATHER_INTERVAL);
 
+    this.setupEventCallbacks();
     this.getWeather();
     this.handleScreenCycle();
   },
 
+  unmounted() {
+    this.destroyEventCallbacks();
+  },
+
   methods: {
+    setupEventCallbacks() {
+      EventBus.on("forecast-complete", () => {
+        this.handleScreenCycle(true);
+      });
+    },
+
+    destroyEventCallbacks() {
+      EventBus.off("forecast-complete");
+    },
+
     getWeather() {
       this.$http
         .get("//localhost:8600/api/weather")
@@ -95,6 +120,7 @@ export default {
           this.weather.observed = data.observed;
           this.weather.currentConditions = data.current;
           this.weather.riseSet = data.riseSet;
+          this.weather.forecast = data.upcomingForecast.slice(0, 5);
         })
         .catch((err) => {
           console.error(err);
@@ -102,14 +128,20 @@ export default {
         });
     },
 
-    handleScreenCycle() {
-      console.log(SCREEN_ROTATION.length);
-      // setTimeout(() => {
-      //   this.rotationIndex += 1;
-      //   if (this.rotationIndex === SCREEN_ROTATION.length) this.rotationIndex = 0;
-      //   this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
-      //   this.handleScreenCycle();
-      // }, this.currentScreenTimeout * 1000);
+    handleScreenCycle(isForced) {
+      if (isForced) this.switchToNextScreen();
+      if (this.screenChanger) clearTimeout(this.screenChanger);
+
+      this.screenChanger = setTimeout(() => {
+        this.switchToNextScreen();
+      }, this.currentScreenTimeout * 1000);
+    },
+
+    switchToNextScreen() {
+      this.rotationIndex += 1;
+      if (this.rotationIndex === SCREEN_ROTATION.length) this.rotationIndex = 0;
+      this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
+      this.handleScreenCycle();
     },
   },
 };

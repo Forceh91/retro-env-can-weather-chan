@@ -61,7 +61,7 @@ export default {
 
   computed: {
     observedFormatted() {
-      return format(parseISO(this.observed), "h aa zzz MMM dd/yy");
+      return format(parseISO(this.observed), "h aa ??? MMM dd/yy").replace(`???`, this.conditions?.dateTime[1]?.zone);
     },
 
     temperature() {
@@ -110,11 +110,17 @@ export default {
       const rise = riseSet.dateTime[1];
       const set = riseSet.dateTime[3];
 
-      return `Sunrise ${rise?.hour}:${rise?.minute} AM...Sunset ${set?.hour}:${set?.minute} PM`;
+      return `Sunrise ${rise?.hour}:${rise?.minute} AM...Sunset ${this.pad(set?.hour % 12)}:${set?.minute} PM`;
     },
   },
 
   mounted() {},
+
+  methods: {
+    pad(val) {
+      return val < 10 ? `0${val}` : val;
+    },
+  },
 };
 </script>
 

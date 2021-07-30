@@ -24,6 +24,7 @@ app.get("/api/weather", (req, res) => {
       observed: weather.date,
       upcomingForecast: weather.weekly,
       warnings: weather.all.warnings,
+      almanac: weather.all.almanac,
     });
   });
 });

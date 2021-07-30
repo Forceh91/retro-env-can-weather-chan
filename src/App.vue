@@ -25,6 +25,13 @@
           :timezone="timeZone"
           :observations="weather.surroundingObservations"
         />
+        <almanac
+          v-if="isAlmanac"
+          :city="weather.city"
+          :observed="weather.observed"
+          :conditions="weather.currentConditions"
+          :almanac="weather.almanac"
+        />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -45,18 +52,20 @@ const SCREENS = {
   CURRENT_CONDITIONS: { id: 1, length: 30 },
   FORECAST: { id: 2, length: 160 },
   SURROUNDING: { id: 3, length: 80 },
+  ALMANAC: { id: 4, length: 30 },
 };
-const SCREEN_ROTATION = [SCREENS.CURRENT_CONDITIONS, SCREENS.FORECAST, SCREENS.SURROUNDING];
+const SCREEN_ROTATION = [SCREENS.CURRENT_CONDITIONS, SCREENS.FORECAST, SCREENS.ALMANAC, SCREENS.SURROUNDING];
 
 import { format } from "date-fns";
 import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
 import forecast from "./components/forecast.vue";
 import surrounding from "./components/surrounding.vue";
+import Almanac from "./components/almanac.vue";
 
 export default {
   name: "App",
-  components: { currentconditions, forecast, surrounding },
+  components: { currentconditions, forecast, surrounding, Almanac },
   data() {
     return {
       screenChanger: null,
@@ -70,6 +79,7 @@ export default {
         riseSet: null,
         forecast: null,
         surroundingObservations: null,
+        almanac: null,
       },
     };
   },
@@ -101,6 +111,10 @@ export default {
 
     isSurrounding() {
       return this.currentScreenID === SCREENS.SURROUNDING.id;
+    },
+
+    isAlmanac() {
+      return this.currentScreenID === SCREENS.ALMANAC.id;
     },
 
     timeZone() {
@@ -160,6 +174,7 @@ export default {
           this.weather.currentConditions = data.current;
           this.weather.riseSet = data.riseSet;
           this.weather.forecast = data.upcomingForecast.slice(0, 5);
+          this.weather.almanac = data.almanac;
         })
         .catch((err) => {
           console.error(err);

@@ -17,6 +17,12 @@
           :conditions="weather.currentConditions"
           :forecast="weather.forecast"
         />
+        <surrounding
+          v-if="isSurrounding"
+          :observed="weather.observed"
+          :timezone="timeZone"
+          :observations="weather.surroundingObservations"
+        />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -31,17 +37,24 @@
 
 <script>
 const FETCH_WEATHER_INTERVAL = 60 * 1000 * 1;
-const SCREENS = { CURRENT_CONDITIONS: { id: 1, length: 30 }, FORECAST: { id: 2, length: 160 } };
-const SCREEN_ROTATION = [SCREENS.CURRENT_CONDITIONS, SCREENS.FORECAST];
+// pages with subscreens (forecast, surrounding) have a fallback timeout incase
+// the subscreens fail to complete correctly
+const SCREENS = {
+  CURRENT_CONDITIONS: { id: 1, length: 30 },
+  FORECAST: { id: 2, length: 160 },
+  SURROUNDING: { id: 3, length: 80 },
+};
+const SCREEN_ROTATION = [SCREENS.CURRENT_CONDITIONS, SCREENS.FORECAST, SCREENS.SURROUNDING];
 
 import { format } from "date-fns";
 import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
 import forecast from "./components/forecast.vue";
+import surrounding from "./components/surrounding.vue";
 
 export default {
   name: "App",
-  components: { currentconditions, forecast },
+  components: { currentconditions, forecast, surrounding },
   data() {
     return {
       screenChanger: null,
@@ -50,6 +63,11 @@ export default {
       currentScreen: SCREENS.CURRENT_CONDITIONS,
       weather: {
         currentConditions: null,
+        city: null,
+        observed: null,
+        riseSet: null,
+        forecast: null,
+        surroundingObservations: null,
       },
     };
   },
@@ -78,6 +96,14 @@ export default {
     isForecast() {
       return this.currentScreenID === SCREENS.FORECAST.id;
     },
+
+    isSurrounding() {
+      return this.currentScreenID === SCREENS.SURROUNDING.id;
+    },
+
+    timeZone() {
+      return this.weather.currentConditions?.dateTime[1]?.zone || "";
+    },
   },
 
   mounted() {
@@ -86,11 +112,13 @@ export default {
     }, 1000);
 
     setInterval(() => {
+      this.getSurroundingWeather();
       this.getWeather();
     }, FETCH_WEATHER_INTERVAL);
 
     this.setupEventCallbacks();
     this.getWeather();
+    this.getSurroundingWeather();
     this.handleScreenCycle();
   },
 
@@ -103,10 +131,15 @@ export default {
       EventBus.on("forecast-complete", () => {
         this.handleScreenCycle(true);
       });
+
+      EventBus.on("observation-complete", () => {
+        this.handleScreenCycle(true);
+      });
     },
 
     destroyEventCallbacks() {
       EventBus.off("forecast-complete");
+      EventBus.off("observation-complete");
     },
 
     getWeather() {
@@ -125,6 +158,21 @@ export default {
         .catch((err) => {
           console.error(err);
           this.weather = {};
+        });
+    },
+
+    getSurroundingWeather() {
+      this.$http
+        .get("//localhost:8600/api/weather/surrounding")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.observations || !data.observations.length) return;
+
+          this.weather.surroundingObservations = data.observations;
+        })
+        .catch((err) => {
+          console.error(err);
+          this.weather.surroundingObservations = null;
         });
     },
 

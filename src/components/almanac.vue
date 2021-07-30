@@ -64,10 +64,12 @@ export default {
     city: String,
     observed: String,
     conditions: Object,
-    almanac: Array,
+    almanac: Object,
   },
 
-  data() {},
+  data() {
+    return {};
+  },
 
   computed: {
     almanacUnavailable() {

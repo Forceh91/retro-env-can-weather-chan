@@ -1,6 +1,7 @@
 const cliSelect = require("cli-select");
 const axios = require("axios");
 const { xml2js } = require("xml-js");
+const fs = require("fs");
 
 let pages = 0;
 
@@ -53,13 +54,22 @@ function renderCityOptions(options, page) {
     else if (resp.value.isNext) renderCityOptions(options, page + 1);
     else {
       // generate object to save
+
       const locationToPullFrom = {
         province: resp.value.provinceCode._text,
-        location: resp._attributes.code,
+        location: resp.value._attributes.code,
+        name: resp.value?.nameEn._text,
+      };
+
+      const config = {
+        primaryLocation: locationToPullFrom,
       };
 
       // save it
-      console.log(`${value?.nameEn._text} - ${value?.provinceCode._text} as primary location`);
+      console.log(`Saving ${resp.value?.nameEn._text} - ${resp.value?.provinceCode._text} as primary location`);
+      fs.writeFile("cfg/retro-evc-config.json", JSON.stringify(config), "utf8", () => {
+        console.log("Saved!");
+      });
     }
   });
 }

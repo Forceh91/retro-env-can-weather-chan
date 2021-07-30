@@ -1,10 +1,10 @@
 <template>
   <div id="current_conditions">
-    <div v-if="!conditions" id="no_data">Current conditions temporarily unavailable</div>
+    <div v-if="!riseSet || !conditions" id="no_data">Stats temporarily unavailable</div>
     <template v-else>
       <div id="conditions_table">
         <div id="title">
-          <span id="city">{{ city }}</span> {{ observedFormatted }}
+          <span id="city">{{ city }}</span> {{ observed }}
         </div>
         <div id="conditions_table_content">
           <!-- temp/wind -->
@@ -33,13 +33,8 @@
           </div>
 
           <!-- pressure -->
-          <div class="full-width centre-align spaced">
-            <span class="label">Pressure {{ pressure }}</span>
-          </div>
-        </div>
-        <div id="rise_set">
           <div class="full-width centre-align">
-            <span class="label">{{ sunriseset }}</span>
+            <span class="label">Pressure {{ pressure }}</span>
           </div>
         </div>
       </div>
@@ -48,20 +43,19 @@
 </template>
 
 <script>
-import { parseISO, format } from "date-fns";
-
 export default {
   name: "CurrentConditions",
   props: {
     city: String,
-    observed: String,
+    riseSet: Object,
     conditions: Object,
-    riseset: Object,
   },
 
   computed: {
-    observedFormatted() {
-      return format(parseISO(this.observed), "h aa ??? MMM dd/yy").replace(`???`, this.conditions?.dateTime[1]?.zone);
+    observed() {
+      const timeData = this.conditions.dateTime[1];
+      if (!timeData) return "";
+      return `${timeData.month?.name.slice(0, 3)} ${timeData.day?.value}`;
     },
 
     temperature() {
@@ -102,25 +96,9 @@ export default {
 
       return `${pressure.value} ${pressure.units} ${pressure.tendency}`;
     },
-
-    sunriseset() {
-      const riseSet = this.riseset;
-      if (!riseSet) return "";
-
-      const rise = riseSet.dateTime[1];
-      const set = riseSet.dateTime[3];
-
-      return `Sunrise ${rise?.hour}:${rise?.minute} AM...Sunset ${this.pad(set?.hour % 12)}:${set?.minute} PM`;
-    },
   },
 
   mounted() {},
-
-  methods: {
-    pad(val) {
-      return val < 10 ? `0${val}` : val;
-    },
-  },
 };
 </script>
 
@@ -130,10 +108,6 @@ export default {
 }
 
 #conditions_table {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
   #title {
     #city {
       margin-right: 50px;
@@ -156,11 +130,6 @@ export default {
       &.centre-align {
         text-align: center;
       }
-
-      &.spaced {
-        margin-top: 20px;
-      }
-
       width: 100%;
     }
   }
@@ -171,10 +140,6 @@ export default {
 
   span:not(.label) {
     text-align: right;
-  }
-
-  #rise_set {
-    margin-top: auto;
   }
 }
 </style>

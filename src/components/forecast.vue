@@ -45,9 +45,14 @@
             <span id="city">{{ city }} Forecast Cont..</span>
           </div>
           <div id="conditions_table_content">
-            <div id="page_forecast" class="full-width">
+            <div class="page_forecast">
               <span class="label"
                 >Forecast for {{ forecast[page][0] }}..<span>{{ forecast[page][1]?.textSummary }}</span></span
+              >
+            </div>
+            <div class="page_forecast">
+              <span v-if="page + 1 <= forecast.length - 1" class="label"
+                >Forecast for {{ forecast[page + 1][0] }}..<span>{{ forecast[page + 1][1]?.textSummary }}</span></span
               >
             </div>
           </div>
@@ -118,7 +123,9 @@ export default {
     this.page = 0;
 
     this.pageChangeInterval = setInterval(() => {
-      this.page = ++this.page % this.forecast.length;
+      if (!this.page) this.page = ++this.page % this.forecast.length;
+      else this.page = (this.page + 2) % this.forecast.length;
+
       if (!this.page) return EventBus.emit("forecast-complete");
     }, PAGE_CHANGE_FREQUENCY);
   },
@@ -141,6 +148,7 @@ export default {
 
   #title {
     &.secondary {
+      margin: 0;
       margin-top: 30px;
     }
 
@@ -183,8 +191,9 @@ export default {
     margin-top: 15px;
   }
 
-  #page_forecast {
+  .page_forecast {
     margin-top: 30px;
+    width: 100%;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="forecast">
-    <div v-if="!conditions || !forecast" id="no_data">Forecast temporarily unavailable</div>
+    <div v-if="forecastUnavailable" id="no_data">Forecast temporarily unavailable</div>
     <template v-else>
       <div id="conditions_table">
         <template v-if="!page">
@@ -35,7 +35,7 @@
 
             <div id="next_forecast" class="full-width">
               <span class="label"
-                >Forecast for {{ forecast[0][0] }}..<span>{{ forecast[0][1]?.textSummary }}</span></span
+                >Forecast for {{ forecast[0]?.day }}..<span>{{ forecast[0]?.textSummary }}</span></span
               >
             </div>
           </div>
@@ -47,12 +47,12 @@
           <div id="conditions_table_content">
             <div class="page_forecast">
               <span class="label"
-                >Forecast for {{ forecast[page][0] }}..<span>{{ forecast[page][1]?.textSummary }}</span></span
+                >Forecast for {{ forecast[page]?.day }}..<span>{{ forecast[page]?.textSummary }}</span></span
               >
             </div>
             <div class="page_forecast">
               <span v-if="page + 1 <= forecast.length - 1" class="label"
-                >Forecast for {{ forecast[page + 1][0] }}..<span>{{ forecast[page + 1][1]?.textSummary }}</span></span
+                >Forecast for {{ forecast[page + 1]?.day }}..<span>{{ forecast[page + 1]?.textSummary }}</span></span
               >
             </div>
           </div>
@@ -82,6 +82,10 @@ export default {
   },
 
   computed: {
+    forecastUnavailable() {
+      return !this.conditions || !this.forecast;
+    },
+
     observedFormatted() {
       return format(parseISO(this.observed), "h aa ??? MMM dd/yy").replace(`???`, this.conditions?.dateTime[1]?.zone);
     },
@@ -123,10 +127,10 @@ export default {
     this.page = 0;
 
     this.pageChangeInterval = setInterval(() => {
-      if (!this.page) this.page = ++this.page % this.forecast.length;
-      else this.page = (this.page + 2) % this.forecast.length;
+      if (!this.page) this.page = ++this.page % this.forecast?.length;
+      else this.page = (this.page + 2) % this.forecast?.length;
 
-      if (!this.page) return EventBus.emit("forecast-complete");
+      if (!this.page || this.forecastUnavailable) return EventBus.emit("forecast-complete");
     }, PAGE_CHANGE_FREQUENCY);
   },
 

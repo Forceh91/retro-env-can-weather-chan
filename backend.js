@@ -22,7 +22,8 @@ app.get("/api/weather", (req, res) => {
       current: weather.current,
       riseSet: weather.all.riseSet,
       observed: weather.date,
-      upcomingForecast: [...weather.all.forecast.entries()],
+      upcomingForecast: weather.weekly,
+      warnings: weather.all.warnings,
     });
   });
 });
@@ -33,6 +34,17 @@ app.get("/api/weather/surrounding", (req, res) => {
 
 function fetchLatestObservationsForMajorCities() {
   majorObservations.splice(0);
+
+  // toronto
+  axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000458_e.xml").then((resp) => {
+    const weather = new Weather(resp.data);
+    if (!weather) return;
+
+    majorObservations.push({
+      city: "Toronto",
+      observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
+    });
+  });
 
   // ottawa
   axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000623_e.xml").then((resp) => {
@@ -150,7 +162,7 @@ function fetchLatestObservationsForMajorCities() {
     if (!weather) return;
 
     majorObservations.push({
-      city: "Niagara Falls",
+      city: "Niagara Fls",
       observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
     });
   });

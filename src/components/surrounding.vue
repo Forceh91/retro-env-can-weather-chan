@@ -1,7 +1,7 @@
 <template>
   <div id="surrounding">
     <div id="title">Latest Hourly Observations<br />{{ dateTime }}</div>
-    <div v-if="!observations || !observations.length">No observations available</div>
+    <div v-if="observationsUnavailable">No observations available</div>
     <div v-else id="observation_table">
       <div v-for="(observation, ix) in paginatedObservations" :key="`observation.${ix}`">
         <span v-html="padTitle(observation.city)"></span><span>{{ observation.observation.temp }}</span
@@ -31,6 +31,10 @@ export default {
   },
 
   computed: {
+    observationsUnavailable() {
+      return !this.observations || !this.observations.length;
+    },
+
     dateTime() {
       return this.observed ? format(parseISO(this.observed), "h aa ??? MMM dd/yy").replace(`???`, this.timezone) : "";
     },
@@ -62,7 +66,7 @@ export default {
 
     this.pageChangeInterval = setInterval(() => {
       this.page = ++this.page % (this.pages + 1);
-      if (!this.page) return EventBus.emit("observation-complete");
+      if (!this.page || this.observationsUnavailable) return EventBus.emit("observation-complete");
     }, PAGE_CHANGE_FREQUENCY);
   },
 

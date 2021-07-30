@@ -1,7 +1,9 @@
 <template>
   <div id="body">
     <div id="main_screen">
-      <div id="top_bar"></div>
+      <div id="top_bar">
+        <div id="code">{{ reportingStation }}</div>
+      </div>
       <div id="content">
         <currentconditions
           v-if="isCurrentConditions"
@@ -103,6 +105,10 @@ export default {
 
     timeZone() {
       return this.weather.currentConditions?.dateTime[1]?.zone || "";
+    },
+
+    reportingStation() {
+      return this.weather.currentConditions?.station?.code;
     },
   },
 
@@ -217,16 +223,25 @@ export default {
     align-items: flex-end;
     background: rgb(22, 90, 22);
     display: flex;
-    height: 100px;
+    height: 50px;
     justify-content: center;
     padding: 10px;
     width: 100%;
+
+    #header {
+      width: 50%;
+    }
+
+    #code {
+      text-align: right;
+      width: 100%;
+    }
   }
 
   #content {
     top: 100px;
     display: flex;
-    height: calc(100% - 200px);
+    height: calc(100% - 150px);
     justify-content: center;
     padding: 10px;
     width: 100%;

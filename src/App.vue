@@ -42,6 +42,7 @@
         <div id="banner">Environment Canada Weather</div>
       </div>
     </div>
+    <playlist :playlist="playlist" />
   </div>
 </template>
 
@@ -71,10 +72,11 @@ import forecast from "./components/forecast.vue";
 import surrounding from "./components/surrounding.vue";
 import almanac from "./components/almanac.vue";
 import warnings from "./components/warnings.vue";
+import playlist from "./components/playlist";
 
 export default {
   name: "App",
-  components: { currentconditions, forecast, surrounding, almanac, warnings },
+  components: { currentconditions, forecast, surrounding, almanac, warnings, playlist },
   data() {
     return {
       screenChanger: null,
@@ -90,6 +92,7 @@ export default {
         surroundingObservations: null,
         almanac: null,
       },
+      playlist: [],
     };
   },
 
@@ -144,15 +147,17 @@ export default {
       this.now = new Date();
     }, 1000);
 
-    setInterval(() => {
-      this.getSurroundingWeather();
-      this.getWeather();
-    }, FETCH_WEATHER_INTERVAL);
+    this.initWeatherChannel(() => {
+      setInterval(() => {
+        this.getSurroundingWeather();
+        this.getWeather();
+      }, FETCH_WEATHER_INTERVAL);
 
-    this.setupEventCallbacks();
-    this.getWeather();
-    this.getSurroundingWeather();
-    this.handleScreenCycle();
+      this.setupEventCallbacks();
+      this.getWeather();
+      this.getSurroundingWeather();
+      this.handleScreenCycle();
+    });
   },
 
   unmounted() {
@@ -160,6 +165,21 @@ export default {
   },
 
   methods: {
+    initWeatherChannel(callback) {
+      this.$http
+        .get("//localhost:8600/api/init")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          if (data.playlist && data.playlist.file_count) this.playlist = data.playlist.files;
+          if (typeof callback === "function") callback();
+        })
+        .catch(() => {
+          console.warn("Unable to initalize channel from server");
+        });
+    },
+
     setupEventCallbacks() {
       EventBus.on("forecast-complete", () => {
         this.handleScreenCycle(true);

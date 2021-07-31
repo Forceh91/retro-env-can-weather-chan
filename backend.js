@@ -5,6 +5,7 @@ const axios = require("axios");
 const fs = require("fs");
 const { exit } = require("process");
 const path = require("path");
+const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -59,6 +60,15 @@ fs.stat(CONFIG_FILE, (err, stats) => {
 });
 
 function startBackend(config) {
+  // generate channel playlist from music folder
+  generatePlaylist();
+
+  app.get("/api/init", (req, res) => {
+    const playlist = getPlaylist();
+    res.send({ playlist: { files: playlist, file_count: playlist.length } });
+  });
+
+  // handling api requests
   const majorObservations = [];
   fetchLatestObservationsForMajorCities();
   setInterval(fetchLatestObservationsForMajorCities, 5 * 60 * 1000);
@@ -249,7 +259,12 @@ function startBackend(config) {
 
 app.listen(port);
 app.use(express.static("dist"));
+app.use(express.static("music"));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/dist/index.html"));
+});
+
+app.get("/music/*", (req, res) => {
+  res.sendFile(path.join(__dirname, decodeURI(req.url)));
 });

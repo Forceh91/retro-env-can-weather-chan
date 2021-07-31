@@ -17,6 +17,7 @@ Once up and running the weather channel will be accessible from your browser.
 - Forecast
 - Almanac Data (Sunset/Rise, High/Low Temp Records)
 - Latest Hourly Observation for various cities
+- Warnings
 
 ## Missing Features
 
@@ -24,6 +25,7 @@ Once up and running the weather channel will be accessible from your browser.
 - Windchill
 - Snowfall/Precipitation Amounts
 - High/Low for the day
+- Last Year temps on almanac
 
 ## Planned Features
 

@@ -18,6 +18,7 @@ Once up and running the weather channel will be accessible from your browser.
 - Almanac Data (Sunset/Rise, High/Low Temp Records)
 - Latest Hourly Observation for various cities
 - Warnings
+- Custom playlist
 
 ## Missing Features
 
@@ -30,7 +31,6 @@ Once up and running the weather channel will be accessible from your browser.
 ## Planned Features
 
 - Customizable screen rotation
-- Customizable playlists
 
 ## Requirements
 
@@ -64,6 +64,19 @@ If sucessful you should see the following in your command prompt:
 Loading retro-envcan with primary location of <location> - <province>
 Listening on 8600...
 Navigate to http://localhost:8600/ in your browser
+```
+
+## Adding music to your channel
+
+**retro-env-canada-weather-chan** supports adding a playlist of your choosing to be played whilst displaying the channel in the browser.
+
+Playlist creation is done simply by placing `.mp3` files into a `music` folder in this root directory.
+
+When you start the backend you will then see it check and generate a playlist for you based off of the files found in that directory.
+
+```
+Generating playlist from `music` folder...
+Generated a playlist of 62 files...
 ```
 
 ## Accessing the channel

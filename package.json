@@ -1,6 +1,6 @@
 {
   "name": "retro-env-can-weather-chan",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -31,7 +31,6 @@
     "eslint-plugin-vue": "^7.0.0",
     "sass": "^1.36.0",
     "sass-loader": "^8.0.0",
-    "version-bump-prompt": "^6.1.0",
     "webpack": "^5.47.0"
   },
   "eslintConfig": {

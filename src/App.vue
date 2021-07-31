@@ -32,6 +32,7 @@
           :conditions="weather.currentConditions"
           :almanac="weather.almanac"
         />
+        <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -53,19 +54,27 @@ const SCREENS = {
   FORECAST: { id: 2, length: 160 },
   SURROUNDING: { id: 3, length: 80 },
   ALMANAC: { id: 4, length: 30 },
+  WARNINGS: { id: 5, length: 30 },
 };
-const SCREEN_ROTATION = [SCREENS.CURRENT_CONDITIONS, SCREENS.FORECAST, SCREENS.ALMANAC, SCREENS.SURROUNDING];
+const SCREEN_ROTATION = [
+  SCREENS.CURRENT_CONDITIONS,
+  SCREENS.WARNINGS,
+  SCREENS.FORECAST,
+  SCREENS.ALMANAC,
+  SCREENS.SURROUNDING,
+];
 
 import { format } from "date-fns";
 import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
 import forecast from "./components/forecast.vue";
 import surrounding from "./components/surrounding.vue";
-import Almanac from "./components/almanac.vue";
+import almanac from "./components/almanac.vue";
+import warnings from "./components/warnings.vue";
 
 export default {
   name: "App",
-  components: { currentconditions, forecast, surrounding, Almanac },
+  components: { currentconditions, forecast, surrounding, almanac, warnings },
   data() {
     return {
       screenChanger: null,
@@ -117,6 +126,10 @@ export default {
       return this.currentScreenID === SCREENS.ALMANAC.id;
     },
 
+    isWarnings() {
+      return this.currentScreenID === SCREENS.WARNINGS.id;
+    },
+
     timeZone() {
       return this.weather.currentConditions?.dateTime[1]?.zone || "";
     },
@@ -155,11 +168,16 @@ export default {
       EventBus.on("observation-complete", () => {
         this.handleScreenCycle(true);
       });
+
+      EventBus.on("warnings-complete", () => {
+        this.handleScreenCycle(true);
+      });
     },
 
     destroyEventCallbacks() {
       EventBus.off("forecast-complete");
       EventBus.off("observation-complete");
+      EventBus.off("warnings-complete");
     },
 
     getWeather() {
@@ -175,6 +193,7 @@ export default {
           this.weather.riseSet = data.riseSet;
           this.weather.forecast = data.upcomingForecast.slice(0, 5);
           this.weather.almanac = data.almanac;
+          this.weather.warnings = data.warnings;
         })
         .catch((err) => {
           console.error(err);

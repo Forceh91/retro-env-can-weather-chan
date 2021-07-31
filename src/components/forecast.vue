@@ -149,6 +149,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
 
   #title {
     &.secondary {

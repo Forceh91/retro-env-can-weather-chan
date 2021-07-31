@@ -4,6 +4,8 @@ const cors = require("cors");
 const axios = require("axios");
 const fs = require("fs");
 const { exit } = require("process");
+const path = require("path");
+
 const corsOptions = {
   origin: "http://localhost:8080",
   optionsSuccessStatus: 200,
@@ -50,7 +52,7 @@ fs.stat(CONFIG_FILE, (err, stats) => {
       `Loading retro-envcan with primary location of ${primaryLocation.name || "N/A"} - ${primaryLocation.province}`
     );
     console.log(`Listening on ${port}...`);
-    console.log(`Navigate to http://localhost:8080/ in your browser`);
+    console.log(`Navigate to http://localhost:8600/ in your browser`);
 
     startBackend(parsedJSON);
   });
@@ -243,6 +245,11 @@ function startBackend(config) {
       });
     });
   }
-
-  app.listen(port);
 }
+
+app.listen(port);
+app.use(express.static("dist"));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "/dist/index.html"));
+});

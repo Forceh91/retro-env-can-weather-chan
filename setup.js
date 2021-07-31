@@ -25,7 +25,18 @@ axios
       return 0;
     });
 
-    renderCityOptions(sortedByLocationProvince);
+    const args = process.argv.slice(2);
+    const searchQuery = args[0] === "--search" ? args[1].toLowerCase() : "";
+
+    const filterToSearchQuery = sortedByLocationProvince;
+    if (searchQuery && searchQuery.length)
+      filterToSearchQuery.splice(
+        0,
+        sortedByLocationProvince.length,
+        ...sortedByLocationProvince.filter((a) => a.nameEn._text.toLowerCase().includes(searchQuery))
+      );
+
+    renderCityOptions(filterToSearchQuery);
   })
   .catch((err) => {
     console.log(err);
@@ -40,7 +51,7 @@ function renderCityOptions(options, page) {
   const startIndex = Math.max(0, (page - 1) * MAX_CITIES_PER_PAGE - 1);
   const endIndex = Math.min(startIndex + MAX_CITIES_PER_PAGE - 1, options?.length);
 
-  console.log("Select location to pull weather data from:", options);
+  console.log("Select location to pull weather data from:");
   cliSelect({
     values: [...options.slice(startIndex, endIndex), { isPrev: true }, { isNext: true }],
     valueRenderer: (value, selected) => {

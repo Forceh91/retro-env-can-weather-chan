@@ -31,6 +31,10 @@
             <span class="label">VSBY</span>
             <span>{{ visibility }}</span>
           </div>
+          <div v-if="windchill > 0" class="half-width">
+            <span class="label">Wind Chill</span>
+            <span>{{ windchill }}</span>
+          </div>
 
           <!-- pressure -->
           <div class="full-width centre-align spaced">
@@ -49,6 +53,7 @@
 
 <script>
 import { parseISO, format } from "date-fns";
+import { calculateWindChillNumber } from "../js/windChill";
 
 export default {
   name: "CurrentConditions",
@@ -111,6 +116,14 @@ export default {
       const set = riseSet.dateTime[3];
 
       return `Sunrise..${rise?.hour}:${rise?.minute} AM Sunset..${this.pad(set?.hour % 12)}:${set?.minute}PM`;
+    },
+
+    windchill() {
+      const temp = this.conditions.temperature && this.conditions.temperature.value;
+      if (temp > 0) return 0;
+
+      const windspeed = this.conditions?.wind?.speed?.value;
+      return calculateWindChillNumber(temp, windspeed);
     },
   },
 

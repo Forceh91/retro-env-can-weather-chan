@@ -6,6 +6,7 @@
     autoplay
     volume="0.5"
     @ended="selectRandomTrackFromPlaylist"
+    @error="selectRandomTrackFromPlaylist"
   />
 </template>
 

@@ -31,6 +31,10 @@
             <span class="label">VSBY</span>
             <span>{{ visibility }}</span>
           </div>
+          <div v-if="windchill > 0" class="half-width">
+            <span class="label">Wind Chill</span>
+            <span>{{ windchill }}</span>
+          </div>
 
           <!-- pressure -->
           <div class="full-width centre-align spaced">
@@ -57,6 +61,7 @@
 
 <script>
 import { parseISO, format } from "date-fns";
+import { calculateWindChillNumber } from "../js/windChill";
 
 export default {
   name: "Almanac",
@@ -155,6 +160,14 @@ export default {
     recordLowYear() {
       const recordLow = this.almanac?.temperature[1];
       return `${recordLow?.year}`;
+    },
+
+    windchill() {
+      const temp = this.conditions.temperature && this.conditions.temperature.value;
+      if (temp > 0) return 0;
+
+      const windspeed = this.conditions?.wind?.speed?.value;
+      return calculateWindChillNumber(temp, windspeed);
     },
   },
 

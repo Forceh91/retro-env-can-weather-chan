@@ -32,6 +32,10 @@
               <span class="label">VSBY</span>
               <span>{{ visibility }}</span>
             </div>
+            <div v-if="windchill > 0" class="half-width">
+              <span class="label">Wind Chill</span>
+              <span>{{ windchill }}</span>
+            </div>
 
             <div id="next_forecast" class="full-width">
               <span class="label"
@@ -67,6 +71,7 @@ const PAGE_CHANGE_FREQUENCY = 15 * 1000;
 
 import { parseISO, format } from "date-fns";
 import { EventBus } from "../js/EventBus";
+import { calculateWindChillNumber } from "../js/windChill";
 
 export default {
   name: "Forecast",
@@ -120,6 +125,14 @@ export default {
       if (!visibility) return "";
 
       return `${visibility.value} ${visibility.units}`;
+    },
+
+    windchill() {
+      const temp = this.conditions.temperature && this.conditions.temperature.value;
+      if (temp > 0) return 0;
+
+      const windspeed = this.conditions?.wind?.speed?.value;
+      return calculateWindChillNumber(temp, windspeed);
     },
   },
 

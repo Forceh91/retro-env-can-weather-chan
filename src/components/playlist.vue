@@ -31,7 +31,6 @@ export default {
   },
 
   mounted() {
-    console.log("Playlist mounted");
     if (!this.playlist || !this.playlist.length) return;
 
     this.selectRandomTrackFromPlaylist();
@@ -39,8 +38,11 @@ export default {
 
   methods: {
     selectRandomTrackFromPlaylist() {
+      this.currentTrack = null;
+
       const rand = Math.floor(Math.random() * this.playlist.length - 1);
       const selectedTrack = this.playlist[rand];
+      if (!selectedTrack) return this.selectRandomTrackFromPlaylist();
       this.currentTrack = selectedTrack;
     },
   },

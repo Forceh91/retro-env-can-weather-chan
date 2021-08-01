@@ -1,6 +1,8 @@
 const fs = require("fs");
 
 const MUSIC_FOLDER = "./music";
+let playlistArray = [];
+
 module.exports = {
   generatePlaylist: () => {
     console.log("Generating playlist from `music` folder...");

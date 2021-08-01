@@ -19,11 +19,11 @@ Once up and running the weather channel will be accessible from your browser.
 - Latest Hourly Observation for various cities
 - Warnings
 - Custom playlist
+- Windchill
 
 ## Missing Features
 
 - Alerts
-- Windchill
 - Snowfall/Precipitation Amounts
 - High/Low for the day
 - Last Year temps on almanac

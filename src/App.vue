@@ -337,14 +337,20 @@ body {
   padding: 0;
 }
 
-@font-face {
+/* @font-face {
   font-family: "Star4000";
   src: local("Star4000"), url(./fonts/star4000/Star4000.ttf) format("truetype");
+} */
+
+@font-face {
+  font-family: "VCRMono";
+  src: local("VCRMono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
 }
 
 #app {
   background: #000;
-  font-family: "Star4000", consolas;
+  /* font-family: "Star4000", consolas; */
+  font-family: "VCRMono", consolas;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;

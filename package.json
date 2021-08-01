@@ -13,7 +13,6 @@
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
     "date-fns": "^2.23.0",
-    "ec-weather": "^1.0.4",
     "ec-weather-js": "^1.1.3",
     "express": "^4.17.1",
     "mitt": "^3.0.0",

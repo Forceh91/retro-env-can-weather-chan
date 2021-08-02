@@ -3,6 +3,7 @@ node_modules
 /dist
 /music
 /cfg/*.json
+/cfg/crawl.txt
 
 
 # local env files

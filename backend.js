@@ -6,6 +6,7 @@ const fs = require("fs");
 const { exit } = require("process");
 const path = require("path");
 const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
+const { generateCrawler, getCrawler } = require("./generate-crawler.js");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -63,9 +64,16 @@ function startBackend(config) {
   // generate channel playlist from music folder
   generatePlaylist();
 
+  // generate crawler messages
+  generateCrawler();
+
   app.get("/api/init", (req, res) => {
     const playlist = getPlaylist();
-    res.send({ playlist: { files: playlist, file_count: playlist.length } });
+    const crawler = getCrawler();
+    res.send({
+      playlist: { files: playlist, file_count: playlist.length },
+      crawler: { messages: crawler, message_count: crawler.length },
+    });
   });
 
   // handling api requests

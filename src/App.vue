@@ -65,7 +65,7 @@ const SCREEN_ROTATION = [
   SCREENS.SURROUNDING,
 ];
 
-import { format } from "date-fns";
+import { format, addMinutes, formatRFC3339 } from "date-fns";
 import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
 import forecast from "./components/forecast.vue";
@@ -100,11 +100,11 @@ export default {
 
   computed: {
     currentTime() {
-      return format(this.now, "HH:mm:ss");
+      return format(this.timezoneAdjustedDate(this.now), "HH:mm:ss");
     },
 
     currentDate() {
-      return format(this.now, "EEE MMM dd");
+      return format(this.timezoneAdjustedDate(this.now), "EEE MMM dd");
     },
 
     currentScreenID() {
@@ -211,12 +211,12 @@ export default {
           if (!data) return;
 
           this.weather.city = data.location && data.location.name && data.location.name.value;
-          this.weather.observed = data.observed;
           this.weather.currentConditions = data.current;
           this.weather.riseSet = data.riseSet;
           this.weather.forecast = data.upcomingForecast.slice(0, 5);
           this.weather.almanac = data.almanac;
           this.weather.warnings = data.warnings;
+          this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
         })
         .catch((err) => {
           console.error(err);
@@ -253,6 +253,15 @@ export default {
       if (this.rotationIndex === SCREEN_ROTATION.length) this.rotationIndex = 0;
       this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
       this.handleScreenCycle();
+    },
+
+    timezoneAdjustedDate(date) {
+      if (!this.weather || !this.weather.currentConditions) return date;
+      const localOffset = -date.getTimezoneOffset();
+      const stationUTCOffset = parseInt(this.weather.currentConditions.dateTime[1].UTCOffset) * 60;
+      const adjustedTime = stationUTCOffset - localOffset;
+
+      return addMinutes(date, adjustedTime);
     },
   },
 };

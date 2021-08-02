@@ -15,11 +15,12 @@ Once up and running the weather channel will be accessible from your browser.
 
 - Current conditions
 - Forecast
+- Windchill
 - Almanac Data (Sunset/Rise, High/Low Temp Records)
 - Latest Hourly Observation for various cities
-- Warnings
+- Weather Warnings
 - Custom playlist
-- Windchill
+- Custom crawler messages for adverts/general info
 
 ## Missing Features
 
@@ -77,6 +78,26 @@ When you start the backend you will then see it check and generate a playlist fo
 ```
 Generating playlist from `music` folder...
 Generated a playlist of 62 files...
+```
+
+## Adding crawler messages to your channel
+
+**retro-env-canada-weather-chan** supports adding custom crawler messages along the top bar for adverts and general info.
+
+This is done by creating a `crawl.txt` file in the `cfg` directory. These messages are loaded when the application starts and the data is sent to the channel when it is first loaded.
+
+The `crawl.txt` supports an unlimited number of messages and all you have to do is add in one message per line
+
+```
+a small crawler message
+a second small crawler message
+```
+
+When you start the backend you will then see it check and generate your crawler messages for you.
+
+```
+Generating crawler from ./cfg/crawl.txt...
+Generated a crawler list of 2 messages
 ```
 
 ## Accessing the channel

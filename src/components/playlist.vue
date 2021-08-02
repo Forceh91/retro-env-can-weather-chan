@@ -40,10 +40,14 @@ export default {
     selectRandomTrackFromPlaylist() {
       this.currentTrack = null;
 
-      const rand = Math.floor(Math.random() * this.playlist.length - 1);
-      const selectedTrack = this.playlist[rand];
-      if (!selectedTrack) return this.selectRandomTrackFromPlaylist();
-      this.currentTrack = selectedTrack;
+      // wait a second for the audio player to be destroyed a rebuilt before
+      // moving onto the next track. hopefully this fixes it getting stuck
+      setTimeout(() => {
+        const rand = Math.floor(Math.random() * this.playlist.length - 1);
+        const selectedTrack = this.playlist[rand];
+        if (!selectedTrack) return this.selectRandomTrackFromPlaylist();
+        this.currentTrack = selectedTrack;
+      }, 1000);
     },
   },
 };

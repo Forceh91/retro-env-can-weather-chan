@@ -2,7 +2,7 @@
   <div id="body">
     <div id="main_screen">
       <div id="top_bar">
-        <div id="code">{{ reportingStation }}</div>
+        <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
       </div>
       <div id="content">
         <currentconditions
@@ -73,10 +73,11 @@ import surrounding from "./components/surrounding.vue";
 import almanac from "./components/almanac.vue";
 import warnings from "./components/warnings.vue";
 import playlist from "./components/playlist";
+import crawler from "./components/crawler";
 
 export default {
   name: "App",
-  components: { currentconditions, forecast, surrounding, almanac, warnings, playlist },
+  components: { currentconditions, forecast, surrounding, almanac, warnings, playlist, crawler },
   data() {
     return {
       screenChanger: null,
@@ -93,6 +94,7 @@ export default {
         almanac: null,
       },
       playlist: [],
+      crawlerMessages: [],
     };
   },
 
@@ -173,6 +175,7 @@ export default {
           if (!data) return;
 
           if (data.playlist && data.playlist.file_count) this.playlist = data.playlist.files;
+          if (data.crawler && data.crawler.message_count) this.crawlerMessages = data.crawler.messages;
           if (typeof callback === "function") callback();
         })
         .catch(() => {
@@ -277,9 +280,10 @@ export default {
     align-items: flex-end;
     background: rgb(22, 90, 22);
     display: flex;
-    height: 50px;
-    justify-content: center;
-    padding: 10px;
+    font-size: 15px;
+    height: 75px;
+    overflow: hidden;
+    padding: 10px 50px;
     width: 100%;
 
     #header {
@@ -295,7 +299,7 @@ export default {
   #content {
     top: 100px;
     display: flex;
-    height: calc(100% - 150px);
+    height: calc(100% - 175px);
     justify-content: center;
     padding: 10px;
     width: 100%;

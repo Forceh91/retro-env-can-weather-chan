@@ -4,7 +4,7 @@
     <div v-if="warningsUnavailable">No warnings in effect</div>
     <div v-else id="warnings_table">
       <div class="description">{{ warningDescription }}</div>
-      <div class="city">In Effect For {{ city }}</div>
+      <div class="city"><template v-if="!warningHasEnded">In Effect</template> For {{ city }}</div>
     </div>
   </div>
 </template>
@@ -40,6 +40,10 @@ export default {
 
     warningIssued() {
       return this.warnings?.event?.dateTime[1]?.textSummary;
+    },
+
+    warningHasEnded() {
+      return this.warnings?.event?.type === "ended";
     },
   },
 

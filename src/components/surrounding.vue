@@ -4,8 +4,10 @@
     <div v-if="observationsUnavailable">No observations available</div>
     <div v-else id="observation_table">
       <div v-for="(observation, ix) in paginatedObservations" :key="`observation.${ix}`">
-        <span v-html="padTitle(observation.city)"></span><span>{{ observation.observation.temp }}</span
-        >&nbsp;&nbsp;<span>{{ trimCondition(observation.observation.condition) }}</span>
+        <span v-html="padTitle(observation.city)"></span
+        ><span v-html="padString(observation.observation.temp, 4, true)"></span>&nbsp;&nbsp;<span>{{
+          trimCondition(observation.observation.condition)
+        }}</span>
       </div>
     </div>
   </div>
@@ -87,6 +89,14 @@ export default {
     trimCondition(val) {
       const squishedVal = val?.replace(/shower/g, "");
       return squishedVal?.slice(0, 13);
+    },
+
+    padString(val, minLength, isFront) {
+      const paddingToAdd = minLength - val.length;
+      let paddingString = ``;
+      for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp`;
+
+      return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
     },
   },
 };

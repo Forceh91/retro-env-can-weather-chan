@@ -33,6 +33,7 @@
           :almanac="weather.almanac"
         />
         <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
+        <windchill v-if="isWindChillEffects" :temp="currentTemp" />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -56,11 +57,13 @@ const SCREENS = {
   SURROUNDING: { id: 3, length: 80 },
   ALMANAC: { id: 4, length: 30 },
   WARNINGS: { id: 5, length: 30 },
+  WINDCHILL: { id: 6, length: 20 },
 };
 const SCREEN_ROTATION = [
   SCREENS.CURRENT_CONDITIONS,
   SCREENS.WARNINGS,
   SCREENS.FORECAST,
+  SCREENS.WINDCHILL,
   SCREENS.ALMANAC,
   SCREENS.SURROUNDING,
 ];
@@ -72,12 +75,13 @@ import forecast from "./components/forecast.vue";
 import surrounding from "./components/surrounding.vue";
 import almanac from "./components/almanac.vue";
 import warnings from "./components/warnings.vue";
+import windchill from "./components/windchill.vue";
 import playlist from "./components/playlist";
 import crawler from "./components/crawler";
 
 export default {
   name: "App",
-  components: { currentconditions, forecast, surrounding, almanac, warnings, playlist, crawler },
+  components: { currentconditions, forecast, surrounding, almanac, warnings, windchill, playlist, crawler },
   data() {
     return {
       screenChanger: null,
@@ -115,6 +119,10 @@ export default {
       return this.currentScreen.length;
     },
 
+    currentTemp() {
+      return Math.round(this.weather?.currentConditions?.temperature?.value) || 0;
+    },
+
     isCurrentConditions() {
       return this.currentScreenID === SCREENS.CURRENT_CONDITIONS.id;
     },
@@ -133,6 +141,10 @@ export default {
 
     isWarnings() {
       return this.currentScreenID === SCREENS.WARNINGS.id;
+    },
+
+    isWindChillEffects() {
+      return this.currentScreenID === SCREENS.WINDCHILL.id;
     },
 
     timeZone() {
@@ -195,12 +207,17 @@ export default {
       EventBus.on("warnings-complete", () => {
         this.handleScreenCycle(true);
       });
+
+      EventBus.on("windchill-complete", () => {
+        this.handleScreenCycle(true);
+      });
     },
 
     destroyEventCallbacks() {
       EventBus.off("forecast-complete");
       EventBus.off("observation-complete");
       EventBus.off("warnings-complete");
+      EventBus.off("windchill-complete");
     },
 
     getWeather() {

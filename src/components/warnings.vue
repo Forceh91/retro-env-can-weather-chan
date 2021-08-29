@@ -2,10 +2,12 @@
   <div id="warnings">
     <div id="title">* WEATHER WARNINGS *</div>
     <div v-if="warningsUnavailable">No warnings in effect</div>
-    <div v-else id="warnings_table">
-      <div class="description">{{ warningDescription }}</div>
-      <div class="city"><template v-if="!warningHasEnded">In Effect</template> For {{ city }}</div>
-    </div>
+    <ul v-else id="warnings_table">
+      <li v-for="(warning, ix) in warningsList" :key="ix" :class="{ flash: shouldFlashWarning(warning) }">
+        <div class="description">{{ warning.description }}</div>
+        <div class="city"><template v-if="warning.type !== `ended`">In Effect</template> For {{ city }}</div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -29,26 +31,10 @@ export default {
     warningsUnavailable() {
       return !this.warnings || !this.warnings.event;
     },
-
-    warningDescription() {
-      return this.warnings?.event?.description;
-    },
-
-    warningPriority() {
-      return this.warnings?.event?.priority;
-    },
-
-    warningIssued() {
-      return this.warnings?.event?.dateTime[1]?.textSummary;
-    },
-
-    warningHasEnded() {
-      return this.warnings?.event?.type === "ended";
-    },
   },
 
   data() {
-    return { page: 1, pageChangeInterval: null, pages: 1 };
+    return { page: 1, pageChangeInterval: null, pages: 1, warningsList: [] };
   },
 
   mounted() {
@@ -56,6 +42,10 @@ export default {
     this.pages = Math.ceil(this.warnings?.length / MAX_WARNINGS_PER_PAGE);
 
     if (this.warningsUnavailable) EventBus.emit("warnings-complete");
+    else {
+      if (!Array.isArray(this.warnings.event)) this.warningsList = [this.warnings.event];
+      else this.warningsList = [...this.warnings.event];
+    }
 
     // this.pageChangeInterval = setInterval(() => {
     //   this.page = ++this.page % (this.pages + 1);
@@ -67,7 +57,13 @@ export default {
     clearInterval(this.pageChangeInterval);
   },
 
-  methods: {},
+  methods: {
+    shouldFlashWarning(warning) {
+      if (!warning) return false;
+
+      return warning.priority === "urgent" && warning.type !== "ended";
+    },
+  },
 };
 </script>
 
@@ -79,6 +75,22 @@ export default {
 }
 
 #warnings_table {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    &:not(:last-child) {
+      margin-bottom: 20px;
+    }
+
+    text-align: center;
+
+    &.flash {
+      animation: flash 0.8s step-start 0s infinite;
+    }
+  }
+
   .description,
   .city {
     font-size: 25px;
@@ -93,5 +105,14 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100% - 60px);
+}
+
+/* flashing warnings from the original were 4 frames hidden, 11 frames visible */
+/* this was at 25fps (lets say 30), so that means 26.6% of the time the warning was hidden */
+/* this renders at 60fps (or should) so if we make 13% then this will close to accurate */
+@keyframes flash {
+  13% {
+    opacity: 0;
+  }
 }
 </style>

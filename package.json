@@ -30,7 +30,7 @@
     "eslint-plugin-vue": "^7.0.0",
     "sass": "^1.36.0",
     "sass-loader": "^8.0.0",
-    "webpack": "^5.47.0"
+    "webpack": "^5.51.1"
   },
   "eslintConfig": {
     "root": true,

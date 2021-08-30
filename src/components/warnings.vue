@@ -3,7 +3,7 @@
     <div id="title">* WEATHER WARNINGS *</div>
     <div v-if="warningsUnavailable">No warnings in effect</div>
     <ul v-else id="warnings_table">
-      <li v-for="(warning, ix) in warningsList" :key="ix" :class="{ flash: shouldFlashWarning(warning) }">
+      <li v-for="(warning, ix) in paginatedWarnings" :key="ix" :class="{ flash: shouldFlashWarning(warning) }">
         <div class="description">{{ warning.description }}</div>
         <div class="city"><template v-if="warning.type !== `ended`">In Effect</template> For {{ city }}</div>
       </li>
@@ -12,8 +12,8 @@
 </template>
 
 <script>
-const MAX_WARNINGS_PER_PAGE = 3;
-// const PAGE_CHANGE_FREQUENCY = 15 * 1000;
+const MAX_WARNINGS_PER_PAGE = 2;
+const PAGE_CHANGE_FREQUENCY = 20 * 1000;
 
 import { EventBus } from "../js/EventBus";
 
@@ -31,6 +31,12 @@ export default {
     warningsUnavailable() {
       return !this.warnings || !this.warnings.event;
     },
+
+    paginatedWarnings() {
+      const startIndex = Math.max(0, (this.page - 1) * MAX_WARNINGS_PER_PAGE);
+      const endIndex = Math.min(startIndex + MAX_WARNINGS_PER_PAGE, this.warningsList?.length);
+      return this.warningsList?.slice(startIndex, endIndex);
+    },
   },
 
   data() {
@@ -38,19 +44,20 @@ export default {
   },
 
   mounted() {
+    // no warnings so skip
+    if (this.warningsUnavailable) return EventBus.emit("warnings-complete");
+
+    // got warnings so deal with them
+    if (!Array.isArray(this.warnings.event)) this.warningsList = [this.warnings.event];
+    else this.warningsList = [...this.warnings.event];
+
     this.page = 1;
-    this.pages = Math.ceil(this.warnings?.length / MAX_WARNINGS_PER_PAGE);
+    this.pages = Math.ceil(this.warningsList?.length / MAX_WARNINGS_PER_PAGE);
 
-    if (this.warningsUnavailable) EventBus.emit("warnings-complete");
-    else {
-      if (!Array.isArray(this.warnings.event)) this.warningsList = [this.warnings.event];
-      else this.warningsList = [...this.warnings.event];
-    }
-
-    // this.pageChangeInterval = setInterval(() => {
-    //   this.page = ++this.page % (this.pages + 1);
-    //   if (!this.page || this.observationsUnavailable) return EventBus.emit("observation-complete");
-    // }, PAGE_CHANGE_FREQUENCY);
+    this.pageChangeInterval = setInterval(() => {
+      this.page = ++this.page % (this.pages + 1);
+      if (!this.page || this.warningsUnavailable) return EventBus.emit("warnings-complete");
+    }, PAGE_CHANGE_FREQUENCY);
   },
 
   unmounted() {

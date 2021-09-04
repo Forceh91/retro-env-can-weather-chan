@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service test:unit"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -23,13 +24,16 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "^4.5.13",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "@vue/test-utils": "^1.2.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.17.0",
     "sass": "^1.39.0",
     "sass-loader": "^8.0.0",
+    "vue-jest": "^3.0.7",
     "webpack": "^5.52.0"
   },
   "eslintConfig": {
@@ -45,6 +49,21 @@
       "parser": "babel-eslint"
     },
     "rules": {}
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.(vue)$": "vue-jest"
+    },
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "**/*.{js,vue}",
+      "!**/node_modules/**"
+    ]
   },
   "browserslist": [
     "> 1%",

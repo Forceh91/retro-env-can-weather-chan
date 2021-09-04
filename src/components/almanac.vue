@@ -42,15 +42,19 @@
           </div>
 
           <!-- almanac data -->
-          <div id="almanac_table" class="full-width centre-align spaced">
+          <div id="almanac_table">
             <div class="header">Last Year&nbsp;Normal&nbsp;Records&nbsp;&nbsp;Year</div>
             <div id="almanac_hi">
-              Hi <span v-html="highLastYear"></span><span v-html="highNormal"></span
-              ><span v-html="recordHigh"></span>&nbsp;IN&nbsp;<span v-html="recordHighYear"></span>
+              Hi <span v-html="highLastYear"></span>&nbsp;&nbsp;<span v-html="highNormal"></span>&nbsp;&nbsp;<span
+                v-html="recordHigh"
+              ></span
+              >&nbsp;IN&nbsp;<span v-html="recordHighYear"></span>
             </div>
             <div id="almanac_lo">
-              Lo <span v-html="lowLastYear"></span><span v-html="lowNormal"></span
-              ><span v-html="recordLow"></span>&nbsp;IN&nbsp;<span v-html="recordLowYear"></span>
+              Lo <span v-html="lowLastYear"></span>&nbsp;&nbsp;<span v-html="lowNormal"></span>&nbsp;&nbsp;<span
+                v-html="recordLow"
+              ></span
+              >&nbsp;IN&nbsp;<span v-html="recordLowYear"></span>
             </div>
           </div>
         </div>
@@ -87,7 +91,7 @@ export default {
 
     temperature() {
       return (
-        ((this.conditions.temperature && this.conditions.temperature.value) || "N/A") +
+        ((this.conditions.temperature && parseInt(this.conditions.temperature.value)) || "N/A") +
           " " +
           this.conditions.temperature.units || ""
       );
@@ -114,7 +118,7 @@ export default {
       const visibility = this.conditions.visibility;
       if (!visibility) return "";
 
-      return `${visibility.value} ${visibility.units}`;
+      return `${parseInt(visibility.value)} ${visibility.units}`;
     },
 
     pressure() {
@@ -125,12 +129,12 @@ export default {
     },
 
     highLastYear() {
-      return `${this.padString("N/A", 7)}`;
+      return `${this.padString("N/A", 5, true)}`;
     },
 
     highNormal() {
       const highTemps = this.almanac?.temperature[2];
-      return `${this.padString(highTemps?.value, 7)}`;
+      return `${this.padString(highTemps?.value, 5, true)}`;
     },
 
     recordHigh() {
@@ -144,12 +148,12 @@ export default {
     },
 
     lowLastYear() {
-      return `${this.padString("N/A", 7)}`;
+      return `${this.padString("N/A", 5, true)}`;
     },
 
     lowNormal() {
       const lowTemps = this.almanac?.temperature[3];
-      return `${this.padString(lowTemps?.value, 7)}`;
+      return `${this.padString(lowTemps?.value, 5, true)}`;
     },
 
     recordLow() {
@@ -235,7 +239,9 @@ export default {
   }
 
   #almanac_table {
-    margin-top: auto;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>

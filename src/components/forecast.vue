@@ -97,7 +97,7 @@ export default {
 
     temperature() {
       return (
-        ((this.conditions.temperature && this.conditions.temperature.value) || "N/A") +
+        ((this.conditions.temperature && parseInt(this.conditions.temperature.value)) || "N/A") +
           " " +
           this.conditions.temperature.units || ""
       );
@@ -124,7 +124,7 @@ export default {
       const visibility = this.conditions.visibility;
       if (!visibility) return "";
 
-      return `${visibility.value} ${visibility.units}`;
+      return `${parseInt(visibility.value)} ${visibility.units}`;
     },
 
     windchill() {

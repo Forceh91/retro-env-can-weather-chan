@@ -61,9 +61,11 @@
       ".*\\.js$": "babel-jest",
       ".*\\.(vue)$": "vue-jest"
     },
-    "collectCoverage": false,
+    "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/*.{js,vue}",
+      "src/**/*.{js,vue}",
+      "!src/**/windchill.vue",
+      "!src/**/stats.vue",
       "!**/node_modules/**"
     ],
     "testEnvironment": "jsdom"

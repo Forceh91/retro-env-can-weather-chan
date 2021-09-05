@@ -60,10 +60,48 @@ test("generateWarningsScreen: generates the correct number of pages", (done) => 
   });
 });
 
+test("generateWarningsScreen: changes page after 20s", (done) => {
+  jest.useFakeTimers();
+  const spy = jest.spyOn(vm, "changePage");
+
+  vm.generateWarningsScreen();
+  jest.advanceTimersByTime(20 * 1000);
+  expect(spy).toHaveBeenCalled();
+  expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 20 * 1000);
+  done();
+});
+
 test("shouldFlashWarning: will flash a warning if it is urgent", (done) => {
+  expect(vm.shouldFlashWarning()).toBe(false);
   expect(vm.shouldFlashWarning(fakeWarning)).toBe(false);
   expect(vm.shouldFlashWarning(fakeEndedWarning)).toBe(false);
   expect(vm.shouldFlashWarning(fakeEndedUrgentWarning)).toBe(false);
   expect(vm.shouldFlashWarning(fakeUrgentWarning)).toBe(true);
+  done();
+});
+
+test("changePage: changes page correctly when there are multiple pages", (done) => {
+  wrapper.setProps({ warnings: { event: [fakeWarning, fakeWarning, fakeWarning] } });
+  vm.$nextTick(() => {
+    vm.generateWarningsScreen();
+    vm.changePage();
+    expect(vm.page).toBe(2);
+    done();
+  });
+});
+
+test("changePage: switches away from the warnings screen when on the last page", (done) => {
+  EventBus.off("warnings-complete");
+  EventBus.on("warnings-complete", () => {
+    expect(vm.page).toBe(0);
+    done();
+  });
+
+  vm.changePage();
+});
+
+test("destroyed: removes page change interval", (done) => {
+  wrapper.unmount();
+  expect(clearInterval).toHaveBeenCalled();
   done();
 });

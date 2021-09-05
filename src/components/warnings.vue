@@ -64,9 +64,13 @@ export default {
       this.pages = Math.ceil(this.warningsList?.length / MAX_WARNINGS_PER_PAGE);
 
       this.pageChangeInterval = setInterval(() => {
-        this.page = ++this.page % (this.pages + 1);
-        if (!this.page || this.warningsUnavailable) return EventBus.emit("warnings-complete");
+        this.changePage();
       }, PAGE_CHANGE_FREQUENCY);
+    },
+
+    changePage() {
+      this.page = ++this.page % (this.pages + 1);
+      if (!this.page || this.warningsUnavailable) return EventBus.emit("warnings-complete");
     },
 
     shouldFlashWarning(warning) {

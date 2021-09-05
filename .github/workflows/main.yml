@@ -5,13 +5,17 @@ jobs:
     name: Run tests and complete build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: install # will run `yarn install` command
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: test # will run `yarn test` command
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: build # will run `yarn build` command
+      - name: "Pull repo"
+        uses: actions/checkout@v2
+      - name: "Install Yarn packages"
+        uses: borales/actions-yarn@v2.3.0
+          with:
+            cmd: install # will run `yarn install` command
+      - name: "Run unit tests"
+        uses: borales/actions-yarn@v2.3.0
+          with:
+            cmd: test # will run `yarn test` command
+      - name: "Check production build is successful"
+        uses: borales/actions-yarn@v2.3.0
+          with:
+            cmd: build # will run `yarn build` command

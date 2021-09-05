@@ -4,6 +4,7 @@ node_modules
 /music
 /cfg/*.json
 /cfg/crawl.txt
+*.zip
 
 
 # local env files
@@ -24,3 +25,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Testing
+coverage
+

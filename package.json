@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service test:unit"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -16,20 +17,24 @@
     "ec-weather-js": "^1.2.0",
     "express": "^4.17.1",
     "mitt": "^3.0.0",
-    "vue": "^3.0.0",
+    "vue": "^3.0.2",
     "vue-axios": "^3.2.5",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "^4.5.13",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "@vue/test-utils": "^2.0.0-rc.13",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.17.0",
+    "jsdom": "^17.0.0",
     "sass": "^1.39.0",
     "sass-loader": "^8.0.0",
+    "vue-jest": "^5.0.0-alpha.10",
     "webpack": "^5.52.0"
   },
   "eslintConfig": {
@@ -45,6 +50,25 @@
       "parser": "babel-eslint"
     },
     "rules": {}
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.js$": "babel-jest",
+      ".*\\.(vue)$": "vue-jest"
+    },
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js,vue}",
+      "!src/**/windchill.vue",
+      "!src/**/stats.vue",
+      "!**/node_modules/**"
+    ],
+    "testEnvironment": "jsdom"
   },
   "browserslist": [
     "> 1%",

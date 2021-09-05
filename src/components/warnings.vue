@@ -44,20 +44,7 @@ export default {
   },
 
   mounted() {
-    // no warnings so skip
-    if (this.warningsUnavailable) return EventBus.emit("warnings-complete");
-
-    // got warnings so deal with them
-    if (!Array.isArray(this.warnings.event)) this.warningsList = [this.warnings.event];
-    else this.warningsList = [...this.warnings.event];
-
-    this.page = 1;
-    this.pages = Math.ceil(this.warningsList?.length / MAX_WARNINGS_PER_PAGE);
-
-    this.pageChangeInterval = setInterval(() => {
-      this.page = ++this.page % (this.pages + 1);
-      if (!this.page || this.warningsUnavailable) return EventBus.emit("warnings-complete");
-    }, PAGE_CHANGE_FREQUENCY);
+    this.generateWarningsScreen();
   },
 
   unmounted() {
@@ -65,6 +52,23 @@ export default {
   },
 
   methods: {
+    generateWarningsScreen() {
+      // no warnings so skip
+      if (this.warningsUnavailable) return EventBus.emit("warnings-complete");
+
+      // got warnings so deal with them
+      if (!Array.isArray(this.warnings.event)) this.warningsList = [this.warnings.event];
+      else this.warningsList = [...this.warnings.event];
+
+      this.page = 1;
+      this.pages = Math.ceil(this.warningsList?.length / MAX_WARNINGS_PER_PAGE);
+
+      this.pageChangeInterval = setInterval(() => {
+        this.page = ++this.page % (this.pages + 1);
+        if (!this.page || this.warningsUnavailable) return EventBus.emit("warnings-complete");
+      }, PAGE_CHANGE_FREQUENCY);
+    },
+
     shouldFlashWarning(warning) {
       if (!warning) return false;
 

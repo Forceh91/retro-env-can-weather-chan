@@ -26,7 +26,6 @@
 
 <script>
 import conditions from "./conditions.vue";
-import { calculateWindChillNumber } from "../js/windChill";
 
 export default {
   name: "Almanac",
@@ -84,14 +83,6 @@ export default {
     recordLowYear() {
       const recordLow = this.almanac?.temperature[1];
       return `${recordLow?.year}`;
-    },
-
-    windchill() {
-      const temp = this.conditions.temperature && this.conditions.temperature.value;
-      if (temp > 0) return 0;
-
-      const windspeed = this.conditions?.wind?.speed?.value;
-      return calculateWindChillNumber(temp, windspeed);
     },
   },
 

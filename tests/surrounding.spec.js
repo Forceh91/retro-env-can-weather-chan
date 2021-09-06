@@ -29,7 +29,7 @@ test("observationsUnavailable: correctly computes based on observations", (done)
 });
 
 test("dateTime: correctly produces the date/time string with filled in timezone", (done) => {
-  expect(vm.dateTime).toBe(`5 PM ${vm.timezone} Sep 05/21`);
+  expect(vm.dateTime).toContain(`${vm.timezone} Sep 05/21`);
 
   wrapper.setProps({ timezone: "CDT" });
   vm.$nextTick(() => {

@@ -4,21 +4,19 @@
       <div id="title" v-html="titleString"></div>
       <div>
         <span>Temp&nbsp;</span><span v-html="padString(temperature, 5, true)"></span>
-        <span v-html="padString('', 6)"></span><span>Wind&nbsp;</span><span v-html="wind"></span>
+        <span v-html="padString('', 5)"></span><span>Wind&nbsp;</span><span v-html="wind"></span>
       </div>
       <div>
         <span>Hum&nbsp;&nbsp;</span><span v-html="padString(humidity, 5, true)"></span>
-        <span v-html="padString('', 6)"></span><span>{{ conditions.condition }}</span>
+        <span v-html="padString('', 5)"></span><span>{{ conditions.condition }}</span>
       </div>
       <div>
         <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
         <template v-if="windchill > 0"
-          ><span v-html="padString('', 5)"></span><span>Wind Chill {{ windchill }}</span></template
+          ><span v-html="padString('', 4)"></span><span>Wind Chill {{ windchill }}</span></template
         >
       </div>
-      <div>
-        <span v-html="padString('pressure', 11, true)"></span>&nbsp;<span>{{ pressure }}</span>
-      </div>
+      <div><span v-html="padString('pressure', 11, true)"></span>&nbsp;<span v-html="pressure"></span></div>
     </div>
   </div>
 </template>
@@ -41,7 +39,7 @@ export default {
     },
 
     observedFormatted() {
-      return format(parseISO(this.observed), "h aa ???'&nbsp;&nbsp;'MMM dd/yy").replace(
+      return format(parseISO(this.observed), "h aa ???'&nbsp;'MMM dd/yy").replace(
         `???`,
         this.conditions?.dateTime[1]?.zone
       );
@@ -83,7 +81,7 @@ export default {
       const pressure = this.conditions.pressure;
       if (!pressure) return "";
 
-      return `${pressure.value} ${pressure.units} ${pressure.tendency}`;
+      return `${pressure.value} ${pressure.units}&nbsp;&nbsp;${pressure.tendency}`;
     },
 
     windchill() {
@@ -112,8 +110,8 @@ export default {
   display: flex;
   justify-content: center;
 
-  div {
-    margin-bottom: 4px;
+  #conditions_table_content div {
+    margin-bottom: 5px;
   }
 }
 </style>

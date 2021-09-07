@@ -48,8 +48,8 @@ export default {
     temperature() {
       return (
         ((this.conditions.temperature && Math.round(this.conditions.temperature.value)) || "N/A") +
-          " " +
-          this.conditions.temperature.units || ""
+        " " +
+        ((this.conditions.temperature && this.conditions.temperature.units) || "")
       );
     },
 

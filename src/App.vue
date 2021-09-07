@@ -327,6 +327,7 @@ export default {
     display: flex;
     height: calc(100% - 175px);
     justify-content: center;
+    line-height: 1.6rem;
     padding: 10px;
     width: 100%;
   }

@@ -10,7 +10,10 @@ test("setupPlaylist: doesn't call selectRandomTrackFromPlaylist since the playli
   vm.setupPlaylist();
   expect(spy).not.toHaveBeenCalled();
   wrapper.setProps({ playlist: ["a.mp3", "b.mp3", "c.mp3"] });
-  done();
+
+  vm.$nextTick(() => {
+    done();
+  });
 });
 
 test("setupPlaylist: does select a random track if a playlist exists", (done) => {

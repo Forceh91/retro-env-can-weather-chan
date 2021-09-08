@@ -9,29 +9,22 @@ test("setupPlaylist: doesn't call selectRandomTrackFromPlaylist since the playli
 
   vm.setupPlaylist();
   expect(spy).not.toHaveBeenCalled();
+  wrapper.setProps({ playlist: ["a.mp3", "b.mp3", "c.mp3"] });
   done();
 });
 
 test("setupPlaylist: does select a random track if a playlist exists", (done) => {
-  wrapper.setProps({ playlist: ["a.mp3", "b.mp3", "c.mp3"] });
   const spy = jest.spyOn(vm, "selectRandomTrackFromPlaylist");
 
-  vm.$nextTick(() => {
-    vm.setupPlaylist();
-    expect(spy).toHaveBeenCalled();
-    done();
-  });
-});
-
-test("selectRandomTrackFromPlaylist: sets current track to null before changing", (done) => {
-  vm.selectRandomTrackFromPlaylist();
-  expect(vm.currentTrack).toBe(null);
+  vm.setupPlaylist();
+  expect(spy).toHaveBeenCalled();
   done();
 });
 
 test("selectRandomTrackFromPlaylist: changes track after a second", (done) => {
   jest.useFakeTimers();
   vm.selectRandomTrackFromPlaylist();
+  expect(vm.currentTrack).toBe(null);
 
   jest.advanceTimersByTime(1000);
   expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 1000);

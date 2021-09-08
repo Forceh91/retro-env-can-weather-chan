@@ -1,0 +1,76 @@
+export default {
+  temperature: [
+    {
+      class: "extremeMax",
+      period: "1938-2007",
+      unitType: "metric",
+      units: "C",
+      year: "1980",
+      value: "33.3",
+    },
+    {
+      class: "extremeMin",
+      period: "1938-2007",
+      unitType: "metric",
+      units: "C",
+      year: "1956",
+      value: "0.6",
+    },
+    {
+      class: "normalMax",
+      unitType: "metric",
+      units: "C",
+      value: "20.6",
+    },
+    {
+      class: "normalMin",
+      unitType: "metric",
+      units: "C",
+      value: "7.8",
+    },
+    {
+      class: "normalMean",
+      unitType: "metric",
+      units: "C",
+      value: "14.2",
+    },
+  ],
+  precipitation: [
+    {
+      class: "extremeRainfall",
+      period: "1938-2007",
+      unitType: "metric",
+      units: "mm",
+      year: "1943",
+      value: "13.7",
+    },
+    {
+      class: "extremeSnowfall",
+      period: "1938-2007",
+      unitType: "metric",
+      units: "cm",
+      year: "1938",
+      value: "0.0",
+    },
+    {
+      class: "extremePrecipitation",
+      period: "1938-2007",
+      unitType: "metric",
+      units: "mm",
+      year: "1943",
+      value: "13.7",
+    },
+    {
+      class: "extremeSnowOnGround",
+      period: "1955-2007",
+      unitType: "metric",
+      units: "cm",
+      year: "1955",
+      value: "0.0",
+    },
+  ],
+  pop: {
+    units: "%",
+    value: "35.0",
+  },
+};

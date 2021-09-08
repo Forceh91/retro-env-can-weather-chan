@@ -90,7 +90,7 @@ export default {
     padString(val, minLength, isFront) {
       const paddingToAdd = minLength - val.length;
       let paddingString = ``;
-      for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp`;
+      for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
 
       return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
     },

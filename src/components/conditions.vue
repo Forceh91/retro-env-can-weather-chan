@@ -8,7 +8,7 @@
       </div>
       <div>
         <span>Hum&nbsp;&nbsp;</span><span v-html="padString(humidity, 5, true)"></span>
-        <span v-html="padString('', 5)"></span><span>{{ conditions.condition }}</span>
+        <span v-html="padString('', 5)"></span><span>{{ currentCondition }}</span>
       </div>
       <div>
         <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
@@ -43,6 +43,12 @@ export default {
         `???`,
         this.conditions?.dateTime[1]?.zone
       );
+    },
+
+    currentCondition() {
+      const condition = this.conditions.condition;
+      if (condition.includes("thunderstorms with")) return "Thunderstorms";
+      return `${condition.slice(0, 16)}`;
     },
 
     temperature() {

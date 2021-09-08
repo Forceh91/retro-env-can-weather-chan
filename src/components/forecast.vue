@@ -60,18 +60,28 @@ export default {
   },
 
   mounted() {
-    this.page = 0;
-
-    this.pageChangeInterval = setInterval(() => {
-      if (!this.page) this.page = ++this.page % this.forecast?.length;
-      else this.page = (this.page + 2) % this.forecast?.length;
-
-      if (!this.page || this.forecastUnavailable) return EventBus.emit("forecast-complete");
-    }, PAGE_CHANGE_FREQUENCY);
+    this.generateForecastPages();
   },
 
   unmounted() {
     clearInterval(this.pageChangeInterval);
+  },
+
+  methods: {
+    generateForecastPages() {
+      this.page = 0;
+
+      this.pageChangeInterval = setInterval(() => {
+        this.changePage();
+      }, PAGE_CHANGE_FREQUENCY);
+    },
+
+    changePage() {
+      if (!this.page) this.page = ++this.page % this.forecast?.length;
+      else this.page = (this.page + 2) % this.forecast?.length;
+
+      if (!this.page || this.forecastUnavailable) return EventBus.emit("forecast-complete");
+    },
   },
 };
 </script>

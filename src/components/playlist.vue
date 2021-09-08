@@ -31,12 +31,16 @@ export default {
   },
 
   mounted() {
-    if (!this.playlist || !this.playlist.length) return;
-
-    this.selectRandomTrackFromPlaylist();
+    this.setupPlaylist();
   },
 
   methods: {
+    setupPlaylist() {
+      if (!this.playlist || !this.playlist.length) return;
+
+      this.selectRandomTrackFromPlaylist();
+    },
+
     selectRandomTrackFromPlaylist() {
       this.currentTrack = null;
 

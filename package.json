@@ -11,14 +11,14 @@
   "dependencies": {
     "axios": "^0.21.4",
     "cli-select": "^1.1.2",
-    "core-js": "^3.17.2",
+    "core-js": "^3.17.3",
     "cors": "^2.8.5",
     "date-fns": "^2.23.0",
     "ec-weather-js": "^1.2.0",
     "express": "^4.17.1",
     "mitt": "^3.0.0",
-    "vue": "^3.2.9",
-    "vue-axios": "^3.2.5",
+    "vue": "^3.2.11",
+    "vue-axios": "^3.3.6",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
@@ -26,7 +26,7 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "^4.5.13",
     "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.2.9",
+    "@vue/compiler-sfc": "^3.2.11",
     "@vue/test-utils": "^2.0.0-rc.14",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",

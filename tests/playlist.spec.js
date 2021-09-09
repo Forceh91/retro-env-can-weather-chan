@@ -4,30 +4,29 @@ import Playlist from "../src/components/playlist";
 const wrapper = shallowMount(Playlist, { props: {} });
 const { vm } = wrapper;
 
-test("setupPlaylist: doesn't call selectRandomTrackFromPlaylist since the playlist is empty", (done) => {
+test("setupPlaylist: doesn't do anything if there's no playlist", (done) => {
   const spy = jest.spyOn(vm, "selectRandomTrackFromPlaylist");
-
-  vm.setupPlaylist();
-  expect(spy).not.toHaveBeenCalled();
-  wrapper.setProps({ playlist: ["a.mp3", "b.mp3", "c.mp3"] });
-
   vm.$nextTick(() => {
+    vm.setupPlaylist();
+    expect(spy).not.toHaveBeenCalled();
     done();
   });
 });
 
-test("setupPlaylist: does select a random track if a playlist exists", (done) => {
+test("setupPlaylist: it calls selectRandomTrackFromPlaylist because there's a list of tracks", (done) => {
+  wrapper.setProps({ playlist: ["a.mp3", "b.mp3", "c.mp3"] });
   const spy = jest.spyOn(vm, "selectRandomTrackFromPlaylist");
 
-  vm.setupPlaylist();
-  expect(spy).toHaveBeenCalled();
-  done();
+  vm.$nextTick(() => {
+    vm.setupPlaylist();
+    expect(spy).toHaveBeenCalled();
+    done();
+  });
 });
 
-test("selectRandomTrackFromPlaylist: changes track after a second", (done) => {
+test("selectRandomTrackFromPlaylist: selects a random track after 1s", (done) => {
   jest.useFakeTimers();
   vm.selectRandomTrackFromPlaylist();
-  expect(vm.currentTrack).toBe(null);
 
   jest.advanceTimersByTime(1000);
   expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 1000);
@@ -35,16 +34,16 @@ test("selectRandomTrackFromPlaylist: changes track after a second", (done) => {
   done();
 });
 
-test("selectRandomTrackFromPlaylist: tries again if it can't select a track", (done) => {
+test("selectRandomTrackFromPlaylist: selects a random track after 1s", (done) => {
   wrapper.setProps({ playlist: [] });
-  const spy = jest.spyOn(vm, "selectRandomTrackFromPlaylist");
 
   vm.$nextTick(() => {
     jest.useFakeTimers();
     vm.selectRandomTrackFromPlaylist();
 
     jest.advanceTimersByTime(1000);
-    expect(spy).toHaveBeenCalled();
+    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 1000);
+    expect(vm.currentTrack).toBe(null);
     done();
   });
 });

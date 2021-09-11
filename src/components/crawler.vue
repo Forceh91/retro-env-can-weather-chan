@@ -37,15 +37,19 @@ export default {
   },
 
   mounted() {
-    this.$nextTick(() => {
-      const topBar = document.querySelector("#top_bar");
-      if (topBar) this.parentWidth = topBar.clientWidth;
-
-      this.startCrawler();
-    });
+    this.setupCrawler();
   },
 
   methods: {
+    setupCrawler() {
+      this.$nextTick(() => {
+        const topBar = document.querySelector("#top_bar");
+        if (topBar) this.parentWidth = topBar.clientWidth;
+
+        this.startCrawler();
+      });
+    },
+
     startCrawler() {
       this.marginLeft = this.parentWidth || 0;
       const crawlMessage = this.$refs.crawlmessage;

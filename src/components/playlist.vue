@@ -31,19 +31,23 @@ export default {
   },
 
   mounted() {
-    if (!this.playlist || !this.playlist.length) return;
-
-    this.selectRandomTrackFromPlaylist();
+    this.setupPlaylist();
   },
 
   methods: {
+    setupPlaylist() {
+      if (!this.playlist || !this.playlist.length) return;
+
+      this.selectRandomTrackFromPlaylist();
+    },
+
     selectRandomTrackFromPlaylist() {
       this.currentTrack = null;
 
       // wait a second for the audio player to be destroyed a rebuilt before
       // moving onto the next track. hopefully this fixes it getting stuck
       setTimeout(() => {
-        const rand = Math.floor(Math.random() * this.playlist.length - 1);
+        const rand = Math.floor(1 + Math.random() * this.playlist.length) - 1;
         const selectedTrack = this.playlist[rand];
         if (!selectedTrack) return this.selectRandomTrackFromPlaylist();
         this.currentTrack = selectedTrack;

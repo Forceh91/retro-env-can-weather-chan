@@ -174,6 +174,16 @@ test("padString: pads strings correctly when a length is given", (done) => {
   done();
 });
 
+test("padString: doesn't error when no string is passed", (done) => {
+  const stringA = vm.padString(null, 5);
+  expect(stringA).toBe("");
+
+  const stringB = vm.padString("", 5);
+  expect(stringB).toBe("");
+
+  done();
+});
+
 test("destroyed: removes page change interval", (done) => {
   wrapper.unmount();
   expect(clearInterval).toHaveBeenCalled();

@@ -1,6 +1,6 @@
 <template>
   <div id="body">
-    <div id="main_screen">
+    <div id="main_screen" :style="{ 'background-color': backgroundCol }">
       <div id="top_bar">
         <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
       </div>
@@ -68,6 +68,9 @@ const SCREEN_ROTATION = [
   SCREENS.SURROUNDING,
 ];
 
+const BLUE_COL = "darkblue";
+const RED_COL = "#610b00";
+
 import { format, addMinutes, formatRFC3339 } from "date-fns";
 import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
@@ -99,7 +102,15 @@ export default {
       },
       playlist: [],
       crawlerMessages: [],
+      backgroundCol: BLUE_COL,
+      backgroundColDebouncer: null,
     };
+  },
+
+  watch: {
+    rotationIndex() {
+      this.switchBackgroundColour();
+    },
   },
 
   computed: {
@@ -270,6 +281,16 @@ export default {
       if (this.rotationIndex === SCREEN_ROTATION.length) this.rotationIndex = 0;
       this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
       this.handleScreenCycle();
+    },
+
+    switchBackgroundColour() {
+      if (this.backgroundColDebouncer) return;
+
+      this.backgroundColDebouncer = setTimeout(() => {
+        if (this.backgroundCol !== BLUE_COL) this.backgroundCol = BLUE_COL;
+        else this.backgroundCol = RED_COL;
+        this.backgroundColDebouncer = null;
+      }, 50);
     },
 
     timezoneAdjustedDate(date) {

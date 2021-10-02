@@ -17,6 +17,7 @@ const port = 8600;
 
 let configHasSize = false;
 const CONFIG_FILE = "./cfg/retro-evc-config.json";
+let loadedConfig = null;
 fs.stat(CONFIG_FILE, (err, stats) => {
   if (err) {
     console.error("No config file found, run setup first!");
@@ -56,6 +57,7 @@ fs.stat(CONFIG_FILE, (err, stats) => {
     console.log(`Listening on ${port}...`);
     console.log(`Navigate to http://localhost:8600/ in your browser`);
 
+    loadedConfig = parsedJSON;
     startBackend(parsedJSON);
   });
 });
@@ -73,6 +75,7 @@ function startBackend(config) {
     res.send({
       playlist: { files: playlist, file_count: playlist.length },
       crawler: { messages: crawler, message_count: crawler.length },
+      showMBHighLow: loadedConfig.showMBHighLow,
     });
   });
 
@@ -104,6 +107,13 @@ function startBackend(config) {
 
   app.get("/api/weather/surrounding", (req, res) => {
     res.send({ observations: majorObservations });
+  });
+
+  app.get("/api/weather/mb_highlow", (req, res) => {
+    if (!loadedConfig.showMBHighLow || !highLowAroundMB.length) return;
+
+    const tempClass = highLowAroundMB.filter((city) => city.tempClass).map((city) => city.tempClass);
+    res.send({ tempClass: tempClass[0], values: highLowAroundMB });
   });
 
   function fetchLatestObservationsForMajorCities() {
@@ -262,6 +272,75 @@ function startBackend(config) {
         observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
       });
     });
+  }
+
+  // MB regional high/low screen
+  // winnipeg, portage, brandon, dauphin, kenora, thompson
+  const highLowAroundMB = [];
+  if (config.showMBHighLow) {
+    setInterval(fetchHighLowAroundMB, 30 * 60 * 1000);
+    fetchHighLowAroundMB();
+  }
+
+  function fetchHighLowAroundMB() {
+    highLowAroundMB.splice(0, highLowAroundMB.length);
+
+    // winnipeg
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000193_e.xml").then((resp) => {
+      const weather = new Weather(resp.data);
+      if (!weather) return;
+
+      parseHighLowForCity("Winnipeg", weather.weekly);
+    });
+
+    // portage
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000626_e.xml").then((resp) => {
+      const weather = new Weather(resp.data);
+      if (!weather) return;
+
+      parseHighLowForCity("Portage", weather.weekly);
+    });
+
+    // brandon
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000492_e.xml").then((resp) => {
+      const weather = new Weather(resp.data);
+      if (!weather) return;
+
+      parseHighLowForCity("Brandon", weather.weekly);
+    });
+
+    // dauphin
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000508_e.xml").then((resp) => {
+      const weather = new Weather(resp.data);
+      if (!weather) return;
+
+      parseHighLowForCity("Dauphin", weather.weekly);
+    });
+
+    // kenora
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000651_e.xml").then((resp) => {
+      const weather = new Weather(resp.data);
+      if (!weather) return;
+
+      parseHighLowForCity("Kenora", weather.weekly);
+    });
+
+    // thompson
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000695_e.xml").then((resp) => {
+      const weather = new Weather(resp.data);
+      if (!weather) return;
+
+      parseHighLowForCity("Thompson", weather.weekly);
+    });
+
+    const parseHighLowForCity = (cityName, forecast) => {
+      const immediateForecast = forecast[0];
+      highLowAroundMB.push({
+        city: cityName,
+        val: immediateForecast && immediateForecast.temperatures.temperature.value,
+        tempClass: immediateForecast && immediateForecast.temperatures.temperature.class,
+      });
+    };
   }
 }
 

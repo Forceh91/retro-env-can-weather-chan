@@ -198,7 +198,7 @@ export default {
       this.setupEventCallbacks();
       this.getWeather();
       this.getSurroundingWeather();
-      this.getHighLowAroundMB();
+      if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       this.handleScreenCycle();
     });
   },

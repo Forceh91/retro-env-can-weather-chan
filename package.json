@@ -9,7 +9,7 @@
     "test": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "axios": "^0.21.4",
+    "axios": "^0.22.0",
     "cli-select": "^1.1.2",
     "core-js": "^3.18.1",
     "cors": "^2.8.5",
@@ -35,7 +35,7 @@
     "sass": "^1.42.1",
     "sass-loader": "^8.0.0",
     "vue-jest": "^5.0.0-alpha.10",
-    "webpack": "^5.55.1"
+    "webpack": "^5.56.0"
   },
   "eslintConfig": {
     "root": true,

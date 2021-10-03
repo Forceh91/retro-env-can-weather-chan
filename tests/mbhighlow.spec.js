@@ -91,7 +91,7 @@ test("padString: doesn't error when no string is passed", (done) => {
 });
 
 test("sortedHighsLows: is computed correctly", (done) => {
-  expect(vm.sortedHighsLows).toStrictEqual([...mbhighlowdata.values].sort((a, b) => a.city > b.city));
+  expect(vm.sortedHighsLows).toStrictEqual([...mbhighlowdata.values].sort((a, b) => (a.city > b.city ? 1 : -1)));
   done();
 });
 

@@ -26,7 +26,7 @@ export default {
 
   computed: {
     sortedHighsLows() {
-      return this.data && [...this.data].sort((a, b) => a.city > b.city);
+      return this.data && [...this.data].sort((a, b) => (a.city > b.city ? 1 : -1));
     },
 
     timeOfDay() {

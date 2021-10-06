@@ -11,7 +11,7 @@
   "dependencies": {
     "axios": "^0.22.0",
     "cli-select": "^1.1.2",
-    "core-js": "^3.18.1",
+    "core-js": "^3.18.2",
     "cors": "^2.8.5",
     "date-fns": "^2.25.0",
     "ec-weather-js": "^1.2.0",

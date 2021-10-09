@@ -11,13 +11,13 @@
   "dependencies": {
     "axios": "^0.22.0",
     "cli-select": "^1.1.2",
-    "core-js": "^3.18.1",
+    "core-js": "^3.18.2",
     "cors": "^2.8.5",
-    "date-fns": "^2.24.0",
+    "date-fns": "^2.25.0",
     "ec-weather-js": "^1.2.0",
     "express": "^4.17.1",
     "mitt": "^3.0.0",
-    "vue": "^3.2.19",
+    "vue": "^3.2.20",
     "vue-axios": "^3.3.7",
     "xml-js": "^1.6.11"
   },
@@ -30,12 +30,12 @@
     "@vue/test-utils": "^2.0.0-rc.15",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.18.0",
+    "eslint-plugin-vue": "^7.19.1",
     "jsdom": "^17.0.0",
     "sass": "^1.42.1",
     "sass-loader": "^8.0.0",
     "vue-jest": "^5.0.0-alpha.10",
-    "webpack": "^5.56.0"
+    "webpack": "^5.58.1"
   },
   "eslintConfig": {
     "root": true,

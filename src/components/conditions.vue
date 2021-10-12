@@ -52,11 +52,11 @@ export default {
     },
 
     temperature() {
-      return (
-        ((this.conditions.temperature && Math.round(this.conditions.temperature.value)) || "N/A") +
-        " " +
-        ((this.conditions.temperature && this.conditions.temperature.units) || "")
-      );
+      let temp = this.conditions?.temperature?.value;
+      if (!isNaN(temp)) temp = Math.round(temp);
+      else temp = "N/A";
+
+      return `${temp} ${(this.conditions.temperature && this.conditions.temperature.units) || ""}`;
     },
 
     wind() {

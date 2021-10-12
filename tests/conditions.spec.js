@@ -27,17 +27,27 @@ test("currentCondition: is computed properly", (done) => {
 });
 
 test("temperature: is computed properly", (done) => {
+  const oldTempValue = Object.assign({}, vm.conditions.temperature);
   expect(vm.temperature).toBe("23 C");
 
-  const oldTempValue = vm.conditions.temperature;
-  vm.conditions.temperature = null;
+  vm.conditions.temperature.value = 0.3;
+  expect(vm.temperature).toBe("0 C");
 
+  vm.conditions.temperature.value = 0.6;
+  expect(vm.temperature).toBe("1 C");
+
+  vm.conditions.temperature.value = -0.4;
+  expect(vm.temperature).toBe("0 C");
+
+  vm.conditions.temperature.value = -11.4;
+  expect(vm.temperature).toBe("-11 C");
+
+  vm.conditions.temperature.value = oldTempValue.value;
+
+  vm.conditions.temperature = null;
   expect(vm.temperature).toBe("N/A ");
 
-  vm.conditions.temperature = oldTempValue;
-  vm.$nextTick(() => {
-    done();
-  });
+  done();
 });
 
 test("wind: is computed properly", (done) => {

@@ -176,7 +176,7 @@ function startBackend(config) {
     });
 
     // edmonton
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/AB/s0000045_e.xml").then((resp) => {
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/AB/s0000510_e.xml").then((resp) => {
       const weather = new Weather(resp.data);
       if (!weather) return;
 

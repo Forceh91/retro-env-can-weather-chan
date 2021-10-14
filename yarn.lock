@@ -19,7 +19,7 @@
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.15.0.tgz#2dbaf8b85334796cafbb0f5793a90a2fc010b176"
   integrity sha512-0NqAC1IJE0S0+lL1SWFMxMkz1pKCNCjI4tr2Zx4LJSXxCLAdr6KyArnY+sno5m3yH9g737ygOyPABDsnXkpxiA==
 
-"@babel/core@^7.1.0":
+"@babel/core@^7.1.0", "@babel/core@^7.11.0":
   version "7.15.5"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.15.5.tgz#f8ed9ace730722544609f90c9bb49162dc3bf5b9"
   integrity sha512-pYgXxiwAgQpgM1bNkZsDEq85f0ggXMA5L7c+o3tskGMh2BunCI9QUwB9Z4jpvXUOuMdyGKiGKQiRe11VS6Jzvg==
@@ -33,27 +33,6 @@
     "@babel/template" "^7.15.4"
     "@babel/traverse" "^7.15.4"
     "@babel/types" "^7.15.4"
-    convert-source-map "^1.7.0"
-    debug "^4.1.0"
-    gensync "^1.0.0-beta.2"
-    json5 "^2.1.2"
-    semver "^6.3.0"
-    source-map "^0.5.0"
-
-"@babel/core@^7.11.0":
-  version "7.14.8"
-  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.14.8.tgz#20cdf7c84b5d86d83fac8710a8bc605a7ba3f010"
-  integrity sha512-/AtaeEhT6ErpDhInbXmjHcUQXH0L0TEgscfcxk1qbOvLuKCa5aZT0SOOtDKFY96/CLROwbLSKyFor6idgNaU4Q==
-  dependencies:
-    "@babel/code-frame" "^7.14.5"
-    "@babel/generator" "^7.14.8"
-    "@babel/helper-compilation-targets" "^7.14.5"
-    "@babel/helper-module-transforms" "^7.14.8"
-    "@babel/helpers" "^7.14.8"
-    "@babel/parser" "^7.14.8"
-    "@babel/template" "^7.14.5"
-    "@babel/traverse" "^7.14.8"
-    "@babel/types" "^7.14.8"
     convert-source-map "^1.7.0"
     debug "^4.1.0"
     gensync "^1.0.0-beta.2"
@@ -229,7 +208,7 @@
   dependencies:
     "@babel/types" "^7.15.4"
 
-"@babel/helper-module-transforms@^7.14.5", "@babel/helper-module-transforms@^7.14.8":
+"@babel/helper-module-transforms@^7.14.5":
   version "7.14.8"
   resolved "https://registry.yarnpkg.com/@babel/helper-module-transforms/-/helper-module-transforms-7.14.8.tgz#d4279f7e3fd5f4d5d342d833af36d4dd87d7dc49"
   integrity sha512-RyE+NFOjXn5A9YU1dkpeBaduagTlZ0+fccnIcAGbv1KGUlReBj7utF7oEth8IdIBQPcux0DDgW5MFBH2xu9KcA==
@@ -364,15 +343,6 @@
     "@babel/template" "^7.14.5"
     "@babel/traverse" "^7.14.5"
     "@babel/types" "^7.14.5"
-
-"@babel/helpers@^7.14.8":
-  version "7.14.8"
-  resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-7.14.8.tgz#839f88f463025886cff7f85a35297007e2da1b77"
-  integrity sha512-ZRDmI56pnV+p1dH6d+UN6GINGz7Krps3+270qqI9UJ4wxYThfAIcI5i7j5vXC4FJ3Wap+S9qcebxeYiqn87DZw==
-  dependencies:
-    "@babel/template" "^7.14.5"
-    "@babel/traverse" "^7.14.8"
-    "@babel/types" "^7.14.8"
 
 "@babel/helpers@^7.15.4":
   version "7.15.4"
@@ -1612,10 +1582,10 @@
     lodash.kebabcase "^4.1.1"
     svg-tags "^1.0.0"
 
-"@vue/babel-preset-app@^4.5.13":
-  version "4.5.13"
-  resolved "https://registry.yarnpkg.com/@vue/babel-preset-app/-/babel-preset-app-4.5.13.tgz#cb475321e4c73f7f110dac29a48c2a9cb80afeb6"
-  integrity sha512-pM7CR3yXB6L8Gfn6EmX7FLNE3+V/15I3o33GkSNsWvgsMp6HVGXKkXgojrcfUUauyL1LZOdvTmu4enU2RePGHw==
+"@vue/babel-preset-app@^4.5.14":
+  version "4.5.14"
+  resolved "https://registry.yarnpkg.com/@vue/babel-preset-app/-/babel-preset-app-4.5.14.tgz#30883e23bfea35031434db231db77e8784f0dd12"
+  integrity sha512-P13AJv5FDt2XnpZ92K0VMxBS7Pe+gnibxtXMsa8rXLBkEE1NkmtaG5pyXh3fulkmF2/21efOcuh6yFP7k0KuZg==
   dependencies:
     "@babel/core" "^7.11.0"
     "@babel/helper-compilation-targets" "^7.9.6"
@@ -1702,14 +1672,14 @@
   resolved "https://registry.yarnpkg.com/@vue/cli-overlay/-/cli-overlay-4.5.14.tgz#19c2a953bc6c974da79d5566fac057db88ef58dd"
   integrity sha512-0LFqTA1uaCTq4N1P9/A0MhWY0tWER3dZkMN1y+ODfrjAcnX96t/qf2jVy9u3QGKHSPbhF5FYBsKEa6uEFYPyfg==
 
-"@vue/cli-plugin-babel@~4.5.0":
-  version "4.5.13"
-  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-babel/-/cli-plugin-babel-4.5.13.tgz#a89c482edcc4ea1d135645cec502a7f5fd4c30e7"
-  integrity sha512-ykvEAfD8PgGs+dGMGqr7l/nRmIS39NRzWLhMluPLTvDV1L+IxcoB73HNLGA/aENDpl8CuWrTE+1VgydcOhp+wg==
+"@vue/cli-plugin-babel@~4.5.14":
+  version "4.5.14"
+  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-babel/-/cli-plugin-babel-4.5.14.tgz#50f0291a50defc7fc081d350256cbd8536970aca"
+  integrity sha512-8+K684NwmN7TitdCLB9GVts36582ohusfxAL/v6cWnUgrw79gbdGkY8SqyXWrbXCyWYDJrhB25LQIrqGfsJ6Dg==
   dependencies:
     "@babel/core" "^7.11.0"
-    "@vue/babel-preset-app" "^4.5.13"
-    "@vue/cli-shared-utils" "^4.5.13"
+    "@vue/babel-preset-app" "^4.5.14"
+    "@vue/cli-shared-utils" "^4.5.14"
     babel-loader "^8.1.0"
     cache-loader "^4.1.0"
     thread-loader "^2.1.3"

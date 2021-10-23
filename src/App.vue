@@ -109,7 +109,7 @@ export default {
         forecast: null,
         surroundingObservations: null,
         almanac: null,
-        highLowAroundMB: null,
+        highLowAroundMB: {},
       },
       playlist: [],
       crawlerMessages: [],
@@ -303,7 +303,6 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-          this.weather.highLowAroundMB = null;
         });
     },
 

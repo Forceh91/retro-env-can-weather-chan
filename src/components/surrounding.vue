@@ -1,11 +1,11 @@
 <template>
   <div id="surrounding">
-    <div id="title">Latest Hourly Observations<br />{{ dateTime }}</div>
+    <div id="title" v-html="dateTime"></div>
     <div v-if="observationsUnavailable">No observations available</div>
     <div v-else id="observation_table">
       <div v-for="(observation, ix) in paginatedObservations" :key="`observation.${ix}`">
         <span v-html="padTitle(observation.city)"></span
-        ><span v-html="padString(observation.observation.temp, 5, true)"></span>&nbsp;&nbsp;<span>{{
+        ><span v-html="padString(roundTemp(observation.observation.temp), 3, true)"></span>&nbsp;&nbsp;<span>{{
           trimCondition(observation.observation.condition)
         }}</span>
       </div>
@@ -15,7 +15,7 @@
 
 <script>
 const MAX_TITLE_LENGTH = 11;
-const MAX_CITIES_PER_PAGE = 7;
+const MAX_CITIES_PER_PAGE = 11;
 const PAGE_CHANGE_FREQUENCY = 15 * 1000;
 
 import { format, parseISO } from "date-fns";
@@ -38,7 +38,9 @@ export default {
     },
 
     dateTime() {
-      return this.observed ? format(parseISO(this.observed), "h aa ??? MMM dd/yy").replace(`???`, this.timezone) : "";
+      return this.observed
+        ? format(parseISO(this.observed), "h aa ???'&nbsp;&nbsp;'MMM dd/yy").replace(`???`, this.timezone)
+        : "";
     },
 
     sortedObservations() {
@@ -100,20 +102,34 @@ export default {
     },
 
     padString(val, minLength, isFront) {
-      if (!val || !val.length) return "";
+      if (!val) val = "";
+      val = val.toString();
+      if (!val.length) val = "";
+
       const paddingToAdd = minLength - val.length;
       let paddingString = ``;
       for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
 
       return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
     },
+
+    roundTemp(temp) {
+      if (isNaN(temp)) return "";
+      return Math.round(temp);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+#surrounding {
+  margin-top: -10px;
+}
+
 #title {
-  margin-bottom: 30px;
   text-align: center;
+}
+
+#observation_table {
 }
 </style>

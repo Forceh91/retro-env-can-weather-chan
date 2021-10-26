@@ -12,6 +12,9 @@ const cityG = { city: "g", observation: { temp: 30, condition: "smoke" } };
 const cityH = { city: "h", observation: { temp: 5, condition: "fog" } };
 const cityI = { city: "i", observation: { temp: 17, condition: "drizzle" } };
 const cityJ = { city: "j", observation: { temp: 22, condition: "mist" } };
+const cityK = { city: "k", observation: { temp: 11, condition: "mist" } };
+const cityL = { city: "l", observation: { temp: 12, condition: "mist" } };
+const cityM = { city: "m", observation: { temp: 13, condition: "mist" } };
 
 const wrapper = shallowMount(Surrounding, {
   props: { observed: "2021-09-05T21:00:00.000Z", timezone: "EDT" },
@@ -29,11 +32,11 @@ test("observationsUnavailable: correctly computes based on observations", (done)
 });
 
 test("dateTime: correctly produces the date/time string with filled in timezone", (done) => {
-  expect(vm.dateTime).toContain(`${vm.timezone} Sep 05/21`);
+  expect(vm.dateTime).toContain(`${vm.timezone}&nbsp;&nbsp;Sep 05/21`);
 
   wrapper.setProps({ timezone: "CDT" });
   vm.$nextTick(() => {
-    expect(vm.dateTime).toContain(`CDT Sep 05/21`);
+    expect(vm.dateTime).toContain(`CDT&nbsp;&nbsp;Sep 05/21`);
     done();
   });
 });
@@ -57,12 +60,26 @@ test("sortedObservations: sorts observations alphabetically", (done) => {
 });
 
 test("paginatedObservations: correctly paginates observations", (done) => {
-  wrapper.setProps({ observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ] });
+  wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
+  });
   vm.$nextTick(() => {
-    expect(vm.paginatedObservations).toStrictEqual([cityA, cityB, cityC, cityD, cityE, cityF, cityG]);
+    expect(vm.paginatedObservations).toStrictEqual([
+      cityA,
+      cityB,
+      cityC,
+      cityD,
+      cityE,
+      cityF,
+      cityG,
+      cityH,
+      cityI,
+      cityJ,
+      cityK,
+    ]);
 
     vm.page += 1;
-    expect(vm.paginatedObservations).toStrictEqual([cityH, cityI, cityJ]);
+    expect(vm.paginatedObservations).toStrictEqual([cityL, cityM]);
     done();
   });
 });
@@ -81,7 +98,9 @@ test("generateObservationsScreen: correctly generates the page count", (done) =>
 });
 
 test("generateObservationsScreen: changes page after 15s", (done) => {
-  wrapper.setProps({ observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ] });
+  wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
+  });
 
   jest.useFakeTimers();
   const spy = jest.spyOn(vm, "changePage");
@@ -176,11 +195,25 @@ test("padString: pads strings correctly when a length is given", (done) => {
 
 test("padString: doesn't error when no string is passed", (done) => {
   const stringA = vm.padString(null, 5);
-  expect(stringA).toBe("");
+  expect(stringA).toBe("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
   const stringB = vm.padString("", 5);
-  expect(stringB).toBe("");
+  expect(stringB).toBe("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
+  done();
+});
+
+test("roundTemp: handles a NaN correctly", (done) => {
+  expect(vm.roundTemp()).toBe("");
+  expect(vm.roundTemp(NaN)).toBe("");
+  done();
+});
+
+test("roundTemp: handles a normal number correctly", (done) => {
+  expect(vm.roundTemp(1.1)).toBe(1);
+  expect(vm.roundTemp(3.5)).toBe(4);
+  expect(vm.roundTemp(16.7)).toBe(17);
+  expect(vm.roundTemp(-1.4)).toBe(-1);
   done();
 });
 

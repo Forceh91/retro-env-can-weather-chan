@@ -68,7 +68,7 @@ const SCREEN_ROTATION = [
   SCREENS.SURROUNDING,
 ];
 
-const BLUE_COL = "darkblue";
+const BLUE_COL = "rgb(0,0,135)";
 const RED_COL = "#610b00";
 
 import { format, addMinutes, formatRFC3339 } from "date-fns";

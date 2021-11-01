@@ -7,6 +7,7 @@ const { exit } = require("process");
 const path = require("path");
 const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
 const { generateCrawler, getCrawler } = require("./generate-crawler.js");
+const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -80,9 +81,8 @@ function startBackend(config) {
   });
 
   // handling api requests
-  const majorObservations = [];
-  fetchLatestObservationsForMajorCities();
-  setInterval(fetchLatestObservationsForMajorCities, 5 * 60 * 1000);
+  fetchWeatherForObservedCities();
+  setInterval(fetchWeatherForObservedCities, 5 * 60 * 1000);
 
   const primaryLocation = config?.primaryLocation || {};
   app.get("/api/weather", (req, res) => {
@@ -106,7 +106,7 @@ function startBackend(config) {
   });
 
   app.get("/api/weather/surrounding", (req, res) => {
-    res.send({ observations: majorObservations });
+    res.send({ observations: latestObservations });
   });
 
   app.get("/api/weather/mb_highlow", (req, res) => {
@@ -116,162 +116,73 @@ function startBackend(config) {
     res.send({ tempClass: tempClass[0], values: highLowAroundMB });
   });
 
-  function fetchLatestObservationsForMajorCities() {
-    majorObservations.splice(0);
+  // MB regional high/low screen
+  // winnipeg, portage, brandon, dauphin, kenora, thompson
+  const highLowAroundMB = [];
+  if (config.showMBHighLow) {
+    setInterval(fetchHighLowAroundMB, 30 * 60 * 1000);
+    fetchHighLowAroundMB();
+  }
 
-    // toronto
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000458_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Toronto",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
-
-    // ottawa
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000623_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Ottawa",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
-
-    // montreal
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000762_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Montreal",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
-
-    // calgary
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/AB/s0000047_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Calgary",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
-
-    // vancouver
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/BC/s0000141_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Vancouver",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
-
-    // banff
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/AB/s0000404_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Banff",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
-
-    // edmonton
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/AB/s0000045_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Edmonton",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
-
-    // thunder bay
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000411_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Thunder Bay",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
-
-    // saskatoon
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/SK/s0000797_e.xml").then((resp) => {
-      const weather = new Weather(resp.data);
-      if (!weather) return;
-
-      majorObservations.push({
-        city: "Saskatoon",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
-    });
+  function fetchHighLowAroundMB() {
+    highLowAroundMB.splice(0, highLowAroundMB.length);
 
     // winnipeg
     axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000193_e.xml").then((resp) => {
       const weather = new Weather(resp.data);
       if (!weather) return;
 
-      majorObservations.push({
-        city: "Winnipeg",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
+      parseHighLowForCity("Winnipeg", weather.weekly);
     });
 
-    // quebec
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/QC/s0000620_e.xml").then((resp) => {
+    // portage
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000626_e.xml").then((resp) => {
       const weather = new Weather(resp.data);
       if (!weather) return;
 
-      majorObservations.push({
-        city: "Quebec City",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
+      parseHighLowForCity("Portage", weather.weekly);
     });
 
-    // niagara falls
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000692_e.xml").then((resp) => {
+    // brandon
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000492_e.xml").then((resp) => {
       const weather = new Weather(resp.data);
       if (!weather) return;
 
-      majorObservations.push({
-        city: "Niagara Fls",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
+      parseHighLowForCity("Brandon", weather.weekly);
     });
 
-    // halifax
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/NS/s0000318_e.xml").then((resp) => {
+    // dauphin
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000508_e.xml").then((resp) => {
       const weather = new Weather(resp.data);
       if (!weather) return;
 
-      majorObservations.push({
-        city: "Halifax",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
+      parseHighLowForCity("Dauphin", weather.weekly);
     });
 
-    // St. John's
-    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/NL/s0000280_e.xml").then((resp) => {
+    // kenora
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/ON/s0000651_e.xml").then((resp) => {
       const weather = new Weather(resp.data);
       if (!weather) return;
 
-      majorObservations.push({
-        city: "St. John's",
-        observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-      });
+      parseHighLowForCity("Kenora", weather.weekly);
     });
+
+    // thompson
+    axios.get("https://dd.weather.gc.ca/citypage_weather/xml/MB/s0000695_e.xml").then((resp) => {
+      const weather = new Weather(resp.data);
+      if (!weather) return;
+
+      parseHighLowForCity("Thompson", weather.weekly);
+    });
+
+    const parseHighLowForCity = (cityName, forecast) => {
+      const immediateForecast = forecast[0];
+      highLowAroundMB.push({
+        city: cityName,
+        val: immediateForecast && immediateForecast.temperatures.temperature.value,
+        tempClass: immediateForecast && immediateForecast.temperatures.temperature.class,
+      });
+    };
   }
 
   // MB regional high/low screen

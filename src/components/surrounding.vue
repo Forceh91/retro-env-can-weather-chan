@@ -1,11 +1,11 @@
 <template>
   <div id="surrounding">
-    <div id="title">Latest Hourly Observations<br />{{ dateTime }}</div>
+    <div id="title" v-html="dateTime"></div>
     <div v-if="observationsUnavailable">No observations available</div>
     <div v-else id="observation_table">
       <div v-for="(observation, ix) in paginatedObservations" :key="`observation.${ix}`">
-        <span v-html="padTitle(observation.city)"></span
-        ><span v-html="padString(observation.observation.temp, 5, true)"></span>&nbsp;&nbsp;<span>{{
+        <span v-html="padTitle(observation.name)"></span
+        ><span v-html="padString(roundTemp(observation.observation.temp), 3, true)"></span>&nbsp;&nbsp;<span>{{
           trimCondition(observation.observation.condition)
         }}</span>
       </div>
@@ -38,23 +38,15 @@ export default {
     },
 
     dateTime() {
-      return this.observed ? format(parseISO(this.observed), "h aa ??? MMM dd/yy").replace(`???`, this.timezone) : "";
-    },
-
-    sortedObservations() {
-      return [...this.observations].sort((a, b) => {
-        const cityA = a.city.toUpperCase();
-        const cityB = b.city.toUpperCase();
-        if (cityA < cityB) return -1;
-        if (cityA > cityB) return 1;
-        return 0;
-      });
+      return this.observed
+        ? format(parseISO(this.observed), "h aa ???'&nbsp;&nbsp;'MMM dd/yy").replace(`???`, this.timezone)
+        : "";
     },
 
     paginatedObservations() {
       const startIndex = Math.max(0, (this.page - 1) * MAX_CITIES_PER_PAGE);
       const endIndex = Math.min(startIndex + MAX_CITIES_PER_PAGE, this.observations?.length);
-      return this.sortedObservations.slice(startIndex, endIndex);
+      return this.observations.slice(startIndex, endIndex);
     },
   },
 
@@ -91,7 +83,7 @@ export default {
       let paddingString = ``;
       for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
 
-      return `${slicedTitle}${paddingString}&nbsp;&nbsp;&nbsp;`;
+      return `${slicedTitle}${paddingString}&nbsp;&nbsp;`;
     },
 
     trimCondition(val) {
@@ -100,12 +92,20 @@ export default {
     },
 
     padString(val, minLength, isFront) {
-      if (!val || !val.length) return "";
+      if (!val) val = "";
+      val = val.toString();
+      if (!val.length) val = "";
+
       const paddingToAdd = minLength - val.length;
       let paddingString = ``;
       for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
 
       return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
+    },
+
+    roundTemp(temp) {
+      if (isNaN(temp)) return "";
+      return Math.round(temp);
     },
   },
 };
@@ -113,7 +113,12 @@ export default {
 
 <style lang="scss" scoped>
 #title {
-  margin-bottom: 30px;
+  font-size: 23px;
   text-align: center;
+}
+
+#observation_table {
+  font-size: 23px;
+  line-height: 2rem;
 }
 </style>

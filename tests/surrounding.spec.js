@@ -2,16 +2,19 @@ import { shallowMount } from "@vue/test-utils";
 import { EventBus } from "../src/js/EventBus";
 import Surrounding from "../src/components/surrounding";
 
-const cityA = { city: "a", observation: { temp: 10, condition: "sunny" } };
-const cityB = { city: "b", observation: { temp: 15, condition: "mostly cloudy" } };
-const cityC = { city: "c", observation: { temp: 25, condition: "light rainshower" } };
-const cityD = { city: "d", observation: { temp: 30, condition: "sunny" } };
-const cityE = { city: "e", observation: { temp: 23, condition: "partly cloudy" } };
-const cityF = { city: "f", observation: { temp: 12, condition: "thunderstorms" } };
-const cityG = { city: "g", observation: { temp: 30, condition: "smoke" } };
-const cityH = { city: "h", observation: { temp: 5, condition: "fog" } };
-const cityI = { city: "i", observation: { temp: 17, condition: "drizzle" } };
-const cityJ = { city: "j", observation: { temp: 22, condition: "mist" } };
+const cityA = { name: "a", observation: { temp: 10, condition: "sunny" } };
+const cityB = { name: "b", observation: { temp: 15, condition: "mostly cloudy" } };
+const cityC = { name: "c", observation: { temp: 25, condition: "light rainshower" } };
+const cityD = { name: "d", observation: { temp: 30, condition: "sunny" } };
+const cityE = { name: "e", observation: { temp: 23, condition: "partly cloudy" } };
+const cityF = { name: "f", observation: { temp: 12, condition: "thunderstorms" } };
+const cityG = { name: "g", observation: { temp: 30, condition: "smoke" } };
+const cityH = { name: "h", observation: { temp: 5, condition: "fog" } };
+const cityI = { name: "i", observation: { temp: 17, condition: "drizzle" } };
+const cityJ = { name: "j", observation: { temp: 22, condition: "mist" } };
+const cityK = { name: "k", observation: { temp: 11, condition: "mist" } };
+const cityL = { name: "l", observation: { temp: 12, condition: "mist" } };
+const cityM = { name: "m", observation: { temp: 13, condition: "mist" } };
 
 const wrapper = shallowMount(Surrounding, {
   props: { observed: "2021-09-05T21:00:00.000Z", timezone: "EDT" },
@@ -29,11 +32,11 @@ test("observationsUnavailable: correctly computes based on observations", (done)
 });
 
 test("dateTime: correctly produces the date/time string with filled in timezone", (done) => {
-  expect(vm.dateTime).toContain(`${vm.timezone} Sep 05/21`);
+  expect(vm.dateTime).toContain(`${vm.timezone}&nbsp;&nbsp;Sep 05/21`);
 
   wrapper.setProps({ timezone: "CDT" });
   vm.$nextTick(() => {
-    expect(vm.dateTime).toContain(`CDT Sep 05/21`);
+    expect(vm.dateTime).toContain(`CDT&nbsp;&nbsp;Sep 05/21`);
     done();
   });
 });
@@ -46,23 +49,15 @@ test("dateTime: is blank when theres no observed info", (done) => {
   });
 });
 
-test("sortedObservations: sorts observations alphabetically", (done) => {
-  expect(vm.sortedObservations).toStrictEqual([cityA, cityB, cityC]);
-
-  wrapper.setProps({ observations: [cityB, cityA, cityC, cityA] });
-  vm.$nextTick(() => {
-    expect(vm.sortedObservations).toStrictEqual([cityA, cityA, cityB, cityC]);
-    done();
-  });
-});
-
 test("paginatedObservations: correctly paginates observations", (done) => {
-  wrapper.setProps({ observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ] });
+  wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
+  });
   vm.$nextTick(() => {
-    expect(vm.paginatedObservations).toStrictEqual([cityA, cityB, cityC, cityD, cityE, cityF, cityG]);
+    expect(vm.paginatedObservations).toStrictEqual([cityB, cityA, cityC, cityD, cityE, cityF, cityG]);
 
     vm.page += 1;
-    expect(vm.paginatedObservations).toStrictEqual([cityH, cityI, cityJ]);
+    expect(vm.paginatedObservations).toStrictEqual([cityH, cityI, cityJ, cityK, cityL, cityM]);
     done();
   });
 });
@@ -81,7 +76,9 @@ test("generateObservationsScreen: correctly generates the page count", (done) =>
 });
 
 test("generateObservationsScreen: changes page after 15s", (done) => {
-  wrapper.setProps({ observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ] });
+  wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
+  });
 
   jest.useFakeTimers();
   const spy = jest.spyOn(vm, "changePage");
@@ -110,8 +107,8 @@ test("changePage: navigates away if its the last page", (done) => {
   vm.changePage();
 });
 
-test("padTitle: makes sure a city name is always 11 characters + 3 padding spaces", (done) => {
-  const paddingSpaces = "&nbsp;&nbsp;&nbsp;";
+test("padTitle: makes sure a city name is always 11 characters + 2 padding spaces", (done) => {
+  const paddingSpaces = "&nbsp;&nbsp;";
   const cityA = vm.padTitle("Winnipeg");
   expect(cityA).toBe("Winnipeg&nbsp;&nbsp;&nbsp;" + paddingSpaces);
 
@@ -176,11 +173,25 @@ test("padString: pads strings correctly when a length is given", (done) => {
 
 test("padString: doesn't error when no string is passed", (done) => {
   const stringA = vm.padString(null, 5);
-  expect(stringA).toBe("");
+  expect(stringA).toBe("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
   const stringB = vm.padString("", 5);
-  expect(stringB).toBe("");
+  expect(stringB).toBe("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
+  done();
+});
+
+test("roundTemp: handles a NaN correctly", (done) => {
+  expect(vm.roundTemp()).toBe("");
+  expect(vm.roundTemp(NaN)).toBe("");
+  done();
+});
+
+test("roundTemp: handles a normal number correctly", (done) => {
+  expect(vm.roundTemp(1.1)).toBe(1);
+  expect(vm.roundTemp(3.5)).toBe(4);
+  expect(vm.roundTemp(16.7)).toBe(17);
+  expect(vm.roundTemp(-1.4)).toBe(-1);
   done();
 });
 

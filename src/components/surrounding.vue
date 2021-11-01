@@ -4,7 +4,7 @@
     <div v-if="observationsUnavailable">No observations available</div>
     <div v-else id="observation_table">
       <div v-for="(observation, ix) in paginatedObservations" :key="`observation.${ix}`">
-        <span v-html="padTitle(observation.city)"></span
+        <span v-html="padTitle(observation.name)"></span
         ><span v-html="padString(roundTemp(observation.observation.temp), 3, true)"></span>&nbsp;&nbsp;<span>{{
           trimCondition(observation.observation.condition)
         }}</span>
@@ -43,20 +43,10 @@ export default {
         : "";
     },
 
-    sortedObservations() {
-      return [...this.observations].sort((a, b) => {
-        const cityA = a.city.toUpperCase();
-        const cityB = b.city.toUpperCase();
-        if (cityA < cityB) return -1;
-        if (cityA > cityB) return 1;
-        return 0;
-      });
-    },
-
     paginatedObservations() {
       const startIndex = Math.max(0, (this.page - 1) * MAX_CITIES_PER_PAGE);
       const endIndex = Math.min(startIndex + MAX_CITIES_PER_PAGE, this.observations?.length);
-      return this.sortedObservations.slice(startIndex, endIndex);
+      return this.observations.slice(startIndex, endIndex);
     },
   },
 

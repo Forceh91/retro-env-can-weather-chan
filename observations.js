@@ -27,7 +27,7 @@ const observedCities = [
 
 const latestObservations = [];
 function fetchWeatherForObservedCities() {
-  const results = [];
+  const results = [...observedCities.map((station) => ({ ...station, observation: { condition: null, temp: null } }))];
 
   const promises = [];
   observedCities.forEach((station) => {
@@ -39,13 +39,14 @@ function fetchWeatherForObservedCities() {
           const weather = new Weather(data);
           if (!weather) throw "Unable to parse weather data";
 
-          results.push({
-            city: station.name,
-            observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
-          });
+          const resultIx = results.findIndex((s) => s.name === station.name);
+          if (resultIx !== -1)
+            results[resultIx] = {
+              ...results[resultIx],
+              observation: { condition: weather.current?.condition, temp: weather.current?.temperature?.value },
+            };
         })
         .catch(() => {
-          results.push({ city: station.name, observation: { condition: null, temp: null } });
           console.warn("[OBSERVATION]", station.name, "failed to fetch data");
         })
     );

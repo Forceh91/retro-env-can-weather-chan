@@ -2,19 +2,19 @@ import { shallowMount } from "@vue/test-utils";
 import { EventBus } from "../src/js/EventBus";
 import Surrounding from "../src/components/surrounding";
 
-const cityA = { city: "a", observation: { temp: 10, condition: "sunny" } };
-const cityB = { city: "b", observation: { temp: 15, condition: "mostly cloudy" } };
-const cityC = { city: "c", observation: { temp: 25, condition: "light rainshower" } };
-const cityD = { city: "d", observation: { temp: 30, condition: "sunny" } };
-const cityE = { city: "e", observation: { temp: 23, condition: "partly cloudy" } };
-const cityF = { city: "f", observation: { temp: 12, condition: "thunderstorms" } };
-const cityG = { city: "g", observation: { temp: 30, condition: "smoke" } };
-const cityH = { city: "h", observation: { temp: 5, condition: "fog" } };
-const cityI = { city: "i", observation: { temp: 17, condition: "drizzle" } };
-const cityJ = { city: "j", observation: { temp: 22, condition: "mist" } };
-const cityK = { city: "k", observation: { temp: 11, condition: "mist" } };
-const cityL = { city: "l", observation: { temp: 12, condition: "mist" } };
-const cityM = { city: "m", observation: { temp: 13, condition: "mist" } };
+const cityA = { name: "a", observation: { temp: 10, condition: "sunny" } };
+const cityB = { name: "b", observation: { temp: 15, condition: "mostly cloudy" } };
+const cityC = { name: "c", observation: { temp: 25, condition: "light rainshower" } };
+const cityD = { name: "d", observation: { temp: 30, condition: "sunny" } };
+const cityE = { name: "e", observation: { temp: 23, condition: "partly cloudy" } };
+const cityF = { name: "f", observation: { temp: 12, condition: "thunderstorms" } };
+const cityG = { name: "g", observation: { temp: 30, condition: "smoke" } };
+const cityH = { name: "h", observation: { temp: 5, condition: "fog" } };
+const cityI = { name: "i", observation: { temp: 17, condition: "drizzle" } };
+const cityJ = { name: "j", observation: { temp: 22, condition: "mist" } };
+const cityK = { name: "k", observation: { temp: 11, condition: "mist" } };
+const cityL = { name: "l", observation: { temp: 12, condition: "mist" } };
+const cityM = { name: "m", observation: { temp: 13, condition: "mist" } };
 
 const wrapper = shallowMount(Surrounding, {
   props: { observed: "2021-09-05T21:00:00.000Z", timezone: "EDT" },
@@ -49,22 +49,12 @@ test("dateTime: is blank when theres no observed info", (done) => {
   });
 });
 
-test("sortedObservations: sorts observations alphabetically", (done) => {
-  expect(vm.sortedObservations).toStrictEqual([cityA, cityB, cityC]);
-
-  wrapper.setProps({ observations: [cityB, cityA, cityC, cityA] });
-  vm.$nextTick(() => {
-    expect(vm.sortedObservations).toStrictEqual([cityA, cityA, cityB, cityC]);
-    done();
-  });
-});
-
 test("paginatedObservations: correctly paginates observations", (done) => {
   wrapper.setProps({
     observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
   });
   vm.$nextTick(() => {
-    expect(vm.paginatedObservations).toStrictEqual([cityA, cityB, cityC, cityD, cityE, cityF, cityG]);
+    expect(vm.paginatedObservations).toStrictEqual([cityB, cityA, cityC, cityD, cityE, cityF, cityG]);
 
     vm.page += 1;
     expect(vm.paginatedObservations).toStrictEqual([cityH, cityI, cityJ, cityK, cityL, cityM]);

@@ -23,7 +23,6 @@ const observedCities = [
   { name: "Fredericton", stationCode: "NB/s0000250" },
   { name: "Halifax", stationCode: "NS/s0000318" },
   { name: "St. John's", stationCode: "NL/s0000280" },
-  { name: "Winnipeg", stationCode: "MB/s0000193" },
 ];
 
 const latestObservations = [];

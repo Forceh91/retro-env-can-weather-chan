@@ -15,7 +15,7 @@
 
 <script>
 const MAX_TITLE_LENGTH = 11;
-const MAX_CITIES_PER_PAGE = 11;
+const MAX_CITIES_PER_PAGE = 7;
 const PAGE_CHANGE_FREQUENCY = 15 * 1000;
 
 import { format, parseISO } from "date-fns";
@@ -93,7 +93,7 @@ export default {
       let paddingString = ``;
       for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
 
-      return `${slicedTitle}${paddingString}&nbsp;&nbsp;&nbsp;`;
+      return `${slicedTitle}${paddingString}&nbsp;&nbsp;`;
     },
 
     trimCondition(val) {
@@ -122,14 +122,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#surrounding {
-  margin-top: -10px;
-}
-
 #title {
+  font-size: 23px;
   text-align: center;
 }
 
 #observation_table {
+  font-size: 23px;
+  line-height: 2rem;
 }
 </style>

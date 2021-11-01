@@ -64,22 +64,10 @@ test("paginatedObservations: correctly paginates observations", (done) => {
     observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
   });
   vm.$nextTick(() => {
-    expect(vm.paginatedObservations).toStrictEqual([
-      cityA,
-      cityB,
-      cityC,
-      cityD,
-      cityE,
-      cityF,
-      cityG,
-      cityH,
-      cityI,
-      cityJ,
-      cityK,
-    ]);
+    expect(vm.paginatedObservations).toStrictEqual([cityA, cityB, cityC, cityD, cityE, cityF, cityG]);
 
     vm.page += 1;
-    expect(vm.paginatedObservations).toStrictEqual([cityL, cityM]);
+    expect(vm.paginatedObservations).toStrictEqual([cityH, cityI, cityJ, cityK, cityL, cityM]);
     done();
   });
 });
@@ -129,8 +117,8 @@ test("changePage: navigates away if its the last page", (done) => {
   vm.changePage();
 });
 
-test("padTitle: makes sure a city name is always 11 characters + 3 padding spaces", (done) => {
-  const paddingSpaces = "&nbsp;&nbsp;&nbsp;";
+test("padTitle: makes sure a city name is always 11 characters + 2 padding spaces", (done) => {
+  const paddingSpaces = "&nbsp;&nbsp;";
   const cityA = vm.padTitle("Winnipeg");
   expect(cityA).toBe("Winnipeg&nbsp;&nbsp;&nbsp;" + paddingSpaces);
 

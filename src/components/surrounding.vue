@@ -92,7 +92,7 @@ export default {
     },
 
     padString(val, minLength, isFront) {
-      if (!val) val = "";
+      if (isNaN(val) || val === null || val === undefined) val = "";
       val = val.toString();
       if (!val.length) val = "";
 

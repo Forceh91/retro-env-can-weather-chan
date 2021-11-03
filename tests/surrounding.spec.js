@@ -181,6 +181,12 @@ test("padString: doesn't error when no string is passed", (done) => {
   done();
 });
 
+test("padString: handles a 0 value correctly", (done) => {
+  const stringA = vm.padString(0, 5);
+  expect(stringA).toBe("0&nbsp;&nbsp;&nbsp;&nbsp;");
+  done();
+});
+
 test("roundTemp: handles a NaN correctly", (done) => {
   expect(vm.roundTemp()).toBe("");
   expect(vm.roundTemp(NaN)).toBe("");

@@ -41,10 +41,10 @@ test("dateTime: correctly produces the date/time string with filled in timezone"
   });
 });
 
-test("dateTime: is blank when theres no observed info", (done) => {
+test("dateTime: is a padded blank string when theres no observed info", (done) => {
   wrapper.setProps({ observed: null });
   vm.$nextTick(() => {
-    expect(vm.dateTime).toBe("");
+    expect(vm.dateTime).toBe("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
     done();
   });
 });
@@ -107,16 +107,15 @@ test("changePage: navigates away if its the last page", (done) => {
   vm.changePage();
 });
 
-test("padTitle: makes sure a city name is always 11 characters + 2 padding spaces", (done) => {
-  const paddingSpaces = "&nbsp;&nbsp;";
+test("padTitle: makes sure a city name is always 13 characters", (done) => {
   const cityA = vm.padTitle("Winnipeg");
-  expect(cityA).toBe("Winnipeg&nbsp;&nbsp;&nbsp;" + paddingSpaces);
+  expect(cityA).toBe("Winnipeg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
   const cityB = vm.padTitle("Banff");
-  expect(cityB).toBe("Banff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + paddingSpaces);
+  expect(cityB).toBe("Banff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
   const cityC = vm.padTitle("Niagra Falls");
-  expect(cityC).toBe("Niagra Fall" + paddingSpaces);
+  expect(cityC).toBe("Niagra Falls&nbsp;");
   done();
 });
 

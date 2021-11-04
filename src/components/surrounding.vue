@@ -5,16 +5,16 @@
     <div v-else id="observation_table">
       <div v-for="(observation, ix) in paginatedObservations" :key="`observation.${ix}`">
         <span v-html="padTitle(observation.name)"></span
-        ><span v-html="padString(roundTemp(observation.observation.temp), 3, true)"></span>&nbsp;&nbsp;<span>{{
-          trimCondition(observation.observation.condition)
-        }}</span>
+        ><span v-html="padString(roundTemp(observation.observation.temp), 4, true)"></span>&nbsp;&nbsp;<span
+          v-html="padString(trimCondition(observation.observation.condition), 13)"
+        ></span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-const MAX_TITLE_LENGTH = 11;
+const MAX_TITLE_LENGTH = 13;
 const MAX_CITIES_PER_PAGE = 7;
 const PAGE_CHANGE_FREQUENCY = 15 * 1000;
 
@@ -38,9 +38,15 @@ export default {
     },
 
     dateTime() {
-      return this.observed
-        ? format(parseISO(this.observed), "h aa ???'&nbsp;&nbsp;'MMM dd/yy").replace(`???`, this.timezone)
-        : "";
+      const padding = this.padString("", 6, true);
+      return (
+        padding +
+        (this.observed
+          ? format(parseISO(this.observed), "hh aa ???'&nbsp;&nbsp;'MMM dd/yy")
+              .replace(`???`, this.timezone)
+              .replace("0", "&nbsp;")
+          : "")
+      );
     },
 
     paginatedObservations() {
@@ -83,16 +89,16 @@ export default {
       let paddingString = ``;
       for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
 
-      return `${slicedTitle}${paddingString}&nbsp;&nbsp;`;
+      return `${slicedTitle}${paddingString}`;
     },
 
     trimCondition(val) {
-      const squishedVal = val?.replace(/shower/g, "");
+      let squishedVal = val?.replace(/shower/g, "");
       return squishedVal?.slice(0, 13);
     },
 
     padString(val, minLength, isFront) {
-      if (isNaN(val) || val === null || val === undefined) val = "";
+      if (val === null || val === undefined) val = "";
       val = val.toString();
       if (!val.length) val = "";
 
@@ -113,12 +119,6 @@ export default {
 
 <style lang="scss" scoped>
 #title {
-  font-size: 23px;
-  text-align: center;
-}
-
-#observation_table {
-  font-size: 23px;
-  line-height: 2rem;
+  margin-top: -10px;
 }
 </style>

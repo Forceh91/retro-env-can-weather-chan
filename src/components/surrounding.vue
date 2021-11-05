@@ -39,12 +39,11 @@ export default {
 
     dateTime() {
       const padding = this.padString("", 6, true);
+      const currentHour = this.observed ? this.padString(format(parseISO(this.observed), "h aa "), 6, true) : "";
       return (
         padding +
         (this.observed
-          ? format(parseISO(this.observed), "hh aa ???'&nbsp;&nbsp;'MMM dd/yy")
-              .replace(`???`, this.timezone)
-              .replace("0", "&nbsp;")
+          ? currentHour + format(parseISO(this.observed), "???'&nbsp;&nbsp;'MMM dd/yy").replace(`???`, this.timezone)
           : "")
       );
     },

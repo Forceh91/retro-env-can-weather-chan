@@ -18,7 +18,7 @@
     "express": "^4.17.1",
     "mitt": "^3.0.0",
     "vue": "^3.2.22",
-    "vue-axios": "^3.3.7",
+    "vue-axios": "^3.4.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {

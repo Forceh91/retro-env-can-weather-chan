@@ -103,6 +103,9 @@ function startBackend(config) {
           warnings: weather.all.warnings,
           almanac: weather.all.almanac,
         });
+      })
+      .catch(() => {
+        res.sendStatus(404);
       });
   });
 

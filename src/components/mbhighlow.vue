@@ -4,8 +4,8 @@
     <div v-html="bottomLine"></div>
     <ul id="city_list">
       <li v-for="(cityObj, ix) in sortedHighsLows" :key="`mb.city.${ix}`">
-        <span v-html="padString(cityObj.city, 10)"></span>
-        <span v-html="`${padString(cityObj.val, 6, true)}`"></span>
+        <span v-html="padString(cityObj.name, 10)"></span>
+        <span v-html="`${padString(cityObj.temp, 6, true)}`"></span>
         <span><span v-html="padString(`N/A`, 11, true)"></span>&nbsp;&nbsp;&nbsp;</span>
       </li>
     </ul>

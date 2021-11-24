@@ -19,6 +19,13 @@
           :conditions="weather.currentConditions"
           :forecast="weather.forecast"
         />
+        <mbhighlow
+          v-if="isMBHighLow"
+          :enabled="showMBHighLowSetting"
+          :data="weather.highLowAroundMB.values"
+          :tempclass="weather.highLowAroundMB.tempClass"
+          :timezone="timeZone"
+        />
         <surrounding
           v-if="isSurrounding"
           :observed="weather.observed"
@@ -58,17 +65,19 @@ const SCREENS = {
   ALMANAC: { id: 4, length: 30 },
   WARNINGS: { id: 5, length: 70 },
   WINDCHILL: { id: 6, length: 20 },
+  MB_HIGH_LOW: { id: 7, length: 20 },
 };
 const SCREEN_ROTATION = [
   SCREENS.CURRENT_CONDITIONS,
   SCREENS.WARNINGS,
   SCREENS.FORECAST,
+  SCREENS.MB_HIGH_LOW,
   SCREENS.WINDCHILL,
   SCREENS.ALMANAC,
   SCREENS.SURROUNDING,
 ];
 
-const BLUE_COL = "darkblue";
+const BLUE_COL = "rgb(0,0,135)";
 const RED_COL = "#610b00";
 
 import { format, addMinutes, formatRFC3339 } from "date-fns";
@@ -79,12 +88,13 @@ import surrounding from "./components/surrounding.vue";
 import almanac from "./components/almanac.vue";
 import warnings from "./components/warnings.vue";
 import windchill from "./components/windchill.vue";
+import mbhighlow from "./components/mbhighlow.vue";
 import playlist from "./components/playlist";
 import crawler from "./components/crawler";
 
 export default {
   name: "App",
-  components: { currentconditions, forecast, surrounding, almanac, warnings, windchill, playlist, crawler },
+  components: { currentconditions, forecast, surrounding, almanac, warnings, windchill, mbhighlow, playlist, crawler },
   data() {
     return {
       screenChanger: null,
@@ -99,9 +109,11 @@ export default {
         forecast: null,
         surroundingObservations: null,
         almanac: null,
+        highLowAroundMB: {},
       },
       playlist: [],
       crawlerMessages: [],
+      showMBHighLowSetting: false,
       backgroundCol: BLUE_COL,
       backgroundColDebouncer: null,
     };
@@ -158,6 +170,10 @@ export default {
       return this.currentScreenID === SCREENS.WINDCHILL.id;
     },
 
+    isMBHighLow() {
+      return this.currentScreenID === SCREENS.MB_HIGH_LOW.id;
+    },
+
     timeZone() {
       return this.weather.currentConditions?.dateTime[1]?.zone || "";
     },
@@ -176,11 +192,13 @@ export default {
       setInterval(() => {
         this.getSurroundingWeather();
         this.getWeather();
+        if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       }, FETCH_WEATHER_INTERVAL);
 
       this.setupEventCallbacks();
       this.getWeather();
       this.getSurroundingWeather();
+      if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       this.handleScreenCycle();
     });
   },
@@ -199,6 +217,7 @@ export default {
 
           if (data.playlist && data.playlist.file_count) this.playlist = data.playlist.files;
           if (data.crawler && data.crawler.message_count) this.crawlerMessages = data.crawler.messages;
+          if (data.showMBHighLow) this.showMBHighLowSetting = data.showMBHighLow;
           if (typeof callback === "function") callback();
         })
         .catch(() => {
@@ -220,6 +239,10 @@ export default {
       });
 
       EventBus.on("windchill-complete", () => {
+        this.handleScreenCycle(true);
+      });
+
+      EventBus.on("mbhighlow-complete", () => {
         this.handleScreenCycle(true);
       });
     },
@@ -264,6 +287,22 @@ export default {
         .catch((err) => {
           console.error(err);
           this.weather.surroundingObservations = null;
+        });
+    },
+
+    getHighLowAroundMB() {
+      if (!this.showMBHighLowSetting) return;
+
+      this.$http
+        .get("//localhost:8600/api/weather/mb_highlow")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.values || !data.values.length) return;
+
+          this.weather.highLowAroundMB = data;
+        })
+        .catch((err) => {
+          console.error(err);
         });
     },
 

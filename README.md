@@ -104,7 +104,13 @@ Generated a crawler list of 2 messages
 
 ### End-users
 
-If you don't intend on doing any development for the project you can just navigate to the channel in your [browser](http://localhost:8600/) as instructed by your terminal window.
+If you don't intend on doing any development for the project you you need to run the following
+
+```
+yarn build
+```
+
+Once this is done, you can navigate to the channel in your [browser](http://localhost:8600/) as instructed by your terminal window.
 
 The output will fill your browser however the actual screen area will be limited to 640x480.
 

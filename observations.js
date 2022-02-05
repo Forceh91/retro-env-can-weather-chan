@@ -18,7 +18,7 @@ const observedCities = [
   { name: "Thunder Bay", stationCode: "ON/s0000411" },
   { name: "Toronto", stationCode: "ON/s0000458" },
   { name: "Ottawa", stationCode: "ON/s0000623" },
-  { name: "Montreal", stationCode: "ON/s0000762" },
+  { name: "Montreal", stationCode: "QC/s0000635" },
   { name: "Quebec City", stationCode: "QC/s0000620" },
   { name: "Fredericton", stationCode: "NB/s0000250" },
   { name: "Halifax", stationCode: "NS/s0000318" },

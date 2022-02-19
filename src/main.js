@@ -3,6 +3,11 @@ import App from "./App.vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 
+const BASE_URL = `http://${window.location.hostname}`;
+const BASE_PORT = window.location.port;
+const API_URL = `${BASE_URL}:${BASE_PORT}/`;
+
 const app = createApp(App);
-app.use(VueAxios, axios);
+const weatherAxios = axios.create({ url: API_URL });
+app.use(VueAxios, weatherAxios);
 app.mount("#app");

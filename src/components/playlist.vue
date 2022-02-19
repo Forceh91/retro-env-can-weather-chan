@@ -2,7 +2,7 @@
   <audio
     id="playlist_audio"
     v-if="currentTrack"
-    :src="`//localhost:8600/${currentTrack}`"
+    :src="`${playlistURL}${currentTrack}`"
     autoplay
     volume="0.5"
     @ended="selectRandomTrackFromPlaylist"
@@ -11,6 +11,10 @@
 </template>
 
 <script>
+const BASE_URL = `http://${window.location.hostname}`;
+const BASE_PORT = window.location.port;
+const API_URL = `${BASE_URL}:${BASE_PORT}/`;
+
 export default {
   name: "Playlist",
   props: {
@@ -28,6 +32,12 @@ export default {
 
   data() {
     return { currentTrack: null };
+  },
+
+  computed: {
+    playlistURL() {
+      return API_URL;
+    },
   },
 
   mounted() {

@@ -51,6 +51,13 @@ test("changePage: switches away from the forecast screen on the last page", (don
   vm.changePage();
 });
 
+test("prettifyForecastDay: returns 'tonight' correctly", (done) => {
+  expect(vm.prettifyForecastDay("Saturday Night")).toBe("Tonight");
+  expect(vm.prettifyForecastDay("Saturday")).toBe("Today");
+  expect(vm.prettifyForecastDay("")).toBe("Today");
+  done();
+});
+
 test("destroyed: removes page change interval", (done) => {
   wrapper.unmount();
   expect(clearInterval).toHaveBeenCalled();

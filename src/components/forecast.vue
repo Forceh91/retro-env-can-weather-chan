@@ -7,7 +7,7 @@
         <br />
         <div id="next_forecast" class="full-width">
           <span class="label"
-            >Forecast for {{ forecast[0]?.day }}..<span>{{ forecast[0]?.textSummary }}</span></span
+            >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{ forecast[0]?.textSummary }}</span></span
           >
         </div>
       </template>
@@ -81,6 +81,11 @@ export default {
       else this.page = (this.page + 2) % this.forecast?.length;
 
       if (!this.page || this.forecastUnavailable) return EventBus.emit("forecast-complete");
+    },
+
+    prettifyForecastDay(val) {
+      val = (val || "").toLowerCase();
+      return val.includes("night") ? "Tonight" : "Today";
     },
   },
 };

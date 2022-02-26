@@ -17,13 +17,13 @@
           <br /><br />
           <div class="page_forecast">
             <span class="label"
-              >Forecast for {{ forecast[page]?.day }}..<span>{{ forecast[page]?.textSummary }}</span></span
+              >{{ forecast[page]?.day }}..<span>{{ forecast[page]?.textSummary }}</span></span
             >
           </div>
           <br /><br />
           <div class="page_forecast">
             <span v-if="page + 1 <= forecast.length - 1" class="label"
-              >Forecast for {{ forecast[page + 1]?.day }}..<span>{{ forecast[page + 1]?.textSummary }}</span></span
+              >{{ forecast[page + 1]?.day }}..<span>{{ forecast[page + 1]?.textSummary }}</span></span
             >
           </div>
         </div>

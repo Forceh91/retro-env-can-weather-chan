@@ -210,7 +210,7 @@ export default {
   methods: {
     initWeatherChannel(callback) {
       this.$http
-        .get("//localhost:8600/api/init")
+        .get("api/init")
         .then((resp) => {
           const data = resp.data;
           if (!data) return;
@@ -256,7 +256,7 @@ export default {
 
     getWeather() {
       this.$http
-        .get("//localhost:8600/api/weather")
+        .get("api/weather")
         .then((resp) => {
           const data = resp.data;
           if (!data) return;
@@ -277,7 +277,7 @@ export default {
 
     getSurroundingWeather() {
       this.$http
-        .get("//localhost:8600/api/weather/surrounding")
+        .get("api/weather/surrounding")
         .then((resp) => {
           const data = resp.data;
           if (!data || !data.observations || !data.observations.length) return;
@@ -294,7 +294,7 @@ export default {
       if (!this.showMBHighLowSetting) return;
 
       this.$http
-        .get("//localhost:8600/api/weather/mb_highlow")
+        .get("api/weather/mb_highlow")
         .then((resp) => {
           const data = resp.data;
           if (!data || !data.values || !data.values.length) return;

@@ -1,6 +1,6 @@
 {
   "name": "retro-env-can-weather-chan",
-  "version": "0.5.0",
+  "version": "0.10.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

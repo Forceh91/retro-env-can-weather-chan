@@ -22,35 +22,44 @@ function fetchLastYearObservation() {
     .replace("$DAY", date);
 
   // now we can fetch the result
-  axios.get(url).then((resp) => {
-    const data = resp.data;
-    if (!data) return;
+  axios
+    .get(url)
+    .then((resp) => {
+      const data = resp.data;
+      if (!data) return;
 
-    // convert to js object
-    const historicalData = xmljs.xml2js(data, { compact: true });
-    if (!historicalData) return;
+      // convert to js object
+      const historicalData = xmljs.xml2js(data, { compact: true });
+      if (!historicalData) return;
 
-    // check it has climate data
-    const climateData = historicalData.climatedata;
-    if (!climateData) return;
+      // check it has climate data
+      const climateData = historicalData.climatedata;
+      if (!climateData) return;
 
-    // check it has station data
-    const stationData = climateData.stationdata;
-    if (!stationData || !stationData.length) return;
+      // check it has station data
+      const stationData = climateData.stationdata;
+      if (!stationData || !stationData.length) return;
 
-    // for whatever reason we can't get _just_ the day we asked for and we get the entire year
-    // so we need to go find it
-    const today = stationData.find(
-      (sd) =>
-        parseInt(sd._attributes.day) === date &&
-        parseInt(sd._attributes.month) === month &&
-        parseInt(sd._attributes.year) === year
-    );
-    if (!today) return;
+      // for whatever reason we can't get _just_ the day we asked for and we get the entire year
+      // so we need to go find it
+      const today = stationData.find(
+        (sd) =>
+          parseInt(sd._attributes.day) === date &&
+          parseInt(sd._attributes.month) === month &&
+          parseInt(sd._attributes.year) === year
+      );
+      if (!today) return;
 
-    // now we can set the observations for last year
-    lastYearObservations = { temp: { min: today.mintemp._text, max: today.maxtemp._text } };
-  });
+      // now we can set the observations for last year
+      lastYearObservations = { temp: { min: today.mintemp._text, max: today.maxtemp._text } };
+    })
+    .catch(() => {
+      console.warn("[HISTORICAL]", "Failed to fetch historical data for station %s", STATION_ID_TO_FETCH);
+    });
 }
 
-module.exports = { fetchLastYearObservation, lastYearObservations };
+function lastYearObservation() {
+  return lastYearObservations;
+}
+
+module.exports = { fetchLastYearObservation, lastYearObservation };

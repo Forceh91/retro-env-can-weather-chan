@@ -8,14 +8,14 @@ jobs:
       - name: "Pull repo"
         uses: actions/checkout@v2
       - name: "Install Yarn packages"
-        uses: borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v3.0.0
         with:
           cmd: install # will run `yarn install` command
       - name: "Run unit tests"
-        uses: borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v3.0.0
         with:
           cmd: test # will run `yarn test` command
       - name: "Check production build is successful"
-        uses: borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v3.0.0
         with:
           cmd: build # will run `yarn build` command

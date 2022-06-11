@@ -54,7 +54,7 @@ function fetchLastYearObservation() {
       lastYearObservations = { temp: { min: today.mintemp._text, max: today.maxtemp._text } };
     })
     .catch(() => {
-      console.warn("[HISTORICAL]", "Failed to fetch historical data for station %s", STATION_ID_TO_FETCH);
+      console.warn("[HISTORICAL]", "Failed to fetch historical data for station %i", STATION_ID_TO_FETCH);
     });
 }
 

@@ -83,8 +83,9 @@ function fetchProvinceObservationData(province) {
         temp: coldLocationTempValue,
       };
     })
-    .catch(() => {
-      console.warn("[PROVINCE TODAY]", "Failed to fetch province today for province %s", province);
+    .catch((e) => {
+      console.log("e", e);
+      console.warn("[PROVINCE TODAY]", "Failed to fetch province today for province", province);
     });
 }
 

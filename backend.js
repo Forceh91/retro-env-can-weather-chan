@@ -93,7 +93,7 @@ function startBackend(config) {
 
   // provincial today observations
   fetchProvinceObservationData(config?.primaryLocation?.province);
-  setInterval(fetchProvinceObservationData, 5 * 60 * 1000);
+  setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
 
   const primaryLocation = config?.primaryLocation || {};
   app.get("/api/weather", (req, res) => {

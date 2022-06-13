@@ -22,7 +22,12 @@ export default {
   props: {
     city: String,
     riseset: Object,
-    hotcold: Object,
+    hotcold: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
 
   computed: {
@@ -67,6 +72,8 @@ export default {
     },
 
     padString(val, minLength, isFront, char) {
+      if (val === undefined || val === null) return "";
+
       char = char || `&nbsp;`;
       const paddingToAdd = minLength - val.length;
       let paddingString = ``;

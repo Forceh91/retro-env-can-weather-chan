@@ -11,6 +11,7 @@ const { fetchWeatherForObservedCities, latestObservations } = require("./observa
 const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
 const { fetchLastYearObservation, lastYearObservation } = require("./historical-data.js");
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
+const { startAlertMonitoring } = require("./alert-monitoring");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -138,6 +139,9 @@ function startBackend(config) {
     const tempClass = highLowAroundMB.filter((city) => city.temp_class).map((city) => city.temp_class);
     res.send({ tempClass: tempClass[0], values: highLowAroundMB });
   });
+
+  // start the amqp alert monitoring of cap
+  startAlertMonitoring(config?.primaryLocation?.name);
 }
 
 app.listen(port);

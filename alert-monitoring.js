@@ -16,19 +16,12 @@ function startAlertMonitoring(city) {
       });
     });
 
-  fetchCapFileAndParse(
-    "https://dd4.weather.gc.ca/alerts/cap/20220615/LAND/23/T_ONCN00_C_LAND_202206152302_0707244343.cap",
-    city,
-    (alert) => {
-      pushAlertToList(alert);
-    }
-  );
-
-  //   setTimeout(periodicCleanup, 15 * 1000 * 60);
-  setTimeout(periodicCleanup, 10 * 1000);
+  setInterval(periodicCleanup, 15 * 1000 * 60);
 }
 
 function pushAlertToList(alert) {
+  const { identifier, references, expires } = alert;
+
   // this is a pretty wild guess, BUT, from what i understand, the references lists any
   // identifiers that this is updating or in relation too, so with that, if the references
   // includes an identifier, we should remove that alert because it's stale

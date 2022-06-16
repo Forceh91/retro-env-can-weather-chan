@@ -112,7 +112,7 @@ function startBackend(config) {
           riseSet: weather.all.riseSet,
           observed: weather.date,
           upcomingForecast: weather.weekly,
-          warnings: capAlerts && capAlerts.length ? capAlerts : weather.all.warnings,
+          warnings: capAlerts || [],
           almanac: weather.all.almanac,
           last_year: lastYearObservation(),
           hot_cold: getHotColdSpotsCanada(),

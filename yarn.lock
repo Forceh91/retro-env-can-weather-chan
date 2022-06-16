@@ -2520,6 +2520,13 @@ alphanum-sort@^1.0.0:
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
   integrity sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
 
+amqp@^0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/amqp/-/amqp-0.2.7.tgz#738cfc45fd9c99260b45d5fafc32ed000841e1b1"
+  integrity sha512-AtXW9QEhSf2diJHn4Fmeo9Zdb1LMyEer6dUCOxzjEb7Fxh3CBgad3nmB8LTXDYsDRbdRfHruGCFYG7T+4qilww==
+  dependencies:
+    lodash "^4.0.0"
+
 ansi-colors@^3.0.0:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/ansi-colors/-/ansi-colors-3.2.4.tgz#e3a3da4bfbae6c86a9c285625de124a234026fbf"
@@ -7346,7 +7353,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.3, lodash@^4.17.4:
+lodash@^4.0.0, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.3, lodash@^4.17.4:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==

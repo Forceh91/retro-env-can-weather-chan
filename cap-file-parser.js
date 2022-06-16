@@ -20,7 +20,9 @@ function fetchCapFileAndParse(url, city, callback) {
     // we're presuming info[0] for the english version
     const alert = weatherAlertCAP.alert;
     const info_en = alert?.info.find((i) => i.language?._text === "en-CA");
-    const areas = info_en?.area || [];
+    let areas = info_en?.area || [];
+
+    if (!Array.isArray(areas)) areas = [areas];
 
     // loop through areas and see if our tracked city is included
     let isRelevant = false;

@@ -29,9 +29,11 @@ function startAlertMonitoring(city) {
 }
 
 function pushAlertToList(alert) {
-  const { identifier, expires } = alert;
-  const ix = alertsFromCAP.findIndex((a) => a.identifier === identifier);
-  if (ix !== -1) alertsFromCAP.splice(ix, 1);
+  // this is a pretty wild guess, BUT, from what i understand, the references lists any
+  // identifiers that this is updating or in relation too, so with that, if the references
+  // includes an identifier, we should remove that alert because it's stale
+  const ix = alertsFromCAP.findIndex((a) => references.includes(a.identifier));
+  if (ix !== -1) alertsFromCAP.splice(ix, 1, alert);
   else alertsFromCAP.push(alert);
 
   console.log(

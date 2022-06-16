@@ -19,8 +19,8 @@ function fetchCapFileAndParse(url, city, callback) {
     // find the alert->info->area and see if any include the city we're tracking
     // we're presuming info[0] for the english version
     const alert = weatherAlertCAP.alert;
-    const info_en = alert?.info[0];
-    const areas = info_en?.area;
+    const info_en = alert?.info.find((i) => i.language?._text === "en-CA");
+    const areas = info_en?.area || [];
 
     // loop through areas and see if our tracked city is included
     let isRelevant = false;
@@ -50,9 +50,12 @@ function fetchCapFileAndParse(url, city, callback) {
     const severity = info_en?.severity?._text;
     if (!severity) return;
 
+    const urgency = info_en?.urgency?._text;
+    if (!urgency) return;
+
     console.log(`[CAP PARSER] CAP ${url} has been parsed, passing along to alert monitor`);
 
-    if (typeof callback === "function") callback({ identifier, expires, headline, description, severity });
+    if (typeof callback === "function") callback({ identifier, expires, headline, description, severity, urgency });
   });
 }
 

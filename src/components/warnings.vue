@@ -30,7 +30,7 @@ export default {
 
   computed: {
     warningsUnavailable() {
-      return !this.warnings;
+      return !this.warnings || !this.warnings.length;
     },
 
     paginatedWarnings() {

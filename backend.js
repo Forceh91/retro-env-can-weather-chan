@@ -11,7 +11,7 @@ const { fetchWeatherForObservedCities, latestObservations } = require("./observa
 const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
 const { fetchLastYearObservation, lastYearObservation } = require("./historical-data.js");
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
-const { startAlertMonitoring } = require("./alert-monitoring");
+const { startAlertMonitoring, getAlertsFromCAP } = require("./alert-monitoring");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -97,6 +97,7 @@ function startBackend(config) {
   setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
 
   const primaryLocation = config?.primaryLocation || {};
+  const capAlerts = getAlertsFromCAP();
   app.get("/api/weather", (req, res) => {
     axios
       .get(
@@ -111,7 +112,7 @@ function startBackend(config) {
           riseSet: weather.all.riseSet,
           observed: weather.date,
           upcomingForecast: weather.weekly,
-          warnings: weather.all.warnings,
+          warnings: capAlerts && capAlerts.length ? capAlerts : weather.all.warnings,
           almanac: weather.all.almanac,
           last_year: lastYearObservation(),
           hot_cold: getHotColdSpotsCanada(),

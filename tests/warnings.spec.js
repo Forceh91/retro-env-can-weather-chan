@@ -2,10 +2,42 @@ import { shallowMount } from "@vue/test-utils";
 import { EventBus } from "../src/js/EventBus";
 import Warnings from "../src/components/warnings";
 
-const fakeWarning = { description: "weather warning", type: "warning", priority: "high" };
-const fakeEndedWarning = { description: "weather warning", type: "ended", priority: "high" };
-const fakeUrgentWarning = { description: "weather warning", type: "warning", priority: "urgent" };
-const fakeEndedUrgentWarning = { description: "weather warning", type: "ended", priority: "urgent" };
+const fakeWarning = {
+  identifier: "a",
+  references: "a,b,c",
+  expires: "2022-06-15T00:00:00",
+  headline: "weather warning in effect",
+  description: "stuff will happen",
+  severity: "medium",
+  urgency: "low",
+};
+const fakeEndedWarning = {
+  identifier: "b",
+  references: "a,b,c",
+  expires: "2022-06-15T01:00:00",
+  headline: "weather warning ended",
+  description: "stuff will happen",
+  severity: "clear",
+  urgency: "past",
+};
+const fakeUrgentWarning = {
+  identifier: "c",
+  references: "a,b,c",
+  expires: "2022-06-15T00:00:00",
+  headline: "severe weather warning in effect",
+  description: "stuff will happen Locations impacted: some location here ### when warning appears, run",
+  severity: "medium",
+  urgency: "Immediate",
+};
+const fakeEndedUrgentWarning = {
+  identifier: "d",
+  references: "a,b,c",
+  expires: "2022-06-15T00:00:00",
+  headline: "weather warning ended",
+  description: "stuff wont happen",
+  severity: "clear",
+  urgency: "Past",
+};
 
 const wrapper = shallowMount(Warnings, { props: { city: "City" } });
 const { vm } = wrapper;
@@ -25,7 +57,7 @@ test("generateWarningsScreen: skips over generating warnings list if there are n
 });
 
 test("generateWarningsScreen: converts the warnings into a list if there is just one warning", (done) => {
-  wrapper.setProps({ warnings: { event: { description: "weather warning", type: "warning", priority: "high" } } });
+  wrapper.setProps({ warnings: [fakeWarning] });
   vm.$nextTick(() => {
     vm.generateWarningsScreen();
 
@@ -36,7 +68,7 @@ test("generateWarningsScreen: converts the warnings into a list if there is just
 });
 
 test("generateWarningsScreen: copies warnings over correctly when there are multiple", (done) => {
-  wrapper.setProps({ warnings: { event: [fakeWarning, fakeWarning] } });
+  wrapper.setProps({ warnings: [fakeWarning, fakeWarning] });
 
   vm.$nextTick(() => {
     vm.generateWarningsScreen();
@@ -49,13 +81,13 @@ test("generateWarningsScreen: copies warnings over correctly when there are mult
 
 test("generateWarningsScreen: generates the correct number of pages", (done) => {
   vm.generateWarningsScreen();
-  expect(vm.pages).toBe(1);
+  expect(vm.pages).toBe(2);
 
-  wrapper.setProps({ warnings: { event: [fakeWarning, fakeWarning, fakeWarning] } });
+  wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
 
   vm.$nextTick(() => {
     vm.generateWarningsScreen();
-    expect(vm.pages).toBe(2);
+    expect(vm.pages).toBe(3);
     done();
   });
 });
@@ -81,7 +113,7 @@ test("shouldFlashWarning: will flash a warning if it is urgent", (done) => {
 });
 
 test("changePage: changes page correctly when there are multiple pages", (done) => {
-  wrapper.setProps({ warnings: { event: [fakeWarning, fakeWarning, fakeWarning] } });
+  wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
   vm.$nextTick(() => {
     vm.generateWarningsScreen();
     vm.changePage();
@@ -98,6 +130,20 @@ test("changePage: switches away from the warnings screen when on the last page",
   });
 
   vm.changePage();
+  vm.changePage();
+});
+
+test("cleanupHeadline: removes 'in effect' text", (done) => {
+  expect(vm.cleanupHeadline(fakeWarning.headline)).toBe("weather warning");
+  expect(vm.cleanupHeadline(fakeEndedWarning.headline)).toBe("weather warning ended");
+  done();
+});
+
+test("truncateWarningDescription: removes redundant info", (done) => {
+  expect(vm.truncateWarningDescription(fakeWarning.description)).toBe(fakeWarning.description);
+  expect(vm.truncateWarningDescription(fakeEndedUrgentWarning.description)).toBe(fakeEndedUrgentWarning.description);
+  expect(vm.truncateWarningDescription(fakeUrgentWarning.description)).toBe("stuff will happen");
+  done();
 });
 
 test("destroyed: removes page change interval", (done) => {

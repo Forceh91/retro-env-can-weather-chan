@@ -107,6 +107,7 @@ export default {
   list-style: none;
   margin: 0;
   padding: 0;
+  width: 100%;
 
   li {
     &:not(:last-child) {
@@ -116,6 +117,13 @@ export default {
     &.flash .headline {
       animation: flash 0.8s step-start 0s infinite;
     }
+
+    .headline,
+    .description {
+      width: 100%;
+    }
+
+    width: 100%;
   }
 
   align-items: center;
@@ -123,6 +131,7 @@ export default {
   flex-direction: column;
   height: calc(100% - 5px);
   overflow: hidden;
+  width: 100%;
 }
 
 /* flashing warnings from the original were 4 frames hidden, 11 frames visible */

@@ -65,7 +65,7 @@ const SCREENS = {
   FORECAST: { id: 2, length: 160 },
   SURROUNDING: { id: 3, length: 80 },
   ALMANAC: { id: 4, length: 30 },
-  WARNINGS: { id: 5, length: 185 },
+  WARNINGS: { id: 5, length: 65 * 10 }, // enough for 10 warnings if things get crazy
   WINDCHILL: { id: 6, length: 20 },
   MB_HIGH_LOW: { id: 7, length: 20 },
   CITY_STATS: { id: 8, length: 20 },

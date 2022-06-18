@@ -92,14 +92,14 @@ test("generateWarningsScreen: generates the correct number of pages", (done) => 
   });
 });
 
-test("generateWarningsScreen: changes page after 20s", (done) => {
+test("generateWarningsScreen: changes page after 60s", (done) => {
   jest.useFakeTimers();
   const spy = jest.spyOn(vm, "changePage");
 
   vm.generateWarningsScreen();
-  jest.advanceTimersByTime(20 * 1000);
+  jest.advanceTimersByTime(60 * 1000);
   expect(spy).toHaveBeenCalled();
-  expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 20 * 1000);
+  expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 60 * 1000);
   done();
 });
 

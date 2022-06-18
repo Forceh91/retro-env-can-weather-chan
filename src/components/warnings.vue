@@ -14,7 +14,7 @@
 
 <script>
 const MAX_WARNINGS_PER_PAGE = 1;
-const PAGE_CHANGE_FREQUENCY = 20 * 1000;
+const PAGE_CHANGE_FREQUENCY = 60 * 1000; // 60mins is good reading time now for descriptions
 
 import { EventBus } from "../js/EventBus";
 

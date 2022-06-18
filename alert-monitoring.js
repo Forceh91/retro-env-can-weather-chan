@@ -1,8 +1,11 @@
+const fs = require("fs");
 const { listen } = require("./sarra-canada-amqp");
 const { fetchCapFileAndParse } = require("./cap-file-parser");
 const { compareAsc, parseISO } = require("date-fns");
 
 const alertsFromCAP = [];
+const ALERTS_FOLDER = "./alerts";
+const ALERTS_FILE = "alerts.txt";
 
 function startAlertMonitoring(city) {
   console.log("[ALERT MONITORING] Starting alert monitoring via AMQP...");
@@ -15,6 +18,9 @@ function startAlertMonitoring(city) {
         pushAlertToList(alert);
       });
     });
+
+  // load anything we knew about before we rebooted the system
+  loadCurrentAlerts(city);
 
   setInterval(periodicCleanup, 15 * 1000 * 60);
 }
@@ -33,6 +39,8 @@ function pushAlertToList(alert) {
     `[ALERT MONITORING] Ingested CAP (${identifier}), expiry set for ${expires}`,
     `(total: ${alertsFromCAP.length})`
   );
+
+  saveCurrentAlerts();
 }
 
 function periodicCleanup() {
@@ -52,7 +60,38 @@ function periodicCleanup() {
     }
   });
 
+  saveCurrentAlerts();
+
   console.log("[ALERT MONITORING] Periodic cleanup completed");
+}
+
+function saveCurrentAlerts() {
+  const alertFile = `${ALERTS_FOLDER}/${ALERTS_FILE}`;
+  fs.writeFile(alertFile, alertsFromCAP.map((a) => a.url).join("\n"), "utf8", () => {
+    console.log("[ALERT MONITORING] CAP files stored locally incase of restart");
+  });
+}
+
+function loadCurrentAlerts(city) {
+  const alertFile = `${ALERTS_FOLDER}/${ALERTS_FILE}`;
+  fs.stat(alertFile, (err, stat) => {
+    if (err || stat.size < 1) console.log("[ALERT MONITORING] No stored alerts");
+    else {
+      fs.readFile(alertFile, "utf8", (err, data) => {
+        if (err) console.log("[ALERT MONITORING] Unable to load stored alerts");
+        else {
+          const capFileURLArray = data.split(/\r?\n/g);
+
+          console.log(`[ALERT MONITORING] Refetching ${capFileURLArray.length} CAP files...`);
+          capFileURLArray.forEach((url) => {
+            fetchCapFileAndParse(url, city, (alert) => {
+              pushAlertToList(alert);
+            });
+          });
+        }
+      });
+    }
+  });
 }
 
 function getAlertsFromCAP() {

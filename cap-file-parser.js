@@ -61,7 +61,7 @@ function fetchCapFileAndParse(url, city, callback) {
     console.log(`[CAP PARSER] CAP ${url} has been parsed, passing along to alert monitor`);
 
     if (typeof callback === "function")
-      callback({ identifier, references, expires, headline, description, severity, urgency });
+      callback({ identifier, references, expires, headline, description, severity, urgency, url });
   });
 }
 

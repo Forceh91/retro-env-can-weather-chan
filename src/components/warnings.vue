@@ -88,7 +88,7 @@ export default {
 
     truncateWarningDescription(description) {
       // get rid of some weird ### description stuff
-      description = (description || "").split(/.+\n\n###/g)[0];
+      description = (description || "").split(/\n\n###/g)[0];
 
       // remove impacted locations as its a giant list
       description = description.split("Locations impacted")[0];

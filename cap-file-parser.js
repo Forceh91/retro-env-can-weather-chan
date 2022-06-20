@@ -28,7 +28,10 @@ function fetchCapFileAndParse(url, city, callback) {
     let isRelevant = false;
     areas.some((area) => {
       const areaDesc = (area.areaDesc?._text || "").toLowerCase();
-      isRelevant = areaDesc.includes(city);
+      const regexString = `\\b${city}\\b`;
+      const regexMatch = new RegExp(regexString, "gmi");
+      const regexResult = areaDesc.match(regexMatch);
+      isRelevant = regexResult && regexResult[0] === city;
       if (isRelevant) return true;
     });
 

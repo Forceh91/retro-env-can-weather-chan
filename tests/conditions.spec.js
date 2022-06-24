@@ -21,8 +21,17 @@ test("observedFormatted: is computed properly", (done) => {
 test("currentCondition: is computed properly", (done) => {
   expect(vm.currentCondition).toBe("Partly Cloudy");
 
-  vm.conditions.condition = "thunderstorms with heavy rain shower";
+  vm.conditions.condition = "Thunderstorms with heavy rain shower";
   expect(vm.currentCondition).toBe("Thunderstorms");
+
+  vm.conditions.condition = "snow and freezing rain";
+  expect(vm.currentCondition).toBe("snow");
+
+  vm.conditions.condition = "light rainshower";
+  expect(vm.currentCondition).toBe("light rainshower");
+
+  vm.conditions.condition = "freezing rain";
+  expect(vm.currentCondition).toBe("freezing rain");
   done();
 });
 

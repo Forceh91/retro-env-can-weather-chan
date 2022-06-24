@@ -46,9 +46,7 @@ export default {
     },
 
     currentCondition() {
-      const condition = this.conditions.condition;
-      if (condition.includes("thunderstorms with")) return "Thunderstorms";
-      return `${condition.slice(0, 16)}`;
+      return this.truncateConditions(this.conditions?.condition);
     },
 
     temperature() {
@@ -106,6 +104,13 @@ export default {
       for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
 
       return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
+    },
+
+    truncateConditions(condition) {
+      if (!condition) return "";
+      if (condition.includes("with")) condition = condition.split(" with")[0];
+      if (condition.includes("and")) condition = condition.split(" and")[0];
+      return `${condition.slice(0, 16)}`;
     },
   },
 };

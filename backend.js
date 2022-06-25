@@ -10,6 +10,7 @@ const { generateCrawler, getCrawler } = require("./generate-crawler.js");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
 const { fetchLastYearObservation, lastYearObservation } = require("./historical-data.js");
+const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -90,6 +91,10 @@ function startBackend(config) {
   fetchLastYearObservation();
   setInterval(fetchLastYearObservation, 5 * 60 * 1000);
 
+  // provincial today observations
+  fetchProvinceObservationData(config?.primaryLocation?.province);
+  setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
+
   const primaryLocation = config?.primaryLocation || {};
   app.get("/api/weather", (req, res) => {
     axios
@@ -108,6 +113,7 @@ function startBackend(config) {
           warnings: weather.all.warnings,
           almanac: weather.all.almanac,
           last_year: lastYearObservation(),
+          hot_cold: getHotColdSpotsCanada(),
         });
       })
       .catch(() => {

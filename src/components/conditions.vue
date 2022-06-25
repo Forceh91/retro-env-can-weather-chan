@@ -24,6 +24,7 @@
 <script>
 import { parseISO, format } from "date-fns";
 import { calculateWindChillNumber } from "../js/windChill";
+import conditionmixin from "../mixins/condition.mixin";
 
 export default {
   name: "Conditions",
@@ -32,6 +33,8 @@ export default {
     observed: String,
     conditions: Object,
   },
+
+  mixins: [conditionmixin],
 
   computed: {
     titleString() {
@@ -104,13 +107,6 @@ export default {
       for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
 
       return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
-    },
-
-    truncateConditions(condition) {
-      if (!condition) return "";
-      if (condition.includes("with")) condition = condition.split(" with")[0];
-      if (condition.includes("and")) condition = condition.split(" and")[0];
-      return `${condition.slice(0, 16)}`;
     },
   },
 };

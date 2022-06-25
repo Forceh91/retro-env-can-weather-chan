@@ -9,6 +9,7 @@ const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
 const { generateCrawler, getCrawler } = require("./generate-crawler.js");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
+const { fetchLastYearObservation, lastYearObservation } = require("./historical-data.js");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -85,6 +86,10 @@ function startBackend(config) {
   fetchWeatherForObservedCities();
   setInterval(fetchWeatherForObservedCities, 5 * 60 * 1000);
 
+  // historical data
+  fetchLastYearObservation();
+  setInterval(fetchLastYearObservation, 5 * 60 * 1000);
+
   const primaryLocation = config?.primaryLocation || {};
   app.get("/api/weather", (req, res) => {
     axios
@@ -102,6 +107,7 @@ function startBackend(config) {
           upcomingForecast: weather.weekly,
           warnings: weather.all.warnings,
           almanac: weather.all.almanac,
+          last_year: lastYearObservation(),
         });
       })
       .catch(() => {

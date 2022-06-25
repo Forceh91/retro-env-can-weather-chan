@@ -38,6 +38,7 @@
           :observed="weather.observed"
           :conditions="weather.currentConditions"
           :almanac="weather.almanac"
+          :last-year="weather.lastYear"
         />
         <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
         <windchill v-if="isWindChillEffects" :temp="currentTemp" />
@@ -268,6 +269,7 @@ export default {
           this.weather.almanac = data.almanac;
           this.weather.warnings = data.warnings;
           this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
+          this.weather.lastYear = data.last_year || {};
         })
         .catch((err) => {
           console.error(err);

@@ -68,9 +68,10 @@ export default {
       if (!wind) return "";
 
       const speed = (wind.speed && wind.speed.value) || "";
+      const gust = (wind.gust && wind.gust.value) || 0;
       const direction = wind.direction;
-      const units = wind.speed && wind.speed.units;
-      return `${this.padString(direction, 3, true)}&nbsp;&nbsp;${speed} ${units}`;
+      if (gust) return `${this.padString(direction, 3, true)}&nbsp;&nbsp;${speed}G${gust}&nbsp;`;
+      return `${this.padString(direction, 3, true)}&nbsp;&nbsp;${speed} KMH`;
     },
 
     humidity() {

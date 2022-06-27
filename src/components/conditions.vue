@@ -11,10 +11,13 @@
         <span v-html="padString('', 5)"></span><span>{{ currentCondition }}</span>
       </div>
       <div>
-        <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
-        <template v-if="windchill > 0"
-          ><span v-html="padString('', 4)"></span><span>Wind Chill {{ windchill }}</span></template
-        >
+        <template v-if="shouldShowWindchill">
+          <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
+          <span v-html="padString('', 4)"></span><span>Wind Chill {{ windchill }}</span>
+        </template>
+        <template v-else>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visibility&nbsp;&nbsp;</span><span v-html="visibility"></span>
+        </template>
       </div>
       <div><span v-html="padString('pressure', 11, true)"></span>&nbsp;<span v-html="pressure"></span></div>
     </div>
@@ -97,6 +100,10 @@ export default {
 
       const windspeed = this.conditions?.wind?.speed?.value;
       return calculateWindChillNumber(temp, windspeed);
+    },
+
+    shouldShowWindchill() {
+      return this.windchill > 0;
     },
   },
 

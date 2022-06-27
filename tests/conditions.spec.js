@@ -60,12 +60,16 @@ test("temperature: is computed properly", (done) => {
 });
 
 test("wind: is computed properly", (done) => {
-  expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp;45 km/h");
+  vm.conditions.wind.gust.value = 0;
+  expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp;45 KMH");
 
   const oldSpeed = { ...vm.conditions.wind.speed };
   vm.conditions.wind.speed.value = null;
-  expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp; km/h");
+  expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp; KMH");
+
   vm.conditions.wind.speed = oldSpeed;
+  vm.conditions.wind.gust.value = 72;
+  expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp;45G72&nbsp;");
 
   vm.conditions.wind = null;
   expect(vm.wind).toBe("");

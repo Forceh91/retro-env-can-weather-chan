@@ -111,6 +111,15 @@ test("windchill: is computed correctly", (done) => {
   done();
 });
 
+test("shouldShowWindchill: is computed correctly", (done) => {
+  expect(vm.shouldShowWindchill).toBe(true);
+
+  vm.conditions.temperature.value = 1;
+  expect(vm.shouldShowWindchill).toBe(false);
+
+  done();
+});
+
 test("padString: pads strings correctly", (done) => {
   const stringA = vm.padString("-15.5", 5);
   expect(stringA).toBe("-15.5");

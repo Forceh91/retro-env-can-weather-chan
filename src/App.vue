@@ -71,10 +71,10 @@ const SCREENS = {
   CITY_STATS: { id: 8, length: 20 },
 };
 const SCREEN_ROTATION = [
-  SCREENS.CURRENT_CONDITIONS,
+  // SCREENS.CURRENT_CONDITIONS,
+  SCREENS.FORECAST,
   SCREENS.CITY_STATS,
   SCREENS.WARNINGS,
-  SCREENS.FORECAST,
   SCREENS.WINDCHILL,
   SCREENS.MB_HIGH_LOW,
   SCREENS.ALMANAC,
@@ -116,7 +116,7 @@ export default {
       screenChanger: null,
       now: new Date(),
       rotationIndex: 0,
-      currentScreen: SCREENS.CURRENT_CONDITIONS,
+      currentScreen: SCREENS.FORECAST,
       weather: {
         currentConditions: null,
         city: null,

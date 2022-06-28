@@ -111,7 +111,7 @@ export default {
     },
 
     roundTemp(temp) {
-      if (isNaN(temp)) return "";
+      if (isNaN(temp) || temp === null) return "";
       return Math.round(temp);
     },
   },

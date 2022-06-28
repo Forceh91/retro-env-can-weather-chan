@@ -8,6 +8,7 @@ const path = require("path");
 const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
 const { generateCrawler, getCrawler } = require("./generate-crawler.js");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
+const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
 const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
 const { fetchLastYearObservation, lastYearObservation } = require("./historical-data.js");
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
@@ -88,6 +89,10 @@ function startBackend(config) {
   fetchWeatherForObservedCities();
   setInterval(fetchWeatherForObservedCities, 5 * 60 * 1000);
 
+  // us city observations
+  fetchWeatherForObservedUSCities();
+  setInterval(fetchWeatherForObservedUSCities, 7.5 * 60 * 1000);
+
   // historical data
   fetchLastYearObservation();
   setInterval(fetchLastYearObservation, 5 * 60 * 1000);
@@ -125,6 +130,10 @@ function startBackend(config) {
 
   app.get("/api/weather/surrounding", (req, res) => {
     res.send({ observations: latestObservations });
+  });
+
+  app.get("/api/weather/usa", (req, res) => {
+    res.send({ observations: latestUSObservations });
   });
 
   // MB regional high/low screen

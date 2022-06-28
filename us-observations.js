@@ -38,7 +38,6 @@ function fetchWeatherForObservedUSCities() {
 
   Promise.allSettled(promises).then(() => {
     latestUSObservations.splice(0, latestUSObservations.length, ...results);
-    console.log(latestUSObservations);
   });
 }
 

@@ -18,6 +18,8 @@ Once up and running the weather channel will be accessible from your browser.
 - Windchill
 - Almanac Data (Sunset/Rise, High/Low Temp Records)
 - Latest Hourly Observation for various cities
+- Snowfall/Precipitation Amounts
+- High/Low for the day around province of your choice (config coming soon)
 - Weather Warnings
 - Custom playlist
 - Custom crawler messages for adverts/general info
@@ -25,8 +27,6 @@ Once up and running the weather channel will be accessible from your browser.
 ## Missing Features
 
 - Alerts
-- Snowfall/Precipitation Amounts
-- High/Low for the day
 - Last Year temps on almanac
 
 ## Planned Features

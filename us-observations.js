@@ -46,7 +46,7 @@ function fetchWeatherForObservedUSCities() {
         })
         .catch(() => {
           console.warn("[US OBSERVATION]", station.name, "failed to fetch data");
-          fillObservationForCity(station, data);
+          fillObservationForCity(station, {});
         })
     );
   });

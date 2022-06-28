@@ -19,7 +19,9 @@
           <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visibility&nbsp;&nbsp;</span><span v-html="visibility"></span>
         </template>
       </div>
-      <div><span v-html="padString('pressure', 11, true)"></span>&nbsp;<span v-html="pressure"></span></div>
+      <div v-if="showPressure">
+        <span v-html="padString('pressure', 11, true)"></span>&nbsp;<span v-html="pressure"></span>
+      </div>
     </div>
   </div>
 </template>
@@ -35,6 +37,10 @@ export default {
     city: String,
     observed: String,
     conditions: Object,
+    showPressure: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   mixins: [conditionmixin],

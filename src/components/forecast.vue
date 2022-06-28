@@ -3,8 +3,7 @@
     <div v-if="forecastUnavailable" id="no_data">Forecast temporarily unavailable</div>
     <template v-else>
       <template v-if="!page">
-        <conditions :city="city" :observed="observed" :conditions="conditions" />
-        <br />
+        <conditions :city="city" :observed="observed" :conditions="conditions" :show-pressure="false" />
         <div id="next_forecast" class="full-width">
           <span class="label"
             >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{ forecast[0]?.textSummary }}</span></span
@@ -99,5 +98,10 @@ export default {
 
 #forecast_cont #title {
   text-align: center;
+}
+
+#next_forecast {
+  display: flex;
+  justify-content: center;
 }
 </style>

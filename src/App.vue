@@ -32,6 +32,12 @@
           :timezone="timeZone"
           :observations="weather.surroundingObservations"
         />
+        <surrounding
+          v-if="isUSSurrounding"
+          :observed="weather.observed"
+          :timezone="timeZone"
+          :observations="weather.surroundingUSObservations"
+        />
         <almanac
           v-if="isAlmanac"
           :city="weather.city"
@@ -69,6 +75,7 @@ const SCREENS = {
   WINDCHILL: { id: 6, length: 20 },
   MB_HIGH_LOW: { id: 7, length: 20 },
   CITY_STATS: { id: 8, length: 20 },
+  US_SURROUNDING: { id: 9, length: 30 },
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,
@@ -79,6 +86,7 @@ const SCREEN_ROTATION = [
   SCREENS.MB_HIGH_LOW,
   SCREENS.ALMANAC,
   SCREENS.SURROUNDING,
+  SCREENS.US_SURROUNDING,
 ];
 
 const BLUE_COL = "rgb(0,0,135)";
@@ -124,6 +132,7 @@ export default {
         riseSet: null,
         forecast: null,
         surroundingObservations: null,
+        surroundingUSObservations: null,
         almanac: null,
         highLowAroundMB: {},
         hotColdSpots: {},
@@ -176,6 +185,10 @@ export default {
       return this.currentScreenID === SCREENS.SURROUNDING.id;
     },
 
+    isUSSurrounding() {
+      return this.currentScreenID === SCREENS.US_SURROUNDING.id;
+    },
+
     isAlmanac() {
       return this.currentScreenID === SCREENS.ALMANAC.id;
     },
@@ -213,6 +226,7 @@ export default {
     this.initWeatherChannel(() => {
       setInterval(() => {
         this.getSurroundingWeather();
+        this.getSurroundingUSWeather();
         this.getWeather();
         if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       }, FETCH_WEATHER_INTERVAL);
@@ -220,6 +234,7 @@ export default {
       this.setupEventCallbacks();
       this.getWeather();
       this.getSurroundingWeather();
+      this.getSurroundingUSWeather();
       if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       this.handleScreenCycle();
     });
@@ -311,6 +326,21 @@ export default {
         .catch((err) => {
           console.error(err);
           this.weather.surroundingObservations = null;
+        });
+    },
+
+    getSurroundingUSWeather() {
+      this.$http
+        .get("api/weather/usa")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.observations || !data.observations.length) return;
+
+          this.weather.surroundingUSObservations = data.observations;
+        })
+        .catch((err) => {
+          console.error(err);
+          this.weather.surroundingUSObservations = null;
         });
     },
 

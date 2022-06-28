@@ -9,6 +9,8 @@ const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
 const { generateCrawler, getCrawler } = require("./generate-crawler.js");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
+const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
+const { startAlertMonitoring, getAlertsFromCAP } = require("./alert-monitoring");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -85,7 +87,12 @@ function startBackend(config) {
   fetchWeatherForObservedCities();
   setInterval(fetchWeatherForObservedCities, 5 * 60 * 1000);
 
+  // provincial today observations
+  fetchProvinceObservationData(config?.primaryLocation?.province);
+  setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
+
   const primaryLocation = config?.primaryLocation || {};
+  const capAlerts = getAlertsFromCAP();
   app.get("/api/weather", (req, res) => {
     axios
       .get(
@@ -100,8 +107,9 @@ function startBackend(config) {
           riseSet: weather.all.riseSet,
           observed: weather.date,
           upcomingForecast: weather.weekly,
-          warnings: weather.all.warnings,
+          warnings: capAlerts || [],
           almanac: weather.all.almanac,
+          hot_cold: getHotColdSpotsCanada(),
         });
       })
       .catch(() => {
@@ -126,6 +134,9 @@ function startBackend(config) {
     const tempClass = highLowAroundMB.filter((city) => city.temp_class).map((city) => city.temp_class);
     res.send({ tempClass: tempClass[0], values: highLowAroundMB });
   });
+
+  // start the amqp alert monitoring of cap
+  startAlertMonitoring(config?.primaryLocation?.name);
 }
 
 app.listen(port);

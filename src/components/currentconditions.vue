@@ -3,11 +3,11 @@
     <div v-if="!conditions" id="no_data">Current conditions temporarily unavailable</div>
     <template v-else>
       <conditions :city="city" :observed="observed" :conditions="conditions" />
-      <div id="rise_set">
+      <!-- <div id="rise_set">
         <div class="full-width centre-align">
           <span class="label">{{ sunriseset }}</span>
         </div>
-      </div>
+      </div> -->
     </template>
   </div>
 </template>

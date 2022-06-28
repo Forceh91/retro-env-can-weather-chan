@@ -1,6 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
-import mbhighlow from "../src/components/mbhighlow";
+import { subDays, format } from "date-fns";
 import { EventBus } from "../src/js/EventBus";
+import mbhighlow from "../src/components/mbhighlow";
 import mbhighlowdata from "./data/mbhighlow";
 
 const wrapper = shallowMount(mbhighlow, { props: {} });
@@ -100,6 +101,20 @@ test("timeOfDay: computes correctly for overnight", (done) => {
   done();
 });
 
+test("yesterday: computes correctly", (done) => {
+  const yesterday = subDays(new Date(), 1);
+  expect(vm.yesterday.getDate()).toBe(yesterday.getDate());
+  done();
+});
+
+test("yesterdayDateFormatted: computes correctly", (done) => {
+  const yesterday = subDays(new Date(), 1);
+  const yesterdayFormatted = format(yesterday, "MMM dd");
+
+  expect(vm.yesterdayDateFormatted).toBe(yesterdayFormatted);
+  done();
+});
+
 test("tempClass: computes correctly for overnight", (done) => {
   expect(vm.tempClass).toBe("low:");
   done();
@@ -139,6 +154,42 @@ test("bottomLine: computes correctly for high temp class", (done) => {
 });
 
 test("bottomPrecipLine: includes the timezone correctly", (done) => {
-  expect(vm.bottomPrecipLine).toBe(`&nbsp;&nbsp;&nbsp;To 7 AM ${vm.timezone}`);
+  const yesterday = subDays(new Date(), 1);
+  const yesterdayFormatted = format(yesterday, "MMM dd");
+
+  expect(vm.bottomPrecipLine).toBe(`&nbsp;&nbsp;&nbsp;&nbsp;For ${yesterdayFormatted}`);
+  done();
+});
+
+test("generatePrecipString: generates correctly for no data", (done) => {
+  expect(vm.generatePrecipString()).toBe("MISSING");
+  done();
+});
+
+test("generatePrecipString: returns correctly if the value is a string", (done) => {
+  expect(vm.generatePrecipString({ value: "MSNG" })).toBe("MSNG");
+  expect(vm.generatePrecipString({ value: "" })).toBe("MISSING");
+  done();
+});
+
+test("generatePrecipString: returns NIL correctly", (done) => {
+  expect(vm.generatePrecipString({ value: "0.0" })).toBe("&nbsp;&nbsp;&nbsp;NIL");
+  done();
+});
+
+test("generatePrecipString: returns TRACE correctly", (done) => {
+  expect(vm.generatePrecipString({ value: "0.16" })).not.toBe("&nbsp;&nbsp;&nbsp;&nbsp;TRACE");
+  expect(vm.generatePrecipString({ value: "0.15" })).toBe("&nbsp;&nbsp;TRACE");
+  expect(vm.generatePrecipString({ value: "0.12" })).toBe("&nbsp;&nbsp;TRACE");
+  expect(vm.generatePrecipString({ value: "0.06" })).toBe("&nbsp;&nbsp;TRACE");
+  done();
+});
+
+test("generatePrecipString: returns other values correctly", (done) => {
+  expect(vm.generatePrecipString({ value: "0.16", units: "mm" })).not.toBe("0.2 mm");
+  expect(vm.generatePrecipString({ value: "0.3", units: "mm" })).toBe("&nbsp;&nbsp;0.3 mm");
+  expect(vm.generatePrecipString({ value: "1.6", units: "mm" })).toBe("&nbsp;&nbsp;1.6 mm");
+  expect(vm.generatePrecipString({ value: "3.4", units: "mm" })).toBe("&nbsp;&nbsp;3.4 mm");
+  expect(vm.generatePrecipString({ value: "11.6", units: "mm" })).toBe("&nbsp;11.6 mm");
   done();
 });

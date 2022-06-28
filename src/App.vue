@@ -38,9 +38,11 @@
           :observed="weather.observed"
           :conditions="weather.currentConditions"
           :almanac="weather.almanac"
+          :last-year="weather.lastYear"
         />
         <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
         <windchill v-if="isWindChillEffects" :temp="currentTemp" />
+        <citystats v-if="isCityStats" :city="weather.city" :riseset="weather.riseSet" :hotcold="weather.hotColdSpots" />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -63,16 +65,18 @@ const SCREENS = {
   FORECAST: { id: 2, length: 160 },
   SURROUNDING: { id: 3, length: 80 },
   ALMANAC: { id: 4, length: 30 },
-  WARNINGS: { id: 5, length: 70 },
+  WARNINGS: { id: 5, length: 65 * 10 }, // enough for 10 warnings if things get crazy
   WINDCHILL: { id: 6, length: 20 },
   MB_HIGH_LOW: { id: 7, length: 20 },
+  CITY_STATS: { id: 8, length: 20 },
 };
 const SCREEN_ROTATION = [
   SCREENS.CURRENT_CONDITIONS,
+  SCREENS.CITY_STATS,
   SCREENS.WARNINGS,
   SCREENS.FORECAST,
-  SCREENS.MB_HIGH_LOW,
   SCREENS.WINDCHILL,
+  SCREENS.MB_HIGH_LOW,
   SCREENS.ALMANAC,
   SCREENS.SURROUNDING,
 ];
@@ -89,12 +93,24 @@ import almanac from "./components/almanac.vue";
 import warnings from "./components/warnings.vue";
 import windchill from "./components/windchill.vue";
 import mbhighlow from "./components/mbhighlow.vue";
+import citystats from "./components/citystats.vue";
 import playlist from "./components/playlist";
 import crawler from "./components/crawler";
 
 export default {
   name: "App",
-  components: { currentconditions, forecast, surrounding, almanac, warnings, windchill, mbhighlow, playlist, crawler },
+  components: {
+    currentconditions,
+    forecast,
+    surrounding,
+    almanac,
+    warnings,
+    windchill,
+    mbhighlow,
+    citystats,
+    playlist,
+    crawler,
+  },
   data() {
     return {
       screenChanger: null,
@@ -110,6 +126,8 @@ export default {
         surroundingObservations: null,
         almanac: null,
         highLowAroundMB: {},
+        hotColdSpots: {},
+        lastYear: {},
       },
       playlist: [],
       crawlerMessages: [],
@@ -172,6 +190,10 @@ export default {
 
     isMBHighLow() {
       return this.currentScreenID === SCREENS.MB_HIGH_LOW.id;
+    },
+
+    isCityStats() {
+      return this.currentScreenID === SCREENS.CITY_STATS.id;
     },
 
     timeZone() {
@@ -268,6 +290,8 @@ export default {
           this.weather.almanac = data.almanac;
           this.weather.warnings = data.warnings;
           this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
+          this.weather.lastYear = data.last_year || {};
+          this.weather.hotColdSpots = data.hot_cold || {};
         })
         .catch((err) => {
           console.error(err);

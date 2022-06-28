@@ -34,6 +34,7 @@ export default {
     observed: String,
     conditions: Object,
     almanac: Object,
+    lastYear: Object,
   },
 
   components: { conditions },
@@ -48,7 +49,8 @@ export default {
     },
 
     highLastYear() {
-      return `${this.padString("N/A", 5, true)}`;
+      const highLastYear = this.lastYear?.temp?.max || "N/A";
+      return `${this.padString(highLastYear, 5, true)}`;
     },
 
     highNormal() {
@@ -67,7 +69,8 @@ export default {
     },
 
     lowLastYear() {
-      return `${this.padString("N/A", 5, true)}`;
+      const lowLastYear = this.lastYear?.temp?.min || "N/A";
+      return `${this.padString(lowLastYear, 5, true)}`;
     },
 
     lowNormal() {

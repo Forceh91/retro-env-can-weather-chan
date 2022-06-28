@@ -24,6 +24,7 @@
 <script>
 import { parseISO, format } from "date-fns";
 import { calculateWindChillNumber } from "../js/windChill";
+import conditionmixin from "../mixins/condition.mixin";
 
 export default {
   name: "Conditions",
@@ -32,6 +33,8 @@ export default {
     observed: String,
     conditions: Object,
   },
+
+  mixins: [conditionmixin],
 
   computed: {
     titleString() {
@@ -46,9 +49,7 @@ export default {
     },
 
     currentCondition() {
-      const condition = this.conditions.condition;
-      if (condition.includes("thunderstorms with")) return "Thunderstorms";
-      return `${condition.slice(0, 16)}`;
+      return this.truncateConditions(this.conditions?.condition);
     },
 
     temperature() {

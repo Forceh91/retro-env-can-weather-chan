@@ -74,7 +74,6 @@ function fetchWeatherForObservedUSCities() {
 
     // push this into what we send to the channel
     latestUSObservations.splice(0, latestUSObservations.length, ...stationsToPush);
-    console.log("us obs", latestUSObservations);
   });
 }
 

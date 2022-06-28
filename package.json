@@ -11,7 +11,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "cli-select": "^1.1.2",
-    "core-js": "^3.22.8",
+    "core-js": "^3.23.3",
     "cors": "^2.8.5",
     "date-fns": "^2.28.0",
     "ec-weather-js": "^1.2.0",
@@ -22,17 +22,17 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~5.0.4",
-    "@vue/cli-plugin-eslint": "~4.5.17",
-    "@vue/cli-plugin-unit-jest": "^4.5.17",
+    "@vue/cli-plugin-babel": "~5.0.6",
+    "@vue/cli-plugin-eslint": "~4.5.19",
+    "@vue/cli-plugin-unit-jest": "^4.5.19",
     "@vue/cli-service": "~4.5.15",
     "@vue/compiler-sfc": "^3.2.32",
-    "@vue/test-utils": "^2.0.0",
+    "@vue/test-utils": "^2.0.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.20.0",
-    "jsdom": "^19.0.0",
-    "sass": "^1.52.3",
+    "jsdom": "^20.0.0",
+    "sass": "^1.53.0",
     "sass-loader": "^8.0.0",
     "vue-jest": "^5.0.0-alpha.10",
     "webpack": "^5.73.0"

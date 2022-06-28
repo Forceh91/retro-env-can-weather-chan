@@ -20,6 +20,7 @@ const PAGE_CHANGE_FREQUENCY = 15 * 1000;
 
 import { format, parseISO } from "date-fns";
 import { EventBus } from "../js/EventBus";
+import conditionmixin from "../mixins/condition.mixin";
 
 export default {
   name: "Surrounding",
@@ -31,6 +32,8 @@ export default {
       default: () => [],
     },
   },
+
+  mixins: [conditionmixin],
 
   computed: {
     observationsUnavailable() {
@@ -92,8 +95,7 @@ export default {
     },
 
     trimCondition(val) {
-      let squishedVal = val?.replace(/shower/g, "");
-      return squishedVal?.slice(0, 13);
+      return this.truncateConditions(val);
     },
 
     padString(val, minLength, isFront) {

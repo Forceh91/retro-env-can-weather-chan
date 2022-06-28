@@ -1,19 +1,20 @@
 <template>
   <div id="warnings">
-    <div id="title">* WEATHER WARNINGS *</div>
-    <div v-if="warningsUnavailable">No warnings in effect</div>
+    <div v-if="warningsUnavailable">Warnings/Alerts temporarily unavailable</div>
     <ul v-else id="warnings_table">
       <li v-for="(warning, ix) in paginatedWarnings" :key="ix" :class="{ flash: shouldFlashWarning(warning) }">
-        <div class="description">{{ warning.description }}</div>
-        <div class="city"><template v-if="warning.type !== `ended`">In Effect</template> For {{ city }}</div>
+        <!-- <div class="description">{{ warning.description }}</div>
+        <div class="city"><template v-if="warning.type !== `ended`">In Effect</template> For {{ city }}</div> -->
+        <div class="headline">&nbsp;&nbsp;&nbsp;&nbsp;{{ cleanupHeadline(warning.headline) }}</div>
+        <div class="description">&nbsp;&nbsp;&nbsp;&nbsp;{{ truncateWarningDescription(warning.description) }}</div>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-const MAX_WARNINGS_PER_PAGE = 2;
-const PAGE_CHANGE_FREQUENCY = 20 * 1000;
+const MAX_WARNINGS_PER_PAGE = 1;
+const PAGE_CHANGE_FREQUENCY = 60 * 1000; // 60mins is good reading time now for descriptions
 
 import { EventBus } from "../js/EventBus";
 
@@ -29,7 +30,7 @@ export default {
 
   computed: {
     warningsUnavailable() {
-      return !this.warnings || !this.warnings.event;
+      return !this.warnings || !this.warnings.length;
     },
 
     paginatedWarnings() {
@@ -57,8 +58,9 @@ export default {
       if (this.warningsUnavailable) return EventBus.emit("warnings-complete");
 
       // got warnings so deal with them
-      if (!Array.isArray(this.warnings.event)) this.warningsList = [this.warnings.event];
-      else this.warningsList = [...this.warnings.event];
+      // if (!Array.isArray(this.warnings.event)) this.warningsList = [this.warnings.event];
+      // else this.warningsList = [...this.warnings.event];
+      this.warningsList = [...this.warnings];
 
       this.page = 1;
       this.pages = Math.ceil(this.warningsList?.length / MAX_WARNINGS_PER_PAGE);
@@ -76,50 +78,60 @@ export default {
     shouldFlashWarning(warning) {
       if (!warning) return false;
 
-      return warning.priority === "urgent" && warning.type !== "ended";
+      return warning.urgency === "Immediate";
+    },
+
+    cleanupHeadline(headline) {
+      headline = (headline || "").replace(" in effect", "");
+      return headline;
+    },
+
+    truncateWarningDescription(description) {
+      // get rid of some weird ### description stuff
+      description = (description || "").split(/\n\n###/g)[0];
+
+      // remove impacted locations as its a giant list
+      description = description.split("Locations impacted")[0];
+      return description.trim();
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-#title {
-  font-size: 30px;
-  margin-bottom: 30px;
-  text-align: center;
+#warnings {
+  width: calc(100% - 100px);
 }
 
 #warnings_table {
   list-style: none;
   margin: 0;
   padding: 0;
+  width: 100%;
 
   li {
     &:not(:last-child) {
       margin-bottom: 20px;
     }
 
-    text-align: center;
-
-    &.flash {
+    &.flash .headline {
       animation: flash 0.8s step-start 0s infinite;
     }
-  }
 
-  .description,
-  .city {
-    font-size: 25px;
-    margin-bottom: 5px;
-  }
+    .headline,
+    .description {
+      width: 100%;
+    }
 
-  .issued-at {
-    font-size: 20px;
+    width: 100%;
   }
 
   align-items: center;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 60px);
+  height: calc(100% - 5px);
+  overflow: hidden;
+  width: 100%;
 }
 
 /* flashing warnings from the original were 4 frames hidden, 11 frames visible */

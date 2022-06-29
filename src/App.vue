@@ -19,6 +19,12 @@
           :conditions="weather.currentConditions"
           :forecast="weather.forecast"
         />
+        <outlook
+          v-if="isOutlook"
+          :city="weather.city"
+          :forecast="weather.fullForecast"
+          :normals="weather.regionalNormals"
+        />
         <mbhighlow
           v-if="isMBHighLow"
           :enabled="showMBHighLowSetting"
@@ -76,10 +82,12 @@ const SCREENS = {
   MB_HIGH_LOW: { id: 7, length: 20 },
   CITY_STATS: { id: 8, length: 20 },
   US_SURROUNDING: { id: 9, length: 30 },
+  OUTLOOK: { id: 10, length: 30 },
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,
   SCREENS.FORECAST,
+  SCREENS.OUTLOOK,
   SCREENS.CITY_STATS,
   SCREENS.WARNINGS,
   SCREENS.WINDCHILL,
@@ -104,6 +112,7 @@ import mbhighlow from "./components/mbhighlow.vue";
 import citystats from "./components/citystats.vue";
 import playlist from "./components/playlist";
 import crawler from "./components/crawler";
+import Outlook from "./components/outlook.vue";
 
 export default {
   name: "App",
@@ -118,6 +127,7 @@ export default {
     citystats,
     playlist,
     crawler,
+    Outlook,
   },
   data() {
     return {
@@ -137,6 +147,7 @@ export default {
         highLowAroundMB: {},
         hotColdSpots: {},
         lastYear: {},
+        regionalNormals: {},
       },
       playlist: [],
       crawlerMessages: [],
@@ -179,6 +190,10 @@ export default {
 
     isForecast() {
       return this.currentScreenID === SCREENS.FORECAST.id;
+    },
+
+    isOutlook() {
+      return this.currentScreenID === SCREENS.OUTLOOK.id;
     },
 
     isSurrounding() {
@@ -302,11 +317,13 @@ export default {
           this.weather.currentConditions = data.current;
           this.weather.riseSet = data.riseSet;
           this.weather.forecast = data.upcomingForecast.slice(0, 5);
+          this.weather.fullForecast = data.upcomingForecast;
           this.weather.almanac = data.almanac;
           this.weather.warnings = data.warnings;
           this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
           this.weather.lastYear = data.last_year || {};
           this.weather.hotColdSpots = data.hot_cold || {};
+          this.weather.regionalNormals = data.regionalNormals || {};
         })
         .catch((err) => {
           console.error(err);

@@ -96,11 +96,8 @@ function fetchWeatherForObservedCities() {
         (city) => city.isBackup && isStationReporting(city) && city.area === area
       );
 
-      // get the number of non backup stations that aren't reporting
-      const nonReportingStationCount =
-        mainStations.filter(
-          (city) => city.area === area && city.observation?.condition === null && city.observation?.temp === null
-        )?.length || 0;
+      // get the number of main stations that aren't reporting
+      const nonReportingStationCount = mainStations.filter((city) => !isStationReporting(city))?.length || 0;
 
       // start off with this
       stationsToPush.push(...reportingMainStations);

@@ -61,9 +61,7 @@ function fetchWeatherForObservedUSCities() {
     const reportingBackupStations = results.filter((city) => city.isBackup && isStationReporting(city));
 
     // get the number of non backup stations that aren't reporting
-    const nonReportingStationCount =
-      mainStations.filter((city) => city.observation?.condition === null && city.observation?.temp === null)?.length ||
-      0;
+    const nonReportingStationCount = mainStations.filter((city) => !isStationReporting(city))?.length || 0;
 
     // start off with this
     const stationsToPush = [...reportingMainStations];

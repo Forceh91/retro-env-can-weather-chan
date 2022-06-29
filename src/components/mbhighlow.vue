@@ -114,10 +114,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#mb_high_low_screen {
-  width: calc(100% - 120px);
-}
-
 #city_list {
   margin: 0;
   list-style: none;

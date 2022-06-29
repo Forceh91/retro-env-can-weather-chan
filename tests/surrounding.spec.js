@@ -119,7 +119,7 @@ test("padTitle: makes sure a city name is always 13 characters", (done) => {
   done();
 });
 
-test("trimCondition: makes sure condition string is only 16 characters", (done) => {
+test("trimCondition: makes sure condition string is only 13 characters", (done) => {
   const conditionA = vm.trimCondition("sunny");
   expect(conditionA).toBe("sunny");
 
@@ -132,12 +132,18 @@ test("trimCondition: makes sure condition string is only 16 characters", (done) 
   done();
 });
 
-test("trimCondition: replaces 'shower' with a blank string", (done) => {
+test("trimCondition: handles light/heavy and rainshower better", (done) => {
   const conditionA = vm.trimCondition("sunny");
   expect(conditionA).toBe("sunny");
 
   const conditionB = vm.trimCondition("light rainshower");
-  expect(conditionB).toBe("light rainshower");
+  expect(conditionB).toBe("lght rainshwr");
+
+  expect(vm.trimCondition("heavy thunderstorm")).toBe("hvy tstorm");
+  expect(vm.trimCondition("heavy rainshower")).toBe("hvy rainshwr");
+  expect(vm.trimCondition("mostly cloudy")).toBe("mostly cloudy");
+  expect(vm.trimCondition("partly cloudy")).toBe("partly cloudy");
+  expect(vm.trimCondition("mostly clear")).toBe("mostly clear");
 
   done();
 });

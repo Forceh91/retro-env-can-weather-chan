@@ -95,7 +95,7 @@ export default {
     },
 
     trimCondition(val) {
-      return this.truncateConditions(val);
+      return this.harshTruncateConditions(val);
     },
 
     padString(val, minLength, isFront) {

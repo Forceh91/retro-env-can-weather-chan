@@ -50,7 +50,7 @@ export default {
     },
 
     hotColdTitleString() {
-      return `Canadian Hot/Cold Spot ${this.currentDate}`;
+      return `Canadian Hot/Cold Spot - ${this.currentDate}`;
     },
 
     hotSpotString() {

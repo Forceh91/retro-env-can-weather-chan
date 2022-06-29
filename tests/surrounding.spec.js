@@ -139,11 +139,14 @@ test("trimCondition: handles light/heavy and rainshower better", (done) => {
   const conditionB = vm.trimCondition("light rainshower");
   expect(conditionB).toBe("lght rainshwr");
 
-  expect(vm.trimCondition("heavy thunderstorm")).toBe("hvy tstorm");
+  expect(vm.trimCondition("")).toBe("");
+  expect(vm.trimCondition("heavy thunderstorm")).toBe("heavy tstorm");
   expect(vm.trimCondition("heavy rainshower")).toBe("hvy rainshwr");
   expect(vm.trimCondition("mostly cloudy")).toBe("mostly cloudy");
   expect(vm.trimCondition("partly cloudy")).toBe("partly cloudy");
   expect(vm.trimCondition("mostly clear")).toBe("mostly clear");
+  expect(vm.trimCondition("light rain")).toBe("light rain");
+  expect(vm.trimCondition("rainshower")).toBe("rainshower");
 
   done();
 });

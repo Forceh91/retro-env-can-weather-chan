@@ -60,7 +60,7 @@
         <div id="clock">
           TIME <span>{{ currentTime }}</span>
         </div>
-        <div id="date">{{ currentDate }}</div>
+        <div id="date" v-html="currentDate"></div>
         <div id="banner">Environment Canada Weather</div>
       </div>
     </div>
@@ -169,7 +169,14 @@ export default {
     },
 
     currentDate() {
-      return format(this.timezoneAdjustedDate(this.now), "EEE MMM dd");
+      const dateString = format(this.timezoneAdjustedDate(this.now), "EEE'&nbsp;' MMM'&nbsp;' dd");
+      return dateString
+        .replace(/tue&nbsp;/gi, "tues")
+        .replace(/thu&nbsp;/gi, "thur")
+        .replace(/jun&nbsp;/gi, "june")
+        .replace(/jul&nbsp;/gi, "july")
+        .replace(/sep&nbsp;/gi, "sept")
+        .replace(/\s0/, "&nbsp;&nbsp;");
     },
 
     currentScreenID() {

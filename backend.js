@@ -111,12 +111,14 @@ function startBackend(config) {
       .then((resp) => {
         const weather = new Weather(resp.data);
         if (!weather) return;
+
         res.send({
           location: weather.all.location,
           current: weather.current,
           riseSet: weather.all.riseSet,
           observed: weather.date,
           upcomingForecast: weather.weekly,
+          regionalNormals: weather.all.regionalNormals,
           warnings: capAlerts || [],
           almanac: weather.all.almanac,
           last_year: lastYearObservation(),

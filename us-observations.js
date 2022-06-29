@@ -79,7 +79,7 @@ function fetchWeatherForObservedUSCities() {
 
 function isStationReporting(station) {
   if (!station) return false;
-  return station.observation?.condition !== null || station.observation?.temp !== null;
+  return station.observation?.condition !== null && station.observation?.temp !== null;
 }
 
 module.exports = { fetchWeatherForObservedUSCities, latestUSObservations };

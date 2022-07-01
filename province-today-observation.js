@@ -20,7 +20,7 @@ function fetchProvinceObservationData(province) {
   url = url
     .replace("$YEAR", year)
     .replace("$MONTH", month < 10 ? `0${month}` : month)
-    .replace("$DAY", date);
+    .replace("$DAY", date < 10 ? `0${date}` : date);
 
   // now we can fetch the result
   axios

@@ -13,6 +13,7 @@ const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
 const { fetchLastYearObservation, lastYearObservation } = require("./historical-data.js");
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
 const { startAlertMonitoring, getAlertsFromCAP } = require("./alert-monitoring");
+const { isWinterSeason } = require("./date-utils.js");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -123,6 +124,7 @@ function startBackend(config) {
           almanac: weather.all.almanac,
           last_year: lastYearObservation(),
           hot_cold: getHotColdSpotsCanada(),
+          isWinter: isWinterSeason(),
         });
       })
       .catch(() => {

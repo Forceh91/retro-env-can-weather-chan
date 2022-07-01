@@ -62,6 +62,7 @@
           :season-precip="season?.precip"
           :is-winter="season?.isWinter"
         />
+        <lastmonth v-if="isLastMonthSummary" :city="weather.city" :last-month="climate.lastMonth" />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -77,6 +78,7 @@
 
 <script>
 const FETCH_WEATHER_INTERVAL = 60 * 1000 * 1;
+const FETCH_EXTRA_DATA_INTERVAL = 60 * 1000 * 10;
 // pages with subscreens (forecast, surrounding) have a fallback timeout incase
 // the subscreens fail to complete correctly
 const SCREENS = {
@@ -90,6 +92,8 @@ const SCREENS = {
   CITY_STATS: { id: 8, length: 20 },
   US_SURROUNDING: { id: 9, length: 30 },
   OUTLOOK: { id: 10, length: 20 },
+  RANDOM: { id: 11, length: 20 },
+  SUMMARY: { id: 12, length: 20 },
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,
@@ -102,6 +106,7 @@ const SCREEN_ROTATION = [
   SCREENS.SURROUNDING,
   SCREENS.US_SURROUNDING,
   SCREENS.CITY_STATS,
+  SCREENS.RANDOM,
 ];
 
 const BLUE_COL = "rgb(0,0,135)";
@@ -120,6 +125,7 @@ import citystats from "./components/citystats.vue";
 import playlist from "./components/playlist";
 import crawler from "./components/crawler";
 import Outlook from "./components/outlook.vue";
+import lastmonth from "./components/lastmonth.vue";
 
 export default {
   name: "App",
@@ -135,6 +141,7 @@ export default {
     playlist,
     crawler,
     Outlook,
+    lastmonth,
   },
   data() {
     return {
@@ -159,6 +166,9 @@ export default {
       season: {
         precip: null,
         isWinter: false,
+      },
+      climate: {
+        lastMonth: false,
       },
       playlist: [],
       crawlerMessages: [],
@@ -242,6 +252,10 @@ export default {
       return this.currentScreenID === SCREENS.CITY_STATS.id;
     },
 
+    isLastMonthSummary() {
+      return this.currentScreenID === SCREENS.SUMMARY.id;
+    },
+
     timeZone() {
       return this.weather.currentConditions?.dateTime[1]?.zone || "";
     },
@@ -260,16 +274,21 @@ export default {
       setInterval(() => {
         this.getSurroundingWeather();
         this.getSurroundingUSWeather();
-        this.getSeasonPrecipData();
         this.getWeather();
         if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       }, FETCH_WEATHER_INTERVAL);
+
+      setInterval(() => {
+        this.getSeasonPrecipData();
+        this.getLastMonthSummary();
+      }, FETCH_EXTRA_DATA_INTERVAL);
 
       this.setupEventCallbacks();
       this.getWeather();
       this.getSurroundingWeather();
       this.getSurroundingUSWeather();
       this.getSeasonPrecipData();
+      this.getLastMonthSummary();
       if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       this.handleScreenCycle();
     });
@@ -406,6 +425,20 @@ export default {
 
           this.season.precip = data;
           this.season.isWinter = data.isWinter;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+
+    getLastMonthSummary() {
+      this.$http
+        .get("/api/climate/lastmonth")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.summary) return (this.climate.lastMonth = false);
+
+          this.climate.lastMonth = data.summary;
         })
         .catch((err) => {
           console.error(err);

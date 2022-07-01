@@ -1,6 +1,11 @@
 const xmljs = require("xml-js");
 const axios = require("axios");
-const { isWinterSeason, isDateInCurrentWinterSeason, getShorthandMonthNamesForSeason } = require("./date-utils");
+const {
+  isWinterSeason,
+  isDateInCurrentWinterSeason,
+  isDateInCurrentSummerSeason,
+  getShorthandMonthNamesForSeason,
+} = require("./date-utils");
 
 // this is loaded from config but here's a backup for it
 const STATION_ID_TO_FETCH = 27174; // winnipeg a cs//51097; // winnipeg intl a
@@ -94,9 +99,10 @@ function fetchHistoricalData(stationID) {
       const isThisYear = parseInt(station._attributes.year) === today.getFullYear();
 
       // if its summer we get rainfall, if its winter we get snowfall
-      if (isWinterSeason && isDateInCurrentWinterSeason(date))
+      if (isWinterSeason() && isDateInCurrentWinterSeason(date))
         precipData.push(parseFloat(station.totalprecipitation?._text || 0));
-      else isThisYear && precipData.push(parseFloat(station.totalprecipitation?._text || 0));
+      else if (!isWinterSeason() && isDateInCurrentSummerSeason(date) && isThisYear)
+        precipData.push(parseFloat(station.totalprecipitation?._text || 0));
     });
 
     // now store the total precip for the current season
@@ -168,8 +174,8 @@ function getSeasonPrecipData() {
   return seasonPrecipData;
 }
 
-function getSeasonPrecpNormalsData() {
+function getSeasonPrecipNormalsData() {
   return seasonPrecipNormals;
 }
 
-module.exports = { fetchHistoricalData, lastYearObservation, getSeasonPrecipData, getSeasonPrecpNormalsData };
+module.exports = { fetchHistoricalData, lastYearObservation, getSeasonPrecipData, getSeasonPrecipNormalsData };

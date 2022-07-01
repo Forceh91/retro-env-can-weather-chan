@@ -11,10 +11,11 @@ const { fetchWeatherForObservedCities, latestObservations } = require("./observa
 const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
 const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
 const {
-  fetchHistoricalData,
+  initHistoricalData,
   lastYearObservation,
   getSeasonPrecipData,
   getSeasonPrecipNormalsData,
+  getLastMonthSummary,
 } = require("./historical-data.js");
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
 const { startAlertMonitoring, getAlertsFromCAP } = require("./alert-monitoring");
@@ -100,8 +101,7 @@ function startBackend(config) {
   setInterval(fetchWeatherForObservedUSCities, 7.5 * 60 * 1000);
 
   // historical data
-  fetchHistoricalData(config?.climateStationID);
-  setInterval(() => fetchHistoricalData(config?.climateStationID), 5 * 60 * 1000);
+  initHistoricalData(config?.climateStationID);
 
   // provincial today observations
   fetchProvinceObservationData(config?.primaryLocation?.province);
@@ -142,6 +142,12 @@ function startBackend(config) {
       isWinter: isWinterSeason(),
       totalPrecip: getSeasonPrecipData(),
       normalPrecip: getSeasonPrecipNormalsData(),
+    });
+  });
+
+  app.get("/api/climate/lastmonth", (req, res) => {
+    res.send({
+      summary: getLastMonthSummary() || false,
     });
   });
 

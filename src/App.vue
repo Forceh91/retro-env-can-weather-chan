@@ -458,6 +458,20 @@ export default {
       this.rotationIndex += 1;
       if (this.rotationIndex === SCREEN_ROTATION.length) this.rotationIndex = 0;
       this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
+
+      // if its a random extra screen then decide what to throw in
+      if (this.currentScreenID === SCREENS.RANDOM.id) {
+        // available screens are... LAST MONTH SUMMARY (if data is there)
+        const availableScreens = [];
+        if (this.climate.lastMonth) availableScreens.push(SCREENS.SUMMARY);
+        if (!availableScreens) return this.switchToNextScreen();
+
+        // pick a random screen from that
+        const randomScreen = availableScreens[Math.floor(Math.random() * availableScreens.length)];
+        if (!randomScreen) return this.switchToNextScreen();
+        this.currentScreen = randomScreen;
+      }
+
       this.handleScreenCycle();
     },
 

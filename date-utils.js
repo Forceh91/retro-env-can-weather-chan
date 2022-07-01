@@ -31,6 +31,22 @@ function isDateInCurrentWinterSeason(dateString) {
   );
 }
 
+function isDateInCurrentSummerSeason(dateString) {
+  const date = new Date();
+  const currentYear = date.getFullYear();
+
+  // winter season is october 1st to march 31st
+  const startOfCurrentSummerSeason = parseISO(`${currentYear}-04-01`);
+  const endOfCurrentSummerSeason = parseISO(`${currentYear}-09-30`);
+  const dateToCheck = parseISO(dateString);
+
+  // now we have all of our dates, we can compare them
+  return (
+    compareDesc(startOfCurrentSummerSeason, dateToCheck) !== -1 &&
+    compareAsc(endOfCurrentSummerSeason, dateToCheck) !== -1
+  );
+}
+
 function getShorthandMonthNamesForSeason(stopAtCurrentMonth) {
   let months = ["apr", "may", "jun", "jul", "aug", "sep"];
   if (isWinterSeason()) months = ["oct", "nov", "dec", "jan", "feb"];
@@ -44,4 +60,10 @@ function getShorthandMonthNamesForSeason(stopAtCurrentMonth) {
   return months;
 }
 
-module.exports = { isWinterSeason, isDateInWinterSeason, isDateInCurrentWinterSeason, getShorthandMonthNamesForSeason };
+module.exports = {
+  isWinterSeason,
+  isDateInWinterSeason,
+  isDateInCurrentWinterSeason,
+  isDateInCurrentSummerSeason,
+  getShorthandMonthNamesForSeason,
+};

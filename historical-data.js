@@ -1,14 +1,20 @@
 const xmljs = require("xml-js");
 const axios = require("axios");
-const { isWinterSeason, isDateInCurrentWinterSeason } = require("./date-utils");
+const { isWinterSeason, isDateInCurrentWinterSeason, getShorthandMonthNamesForSeason } = require("./date-utils");
 
-// TODO: Make this a config option somehow
+// this is loaded from config but here's a backup for it
 const STATION_ID_TO_FETCH = 27174; // winnipeg a cs//51097; // winnipeg intl a
 const HISTORICAL_DATA_URL =
   "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=xml&stationID=$STATION_ID&Year=$YEAR&time=&timeframe=2";
 
 let lastYearObservations = null;
-function fetchLastYearObservation() {
+let seasonPrecipData = null;
+let seasonPrecipNormals = null;
+function fetchHistoricalData(stationID) {
+  fetchClimateNormals();
+
+  stationID = stationID || STATION_ID_TO_FETCH;
+
   // fill in the station id
   let url = HISTORICAL_DATA_URL.replace("$STATION_ID", STATION_ID_TO_FETCH);
 
@@ -93,13 +99,77 @@ function fetchLastYearObservation() {
       else isThisYear && precipData.push(parseFloat(station.totalprecipitation?._text || 0));
     });
 
-    // now store the total precip for the current period
-    const totalPrecipForCurrentPeriod = precipData.reduce((acc, curr) => (acc += curr), 0);
+    // now store the total precip for the current season
+    const totalPrecipForCurrentSeason = precipData.reduce((acc, curr) => (acc += curr), 0);
+    seasonPrecipData = totalPrecipForCurrentSeason;
   });
+}
+
+function fetchClimateNormals() {
+  // this is winnipeg richardson intl a
+  // TODO: make this a config option
+  const STATION_ID = 3698;
+  const CLIMATE_ID = 5023222;
+  const PROVINCE = "MB";
+
+  // base url
+  let url =
+    "https://climate.weather.gc.ca/climate_normals/bulk_data_e.html?ffmt=xml&lang=e&prov=$PROVINCE&yr=1981&stnID=$STATION_ID&climateID=$CLIMATE_ID";
+  url = url
+    .replace(/\$PROVINCE/gi, PROVINCE)
+    .replace(/\$STATION_ID/gi, STATION_ID)
+    .replace(/\$CLIMATE_ID/gi, CLIMATE_ID);
+
+  axios
+    .get(url)
+    .then((resp) => {
+      const data = resp.data;
+      if (!data) return;
+
+      // convert to js object
+      const climateNormals = xmljs.xml2js(data, { compact: true });
+      if (!climateNormals) return;
+
+      const parentCollection = climateNormals["om:ObservationCollection"];
+      if (!parentCollection) return;
+
+      const observationsParent = parentCollection["om:member"]["om:Observation"];
+      if (!observationsParent) return;
+
+      const observations = observationsParent["om:result"]?.elements?.element;
+      if (!observations) return;
+
+      // now we can finally get precip normals, we'll take average and go from there
+      const precipNormals = observations.find((obs) => obs._attributes?.name === "precipitation");
+      if (!precipNormals || !precipNormals.element?.length) return;
+
+      // figure out what months we'll need
+      const months = getShorthandMonthNamesForSeason(true);
+      const precipDataForCurrentSeason = precipNormals.element?.filter((el) => {
+        const [, monthForEl] = el._attributes?.name.split("avg_rnfl_");
+        return months.includes(monthForEl);
+      });
+
+      const normalPrecipForCurentSeason = precipDataForCurrentSeason
+        .map((pcp) => parseFloat(pcp._attributes?.value || 0))
+        .reduce((acc, curr) => (acc += curr), 0);
+      seasonPrecipNormals = normalPrecipForCurentSeason;
+    })
+    .catch((e) => {
+      console.log("[CLIMATE NORMALS] Failed to fetch climate normals", e);
+    });
 }
 
 function lastYearObservation() {
   return lastYearObservations;
 }
 
-module.exports = { fetchLastYearObservation, lastYearObservation };
+function getSeasonPrecipData() {
+  return seasonPrecipData;
+}
+
+function getSeasonPrecpNormalsData() {
+  return seasonPrecipNormals;
+}
+
+module.exports = { fetchHistoricalData, lastYearObservation, getSeasonPrecipData, getSeasonPrecpNormalsData };

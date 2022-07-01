@@ -54,7 +54,14 @@
         />
         <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
         <windchill v-if="isWindChillEffects" :temp="currentTemp" />
-        <citystats v-if="isCityStats" :city="weather.city" :riseset="weather.riseSet" :hotcold="weather.hotColdSpots" />
+        <citystats
+          v-if="isCityStats"
+          :city="weather.city"
+          :riseset="weather.riseSet"
+          :hotcold="weather.hotColdSpots"
+          :season-precip="season?.precip"
+          :is-winter="season?.isWinter"
+        />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -148,6 +155,10 @@ export default {
         hotColdSpots: {},
         lastYear: {},
         regionalNormals: {},
+      },
+      season: {
+        precip: null,
+        isWinter: false,
       },
       playlist: [],
       crawlerMessages: [],
@@ -249,6 +260,7 @@ export default {
       setInterval(() => {
         this.getSurroundingWeather();
         this.getSurroundingUSWeather();
+        this.getSeasonPrecipData();
         this.getWeather();
         if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       }, FETCH_WEATHER_INTERVAL);
@@ -257,6 +269,7 @@ export default {
       this.getWeather();
       this.getSurroundingWeather();
       this.getSurroundingUSWeather();
+      this.getSeasonPrecipData();
       if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       this.handleScreenCycle();
     });
@@ -378,6 +391,21 @@ export default {
           if (!data || !data.values || !data.values.length) return;
 
           this.weather.highLowAroundMB = data;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+
+    getSeasonPrecipData() {
+      this.$http
+        .get("/api/climate/season/precip")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.normalPrecip) return;
+
+          this.season.precip = data;
+          this.season.isWinter = data.isWinter;
         })
         .catch((err) => {
           console.error(err);

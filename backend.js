@@ -10,7 +10,12 @@ const { generateCrawler, getCrawler } = require("./generate-crawler.js");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
 const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
-const { fetchLastYearObservation, lastYearObservation } = require("./historical-data.js");
+const {
+  fetchHistoricalData,
+  lastYearObservation,
+  getSeasonPrecipData,
+  getSeasonPrecipNormalsData,
+} = require("./historical-data.js");
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
 const { startAlertMonitoring, getAlertsFromCAP } = require("./alert-monitoring");
 const { isWinterSeason } = require("./date-utils.js");
@@ -95,8 +100,8 @@ function startBackend(config) {
   setInterval(fetchWeatherForObservedUSCities, 7.5 * 60 * 1000);
 
   // historical data
-  fetchLastYearObservation();
-  setInterval(fetchLastYearObservation, 5 * 60 * 1000);
+  fetchHistoricalData(config?.climateStationID);
+  setInterval(() => fetchHistoricalData(config?.climateStationID), 5 * 60 * 1000);
 
   // provincial today observations
   fetchProvinceObservationData(config?.primaryLocation?.province);
@@ -130,6 +135,14 @@ function startBackend(config) {
       .catch(() => {
         res.sendStatus(404);
       });
+  });
+
+  app.get("/api/climate/season/precip", (req, res) => {
+    res.send({
+      isWinter: isWinterSeason(),
+      totalPrecip: getSeasonPrecipData(),
+      normalPrecip: getSeasonPrecipNormalsData(),
+    });
   });
 
   app.get("/api/weather/surrounding", (req, res) => {

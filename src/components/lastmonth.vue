@@ -16,7 +16,7 @@
 
 <script>
 import stringmixin from "../mixins/stringpad.mixin";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 
 export default {
   name: "last-month",
@@ -100,6 +100,7 @@ export default {
       number = parseInt(number);
       const date = new Date();
       date.setDate(number);
+      if (!isValid(date)) return number;
 
       return this.padString(format(date, "do"), 4, true);
     },

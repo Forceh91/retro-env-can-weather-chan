@@ -5,7 +5,9 @@ const {
   isDateInCurrentWinterSeason,
   isDateInCurrentSummerSeason,
   getShorthandMonthNamesForSeason,
+  isStartOfMonth,
 } = require("./date-utils");
+const { subMonths, startOfMonth, endOfMonth, compareAsc, compareDesc, parseISO, format } = require("date-fns");
 
 // this is loaded from config but here's a backup for it
 const STATION_ID_TO_FETCH = 27174; // winnipeg a cs//51097; // winnipeg intl a
@@ -15,6 +17,15 @@ const HISTORICAL_DATA_URL =
 let lastYearObservations = null;
 let seasonPrecipData = null;
 let seasonPrecipNormals = null;
+let lastMonthSummary = false;
+
+function initHistoricalData(climateStationID) {
+  fetchHistoricalData(climateStationID);
+  setInterval(() => fetchHistoricalData(climateStationID), 5 * 60 * 1000);
+}
+
+const pad = (val) => (val < 10 ? `0${val}` : val);
+
 function fetchHistoricalData(stationID) {
   fetchClimateNormals();
 
@@ -86,8 +97,6 @@ function fetchHistoricalData(stationID) {
       };
 
     // now we're going to figure out precip data for the current season
-    const pad = (val) => (val < 10 ? `0${val}` : val);
-
     // by looping through an entire two years worth of data (:
     const precipData = [];
     combinedStationData.forEach((station) => {
@@ -108,6 +117,9 @@ function fetchHistoricalData(stationID) {
     // now store the total precip for the current season
     const totalPrecipForCurrentSeason = precipData.reduce((acc, curr) => (acc += curr), 0);
     seasonPrecipData = totalPrecipForCurrentSeason;
+
+    // figure out a last month summary
+    getSummaryOfLastMonth(combinedStationData);
   });
 }
 
@@ -156,14 +168,95 @@ function fetchClimateNormals() {
         return months.includes(monthForEl);
       });
 
+      // and generate the total precip for the current season
       const normalPrecipForCurentSeason = precipDataForCurrentSeason
         .map((pcp) => parseFloat(pcp._attributes?.value || 0))
         .reduce((acc, curr) => (acc += curr), 0);
       seasonPrecipNormals = normalPrecipForCurentSeason;
+
+      // get the normals for the previous month
+      const tempNormals = observations.find((obs) => obs._attributes?.name === "temperature");
+      if (!tempNormals || !tempNormals.element?.length) return;
+
+      getSummaryOfLastMonthNormals(tempNormals.element, precipNormals.element);
     })
     .catch((e) => {
       console.log("[CLIMATE NORMALS] Failed to fetch climate normals", e);
     });
+}
+
+function getSummaryOfLastMonth(stationData) {
+  // no point doing this if it's past day 5 really
+  if (!isStartOfMonth()) return (lastMonthSummary = false);
+
+  // get start/end of last month
+  const date = new Date();
+  const startOfLastMonth = startOfMonth(subMonths(date, 1));
+  const endOfLastMonth = endOfMonth(startOfLastMonth);
+
+  // get the data for the last month from our station data
+  const dataForLastMonth = stationData.filter((station) => {
+    const date = `${parseInt(station._attributes.year)}-${pad(parseInt(station._attributes.month))}-${pad(
+      parseInt(station._attributes.day)
+    )}`;
+
+    return compareDesc(startOfLastMonth, parseISO(date)) !== -1 && compareAsc(endOfLastMonth, parseISO(date)) !== -1;
+  });
+
+  // now we have all of the data for the last month we need to get the following:
+  // average high/low, precip (mm) / snowfall(cm), warmest day (temp+day), coldest day (temp+day)
+  const highTemps = [];
+  const lowTemps = [];
+  const precipValues = [];
+  dataForLastMonth.forEach((station) => {
+    const day = station._attributes?.day;
+    highTemps.push({ day, temp: parseFloat(station.maxtemp?._text || 0) });
+    lowTemps.push({ day, temp: parseFloat(station.mintemp?._text || 0) });
+    precipValues.push({ day, precip: parseFloat(station.totalprecipitation?._text || 0) });
+  });
+
+  // now we can calculate the average high/low, and total precip
+  const averageHigh = highTemps.reduce((acc, curr) => (acc += curr.temp), 0) / highTemps.length;
+  const averageLow = lowTemps.reduce((acc, curr) => (acc += curr.temp), 0) / lowTemps.length;
+  const totalPrecip = precipValues.reduce((acc, curr) => (acc += curr.precip), 0);
+  const warmestDay = Math.max(...highTemps.map((ht) => ht.temp));
+  const coldestDay = Math.min(...lowTemps.map((lt) => lt.temp));
+
+  // store this as actual data
+  if (!lastMonthSummary) lastMonthSummary = {};
+  lastMonthSummary.actual = {
+    averageHigh: averageHigh.toFixed(1),
+    averageLow: averageLow.toFixed(1),
+    totalPrecip: totalPrecip.toFixed(1),
+    warmestDay: highTemps.find((ht) => ht.temp === warmestDay),
+    coldestDay: lowTemps.find((lt) => lt.temp === coldestDay),
+  };
+}
+
+function getSummaryOfLastMonthNormals(normalTemps, normalPrecip) {
+  // no point doing this if it's past day 5 really
+  if (!isStartOfMonth()) return (lastMonthSummary = false);
+
+  // get the month name for last month
+  const date = new Date();
+  const monthName = format(subMonths(date, 1), "MMM").toLowerCase();
+
+  const averagePrecipElement = normalPrecip.find((e) => e._attributes?.name === `avg_pcpn_${monthName}`);
+  const averagePrecip = (averagePrecipElement && parseFloat(averagePrecipElement._attributes?.value || 0)) || 0;
+
+  const maxTempElement = normalTemps.find((e) => e._attributes?.name === `max_temp_dly_${monthName}`);
+  const maxTemp = (maxTempElement && parseFloat(maxTempElement._attributes?.value || 0)) || 0;
+
+  const minTempElement = normalTemps.find((e) => e._attributes?.name === `min_temp_dly_${monthName}`);
+  const minTemp = (minTempElement && parseFloat(minTempElement._attributes?.value || 0)) || 0;
+
+  // store this as actual data
+  if (!lastMonthSummary) lastMonthSummary = {};
+  lastMonthSummary.normal = {
+    normalHigh: maxTemp.toFixed(1),
+    normalLow: minTemp.toFixed(1),
+    normalPrecip: averagePrecip.toFixed(1),
+  };
 }
 
 function lastYearObservation() {
@@ -178,4 +271,15 @@ function getSeasonPrecipNormalsData() {
   return seasonPrecipNormals;
 }
 
-module.exports = { fetchHistoricalData, lastYearObservation, getSeasonPrecipData, getSeasonPrecipNormalsData };
+function getLastMonthSummary() {
+  if (lastMonthSummary) lastMonthSummary.month = format(subMonths(Date.now(), 1), "MMMM");
+  return lastMonthSummary;
+}
+
+module.exports = {
+  initHistoricalData,
+  lastYearObservation,
+  getSeasonPrecipData,
+  getSeasonPrecipNormalsData,
+  getLastMonthSummary,
+};

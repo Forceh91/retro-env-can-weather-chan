@@ -60,10 +60,16 @@ function getShorthandMonthNamesForSeason(stopAtCurrentMonth) {
   return months;
 }
 
+function isStartOfMonth() {
+  const date = new Date();
+  return date.getDate() <= 5;
+}
+
 module.exports = {
   isWinterSeason,
   isDateInWinterSeason,
   isDateInCurrentWinterSeason,
   isDateInCurrentSummerSeason,
   getShorthandMonthNamesForSeason,
+  isStartOfMonth,
 };

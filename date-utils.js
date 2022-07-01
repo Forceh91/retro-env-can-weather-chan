@@ -1,4 +1,4 @@
-const { parseISO, compareAsc, compareDesc } = require("date-fns");
+const { parseISO, compareAsc, compareDesc, format } = require("date-fns");
 
 function isWinterSeason(month) {
   // remember that months are 0 indexed
@@ -31,4 +31,17 @@ function isDateInCurrentWinterSeason(dateString) {
   );
 }
 
-module.exports = { isWinterSeason, isDateInWinterSeason, isDateInCurrentWinterSeason };
+function getShorthandMonthNamesForSeason(stopAtCurrentMonth) {
+  let months = ["apr", "may", "jun", "jul", "aug", "sep"];
+  if (isWinterSeason()) months = ["oct", "nov", "dec", "jan", "feb"];
+
+  if (stopAtCurrentMonth) {
+    const currMonth = format(Date.now(), "MMM").toLowerCase();
+    const currMonthIx = months.indexOf(currMonth);
+    if (currMonthIx !== -1) months.splice(currMonthIx, months.length - 1);
+  }
+
+  return months;
+}
+
+module.exports = { isWinterSeason, isDateInWinterSeason, isDateInCurrentWinterSeason, getShorthandMonthNamesForSeason };

@@ -50,7 +50,7 @@ export default {
     },
 
     currentDate() {
-      return format(new Date().getTime(), "MMM dd");
+      return format(new Date().getTime(), "MMM d");
     },
 
     sunriseset() {
@@ -88,7 +88,7 @@ export default {
     },
 
     precipActual() {
-      const totalPrecip = `${this.seasonPrecip.totalPrecip} MM`;
+      const totalPrecip = `${this.seasonPrecip.totalPrecip || 0} MM`;
       const dateString = `${this.isWinter ? `October` : `April`} 1st`;
 
       // how many dots we need here
@@ -99,7 +99,7 @@ export default {
     },
 
     precipNormal() {
-      const normalPrecip = `${this.seasonPrecip.normalPrecip} MM`;
+      const normalPrecip = `${this.seasonPrecip.normalPrecip || 0} MM`;
       const dateString = `Normal`;
 
       // how many dots we need here

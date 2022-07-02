@@ -213,7 +213,7 @@ export default [
     relativeHumidity: { units: "%", value: "60" },
   },
   {
-    day: "tuesday mogjt",
+    day: "tuesday night",
     textSummary: "A mix of sun and cloud. High 23.",
     cloudPrecip: { textSummary: "A mix of sun and cloud." },
     abbreviatedForecast: {
@@ -246,6 +246,68 @@ export default [
     winds: null,
     humidex: null,
     precipitation: { textSummary: null, precipType: { start: "", end: "" } },
+    relativeHumidity: { units: "%", value: "60" },
+  },
+  {
+    day: "wednesday night",
+    textSummary:
+      "Partly cloudy. 30 percent chance of showers early this evening with risk of a thunderstorm. Clearing late this evening. Low 13.",
+    cloudPrecip: {
+      textSummary:
+        "Partly cloudy. 30 percent chance of showers early this evening with risk of a thunderstorm. Clearing late this evening.",
+    },
+    abbreviatedForecast: {
+      iconCode: { format: "gif", value: "39" },
+      pop: { units: "%", value: "30" },
+      textSummary: "Chance of showers",
+    },
+    temperatures: {
+      textSummary: "Low 13.",
+      temperature: { unitType: "metric", units: "C", class: "low", value: "13" },
+    },
+    winds: null,
+    humidex: null,
+    precipitation: { textSummary: null, precipType: { start: "19", end: "22", value: "rain" } },
+    relativeHumidity: { units: "%", value: "60" },
+  },
+  {
+    day: "thursday",
+    textSummary: "A mix of sun and cloud. High 23.",
+    cloudPrecip: { textSummary: "A mix of sun and cloud." },
+    abbreviatedForecast: {
+      iconCode: { format: "gif", value: "02" },
+      pop: { units: "%" },
+      textSummary: "A mix of sun and cloud",
+    },
+    temperatures: {
+      textSummary: "High 23.",
+      temperature: { unitType: "metric", units: "C", class: "high", value: "23" },
+    },
+    winds: null,
+    humidex: null,
+    precipitation: { textSummary: null, precipType: { start: "", end: "" } },
+    relativeHumidity: { units: "%", value: "60" },
+  },
+  {
+    day: "thursday night",
+    textSummary:
+      "Partly cloudy. 30 percent chance of showers early this evening with risk of a thunderstorm. Clearing late this evening. Low 13.",
+    cloudPrecip: {
+      textSummary:
+        "Partly cloudy. 30 percent chance of showers early this evening with risk of a thunderstorm. Clearing late this evening.",
+    },
+    abbreviatedForecast: {
+      iconCode: { format: "gif", value: "39" },
+      pop: { units: "%", value: "30" },
+      textSummary: "Chance of showers",
+    },
+    temperatures: {
+      textSummary: "Low 13.",
+      temperature: { unitType: "metric", units: "C", class: "low", value: "13" },
+    },
+    winds: null,
+    humidex: null,
+    precipitation: { textSummary: null, precipType: { start: "19", end: "22", value: "rain" } },
     relativeHumidity: { units: "%", value: "60" },
   },
 ];

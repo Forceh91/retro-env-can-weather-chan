@@ -107,13 +107,13 @@ test("fillEllipsis: fills in ellipsis correctly", (done) => {
   wrapper.setProps({ hotcold: { hot: { city: "some place", province: "on" } } });
   vm.$nextTick(() => {
     const stringA = vm.fillEllipsis(vm.hotcold.hot);
-    expect(stringA).toBe("...................");
+    expect(stringA).toBe("............");
 
     const stringB = vm.fillEllipsis();
-    expect(stringB).toBe("...............................");
+    expect(stringB).toBe("........................");
 
     const stringC = vm.fillEllipsis({ city: "another place", province: "on" });
-    expect(stringC).toBe("................");
+    expect(stringC).toBe(".........");
     done();
   });
 });
@@ -135,19 +135,19 @@ test("hotSpotString: is computed correctly", (done) => {
   wrapper.setProps({ hotcold: { hot: { city: "some place", province: "on", temp: "20" } } });
   vm.$nextTick(() => {
     expect(vm.hotSpotString).toStrictEqual(
-      `${vm.hotcold.hot.city}, ${vm.hotcold.hot.province}&nbsp;...................&nbsp;${vm.hotcold.hot.temp}`
+      `&nbsp;${vm.hotcold.hot.city}, ${vm.hotcold.hot.province}&nbsp;............&nbsp;${vm.hotcold.hot.temp}`
     );
     done();
   });
 });
 
 test("coldSpotString: is computed correctly", (done) => {
-  expect(vm.coldSpotString).toStrictEqual(`N/A, N/A&nbsp;...............................N/A`);
+  expect(vm.coldSpotString).toStrictEqual(`&nbsp;N/A, N/A&nbsp;........................N/A`);
 
   wrapper.setProps({ hotcold: { cold: { city: "another place", province: "on", temp: "-5" } } });
   vm.$nextTick(() => {
     expect(vm.coldSpotString).toStrictEqual(
-      `${vm.hotcold.cold.city}, ${vm.hotcold.cold.province}&nbsp;................&nbsp;${vm.hotcold.cold.temp}`
+      `&nbsp;${vm.hotcold.cold.city}, ${vm.hotcold.cold.province}&nbsp;.........&nbsp;${vm.hotcold.cold.temp}`
     );
     done();
   });

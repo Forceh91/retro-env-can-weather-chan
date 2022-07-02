@@ -1,22 +1,21 @@
 <template>
   <div id="city_stats">
-    <template v-if="cityStatsUnavailable">Stats temporarily unavailable</template>
-    <template v-else>
-      <div id="title">{{ titleString }}</div>
+    <div v-if="cityStatsUnavailable">Stats temporarily unavailable</div>
+    <div v-else>
+      <div id="title">&nbsp;&nbsp;{{ titleString }}</div>
       <div id="rise_set">{{ sunriseset }}</div>
-      <!-- normally precip data goes here -->
-      <div id="precip_title">{{ precipTitle }}</div>
-      <div id="precip_actual">{{ precipActual }}</div>
-      <div id="precip_normal">{{ precipNormal }}</div>
+      <div id="precip_title">&nbsp;&nbsp;&nbsp;&nbsp;{{ precipTitle }}</div>
+      <div id="precip_actual">&nbsp;&nbsp;{{ precipActual }}</div>
+      <div id="precip_normal">&nbsp;&nbsp;{{ precipNormal }}</div>
       <div id="hot_cold_title">{{ hotColdTitleString }}</div>
       <div id="hot_spot" v-html="hotSpotString"></div>
       <div id="cold_spot" v-html="coldSpotString"></div>
-    </template>
+    </div>
   </div>
 </template>
 
 <script>
-const HOT_COLD_SPOT_MAX_LENGTH = 31;
+const HOT_COLD_SPOT_MAX_LENGTH = 24;
 const PRECIP_STRING_WITH_DATA_LENGTH = 29;
 import { format } from "date-fns";
 import stringpadmixin from "../mixins/stringpad.mixin";
@@ -50,7 +49,11 @@ export default {
     },
 
     currentDate() {
-      return format(new Date().getTime(), "MMM d");
+      const dateString = format(new Date().getTime(), "MMM'&nbsp;' d");
+      return dateString
+        .replace(/jun&nbsp;/gi, "june")
+        .replace(/jul&nbsp;/gi, "july")
+        .replace(/sep&nbsp;/gi, "sept");
     },
 
     sunriseset() {
@@ -72,15 +75,21 @@ export default {
     },
 
     hotSpotString() {
-      return `${this.hotcold?.hot?.city || "N/A"}, ${this.hotcold?.hot?.province || "N/A"}&nbsp;${this.fillEllipsis(
-        this.hotcold?.hot
-      )}${this.padString((this.hotcold.hot?.temp || "N/A").split(".")[0], 3, true)}`;
+      return `&nbsp;${(this.hotcold?.hot?.city || "N/A").slice(0, 17)}, ${this.hotcold?.hot?.province ||
+        "N/A"}&nbsp;${this.fillEllipsis(this.hotcold?.hot)}${this.padString(
+        (this.hotcold.hot?.temp || "N/A").split(".")[0],
+        3,
+        true
+      )}`;
     },
 
     coldSpotString() {
-      return `${this.hotcold?.cold?.city || "N/A"}, ${this.hotcold?.cold?.province || "N/A"}&nbsp;${this.fillEllipsis(
-        this.hotcold?.cold
-      )}${this.padString((this.hotcold.cold?.temp || "N/A").split(".")[0], 3, true)}`;
+      return `&nbsp;${(this.hotcold?.cold?.city || "N/A").slice(0, 17)}, ${this.hotcold?.cold?.province ||
+        "N/A"}&nbsp;${this.fillEllipsis(this.hotcold?.cold)}${this.padString(
+        (this.hotcold.cold?.temp || "N/A").split(".")[0],
+        3,
+        true
+      )}`;
     },
 
     precipTitle() {
@@ -88,7 +97,7 @@ export default {
     },
 
     precipActual() {
-      const totalPrecip = `${this.seasonPrecip.totalPrecip || 0} MM`;
+      const totalPrecip = `${this.seasonPrecip?.totalPrecip || 0} MM`;
       const dateString = `${this.isWinter ? `October` : `April`} 1st`;
 
       // how many dots we need here
@@ -99,7 +108,7 @@ export default {
     },
 
     precipNormal() {
-      const normalPrecip = `${this.seasonPrecip.normalPrecip || 0} MM`;
+      const normalPrecip = `${this.seasonPrecip?.normalPrecip || 0} MM`;
       const dateString = `Normal`;
 
       // how many dots we need here
@@ -133,10 +142,5 @@ export default {
   display: flex;
   font-size: 1.3rem;
   flex-direction: column;
-  width: calc(100% - 60px);
-
-  #rise_set {
-    text-align: center;
-  }
 }
 </style>

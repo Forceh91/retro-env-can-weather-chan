@@ -124,6 +124,28 @@ test("shouldShowWindchill: is computed correctly", (done) => {
   done();
 });
 
+it("shouldShowExtraData: is computed correctly", (done) => {
+  expect(vm.shouldShowExtraData).toBe(false);
+
+  wrapper.setProps({ airQuality: { summary: "Good", aqhi: 2.4, hourObserved: "10PM" } });
+  vm.$nextTick(() => {
+    vm.conditions.temperature.value = -1;
+    expect(vm.shouldShowExtraData).not.toBe(false);
+    expect(vm.shouldShowWindchill).toBe(true);
+    expect(vm.shouldShowAQHI).toBe(false);
+    expect(vm.aqhiSummary).toBe(false);
+    done();
+  });
+});
+
+it("shouldShowAQHI: is computed correctly", (done) => {
+  vm.conditions.temperature.value = 1;
+  expect(vm.shouldShowExtraData).not.toBe(false);
+  expect(vm.shouldShowAQHI).not.toBe(false);
+  expect(vm.aqhiSummary).toBe("Good");
+  done();
+});
+
 test("padString: pads strings correctly", (done) => {
   const stringA = vm.padString("-15.5", 5);
   expect(stringA).toBe("-15.5");

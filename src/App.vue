@@ -18,6 +18,7 @@
           :observed="weather.observed"
           :conditions="weather.currentConditions"
           :forecast="weather.forecast"
+          :air-quality="weather.airQuality"
         />
         <outlook
           v-if="isOutlook"
@@ -158,6 +159,7 @@ export default {
         surroundingObservations: null,
         surroundingUSObservations: null,
         almanac: null,
+        airQuality: null,
         highLowAroundMB: {},
         hotColdSpots: {},
         lastYear: {},
@@ -358,6 +360,7 @@ export default {
           this.weather.forecast = data.upcomingForecast.slice(0, 5);
           this.weather.fullForecast = data.upcomingForecast;
           this.weather.almanac = data.almanac;
+          this.weather.airQuality = data.airQuality;
           this.weather.warnings = data.warnings;
           this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
           this.weather.lastYear = data.last_year || {};

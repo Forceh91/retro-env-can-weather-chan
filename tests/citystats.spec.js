@@ -103,21 +103,6 @@ test("pad: pads out numbers less than 10 with a 0", (done) => {
   done();
 });
 
-test("fillEllipsis: fills in ellipsis correctly", (done) => {
-  wrapper.setProps({ hotcold: { hot: { city: "some place", province: "on" } } });
-  vm.$nextTick(() => {
-    const stringA = vm.fillEllipsis(vm.hotcold.hot);
-    expect(stringA).toBe("............");
-
-    const stringB = vm.fillEllipsis();
-    expect(stringB).toBe("........................");
-
-    const stringC = vm.fillEllipsis({ city: "another place", province: "on" });
-    expect(stringC).toBe(".........");
-    done();
-  });
-});
-
 test("titleString: is computed correctly", (done) => {
   wrapper.setProps({ city: "Winnipeg" });
   vm.$nextTick(() => {
@@ -135,19 +120,19 @@ test("hotSpotString: is computed correctly", (done) => {
   wrapper.setProps({ hotcold: { hot: { city: "some place", province: "on", temp: "20" } } });
   vm.$nextTick(() => {
     expect(vm.hotSpotString).toStrictEqual(
-      `&nbsp;${vm.hotcold.hot.city}, ${vm.hotcold.hot.province}&nbsp;............&nbsp;${vm.hotcold.hot.temp}`
+      `&nbsp;${vm.hotcold.hot.city},&nbsp;${vm.hotcold.hot.province}&nbsp;............&nbsp;${vm.hotcold.hot.temp}`
     );
     done();
   });
 });
 
 test("coldSpotString: is computed correctly", (done) => {
-  expect(vm.coldSpotString).toStrictEqual(`&nbsp;N/A, N/A&nbsp;........................N/A`);
+  expect(vm.coldSpotString).toStrictEqual(`&nbsp;N/A,&nbsp;N/A&nbsp;...................N/A`);
 
   wrapper.setProps({ hotcold: { cold: { city: "another place", province: "on", temp: "-5" } } });
   vm.$nextTick(() => {
     expect(vm.coldSpotString).toStrictEqual(
-      `&nbsp;${vm.hotcold.cold.city}, ${vm.hotcold.cold.province}&nbsp;.........&nbsp;${vm.hotcold.cold.temp}`
+      `&nbsp;${vm.hotcold.cold.city},&nbsp;${vm.hotcold.cold.province}&nbsp;.........&nbsp;${vm.hotcold.cold.temp}`
     );
     done();
   });
@@ -158,7 +143,7 @@ test("precipTitle: is computed correctly", (done) => {
 
   wrapper.setProps({ isWinter: true });
   vm.$nextTick(() => {
-    expect(vm.precipTitle).toBe("Total Snowfall Since");
+    expect(vm.precipTitle).toBe("Total Precipitation Since");
     done();
   });
 });

@@ -19,6 +19,7 @@ const {
 } = require("./historical-data.js");
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
 const { startAlertMonitoring, getAlertsFromCAP } = require("./alert-monitoring");
+const { initAQHIObservation, getAQHIObservation } = require("./aqhi-observation");
 const { isWinterSeason } = require("./date-utils.js");
 
 const corsOptions = {
@@ -103,6 +104,9 @@ function startBackend(config) {
   // historical data
   initHistoricalData(config?.climateStationID);
 
+  // air quality readings
+  initAQHIObservation(config?.primaryLocation?.name);
+
   // provincial today observations
   fetchProvinceObservationData(config?.primaryLocation?.province);
   setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
@@ -127,6 +131,7 @@ function startBackend(config) {
           regionalNormals: weather.all.regionalNormals,
           warnings: capAlerts || [],
           almanac: weather.all.almanac,
+          airQuality: getAQHIObservation(),
           last_year: lastYearObservation(),
           hot_cold: getHotColdSpotsCanada(),
           isWinter: isWinterSeason(),

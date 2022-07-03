@@ -129,7 +129,8 @@ export default {
     },
 
     precipTitle() {
-      return `Total ${this.isWinter ? "Snowfall" : "Precipitation"} Since`;
+      // if its winter it should be "snowfall" but alas we don't get that info anymore
+      return `Total ${this.isWinter ? "Precipitation" : "Precipitation"} Since`;
     },
 
     precipActual() {

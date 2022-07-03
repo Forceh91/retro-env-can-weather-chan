@@ -11,9 +11,11 @@
         <span v-html="padString('', 5)"></span><span>{{ currentCondition }}</span>
       </div>
       <div>
-        <template v-if="shouldShowWindchill">
+        <template v-if="shouldShowExtraData">
           <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
-          <span v-html="padString('', 4)"></span><span>Wind Chill {{ windchill }}</span>
+          <span v-html="padString('', 4)"></span>
+          <span v-if="shouldShowWindchill">Wind Chill {{ windchill }}</span>
+          <span v-if="shouldShowAQHI">Air Quality {{ aqhiSummary }}</span>
         </template>
         <template v-else>
           <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visibility&nbsp;&nbsp;</span><span v-html="visibility"></span>
@@ -37,6 +39,7 @@ export default {
     city: String,
     observed: String,
     conditions: Object,
+    airQuality: Object,
     showPressure: {
       type: Boolean,
       default: true,
@@ -111,6 +114,18 @@ export default {
 
     shouldShowWindchill() {
       return this.windchill > 0;
+    },
+
+    aqhiSummary() {
+      return this.shouldShowAQHI && this.airQuality?.summary;
+    },
+
+    shouldShowAQHI() {
+      return (!this.shouldShowWindchill && this.airQuality) || false;
+    },
+
+    shouldShowExtraData() {
+      return this.shouldShowWindchill || this.shouldShowAQHI || false;
     },
   },
 

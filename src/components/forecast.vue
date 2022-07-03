@@ -3,7 +3,13 @@
     <div v-if="forecastUnavailable" id="no_data">Forecast temporarily unavailable</div>
     <template v-else>
       <template v-if="!page">
-        <conditions :city="city" :observed="observed" :conditions="conditions" :show-pressure="false" />
+        <conditions
+          :city="city"
+          :observed="observed"
+          :conditions="conditions"
+          :show-pressure="false"
+          :air-quality="airQuality"
+        />
         <div id="next_forecast" class="full-width">
           <span class="label"
             >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{ forecast[0]?.textSummary }}</span></span
@@ -44,6 +50,7 @@ export default {
     observed: String,
     conditions: Object,
     forecast: Array,
+    airQuality: Object,
   },
 
   components: { conditions },

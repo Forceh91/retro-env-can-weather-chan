@@ -85,7 +85,7 @@ function fetchHistoricalData(stationID) {
     // so we can get what the last year observations were
     const stationDataTodayLastYear = combinedStationData.find(
       (sd) =>
-        parseInt(sd._attributes.day) === today.getDay() &&
+        parseInt(sd._attributes.day) === today.getDate() &&
         parseInt(sd._attributes.month) === today.getMonth() + 1 &&
         parseInt(sd._attributes.year) === lastYear
     );

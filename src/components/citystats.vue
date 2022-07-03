@@ -24,7 +24,7 @@ const HOT_COLD_SPOT_CITY_PROV_PAD_TEMP_LENGTH = 30;
 const HOT_COLD_SPOT_PROV_PAD_TEMP_LENGTH = 8;
 
 // taking away room for the `, PV .. TMP` gives us how long the city name can be
-const HOT_COLD_SPOT_CITY_MAX_LENGTH = HOT_COLD_SPOT_CITY_PROV_PAD_TEMP_LENGTH - HOT_COLD_SPOT_PROV_PAD_TEMP_LENGTH;
+const HOT_COLD_SPOT_CITY_MAX_LENGTH = HOT_COLD_SPOT_CITY_PROV_PAD_TEMP_LENGTH - HOT_COLD_SPOT_PROV_PAD_TEMP_LENGTH - 2;
 
 import { format } from "date-fns";
 import stringpadmixin from "../mixins/stringpad.mixin";

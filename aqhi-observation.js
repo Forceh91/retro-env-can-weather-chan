@@ -69,7 +69,7 @@ function fetchLatestAQHIObservation(observationURL) {
 
       const hourObserved = conditionAirQuality.dateStamp?.hour;
       let observedTime = "";
-      if (hourObserved) observedTime = `${parseInt(hourObserved?._text)}${hourObserved?._attributes?.ampm}`;
+      if (hourObserved) observedTime = `${parseInt(hourObserved?._text)} ${hourObserved?._attributes?.ampm}`;
 
       // get the actual reading
       const aqhi = parseFloat(conditionAirQuality.airQualityHealthIndex?._text || -1);
@@ -92,6 +92,7 @@ function storeAQHIObservation(aqhi, hourObserved) {
     summary: getTextSummaryOfAQHI(aqhi),
     aqhi,
     hourObserved,
+    needsWarning: doesAQHINeedWarning(aqhi),
   };
 }
 
@@ -100,6 +101,10 @@ function getTextSummaryOfAQHI(aqhi) {
   if (aqhi >= 7) return "Poor";
   if (aqhi >= 4) return "Fair";
   else return "Good";
+}
+
+function doesAQHINeedWarning(aqhi) {
+  return aqhi >= 4;
 }
 
 function getAQHIObservation() {

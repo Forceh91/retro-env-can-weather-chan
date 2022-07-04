@@ -20,6 +20,7 @@
           :forecast="weather.forecast"
           :air-quality="weather.airQuality"
         />
+        <aqhiwarning v-if="isAQHIWarning" :aqhi="weather.airQuality" />
         <outlook
           v-if="isOutlook"
           :city="weather.city"
@@ -96,10 +97,12 @@ const SCREENS = {
   OUTLOOK: { id: 10, length: 20 },
   RANDOM: { id: 11, length: 20 },
   SUMMARY: { id: 12, length: 20 },
+  AQHI_WARNING: { id: 13, length: 20 },
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,
   SCREENS.FORECAST,
+  SCREENS.AQHI_WARNING,
   SCREENS.OUTLOOK,
   SCREENS.WINDCHILL,
   SCREENS.WARNINGS,
@@ -128,6 +131,7 @@ import playlist from "./components/playlist";
 import crawler from "./components/crawler";
 import Outlook from "./components/outlook.vue";
 import lastmonth from "./components/lastmonth.vue";
+import aqhiwarning from "./components/aqhiwarning.vue";
 
 export default {
   name: "App",
@@ -144,6 +148,7 @@ export default {
     crawler,
     Outlook,
     lastmonth,
+    aqhiwarning,
   },
   data() {
     return {
@@ -259,6 +264,10 @@ export default {
       return this.currentScreenID === SCREENS.SUMMARY.id;
     },
 
+    isAQHIWarning() {
+      return this.currentScreenID === SCREENS.AQHI_WARNING.id;
+    },
+
     timeZone() {
       return this.weather.currentConditions?.dateTime[1]?.zone || "";
     },
@@ -339,6 +348,10 @@ export default {
       EventBus.on("mbhighlow-complete", () => {
         this.handleScreenCycle(true);
       });
+
+      EventBus.on("aqhi-not-needed", () => {
+        this.handleScreenCycle(true);
+      });
     },
 
     destroyEventCallbacks() {
@@ -346,6 +359,8 @@ export default {
       EventBus.off("observation-complete");
       EventBus.off("warnings-complete");
       EventBus.off("windchill-complete");
+      EventBus.off("mbhighlow-complete");
+      EventBus.off("aqhi-not-needed");
     },
 
     getWeather() {

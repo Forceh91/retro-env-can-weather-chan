@@ -2,7 +2,7 @@
   <div id="almanac">
     <div v-if="almanacUnavailable" id="no_data">Almanac temporarily unavailable</div>
     <template v-else>
-      <conditions :city="city" :observed="observed" :conditions="conditions" />
+      <conditions :city="city" :observed="observed" :conditions="conditions" :air-quality="airQuality" />
 
       <!-- almanac data -->
       <div id="almanac_table">
@@ -35,6 +35,7 @@ export default {
     conditions: Object,
     almanac: Object,
     lastYear: Object,
+    airQuality: Object,
   },
 
   components: { conditions },

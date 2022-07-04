@@ -52,6 +52,7 @@
           :conditions="weather.currentConditions"
           :almanac="weather.almanac"
           :last-year="weather.lastYear"
+          :air-quality="weather.airQuality"
         />
         <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
         <windchill v-if="isWindChillEffects" :temp="currentTemp" />

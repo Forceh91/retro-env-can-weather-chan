@@ -71,12 +71,20 @@ function fetchLatestAQHIObservation(observationURL) {
       let observedTime = "";
       if (hourObserved) observedTime = `${parseInt(hourObserved?._text)} ${hourObserved?._attributes?.ampm}`;
 
+      const dayObserved = conditionAirQuality.dateStamp?.day;
+      let observedDate = "";
+      if (dayObserved) observedDate = dayObserved?._text;
+
+      const monthObserved = conditionAirQuality.dateStamp?.month;
+      let observedMonth = "";
+      if (monthObserved) observedMonth = monthObserved?._attributes?.nameEn;
+
       // get the actual reading
       const aqhi = parseFloat(conditionAirQuality.airQualityHealthIndex?._text || -1);
       if (aqhi === -1) return;
 
       // now group this into the good/bad/fair/whatever rankings
-      storeAQHIObservation(aqhi, observedTime);
+      storeAQHIObservation(aqhi, observedDate, observedMonth, observedTime);
     })
     .catch(() => {
       console.log("[AQHI]", "Failed to fetch AQHI for observed city");
@@ -87,11 +95,13 @@ function clearAQHIObservation() {
   latestAQHIReading = null;
 }
 
-function storeAQHIObservation(aqhi, hourObserved) {
+function storeAQHIObservation(aqhi, day, month, hour) {
   latestAQHIReading = {
     summary: getTextSummaryOfAQHI(aqhi),
     aqhi,
-    hourObserved,
+    day,
+    month,
+    hour,
     needsWarning: doesAQHINeedWarning(aqhi),
   };
 }

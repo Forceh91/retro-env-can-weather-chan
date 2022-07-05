@@ -54,7 +54,7 @@ function getShorthandMonthNamesForSeason(stopAtCurrentMonth) {
   if (stopAtCurrentMonth) {
     const currMonth = format(Date.now(), "MMM").toLowerCase();
     const currMonthIx = months.indexOf(currMonth);
-    if (currMonthIx !== -1) months.splice(currMonthIx, months.length - 1);
+    if (currMonthIx !== -1) months.splice(currMonthIx + 1, months.length - 1);
   }
 
   return months;

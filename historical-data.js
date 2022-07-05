@@ -7,7 +7,16 @@ const {
   getShorthandMonthNamesForSeason,
   isStartOfMonth,
 } = require("./date-utils");
-const { subMonths, startOfMonth, endOfMonth, compareAsc, compareDesc, parseISO, format } = require("date-fns");
+const {
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  compareAsc,
+  compareDesc,
+  parseISO,
+  format,
+  getDaysInMonth,
+} = require("date-fns");
 
 // this is loaded from config but here's a backup for it
 const STATION_ID_TO_FETCH = 27174; // winnipeg a cs//51097; // winnipeg intl a
@@ -164,13 +173,32 @@ function fetchClimateNormals() {
       // figure out what months we'll need
       const months = getShorthandMonthNamesForSeason(true);
       const precipDataForCurrentSeason = precipNormals.element?.filter((el) => {
-        const [, monthForEl] = el._attributes?.name.split("avg_rnfl_");
+        const [, monthForEl] = el._attributes?.name.split("avg_pcpn_");
         return months.includes(monthForEl);
       });
 
       // and generate the total precip for the current season
       const normalPrecipForCurentSeason = precipDataForCurrentSeason
-        .map((pcp) => parseFloat(pcp._attributes?.value || 0))
+        .map((pcp) => {
+          const precipAmount = parseFloat(pcp._attributes?.value || 0);
+          // for the current month we need to do math
+          if (pcp._attributes?.name.includes(months[months.length - 1])) {
+            // if we're past the 1st day of the month, otherwise return 0
+            const date = new Date();
+            const daysInMonth = getDaysInMonth(date);
+            if (date.getDate() > 1 && daysInMonth) {
+              // get the value and divide by daysInMonth to get average per day for this month
+              const averagePerDay = precipAmount / daysInMonth;
+              const averageForMonthUntilYesterday = averagePerDay * (date.getDate() - 1);
+              return averageForMonthUntilYesterday;
+            }
+
+            // not past the first day so return 0
+            return 0;
+          }
+
+          return precipAmount;
+        })
         .reduce((acc, curr) => (acc += curr), 0);
       seasonPrecipNormals = normalPrecipForCurentSeason.toFixed(1);
 

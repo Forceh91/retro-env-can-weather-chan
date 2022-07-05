@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import { format } from "date-fns";
 import stringpadmixin from "../mixins/stringpad.mixin";
 import { EventBus } from "../js/EventBus";
 
@@ -26,12 +25,11 @@ export default {
     },
 
     observedTime() {
-      return this.padString(this.aqhi?.hourObserved, 5, true, "&nbsp;");
+      return this.padString(this.aqhi?.hour, 5, true, "&nbsp;");
     },
 
     observedMonthDate() {
-      const date = Date.now();
-      return format(date, "MMM dd").replace(/\s0/, "&nbsp;&nbsp;");
+      return `${this.aqhi?.month.slice(0, 3)} ${this.aqhi?.day.replace(/\s/, "&nbsp;")}`;
     },
 
     observedAQHI() {

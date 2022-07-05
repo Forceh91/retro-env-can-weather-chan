@@ -116,7 +116,7 @@ function fetchHistoricalData(stationID) {
 
     // now store the total precip for the current season
     const totalPrecipForCurrentSeason = precipData.reduce((acc, curr) => (acc += curr), 0);
-    seasonPrecipData = totalPrecipForCurrentSeason;
+    seasonPrecipData = totalPrecipForCurrentSeason.toFixed(1);
 
     // figure out a last month summary
     getSummaryOfLastMonth(combinedStationData);
@@ -172,7 +172,7 @@ function fetchClimateNormals() {
       const normalPrecipForCurentSeason = precipDataForCurrentSeason
         .map((pcp) => parseFloat(pcp._attributes?.value || 0))
         .reduce((acc, curr) => (acc += curr), 0);
-      seasonPrecipNormals = normalPrecipForCurentSeason;
+      seasonPrecipNormals = normalPrecipForCurentSeason.toFixed(1);
 
       // get the normals for the previous month
       const tempNormals = observations.find((obs) => obs._attributes?.name === "temperature");

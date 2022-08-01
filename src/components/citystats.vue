@@ -2,12 +2,12 @@
   <div id="city_stats">
     <div v-if="cityStatsUnavailable">Stats temporarily unavailable</div>
     <div v-else>
-      <div id="title">&nbsp;&nbsp;{{ titleString }}</div>
+      <div id="title" v-html="titleString"></div>
       <div id="rise_set">{{ sunriseset }}</div>
       <div id="precip_title">&nbsp;&nbsp;&nbsp;&nbsp;{{ precipTitle }}</div>
       <div id="precip_actual">&nbsp;&nbsp;{{ precipActual }}</div>
       <div id="precip_normal">&nbsp;&nbsp;{{ precipNormal }}</div>
-      <div id="hot_cold_title">{{ hotColdTitleString }}</div>
+      <div id="hot_cold_title" v-html="hotColdTitleString"></div>
       <div id="hot_spot" v-html="hotSpotString"></div>
       <div id="cold_spot" v-html="coldSpotString"></div>
     </div>
@@ -75,7 +75,7 @@ export default {
     },
 
     titleString() {
-      return `${this.city} Statistics - ${this.currentDate}`;
+      return `&nbsp;&nbsp;${this.city} Statistics - ${this.currentDate}`;
     },
 
     hotColdTitleString() {

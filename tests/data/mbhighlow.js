@@ -1,6 +1,6 @@
 export default {
-  tempClass: "low",
-  values: [
+  period: "low",
+  stations: [
     { city: "Brandon", val: "3", tempClass: "low" },
     { city: "Kenora", val: "9", tempClass: "low" },
     { city: "Portage", val: "5", tempClass: "low" },

@@ -43,11 +43,11 @@ test("checkScreenIsEnabled: sends off an event correctly when the screen is enab
 test("checkScreenIsEnabled: sends off an event correctly when the screen is enabled but has no data", (done) => {
   EventBus.on("mbhighlow-complete", () => {
     EventBus.off("mbhighlow-complete");
-    wrapper.setProps({ data: mbhighlowdata.values, timezone: "CDT", tempclass: mbhighlowdata.tempClass });
+    wrapper.setProps({ manitobaData: mbhighlowdata, timezone: "CDT" });
     done();
   });
 
-  wrapper.setProps({ enabled: true, data: [] });
+  wrapper.setProps({ enabled: true, manitobaData: { period: "min_temp" } });
   vm.$nextTick(() => {
     vm.checkScreenIsEnabled();
   });
@@ -83,21 +83,19 @@ test("padString: pads strings correctly when a length is given", (done) => {
 
 test("padString: doesn't error when no string is passed", (done) => {
   const stringA = vm.padString(null, 5);
-  expect(stringA).toBe("");
+  expect(stringA).toBe("N/A&nbsp;&nbsp;");
 
   const stringB = vm.padString("", 5);
-  expect(stringB).toBe("");
+  expect(stringB).toBe("N/A&nbsp;&nbsp;");
 
-  done();
-});
-
-test("sortedHighsLows: is computed correctly", (done) => {
-  expect(vm.sortedHighsLows).toStrictEqual([...mbhighlowdata.values].sort((a, b) => (a.city > b.city ? 1 : -1)));
   done();
 });
 
 test("timeOfDay: computes correctly for overnight", (done) => {
-  expect(vm.timeOfDay).toBe("Overnight");
+  wrapper.setProps({ manitobaData: { period: "min_temp" } });
+  vm.$nextTick(() => {
+    expect(vm.timeOfDay).toBe("Overnight");
+  });
   done();
 });
 
@@ -116,7 +114,7 @@ test("yesterdayDateFormatted: computes correctly", (done) => {
 });
 
 test("tempClass: computes correctly for overnight", (done) => {
-  expect(vm.tempClass).toBe("low:");
+  expect(vm.tempClass).toBe("Low:");
   done();
 });
 
@@ -126,12 +124,12 @@ test("topLine: computes correctly for low temp class", (done) => {
 });
 
 test("bottomLine: computes correctly for low temp class", (done) => {
-  expect(vm.bottomLine).toContain(vm.padString("low:", 17, true));
+  expect(vm.bottomLine).toContain(vm.padString("Low:", 17, true));
   done();
 });
 
 test("timeOfDay: computes correctly for today", (done) => {
-  wrapper.setProps({ tempclass: "high" });
+  wrapper.setProps({ manitobaData: { period: "max_temp" } });
   vm.$nextTick(() => {
     expect(vm.timeOfDay).toBe("Today:");
     done();
@@ -139,12 +137,12 @@ test("timeOfDay: computes correctly for today", (done) => {
 });
 
 test("tempClass: computes correctly for today", (done) => {
-  expect(vm.tempClass).toBe("high");
+  expect(vm.tempClass).toBe("High");
   done();
 });
 
 test("topLine: computes correctly for high temp class", (done) => {
-  expect(vm.topLine).toContain(vm.padString("high", 17, true));
+  expect(vm.topLine).toContain(vm.padString("High", 17, true));
   done();
 });
 

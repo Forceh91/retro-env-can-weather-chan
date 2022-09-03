@@ -169,7 +169,7 @@ function startBackend(config) {
   });
 
   app.get("/api/weather/mb_highlow", (req, res) => {
-    if (!loadedConfig.showMBHighLow || !stationTracking.length) return;
+    if (!loadedConfig.showMBHighLow) return;
     res.send(manitobaHighLow());
   });
 

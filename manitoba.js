@@ -1,3 +1,8 @@
+// keeps track of set stations around manitoba and what the min/max was for the
+// current time period. (if the app isnt running the data may be inaccurate)
+// 8am - 8pm it tracks the max temp and displays the min temp
+// 8pm - 8am it tracks the min temp and display the max temp
+
 const axios = require("axios");
 const Weather = require("ec-weather-js");
 
@@ -10,59 +15,98 @@ const manitobaCities = [
   { name: "Thompson", stationCode: "MB/s0000695" },
 ];
 
-const highLowAroundMB = [];
-function fetchHighLowAroundMB() {
-  const results = [
-    ...manitobaCities.map((station) => ({
-      ...station,
-      temp: null,
-      temp_class: null,
-      precip: {},
-    })),
-  ];
+const stationTracking = [
+  // math.max returns -Infinity, and math.min returns Infinity
+  ...manitobaCities.map((city) => ({
+    ...city,
+    max_temp: Math.max(),
+    min_temp: Math.min(),
+    display_temp: null,
+    yesterday_precip: null,
+  })),
+];
 
-  const promises = [];
-  manitobaCities.forEach((station) => {
-    promises.push(
-      axios
-        .get(`https://dd.weather.gc.ca/citypage_weather/xml/${station.stationCode}_e.xml`)
-        .then((resp) => {
-          const data = resp && resp.data;
-          const weather = new Weather(data);
-          if (!weather) throw "Unable to parse weather data";
+let currentDisplayValue = "";
 
-          const resultIx = results.findIndex((s) => s.name === station.name);
-          if (resultIx === -1) return;
+const initManitobaTracking = () => {
+  setInterval(updateManitobaStations, 5 * 60 * 1000);
+  updateManitobaStations();
+};
 
-          const immediateForecast = weather.weekly && weather.weekly[0];
-          if (immediateForecast) {
-            results[resultIx] = {
-              ...results[resultIx],
-              temp: immediateForecast.temperatures?.temperature?.value,
-              temp_class: immediateForecast.temperatures?.temperature?.class,
-            };
-          }
+const resetTrackingAndDisplayValue = (oldVal, newVal) => {
+  if (!oldVal) oldVal = "min_temp";
 
-          const yesterdayConditions = weather.all.yesterdayConditions;
-          if (!yesterdayConditions) return;
+  // if min_temp was displayed, we need to reset this and show max
+  // if max_temp was displayed, we need to reset this and show min
+  stationTracking.forEach((station) => {
+    // if its showing (-)Infinity then set the display temp to null
+    let valueToDisplay = station[newVal];
+    if (valueToDisplay === Math.min() || valueToDisplay === Math.max()) valueToDisplay = null;
 
-          const yesterdayPrecip = yesterdayConditions.precip;
-          if (!yesterdayPrecip) return;
+    // set the display temp to the new value
+    station.display_temp = valueToDisplay;
 
-          results[resultIx] = {
-            ...results[resultIx],
-            precip: yesterdayPrecip || {},
-          };
-        })
-        .catch(() => {
-          console.warn("[MANITOBA]", station.name, "failed to fetch data");
-        })
-    );
+    // reset the other value we were tracking back to min/max
+    station[oldVal] = oldVal === "min_temp" ? Math.min() : Math.max();
   });
 
-  Promise.allSettled(promises).then(() => {
-    highLowAroundMB.splice(0, highLowAroundMB.length, ...results);
-  });
-}
+  tempValueToDisplay = newVal;
+};
 
-module.exports = { fetchHighLowAroundMB, highLowAroundMB };
+const updateManitobaStations = () => {
+  const tempValueToDisplay = shouldShowMinOrMaxTemp();
+  if (tempValueToDisplay !== currentDisplayValue) resetTrackingAndDisplayValue(currentDisplayValue, tempValueToDisplay);
+
+  stationTracking.forEach((station) => {
+    axios
+      .get(`https://dd.weather.gc.ca/citypage_weather/xml/${station.stationCode}_e.xml`)
+      .then((resp) => parseStationInfo(station, resp, tempValueToDisplay))
+      .catch(() => {
+        console.warn("[MANITOBA]", station.name, "failed to fetch data");
+      });
+  });
+};
+
+const parseStationInfo = (station, stationData, displayValue) => {
+  const data = stationData && stationData.data;
+  const weather = data && new Weather(data);
+  if (!weather) throw "Unable to parse weather data";
+
+  // get yesterday conditions
+  const yesterdayConditions = weather.all.yesterdayConditions;
+
+  // store the precip amounts
+  const yesterdayPrecip = yesterdayConditions && yesterdayConditions.precip;
+  if (!yesterdayPrecip.value) yesterdayPrecip.value = "MISSING";
+
+  // update it in our tracking
+  if (yesterdayPrecip) station.yesterday_precip = yesterdayPrecip;
+
+  // track the high/low temp value
+  const temp = weather.current?.temperature?.value;
+  if (temp > station.max_temp && displayValue !== "max_temp") station.max_temp = temp;
+  if (temp < station.min_temp && displayValue !== "min_temp") station.min_temp = temp;
+};
+
+const shouldShowMinOrMaxTemp = () => {
+  const time = new Date();
+  const hour = time.getHours();
+
+  // if its 8pm to 8am we need to show the max_temp from the day
+  // if its 8am to 8pm we need to show the min_temp from the night
+  if (hour >= 20 || hour < 8) return "max_temp";
+  return "min_temp";
+};
+
+const apiResponse = () => {
+  return {
+    period: shouldShowMinOrMaxTemp(),
+    stations: stationTracking,
+  };
+};
+
+const manitobaHighLow = () => {
+  return apiResponse();
+};
+
+module.exports = { initManitobaTracking, manitobaHighLow };

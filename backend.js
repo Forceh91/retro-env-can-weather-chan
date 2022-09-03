@@ -9,7 +9,7 @@ const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
 const { generateCrawler, getCrawler } = require("./generate-crawler.js");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
-const { fetchHighLowAroundMB, highLowAroundMB } = require("./manitoba.js");
+const { initManitobaTracking, manitobaHighLow } = require("./manitoba.js");
 const {
   initHistoricalData,
   lastYearObservation,
@@ -107,6 +107,10 @@ function startBackend(config) {
   // air quality readings
   initAQHIObservation(config?.primaryLocation?.name);
 
+  // MB regional high/low screen
+  // winnipeg, portage, brandon, dauphin, kenora, thompson
+  if (config.showMBHighLow) initManitobaTracking();
+
   // provincial today observations
   fetchProvinceObservationData(config?.primaryLocation?.province);
   setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
@@ -164,18 +168,9 @@ function startBackend(config) {
     res.send({ observations: latestUSObservations });
   });
 
-  // MB regional high/low screen
-  // winnipeg, portage, brandon, dauphin, kenora, thompson
-  if (config.showMBHighLow) {
-    setInterval(fetchHighLowAroundMB, 30 * 60 * 1000);
-    fetchHighLowAroundMB();
-  }
-
   app.get("/api/weather/mb_highlow", (req, res) => {
-    if (!loadedConfig.showMBHighLow || !highLowAroundMB.length) return;
-
-    const tempClass = highLowAroundMB.filter((city) => city.temp_class).map((city) => city.temp_class);
-    res.send({ tempClass: tempClass[0], values: highLowAroundMB });
+    if (!loadedConfig.showMBHighLow || !stationTracking.length) return;
+    res.send(manitobaHighLow());
   });
 
   // start the amqp alert monitoring of cap

@@ -3,11 +3,11 @@
     <div v-html="topLine"></div>
     <div v-html="bottomLine"></div>
     <ul id="city_list">
-      <li v-for="(cityObj, ix) in data" :key="`mb.city.${ix}`">
-        <span v-html="padString(cityObj.name, 10)"></span>
-        <span v-html="`${padString(cityObj.temp, 6, true)}`"></span>
+      <li v-for="(station, ix) in weatherStations" :key="`mb.city.${ix}`">
+        <span v-html="padString(station.name, 10)"></span>
+        <span v-html="`${padString(station.display_temp, 6, true)}`"></span>
         <span v-html="padString('&nbsp;', 6, true)"></span>
-        <span v-html="generatePrecipString(cityObj.precip)" class="precip-amount"></span>
+        <span v-html="generatePrecipString(station.yesterday_precip)" class="precip-amount"></span>
       </li>
     </ul>
   </div>
@@ -21,18 +21,26 @@ export default {
   name: "mbhighlow",
   props: {
     enabled: Boolean,
-    data: Object,
-    tempclass: String,
     timezone: String,
+    manitobaData: {
+      type: Object,
+      default: () => {
+        return null;
+      },
+    },
   },
 
   computed: {
-    sortedHighsLows() {
-      return this.data && [...this.data].sort((a, b) => (a.city > b.city ? 1 : -1));
+    period() {
+      return this.manitobaData?.period;
+    },
+
+    weatherStations() {
+      return this.manitobaData?.stations || [];
     },
 
     timeOfDay() {
-      return this.tempclass === "low" ? "Overnight" : "Today:";
+      return this.period === "min_temp" ? "Overnight" : "Today:";
     },
 
     yesterday() {
@@ -44,12 +52,12 @@ export default {
     },
 
     tempClass() {
-      return this.tempclass === "low" ? `${this.tempclass}:` : this.tempclass;
+      return this.period === "min_temp" ? `Low:` : `High`;
     },
 
     topLine() {
       return (
-        (this.tempclass === "low"
+        (this.period === "min_temp"
           ? this.padString(this.timeOfDay, 17, true)
           : this.padString(this.tempClass, 17, true)) + this.topPrecipLine
       );
@@ -61,7 +69,7 @@ export default {
 
     bottomLine() {
       return (
-        (this.tempclass !== "low"
+        (this.period !== "min_temp"
           ? this.padString(this.timeOfDay, 17, true)
           : this.padString(this.tempClass, 17, true)) + this.bottomPrecipLine
       );
@@ -78,11 +86,15 @@ export default {
 
   methods: {
     checkScreenIsEnabled() {
-      if (!this.enabled || !this.data || !this.data.length) EventBus.emit("mbhighlow-complete");
+      console.log("weather stations", this.weatherStations.length);
+      if (!this.enabled || !this.manitobaData || !this.weatherStations || !this.weatherStations.length) {
+        console.log("emitting");
+        EventBus.emit("mbhighlow-complete");
+      }
     },
 
     padString(val, minLength, isFront) {
-      if (!val) return "";
+      if (!val) val = "N/A";
 
       const paddingToAdd = minLength - val.length;
       let paddingString = ``;

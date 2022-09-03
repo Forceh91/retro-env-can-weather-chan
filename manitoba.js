@@ -41,7 +41,7 @@ const resetTrackingAndDisplayValue = (oldVal, newVal) => {
   stationTracking.forEach((station) => {
     // if its showing (-)Infinity then set the display temp to null
     let valueToDisplay = station[newVal];
-    if (valueToDisplay === Math.min() || valueToDisplay === Math.max()) valueToDisplay = null;
+    if (valueToDisplay === Math.min() || valueToDisplay === Math.max()) valueToDisplay = "M";
 
     // set the display temp to the new value
     station.display_temp = valueToDisplay;

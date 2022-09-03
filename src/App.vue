@@ -30,8 +30,7 @@
         <mbhighlow
           v-if="isMBHighLow"
           :enabled="showMBHighLowSetting"
-          :data="weather.highLowAroundMB.values"
-          :tempclass="weather.highLowAroundMB.tempClass"
+          :manitoba-data="weather.highLowAroundMB"
           :timezone="timeZone"
         />
         <surrounding
@@ -426,7 +425,7 @@ export default {
         .get("api/weather/mb_highlow")
         .then((resp) => {
           const data = resp.data;
-          if (!data || !data.values || !data.values.length) return;
+          if (!data || !data.stations || !data.stations.length) return;
 
           this.weather.highLowAroundMB = data;
         })

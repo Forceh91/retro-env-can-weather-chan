@@ -131,7 +131,9 @@ test("bottomLine: computes correctly for low temp class", (done) => {
 test("timeOfDay: computes correctly for today", (done) => {
   wrapper.setProps({ manitobaData: { period: "max_temp" } });
   vm.$nextTick(() => {
-    expect(vm.timeOfDay).toBe("Today:");
+    const date = new Date();
+    const todayYesterdayForMaxTemp = date.getHours() < 20 ? "Yesterday:" : "Today:";
+    expect(vm.timeOfDay).toBe(todayYesterdayForMaxTemp);
     done();
   });
 });
@@ -147,7 +149,9 @@ test("topLine: computes correctly for high temp class", (done) => {
 });
 
 test("bottomLine: computes correctly for high temp class", (done) => {
-  expect(vm.bottomLine).toContain(vm.padString("Today:", 17, true));
+  const date = new Date();
+  const todayYesterdayForMaxTemp = date.getHours() < 20 ? "Yesterday:" : "Today:";
+  expect(vm.bottomLine).toContain(vm.padString(todayYesterdayForMaxTemp, 17, true));
   done();
 });
 

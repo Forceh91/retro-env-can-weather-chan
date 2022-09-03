@@ -40,7 +40,9 @@ export default {
     },
 
     timeOfDay() {
-      return this.period === "min_temp" ? "Overnight" : "Today:";
+      const date = new Date();
+      const todayYesterdayForMaxTemp = date.getHours() < 20 ? "Yesterday:" : "Today:";
+      return this.period === "min_temp" ? "Overnight" : todayYesterdayForMaxTemp;
     },
 
     yesterday() {
@@ -86,9 +88,7 @@ export default {
 
   methods: {
     checkScreenIsEnabled() {
-      console.log("weather stations", this.weatherStations.length);
       if (!this.enabled || !this.manitobaData || !this.weatherStations || !this.weatherStations.length) {
-        console.log("emitting");
         EventBus.emit("mbhighlow-complete");
       }
     },

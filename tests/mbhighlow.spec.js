@@ -163,6 +163,35 @@ test("bottomPrecipLine: includes the timezone correctly", (done) => {
   done();
 });
 
+test("parseDisplayTemp: generates correctly for no data", (done) => {
+  const expectedTemp = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M";
+  expect(vm.parseDisplayTemp()).toBe(expectedTemp);
+  expect(vm.parseDisplayTemp(null)).toBe(expectedTemp);
+  expect(vm.parseDisplayTemp(undefined)).toBe(expectedTemp);
+  done();
+});
+
+test("parseDisplayTemp: generates correctly for a float as a string", (done) => {
+  expect(vm.parseDisplayTemp("25.2")).toBe("&nbsp;&nbsp;&nbsp;&nbsp;25");
+  expect(vm.parseDisplayTemp("16.7")).toBe("&nbsp;&nbsp;&nbsp;&nbsp;17");
+  expect(vm.parseDisplayTemp("9.9")).toBe("&nbsp;&nbsp;&nbsp;&nbsp;10");
+  done();
+});
+
+test("parseDisplayTemp: generates correctly for a negative float as a string", (done) => {
+  expect(vm.parseDisplayTemp("-25.2")).toBe("&nbsp;&nbsp;&nbsp;-25");
+  expect(vm.parseDisplayTemp("-16.7")).toBe("&nbsp;&nbsp;&nbsp;-17");
+  expect(vm.parseDisplayTemp("-9.9")).toBe("&nbsp;&nbsp;&nbsp;-10");
+  done();
+});
+
+test("parseDisplayTemp: generates correctly for a float", (done) => {
+  expect(vm.parseDisplayTemp(25.2)).toBe("&nbsp;&nbsp;&nbsp;&nbsp;25");
+  expect(vm.parseDisplayTemp(-16.7)).toBe("&nbsp;&nbsp;&nbsp;-17");
+  expect(vm.parseDisplayTemp(3)).toBe("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3");
+  done();
+});
+
 test("generatePrecipString: generates correctly for no data", (done) => {
   expect(vm.generatePrecipString()).toBe("MISSING");
   done();

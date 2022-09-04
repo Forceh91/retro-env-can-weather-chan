@@ -50,7 +50,8 @@ const resetTrackingAndDisplayValue = (oldVal, newVal) => {
     station[oldVal] = oldVal === "min_temp" ? Math.min() : Math.max();
   });
 
-  tempValueToDisplay = newVal;
+  // store the current display value so we track the right data
+  currentDisplayValue = newVal;
 };
 
 const updateManitobaStations = () => {

@@ -5,7 +5,7 @@
     <ul id="city_list">
       <li v-for="(station, ix) in weatherStations" :key="`mb.city.${ix}`">
         <span v-html="padString(station.name, 10)"></span>
-        <span v-html="`${padString(station.display_temp, 6, true)}`"></span>
+        <span v-html="parseDisplayTemp(station.display_temp)"></span>
         <span v-html="padString('&nbsp;', 6, true)"></span>
         <span v-html="generatePrecipString(station.yesterday_precip)" class="precip-amount"></span>
       </li>
@@ -16,9 +16,11 @@
 <script>
 import { format, subDays } from "date-fns";
 import { EventBus } from "../js/EventBus";
+import temperaturemixin from "../mixins/temperature.mixin";
 
 export default {
   name: "mbhighlow",
+  mixins: [temperaturemixin],
   props: {
     enabled: Boolean,
     timezone: String,
@@ -120,6 +122,11 @@ export default {
 
       // otherwise show correct data
       return this.padString(`${precipValue} ${precipData?.units}`, 8, true);
+    },
+
+    parseDisplayTemp(temp) {
+      const roundedTemp = this.roundTemperatureToInt(temp, "M");
+      return this.padString(`${roundedTemp}`, 6, true);
     },
   },
 };

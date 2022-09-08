@@ -93,10 +93,14 @@ const parseStationInfo = (station, stationData) => {
   // update it in our tracking
   if (yesterdayPrecip) station.yesterday_precip = yesterdayPrecip;
 
-  // track the high/low temp value
+  // make sure we have a valid temp
   const temp = weather.current?.temperature?.value;
-  if (temp > station.max_temp && currentDisplayValue !== "max_temp") station.max_temp = temp;
-  if (temp < station.min_temp && currentDisplayValue !== "min_temp") station.min_temp = temp;
+  if (temp === null || temp === undefined || isNaN(temp)) return;
+
+  // track the high/low temp value as a float
+  const tempAsFloat = parseFloat(temp);
+  if (tempAsFloat > station.max_temp && currentDisplayValue !== "max_temp") station.max_temp = tempAsFloat;
+  if (tempAsFloat < station.min_temp && currentDisplayValue !== "min_temp") station.min_temp = tempAsFloat;
 };
 
 const shouldShowMinOrMaxTemp = () => {

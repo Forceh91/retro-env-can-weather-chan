@@ -158,8 +158,8 @@ const loadManitobaTracking = () => {
               const station = stationTracking.find((station) => station.stationCode === savedStation.station_code);
               if (!station) return;
 
-              station.min_temp = savedStation.min_temp;
-              station.max_temp = savedStation.max_temp;
+              station.min_temp = savedStation.min_temp === null ? Math.min() : savedStation.min_temp;
+              station.max_temp = savedStation.max_temp === null ? Math.max() : savedStation.max_temp;
               station.display_temp = savedStation.display_temp;
             });
           }

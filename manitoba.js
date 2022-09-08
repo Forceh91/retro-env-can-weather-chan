@@ -3,8 +3,11 @@
 // 8am - 8pm it tracks the max temp and displays the min temp
 // 8pm - 8am it tracks the min temp and display the max temp
 
+const fs = require("fs");
 const axios = require("axios");
 const Weather = require("ec-weather-js");
+const FOLDER_NAME = "db";
+const FILE_NAME = "manitoba.json";
 
 const manitobaCities = [
   { name: "Winnipeg", stationCode: "MB/s0000193" },
@@ -29,6 +32,8 @@ const stationTracking = [
 let currentDisplayValue = "";
 
 const initManitobaTracking = () => {
+  loadManitobaTracking();
+
   setInterval(updateManitobaStations, 5 * 60 * 1000);
   updateManitobaStations();
 };
@@ -58,17 +63,22 @@ const updateManitobaStations = () => {
   const tempValueToDisplay = shouldShowMinOrMaxTemp();
   if (tempValueToDisplay !== currentDisplayValue) resetTrackingAndDisplayValue(currentDisplayValue, tempValueToDisplay);
 
+  const promises = [];
   stationTracking.forEach((station) => {
-    axios
-      .get(`https://dd.weather.gc.ca/citypage_weather/xml/${station.stationCode}_e.xml`)
-      .then((resp) => parseStationInfo(station, resp, tempValueToDisplay))
-      .catch(() => {
-        console.warn("[MANITOBA]", station.name, "failed to fetch data");
-      });
+    promises.push(
+      axios
+        .get(`https://dd.weather.gc.ca/citypage_weather/xml/${station.stationCode}_e.xml`)
+        .then((resp) => parseStationInfo(station, resp))
+        .catch(() => {
+          console.warn("[MANITOBA]", station.name, "failed to fetch data");
+        })
+    );
   });
+
+  Promise.allSettled(promises).then(saveManitobaTracking);
 };
 
-const parseStationInfo = (station, stationData, displayValue) => {
+const parseStationInfo = (station, stationData) => {
   const data = stationData && stationData.data;
   const weather = data && new Weather(data);
   if (!weather) throw "Unable to parse weather data";
@@ -85,8 +95,8 @@ const parseStationInfo = (station, stationData, displayValue) => {
 
   // track the high/low temp value
   const temp = weather.current?.temperature?.value;
-  if (temp > station.max_temp && displayValue !== "max_temp") station.max_temp = temp;
-  if (temp < station.min_temp && displayValue !== "min_temp") station.min_temp = temp;
+  if (temp > station.max_temp && currentDisplayValue !== "max_temp") station.max_temp = temp;
+  if (temp < station.min_temp && currentDisplayValue !== "min_temp") station.min_temp = temp;
 };
 
 const shouldShowMinOrMaxTemp = () => {
@@ -108,6 +118,57 @@ const apiResponse = () => {
 
 const manitobaHighLow = () => {
   return apiResponse();
+};
+
+const saveManitobaTracking = () => {
+  const saveObj = {
+    display_value: currentDisplayValue,
+    stations: stationTracking.map((station) => ({
+      station_code: station.stationCode,
+      min_temp: station.min_temp,
+      max_temp: station.max_temp,
+      display_temp: station.display_temp,
+    })),
+  };
+
+  const saveFile = `${FOLDER_NAME}/${FILE_NAME}`;
+  fs.writeFile(saveFile, JSON.stringify(saveObj, null, 4), "utf8", (err) => {
+    if (err) console.warn("[MANITOBA] Unable to save tracking information");
+    else console.log("[MANITOBA] Tracking information saved to file");
+  });
+};
+
+const loadManitobaTracking = () => {
+  const trackingFile = `${FOLDER_NAME}/${FILE_NAME}`;
+  fs.stat(trackingFile, (err, stat) => {
+    if (err || stat.size < 1) console.log("[MANITOBA] No stored tracking");
+    else {
+      fs.readFile(trackingFile, "utf8", (err, data) => {
+        if (err) console.warn("[MANITOBA] Unable to load tracking information");
+        else {
+          const savedData = JSON.parse(data);
+          if (!savedData) return;
+
+          // load what value we were displaying
+          if (savedData.display_value) currentDisplayValue = savedData.display_value;
+
+          // load in the stations
+          if (savedData.stations && savedData.stations.length) {
+            savedData.stations.forEach((savedStation) => {
+              const station = stationTracking.find((station) => station.stationCode === savedStation.station_code);
+              if (!station) return;
+
+              station.min_temp = savedStation.min_temp;
+              station.max_temp = savedStation.max_temp;
+              station.display_temp = savedStation.display_temp;
+            });
+          }
+
+          console.log("[MANITOBA] Tracking information loaded from file");
+        }
+      });
+    }
+  });
 };
 
 module.exports = { initManitobaTracking, manitobaHighLow };

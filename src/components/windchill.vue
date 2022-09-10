@@ -21,12 +21,12 @@ import { EventBus } from "../js/EventBus";
 export default {
   name: "Windchill",
   props: {
-    temp: Number,
+    windchill: Number,
   },
 
   computed: {
     windchillNotApplicable() {
-      return this.temp > 0;
+      return !this.windchill;
     },
   },
 

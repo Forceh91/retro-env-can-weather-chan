@@ -14,7 +14,7 @@
         <template v-if="shouldShowExtraData">
           <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
           <span v-html="padString('', 5)"></span>
-          <span v-if="shouldShowWindchill">Wind Chill {{ windchill }}</span>
+          <span v-if="shouldShowWindchill">Wind Chill {{ windChill }}</span>
           <span v-if="shouldShowAQHI">Air Quality {{ aqhiSummary }}</span>
         </template>
         <template v-else>
@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import { calculateWindChillNumber } from "../js/windChill";
 import conditionmixin from "../mixins/condition.mixin";
 import observedmixin from "../mixins/observed.mixin";
 import stringpadmixin from "../mixins/stringpad.mixin";
@@ -40,6 +39,7 @@ export default {
     city: String,
     observed: Object,
     conditions: Object,
+    windChill: Number,
     airQuality: Object,
     showPressure: {
       type: Boolean,
@@ -102,16 +102,8 @@ export default {
       return `${pressure.value} ${pressure.units}&nbsp;&nbsp;${pressure.tendency}`;
     },
 
-    windchill() {
-      const temp = this.conditions.temperature && this.conditions.temperature.value;
-      if (temp > 0) return 0;
-
-      const windspeed = this.conditions?.wind?.speed?.value;
-      return calculateWindChillNumber(temp, windspeed);
-    },
-
     shouldShowWindchill() {
-      return this.windchill > 0;
+      return this.windChill > 0;
     },
 
     aqhiSummary() {

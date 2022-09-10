@@ -18,6 +18,7 @@
           :observed="ecObservedAtStation"
           :conditions="ecConditions"
           :forecast="ecForecast"
+          :wind-chill="ecWindchill"
           :air-quality="weather.airQuality"
         />
         <aqhiwarning v-if="isAQHIWarning" :aqhi="weather.airQuality" />
@@ -55,7 +56,7 @@
           :air-quality="weather.airQuality"
         />
         <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
-        <windchill v-if="isWindChillEffects" :temp="currentTemp" />
+        <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
         <citystats
           v-if="isCityStats"
           :city="weather.city"
@@ -159,6 +160,7 @@ export default {
         city: null,
         observed: null,
         conditions: null,
+        windchill: 0,
         conditionID: null,
       },
       weather: {
@@ -298,6 +300,10 @@ export default {
       return this.ecData && this.ecData.conditions;
     },
 
+    ecWindchill() {
+      return this.ecData && this.ecData.windchill;
+    },
+
     ecForecast() {
       return this.ecData && this.ecData.forecast;
     },
@@ -403,6 +409,7 @@ export default {
           this.ecData.city = data.city;
           this.ecData.observed = data.observed;
           this.ecData.conditions = data.conditions;
+          this.ecData.windchill = data.windchill;
           this.ecData.forecast = data.forecast;
 
           // this.weather.city = data.location && data.location.name && data.location.name.value;

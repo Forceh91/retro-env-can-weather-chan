@@ -9,6 +9,7 @@
           :conditions="conditions"
           :show-pressure="false"
           :air-quality="airQuality"
+          :wind-chill="windChill"
         />
         <div id="next_forecast" class="full-width">
           <span class="label"
@@ -51,6 +52,7 @@ export default {
     conditions: Object,
     forecast: Array,
     airQuality: Object,
+    windChill: Number,
   },
 
   components: { conditions },

@@ -9,15 +9,15 @@
           v-if="isCurrentConditions"
           :city="weather.city"
           :observed="weather.observed"
-          :conditions="weather.currentConditions"
+          :conditions="weather.conditions"
           :riseset="weather.riseSet"
         />
         <forecast
           v-if="isForecast"
-          :city="weather.city"
-          :observed="weather.observed"
-          :conditions="weather.currentConditions"
-          :forecast="weather.forecast"
+          :city="ecCity"
+          :observed="ecObservedAtStation"
+          :conditions="ecConditions"
+          :forecast="ecForecast"
           :air-quality="weather.airQuality"
         />
         <aqhiwarning v-if="isAQHIWarning" :aqhi="weather.airQuality" />
@@ -116,7 +116,7 @@ const SCREEN_ROTATION = [
 const BLUE_COL = "rgb(0,0,135)";
 const RED_COL = "#610b00";
 
-import { format, addMinutes, formatRFC3339 } from "date-fns";
+import { format, addMinutes /*, formatRFC3339*/ } from "date-fns";
 import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
 import forecast from "./components/forecast.vue";
@@ -155,8 +155,14 @@ export default {
       now: new Date(),
       rotationIndex: 0,
       currentScreen: SCREENS.FORECAST,
+      ecData: {
+        city: null,
+        observed: null,
+        conditions: null,
+        conditionID: null,
+      },
       weather: {
-        currentConditions: null,
+        conditions: null,
         city: null,
         observed: null,
         riseSet: null,
@@ -274,6 +280,31 @@ export default {
     reportingStation() {
       return this.weather.currentConditions?.station?.code;
     },
+
+    // data returned from eccc
+    ecCity() {
+      return this.ecData && this.ecData.city;
+    },
+
+    ecObserved() {
+      return this.ecData && this.ecData.observed;
+    },
+
+    ecObservedAtStation() {
+      return this.ecObserved && { time: this.ecObserved.stationTime, timezone: this.ecObserved.stationTimezone };
+    },
+
+    ecConditions() {
+      return this.ecData && this.ecData.conditions;
+    },
+
+    ecForecast() {
+      return this.ecData && this.ecData.forecast;
+    },
+
+    ecUUID() {
+      return this.ecData && this.ecData.conditionID;
+    },
   },
 
   mounted() {
@@ -369,18 +400,23 @@ export default {
           const data = resp.data;
           if (!data) return;
 
-          this.weather.city = data.location && data.location.name && data.location.name.value;
-          this.weather.currentConditions = data.current;
-          this.weather.riseSet = data.riseSet;
-          this.weather.forecast = data.upcomingForecast.slice(0, 5);
-          this.weather.fullForecast = data.upcomingForecast;
-          this.weather.almanac = data.almanac;
-          this.weather.airQuality = data.airQuality;
-          this.weather.warnings = data.warnings;
-          this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
-          this.weather.lastYear = data.last_year || {};
-          this.weather.hotColdSpots = data.hot_cold || {};
-          this.weather.regionalNormals = data.regionalNormals || {};
+          this.ecData.city = data.city;
+          this.ecData.observed = data.observed;
+          this.ecData.conditions = data.conditions;
+          this.ecData.forecast = data.forecast;
+
+          // this.weather.city = data.location && data.location.name && data.location.name.value;
+          // this.weather.currentConditions = data.current;
+          // this.weather.riseSet = data.riseSet;
+          // this.weather.forecast = data.upcomingForecast.slice(0, 5);
+          // this.weather.fullForecast = data.upcomingForecast;
+          // this.weather.almanac = data.almanac;
+          // this.weather.airQuality = data.airQuality;
+          // this.weather.warnings = data.warnings;
+          // this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
+          // this.weather.lastYear = data.last_year || {};
+          // this.weather.hotColdSpots = data.hot_cold || {};
+          // this.weather.regionalNormals = data.regionalNormals || {};
         })
         .catch((err) => {
           console.error(err);

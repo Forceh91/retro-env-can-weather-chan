@@ -47,7 +47,7 @@ export default {
   name: "Forecast",
   props: {
     city: String,
-    observed: String,
+    observed: Object,
     conditions: Object,
     forecast: Array,
     airQuality: Object,

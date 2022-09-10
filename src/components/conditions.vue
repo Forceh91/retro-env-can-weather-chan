@@ -4,16 +4,16 @@
       <div id="title" v-html="titleString"></div>
       <div>
         <span>Temp&nbsp;</span><span v-html="padString(temperature, 5, true)"></span>
-        <span v-html="padString('', 5)"></span><span>Wind&nbsp;</span><span v-html="wind"></span>
+        <span v-html="padString('', 6)"></span><span>Wind&nbsp;</span><span v-html="wind"></span>
       </div>
       <div>
         <span>Hum&nbsp;&nbsp;</span><span v-html="padString(humidity, 5, true)"></span>
-        <span v-html="padString('', 5)"></span><span>{{ currentCondition }}</span>
+        <span v-html="padString('', 6)"></span><span>{{ currentCondition }}</span>
       </div>
       <div>
         <template v-if="shouldShowExtraData">
           <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
-          <span v-html="padString('', 4)"></span>
+          <span v-html="padString('', 5)"></span>
           <span v-if="shouldShowWindchill">Wind Chill {{ windchill }}</span>
           <span v-if="shouldShowAQHI">Air Quality {{ aqhiSummary }}</span>
         </template>
@@ -29,15 +29,16 @@
 </template>
 
 <script>
-import { parseISO, format } from "date-fns";
 import { calculateWindChillNumber } from "../js/windChill";
 import conditionmixin from "../mixins/condition.mixin";
+import observedmixin from "../mixins/observed.mixin";
+import stringpadmixin from "../mixins/stringpad.mixin";
 
 export default {
   name: "Conditions",
   props: {
     city: String,
-    observed: String,
+    observed: Object,
     conditions: Object,
     airQuality: Object,
     showPressure: {
@@ -46,7 +47,7 @@ export default {
     },
   },
 
-  mixins: [conditionmixin],
+  mixins: [stringpadmixin, conditionmixin, observedmixin],
 
   computed: {
     titleString() {
@@ -54,10 +55,7 @@ export default {
     },
 
     observedFormatted() {
-      return format(parseISO(this.observed), "h aa ???'&nbsp;'MMM dd/yy").replace(
-        `???`,
-        this.conditions?.dateTime[1]?.zone
-      );
+      return this.formatObservedLong(this.observed, true);
     },
 
     currentCondition() {

@@ -65,6 +65,11 @@ function isStartOfMonth() {
   return date.getDate() <= 5;
 }
 
+function convertECCDateStringToDateObject(eccDateString) {
+  const cleanTextSummary = eccDateString.replace(" at", "").replace(",", "");
+  return new Date(cleanTextSummary);
+}
+
 module.exports = {
   isWinterSeason,
   isDateInWinterSeason,
@@ -72,4 +77,5 @@ module.exports = {
   isDateInCurrentSummerSeason,
   getShorthandMonthNamesForSeason,
   isStartOfMonth,
+  convertECCDateStringToDateObject,
 };

@@ -7,6 +7,7 @@ const { exit } = require("process");
 const path = require("path");
 const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
 const { generateCrawler, getCrawler } = require("./generate-crawler.js");
+const { initCurrentConditions } = require("./current-conditions");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
 const { initManitobaTracking, manitobaHighLow } = require("./manitoba.js");
@@ -93,6 +94,9 @@ function startBackend(config) {
     });
   });
 
+  // current conditions info
+  initCurrentConditions(config?.primaryLocation, app);
+
   // handling api requests
   fetchWeatherForObservedCities();
   setInterval(fetchWeatherForObservedCities, 5 * 60 * 1000);
@@ -117,7 +121,7 @@ function startBackend(config) {
 
   const primaryLocation = config?.primaryLocation || {};
   const capAlerts = getAlertsFromCAP();
-  app.get("/api/weather", (req, res) => {
+  app.get("/api/weather2", (req, res) => {
     axios
       .get(
         `https://dd.weather.gc.ca/citypage_weather/xml/${primaryLocation.province}/${primaryLocation.location}_e.xml`

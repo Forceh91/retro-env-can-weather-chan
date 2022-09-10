@@ -61,6 +61,7 @@ const fetchCurrentConditions = () => {
     const observedConditions = generateConditions(weather.current);
     const sunRiseSet = generateSunriseSet(allWeatherData.riseSet?.dateTime);
     const almanac = generateAlmanac(allWeatherData.almanac);
+    const windchill = generateWindchill(observedConditions);
 
     // place these into the global conditions object we have that can be used elsewhere
     conditions.city = city;
@@ -69,6 +70,7 @@ const fetchCurrentConditions = () => {
     conditions.riseSet = sunRiseSet;
     conditions.forecast = weather.weekly;
     conditions.almanac = almanac;
+    conditions.windchill = windchill;
     conditions.conditionID = generateConditionsUniqueID(weather.current?.dateTime[1]);
   });
 };
@@ -136,6 +138,32 @@ const generateSunriseSet = (riseset) => {
 
 const generateAlmanac = (almanac) => {
   return almanac;
+};
+
+const generateWindchill = (conditions) => {
+  const { temperature, wind } = conditions;
+
+  // get temp val
+  const tempVal = temperature && temperature.value;
+  if (isNaN(tempVal)) return 0;
+
+  // get wind speed val
+  const windVal = wind && wind.speed?.value;
+  if (isNaN(windVal)) return 0;
+
+  // the old windchill system was a number based off temp and wind speed, rather than just a random temp
+  // this is calculated as below, then rounded up to the nearest 50, if its >= 1350 then windchill should be shown
+  const tempAsFloat = parseFloat(tempVal);
+  const windSpeed = parseInt(windVal);
+  const windSpeedMs = windSpeed / 3.6;
+
+  const windchill = Math.floor(
+    (12.1452 + 11.6222 * Math.sqrt(windSpeedMs) - 1.16222 * windSpeedMs) * (33 - tempAsFloat)
+  );
+
+  // round it to nearest 50 and if its >= 1350 its relevant
+  const roundedWindchill = Math.round(windchill / 50) * 50;
+  return roundedWindchill >= 1350 ? roundedWindchill : 0;
 };
 
 const generateConditionsUniqueID = (date) => {

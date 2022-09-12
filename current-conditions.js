@@ -1,7 +1,9 @@
 const axios = require("axios");
 const Weather = require("ec-weather-js");
 const { addMinutes } = require("date-fns");
+
 const { convertECCDateStringToDateObject } = require("./date-utils");
+const { getAQHIObservation } = require("./aqhi-observation");
 const CURRENT_CONDITIONS_FETCH_INTERVAL = 5 * 60 * 1000;
 
 let currentConditionsLocation = null;
@@ -33,7 +35,7 @@ const initCurrentConditions = (primaryLocation, app) => {
   app &&
     app.get("/api/weather", (req, res) => {
       if (!conditions.conditionID) res.sendStatus(500);
-      else res.send(conditions);
+      else res.send(generateWeatherResponse());
     });
 };
 
@@ -171,6 +173,10 @@ const generateConditionsUniqueID = (date) => {
   // for now we'll just use the timestamp that the data returned for the stations time
   if (!date) return null;
   return date.timeStamp;
+};
+
+const generateWeatherResponse = () => {
+  return { ...conditions, airQuality: getAQHIObservation() };
 };
 
 module.exports = { initCurrentConditions, getStationLastObservedDateTime };

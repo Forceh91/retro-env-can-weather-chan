@@ -14,7 +14,7 @@
         <template v-if="shouldShowExtraData">
           <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
           <span v-html="padString('', 5)"></span>
-          <span v-if="shouldShowWindchill">Wind Chill {{ windChill }}</span>
+          <span v-if="shouldShowWindchill">Wind Chill {{ ecWindchill }}</span>
           <span v-if="shouldShowAQHI">Air Quality {{ aqhiSummary }}</span>
         </template>
         <template v-else>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import conditionmixin from "../mixins/condition.mixin";
 import observedmixin from "../mixins/observed.mixin";
 import stringpadmixin from "../mixins/stringpad.mixin";
@@ -36,11 +37,6 @@ import stringpadmixin from "../mixins/stringpad.mixin";
 export default {
   name: "Conditions",
   props: {
-    city: String,
-    observed: Object,
-    conditions: Object,
-    windChill: Number,
-    airQuality: Object,
     showPressure: {
       type: Boolean,
       default: true,
@@ -50,28 +46,30 @@ export default {
   mixins: [stringpadmixin, conditionmixin, observedmixin],
 
   computed: {
+    ...mapGetters(["ecCity", "ecObservedAtStation", "ecConditions", "ecWindchill"]),
+
     titleString() {
-      return `&nbsp;${this.city}&nbsp;&nbsp;&nbsp;${this.observedFormatted}`;
+      return `&nbsp;${this.ecCity}&nbsp;&nbsp;&nbsp;${this.observedFormatted}`;
     },
 
     observedFormatted() {
-      return this.formatObservedLong(this.observed, true);
+      return this.formatObservedLong(this.ecObservedAtStation, true);
     },
 
     currentCondition() {
-      return this.truncateConditions(this.conditions?.condition);
+      return this.truncateConditions(this.ecConditions?.condition);
     },
 
     temperature() {
-      let temp = this.conditions?.temperature?.value;
+      let temp = this.ecConditions?.temperature?.value;
       if (!isNaN(temp)) temp = Math.round(temp);
       else temp = "N/A";
 
-      return `${temp} ${(this.conditions.temperature && this.conditions.temperature.units) || ""}`;
+      return `${temp} ${(this.ecConditions.temperature && this.ecConditions.temperature.units) || ""}`;
     },
 
     wind() {
-      const wind = this.conditions.wind;
+      const wind = this.ecConditions.wind;
       if (!wind) return "";
 
       const speed = (wind.speed && wind.speed.value) || "";
@@ -82,28 +80,28 @@ export default {
     },
 
     humidity() {
-      const humidity = this.conditions.relativeHumidity;
+      const humidity = this.ecConditions.relativeHumidity;
       if (!humidity) return "";
 
       return `${humidity.value} ${humidity.units}`;
     },
 
     visibility() {
-      const visibility = this.conditions.visibility;
+      const visibility = this.ecConditions.visibility;
       if (!visibility) return "";
 
       return `${Math.round(visibility.value)} ${visibility.units}`;
     },
 
     pressure() {
-      const pressure = this.conditions.pressure;
+      const pressure = this.ecConditions.pressure;
       if (!pressure) return "";
 
       return `${pressure.value} ${pressure.units}&nbsp;&nbsp;${pressure.tendency}`;
     },
 
     shouldShowWindchill() {
-      return this.windChill > 0;
+      return this.ecWindchill > 0;
     },
 
     aqhiSummary() {

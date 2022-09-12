@@ -20,6 +20,7 @@
     "mitt": "^3.0.0",
     "vue": "^3.2.38",
     "vue-axios": "^3.4.1",
+    "vuex": "^4.0.2",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {

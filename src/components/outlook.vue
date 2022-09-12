@@ -22,14 +22,16 @@
 </template>
 
 <script>
-import { addDays, format } from "date-fns";
+import { mapGetters } from "vuex";
+import { format } from "date-fns";
+
+import observedmixin from "../mixins/observed.mixin";
 import stringpadmixin from "../mixins/stringpad.mixin";
 
 export default {
   name: "outlook-screen",
-  mixins: [stringpadmixin],
+  mixins: [stringpadmixin, observedmixin],
   props: {
-    city: String,
     forecast: Array,
     normals: Object,
   },
@@ -41,6 +43,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(["ecObservedAtStation", "ecCity"]),
+
     titleString() {
       return `Outlook for Southern Manitoba`;
     },
@@ -72,10 +76,10 @@ export default {
 
   methods: {
     get3To5DayOutlook() {
-      if (!this.forecast) return null;
+      if (!this.forecast) return;
 
       // figure out what 3 days from now is
-      const threeDaysAway = addDays(Date.now(), 3);
+      const threeDaysAway = this.getDaysAheadFromObserved(this.ecObservedAtStation, 3);
       const threeDaysAwayName = format(threeDaysAway, "EEEE");
 
       // we need to get day 3, 4, and 5 from the forecast. however we know that the forecast includes "night" forecasts too

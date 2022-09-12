@@ -1,4 +1,4 @@
-import { parseISO, format } from "date-fns";
+import { parseISO, format, addDays } from "date-fns";
 
 export default {
   name: "observed-mixin",
@@ -24,6 +24,17 @@ export default {
       // clear out leading 0s from time/date as we dont want those
       const displayDateString = dateString.replace(/0([0-9])/, "&nbsp$1").replace(/\s0/, "&nbsp;&nbsp;");
       return displayDateString;
+    },
+
+    getDaysAheadFromObserved(date, numberOfDays) {
+      // we can go 6 days ahead of the observed date
+      numberOfDays = numberOfDays || 6;
+
+      // lets turn it into a date and then count forward
+      const parsedDate = parseISO(date.time);
+      const daysAhead = addDays(parsedDate, numberOfDays);
+
+      return daysAhead;
     },
   },
 };

@@ -33,6 +33,10 @@ export default {
     return forecast && forecast.slice(0, 5);
   },
 
+  ecRegionalNormals: (state) => {
+    return (state.ecData && state.ecData.regionalNormals) || {};
+  },
+
   ecAirQuality: (state) => {
     return state.ecData && state.ecData.airQuality;
   },

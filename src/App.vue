@@ -8,12 +8,7 @@
         <currentconditions v-if="isCurrentConditions" />
         <forecast v-if="isForecast" :forecast="ecShortForecast" />
         <aqhiwarning v-if="isAQHIWarning" :aqhi="ecAirQuality" />
-        <outlook
-          v-if="isOutlook"
-          :city="weather.city"
-          :forecast="weather.fullForecast"
-          :normals="weather.regionalNormals"
-        />
+        <outlook v-if="isOutlook" :forecast="ecForecast" :normals="ecRegionalNormals" />
         <mbhighlow
           v-if="isMBHighLow"
           :enabled="showMBHighLowSetting"
@@ -271,7 +266,7 @@ export default {
     },
 
     // data returned from eccc
-    ...mapGetters(["ecShortForecast", "ecWindchill", "ecAirQuality"]),
+    ...mapGetters(["ecForecast", "ecRegionalNormals", "ecShortForecast", "ecWindchill", "ecAirQuality"]),
   },
 
   mounted() {

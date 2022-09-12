@@ -12,15 +12,7 @@
           :conditions="weather.conditions"
           :riseset="weather.riseSet"
         />
-        <forecast
-          v-if="isForecast"
-          :city="ecCity"
-          :observed="ecObservedAtStation"
-          :conditions="ecConditions"
-          :forecast="ecForecast"
-          :wind-chill="ecWindchill"
-          :air-quality="weather.airQuality"
-        />
+        <forecast v-if="isForecast" :forecast="ecShortForecast" />
         <aqhiwarning v-if="isAQHIWarning" :aqhi="weather.airQuality" />
         <outlook
           v-if="isOutlook"
@@ -117,6 +109,7 @@ const SCREEN_ROTATION = [
 const BLUE_COL = "rgb(0,0,135)";
 const RED_COL = "#610b00";
 
+import { mapGetters } from "vuex";
 import { format, addMinutes /*, formatRFC3339*/ } from "date-fns";
 import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
@@ -284,33 +277,7 @@ export default {
     },
 
     // data returned from eccc
-    ecCity() {
-      return this.ecData && this.ecData.city;
-    },
-
-    ecObserved() {
-      return this.ecData && this.ecData.observed;
-    },
-
-    ecObservedAtStation() {
-      return this.ecObserved && { time: this.ecObserved.stationTime, timezone: this.ecObserved.stationTimezone };
-    },
-
-    ecConditions() {
-      return this.ecData && this.ecData.conditions;
-    },
-
-    ecWindchill() {
-      return this.ecData && this.ecData.windchill;
-    },
-
-    ecForecast() {
-      return this.ecData && this.ecData.forecast;
-    },
-
-    ecUUID() {
-      return this.ecData && this.ecData.conditionID;
-    },
+    ...mapGetters(["ecShortForecast"]),
   },
 
   mounted() {

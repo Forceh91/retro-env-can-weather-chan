@@ -46,7 +46,7 @@ export default {
   mixins: [stringpadmixin, conditionmixin, observedmixin],
 
   computed: {
-    ...mapGetters(["ecCity", "ecObservedAtStation", "ecConditions", "ecWindchill"]),
+    ...mapGetters(["ecCity", "ecObservedAtStation", "ecConditions", "ecWindchill", "ecAirQuality"]),
 
     titleString() {
       return `&nbsp;${this.ecCity}&nbsp;&nbsp;&nbsp;${this.observedFormatted}`;
@@ -105,11 +105,11 @@ export default {
     },
 
     aqhiSummary() {
-      return this.shouldShowAQHI && this.airQuality?.summary;
+      return this.shouldShowAQHI && this.ecAirQuality?.summary;
     },
 
     shouldShowAQHI() {
-      return (!this.shouldShowWindchill && this.airQuality) || false;
+      return (!this.shouldShowWindchill && this.ecAirQuality) || false;
     },
 
     shouldShowExtraData() {

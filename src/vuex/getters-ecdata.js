@@ -33,6 +33,10 @@ export default {
     return forecast && forecast.slice(0, 5);
   },
 
+  ecAirQuality: (state) => {
+    return state.ecData && state.ecData.airQuality;
+  },
+
   ecUUID: (state) => {
     return state.ecData && state.ecData.conditionID;
   },

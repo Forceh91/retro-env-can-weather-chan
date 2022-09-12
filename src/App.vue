@@ -7,7 +7,7 @@
       <div id="content">
         <currentconditions v-if="isCurrentConditions" />
         <forecast v-if="isForecast" :forecast="ecShortForecast" />
-        <aqhiwarning v-if="isAQHIWarning" :aqhi="weather.airQuality" />
+        <aqhiwarning v-if="isAQHIWarning" :aqhi="ecAirQuality" />
         <outlook
           v-if="isOutlook"
           :city="weather.city"
@@ -271,7 +271,7 @@ export default {
     },
 
     // data returned from eccc
-    ...mapGetters(["ecShortForecast", "ecWindchill"]),
+    ...mapGetters(["ecShortForecast", "ecWindchill", "ecAirQuality"]),
   },
 
   mounted() {

@@ -406,11 +406,7 @@ export default {
           const data = resp.data;
           if (!data) return;
 
-          this.ecData.city = data.city;
-          this.ecData.observed = data.observed;
-          this.ecData.conditions = data.conditions;
-          this.ecData.windchill = data.windchill;
-          this.ecData.forecast = data.forecast;
+          this.$store.commit("storeECData", data);
 
           // this.weather.city = data.location && data.location.name && data.location.name.value;
           // this.weather.currentConditions = data.current;

@@ -17,6 +17,7 @@ const conditions = {
   conditions: null,
   riseSet: null,
   forecast: null,
+  regionalNormals: null,
   conditionID: null,
 };
 
@@ -71,6 +72,7 @@ const fetchCurrentConditions = () => {
     conditions.conditions = observedConditions;
     conditions.riseSet = sunRiseSet;
     conditions.forecast = weather.weekly;
+    conditions.regionalNormals = weather.all.regionalNormals;
     conditions.almanac = almanac;
     conditions.windchill = windchill;
     conditions.conditionID = generateConditionsUniqueID(weather.current?.dateTime[1]);

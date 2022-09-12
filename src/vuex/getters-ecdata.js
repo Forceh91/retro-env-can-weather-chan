@@ -29,7 +29,8 @@ export default {
   },
 
   ecShortForecast: (state) => {
-    return state.ecData && state.ecData.forecast.slice(0, 5);
+    const { forecast } = state.ecData || [];
+    return forecast && forecast.slice(0, 5);
   },
 
   ecUUID: (state) => {

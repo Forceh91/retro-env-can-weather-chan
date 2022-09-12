@@ -5,13 +5,7 @@
         <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
       </div>
       <div id="content">
-        <currentconditions
-          v-if="isCurrentConditions"
-          :city="weather.city"
-          :observed="weather.observed"
-          :conditions="weather.conditions"
-          :riseset="weather.riseSet"
-        />
+        <currentconditions v-if="isCurrentConditions" />
         <forecast v-if="isForecast" :forecast="ecShortForecast" />
         <aqhiwarning v-if="isAQHIWarning" :aqhi="weather.airQuality" />
         <outlook
@@ -277,7 +271,7 @@ export default {
     },
 
     // data returned from eccc
-    ...mapGetters(["ecShortForecast"]),
+    ...mapGetters(["ecShortForecast", "ecWindchill"]),
   },
 
   mounted() {

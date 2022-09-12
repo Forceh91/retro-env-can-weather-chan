@@ -3,14 +3,7 @@
     <div v-if="forecastUnavailable" id="no_data">Forecast temporarily unavailable</div>
     <template v-else>
       <template v-if="!page">
-        <conditions
-          :city="city"
-          :observed="observed"
-          :conditions="conditions"
-          :show-pressure="false"
-          :air-quality="airQuality"
-          :wind-chill="windChill"
-        />
+        <conditions :show-pressure="false" />
         <div id="next_forecast" class="full-width">
           <span class="label"
             >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{ forecast[0]?.textSummary }}</span></span
@@ -19,14 +12,14 @@
       </template>
       <template v-else>
         <div id="forecast_cont">
-          <div id="title">{{ city }} Forecast Cont..</div>
-          <br /><br />
+          <div id="title">{{ ecCity }} Forecast Cont..</div>
+          <br />
           <div class="page_forecast">
             <span class="label"
               >{{ forecast[page]?.day }}..<span>{{ forecast[page]?.textSummary }}</span></span
             >
           </div>
-          <br /><br />
+          <br />
           <div class="page_forecast">
             <span v-if="page + 1 <= forecast.length - 1" class="label"
               >{{ forecast[page + 1]?.day }}..<span>{{ forecast[page + 1]?.textSummary }}</span></span
@@ -43,16 +36,12 @@ const PAGE_CHANGE_FREQUENCY = 15 * 1000;
 
 import conditions from "./conditions.vue";
 import { EventBus } from "../js/EventBus";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Forecast",
   props: {
-    city: String,
-    observed: Object,
-    conditions: Object,
     forecast: Array,
-    airQuality: Object,
-    windChill: Number,
   },
 
   components: { conditions },
@@ -62,8 +51,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters(["ecCity"]),
+
     forecastUnavailable() {
-      return !this.conditions || !this.forecast;
+      return !this.forecast || !this.forecast.length;
     },
   },
 

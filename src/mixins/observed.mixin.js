@@ -3,26 +3,32 @@ import { parseISO, format, addDays, subDays } from "date-fns";
 export default {
   name: "observed-mixin",
   methods: {
-    formatObservedLong(date, handleMid) {
+    formatObservedLong(date, handleMid, additionalTimeZonePadding) {
       if (!date) return "";
 
       const parsedDate = parseISO(date.time);
       const timeZone = date.timezone;
 
+      // is the right place to do this? idk
+      // i dont wanna write an entire other function just for the screen
+      // with the list of cities on it
+      additionalTimeZonePadding = additionalTimeZonePadding || "";
+
       const hours = parsedDate.getHours();
       let hourTimezoneFormat = `hh aa `;
       // we need to double space after timezone if its a single digit hour
       // otherwise it should be a single space because 10/11 eat into that space
-      let timeZoneString = `'${timeZone}&nbsp;'`;
-      if (hours < 10 || (hours > 12 && hours < 22)) timeZoneString = `'${timeZone}&nbsp;&nbsp;'`;
+      let timeZoneString = `'${timeZone}&nbsp;${additionalTimeZonePadding}'`;
+      if (hours < 10 || (hours > 12 && hours < 22))
+        timeZoneString = `'${timeZone}${additionalTimeZonePadding}&nbsp;&nbsp;'`;
 
       // ammend this onto the hour format
       hourTimezoneFormat += timeZoneString;
 
       // handle midnight/noon
       if (handleMid) {
-        if (hours === 12) hourTimezoneFormat = `'${this.padString("Noon", 10)}'`;
-        if (hours === 0) hourTimezoneFormat = `'${this.padString("Midnight", 10)}'`;
+        if (hours === 12) hourTimezoneFormat = `'${this.padString("Noon", 10)}${additionalTimeZonePadding}'`;
+        if (hours === 0) hourTimezoneFormat = `'${this.padString("Midnight", 10)}${additionalTimeZonePadding}'`;
       }
 
       // put it all together and format

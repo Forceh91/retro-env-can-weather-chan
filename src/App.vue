@@ -15,29 +15,12 @@
           :manitoba-data="weather.highLowAroundMB"
           :timezone="timeZone"
         />
-        <surrounding
-          v-if="isSurrounding"
-          :observed="weather.observed"
-          :timezone="timeZone"
-          :observations="weather.surroundingObservations"
-        />
-        <surrounding
-          v-if="isUSSurrounding"
-          :observed="weather.observed"
-          :timezone="timeZone"
-          :observations="weather.surroundingUSObservations"
-        />
+        <surrounding v-if="isSurrounding" :observations="weather.surroundingObservations" />
+        <surrounding v-if="isUSSurrounding" :observations="weather.surroundingUSObservations" />
         <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
         <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
         <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
-        <citystats
-          v-if="isCityStats"
-          :city="weather.city"
-          :riseset="weather.riseSet"
-          :hotcold="weather.hotColdSpots"
-          :season-precip="season?.precip"
-          :is-winter="season?.isWinter"
-        />
+        <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
         <lastmonth v-if="isLastMonthSummary" :city="weather.city" :last-month="climate.lastMonth" />
       </div>
       <div id="bottom_bar">
@@ -130,13 +113,6 @@ export default {
       now: new Date(),
       rotationIndex: 0,
       currentScreen: SCREENS.FORECAST,
-      ecData: {
-        city: null,
-        observed: null,
-        conditions: null,
-        windchill: 0,
-        conditionID: null,
-      },
       weather: {
         conditions: null,
         city: null,

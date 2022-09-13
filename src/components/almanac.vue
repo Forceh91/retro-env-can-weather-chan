@@ -46,6 +46,10 @@ export default {
       return !this.almanac;
     },
 
+    lastYear() {
+      return this.almanac.lastYear || {};
+    },
+
     highLastYear() {
       const highLastYear = this.lastYear?.temp?.max || "N/A";
       return `${this.padString(highLastYear, 5, true)}`;

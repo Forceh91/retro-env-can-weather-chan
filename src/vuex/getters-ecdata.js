@@ -41,6 +41,10 @@ export default {
     return state.ecData && state.ecData.airQuality;
   },
 
+  ecAlmanac: (state) => {
+    return state.ecData && state.ecData.almanac;
+  },
+
   ecUUID: (state) => {
     return state.ecData && state.ecData.conditionID;
   },

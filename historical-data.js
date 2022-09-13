@@ -1,13 +1,6 @@
 const xmljs = require("xml-js");
 const axios = require("axios");
 const {
-  isWinterSeason,
-  isDateInCurrentWinterSeason,
-  isDateInCurrentSummerSeason,
-  getShorthandMonthNamesForSeason,
-  isStartOfMonth,
-} = require("./date-utils");
-const {
   subMonths,
   startOfMonth,
   endOfMonth,
@@ -17,6 +10,16 @@ const {
   format,
   getDaysInMonth,
 } = require("date-fns");
+
+const {
+  isWinterSeason,
+  isDateInCurrentWinterSeason,
+  isDateInCurrentSummerSeason,
+  getShorthandMonthNamesForSeason,
+  isStartOfMonth,
+} = require("./date-utils");
+
+const { getStationLastObservedDateTime } = require("./current-conditions");
 
 // this is loaded from config but here's a backup for it
 const STATION_ID_TO_FETCH = 27174; // winnipeg a cs//51097; // winnipeg intl a
@@ -43,8 +46,11 @@ function fetchHistoricalData(stationID) {
   // fill in the station id
   let url = HISTORICAL_DATA_URL.replace("$STATION_ID", STATION_ID_TO_FETCH);
 
+  // use the current conditions observed data to decide what date to use for historical temp data
+  const today = getStationLastObservedDateTime();
+  if (!today) return;
+
   // get the starting year for this place
-  const today = new Date();
   const lastYear = today.getFullYear() - 1;
 
   // place to store two years worth of data
@@ -184,7 +190,7 @@ function fetchClimateNormals() {
           // for the current month we need to do math
           if (pcp._attributes?.name.includes(months[months.length - 1])) {
             // if we're past the 1st day of the month, otherwise return 0
-            const date = new Date();
+            const date = getStationLastObservedDateTime() || new Date();
             const daysInMonth = getDaysInMonth(date);
             if (date.getDate() > 1 && daysInMonth) {
               // get the value and divide by daysInMonth to get average per day for this month
@@ -218,7 +224,7 @@ function getSummaryOfLastMonth(stationData) {
   if (!isStartOfMonth()) return (lastMonthSummary = false);
 
   // get start/end of last month
-  const date = new Date();
+  const date = getStationLastObservedDateTime() || new Date();
   const startOfLastMonth = startOfMonth(subMonths(date, 1));
   const endOfLastMonth = endOfMonth(startOfLastMonth);
 
@@ -306,6 +312,7 @@ function getLastMonthSummary() {
 
 module.exports = {
   initHistoricalData,
+  fetchHistoricalData,
   lastYearObservation,
   getSeasonPrecipData,
   getSeasonPrecipNormalsData,

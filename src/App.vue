@@ -27,15 +27,7 @@
           :timezone="timeZone"
           :observations="weather.surroundingUSObservations"
         />
-        <almanac
-          v-if="isAlmanac"
-          :city="weather.city"
-          :observed="weather.observed"
-          :conditions="weather.currentConditions"
-          :almanac="weather.almanac"
-          :last-year="weather.lastYear"
-          :air-quality="weather.airQuality"
-        />
+        <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
         <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
         <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
         <citystats
@@ -266,7 +258,7 @@ export default {
     },
 
     // data returned from eccc
-    ...mapGetters(["ecForecast", "ecRegionalNormals", "ecShortForecast", "ecWindchill", "ecAirQuality"]),
+    ...mapGetters(["ecForecast", "ecRegionalNormals", "ecShortForecast", "ecWindchill", "ecAirQuality", "ecAlmanac"]),
   },
 
   mounted() {

@@ -4,6 +4,7 @@ const { addMinutes } = require("date-fns");
 
 const { convertECCDateStringToDateObject } = require("./date-utils");
 const { getAQHIObservation } = require("./aqhi-observation");
+const { getHotColdSpotsCanada } = require("./province-today-observation.js");
 const CURRENT_CONDITIONS_FETCH_INTERVAL = 5 * 60 * 1000;
 
 let currentConditionsLocation = null;
@@ -191,6 +192,7 @@ const generateWeatherResponse = () => {
   return {
     ...conditions,
     almanac: { ...conditions.almanac, lastYear: (historicalData && historicalData.lastYearObservation()) || {} },
+    canadaHotColdSpots: getHotColdSpotsCanada(),
     airQuality: getAQHIObservation(),
   };
 };

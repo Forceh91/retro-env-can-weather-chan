@@ -49,6 +49,10 @@ export default {
     return state.ecData && state.ecData.riseSet;
   },
 
+  ecHotColdSpotsCanada: (state) => {
+    return (state.ecData && state.ecData.canadaHotColdSpots) || {};
+  },
+
   ecUUID: (state) => {
     return state.ecData && state.ecData.conditionID;
   },

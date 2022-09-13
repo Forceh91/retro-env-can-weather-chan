@@ -36,12 +36,6 @@ export default {
   name: "city-stats",
   mixins: [stringpadmixin, observedmixin],
   props: {
-    hotcold: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
     seasonPrecip: {
       type: Object,
       default: () => {
@@ -52,7 +46,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["ecCity", "ecObservedAtStation", "ecSunriseSet"]),
+    ...mapGetters(["ecCity", "ecObservedAtStation", "ecSunriseSet", "ecHotColdSpotsCanada"]),
 
     cityStatsUnavailable() {
       return !this.ecCity || !this.ecObservedAtStation;
@@ -87,15 +81,15 @@ export default {
     },
 
     hotSpotCity() {
-      return (this.hotcold?.hot?.city || "N/A").slice(0, HOT_COLD_SPOT_CITY_MAX_LENGTH);
+      return (this.ecHotColdSpotsCanada?.hot?.city || "N/A").slice(0, HOT_COLD_SPOT_CITY_MAX_LENGTH);
     },
 
     hotSpotProvince() {
-      return this.hotcold?.hot?.province || "N/A";
+      return this.ecHotColdSpotsCanada?.hot?.province || "N/A";
     },
 
     hotSpotTemp() {
-      const temp = this.hotcold?.hot?.temp;
+      const temp = this.ecHotColdSpotsCanada?.hot?.temp;
       const tempString = !isNaN(temp) ? Math.round(temp) : "N/A";
       return this.padString(`${tempString}`, 3, true);
     },
@@ -110,15 +104,15 @@ export default {
     },
 
     coldSpotCity() {
-      return (this.hotcold?.cold?.city || "N/A").slice(0, HOT_COLD_SPOT_CITY_MAX_LENGTH);
+      return (this.ecHotColdSpotsCanada?.cold?.city || "N/A").slice(0, HOT_COLD_SPOT_CITY_MAX_LENGTH);
     },
 
     coldSpotProvince() {
-      return this.hotcold?.cold?.province || "N/A";
+      return this.ecHotColdSpotsCanada?.cold?.province || "N/A";
     },
 
     coldSpotTemp() {
-      const temp = this.hotcold?.cold?.temp;
+      const temp = this.ecHotColdSpotsCanada?.cold?.temp;
       const tempString = !isNaN(temp) ? Math.round(temp) : "N/A";
       return this.padString(`${tempString}`, 3, true);
     },

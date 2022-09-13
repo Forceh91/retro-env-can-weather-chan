@@ -11,13 +11,13 @@ const { initCurrentConditions } = require("./current-conditions");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
 const { initManitobaTracking, manitobaHighLow } = require("./manitoba.js");
-const {
+const historicalDataAPI = ({
   initHistoricalData,
   lastYearObservation,
   getSeasonPrecipData,
   getSeasonPrecipNormalsData,
   getLastMonthSummary,
-} = require("./historical-data.js");
+} = require("./historical-data.js"));
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
 const { startAlertMonitoring, getAlertsFromCAP } = require("./alert-monitoring");
 const { initAQHIObservation, getAQHIObservation } = require("./aqhi-observation");
@@ -95,7 +95,7 @@ function startBackend(config) {
   });
 
   // current conditions info
-  initCurrentConditions(config?.primaryLocation, app);
+  initCurrentConditions(config?.primaryLocation, app, historicalDataAPI);
 
   // handling api requests
   fetchWeatherForObservedCities();
@@ -104,9 +104,6 @@ function startBackend(config) {
   // us city observations
   fetchWeatherForObservedUSCities();
   setInterval(fetchWeatherForObservedUSCities, 7.5 * 60 * 1000);
-
-  // historical data
-  initHistoricalData(config?.climateStationID);
 
   // air quality readings
   initAQHIObservation(config?.primaryLocation?.name);

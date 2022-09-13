@@ -7,6 +7,7 @@ const { getAQHIObservation } = require("./aqhi-observation");
 const CURRENT_CONDITIONS_FETCH_INTERVAL = 5 * 60 * 1000;
 
 let currentConditionsLocation = null;
+let historicalData = null;
 const conditions = {
   observed: {
     unixTimestamp: 0,
@@ -21,12 +22,13 @@ const conditions = {
   conditionID: null,
 };
 
-const initCurrentConditions = (primaryLocation, app) => {
+const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
   // pass in the primary location from the config and make sure its valid
   if (!primaryLocation || !primaryLocation.province || !primaryLocation.location) return;
 
   // store this for later use
   currentConditionsLocation = { ...primaryLocation };
+  historicalData = historicalDataAPI;
 
   // setup a timer to fetch the conditions periodically (ECC updates this roughly once every 30mins)
   // we will fetch data once every 5 minutes or so
@@ -48,6 +50,8 @@ const getStationLastObservedDateTime = () => {
 
 const fetchCurrentConditions = () => {
   if (!currentConditionsLocation) return;
+
+  const previousConditionsID = conditions.conditionID;
 
   const { province, location } = currentConditionsLocation;
   axios.get(`https://dd.weather.gc.ca/citypage_weather/xml/${province}/${location}_e.xml`).then((resp) => {
@@ -76,6 +80,9 @@ const fetchCurrentConditions = () => {
     conditions.almanac = almanac;
     conditions.windchill = windchill;
     conditions.conditionID = generateConditionsUniqueID(weather.current?.dateTime[1]);
+
+    // if the conditions ID has updated this means new info is available which means we should fetch more historical data
+    if (conditions.conditionID !== previousConditionsID) historicalData && historicalData.fetchHistoricalData();
   });
 };
 
@@ -141,6 +148,9 @@ const generateSunriseSet = (riseset) => {
 };
 
 const generateAlmanac = (almanac) => {
+  // we need to fetch the historical values from the historical data at this point, we will use the current observed date
+  // to fetch the historical data, rather than the current time value so that data doesn't get muddled up
+  // where it was showing normal/record from observed, and and the last year from the current date/time
   return almanac;
 };
 
@@ -178,7 +188,11 @@ const generateConditionsUniqueID = (date) => {
 };
 
 const generateWeatherResponse = () => {
-  return { ...conditions, airQuality: getAQHIObservation() };
+  return {
+    ...conditions,
+    almanac: { ...conditions.almanac, lastYear: (historicalData && historicalData.lastYearObservation()) || {} },
+    airQuality: getAQHIObservation(),
+  };
 };
 
 module.exports = { initCurrentConditions, getStationLastObservedDateTime };

@@ -45,6 +45,10 @@ export default {
     return state.ecData && state.ecData.almanac;
   },
 
+  ecSunriseSet: (state) => {
+    return state.ecData && state.ecData.riseSet;
+  },
+
   ecUUID: (state) => {
     return state.ecData && state.ecData.conditionID;
   },

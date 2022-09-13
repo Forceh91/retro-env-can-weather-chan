@@ -40,6 +40,19 @@ export default {
       return displayDateString;
     },
 
+    formatObservedMonthDate(date, isLongMonths) {
+      if (!date) return "";
+
+      const parsedDate = parseISO(date.time);
+      const dateString = format(parsedDate, "MMM'&nbsp;' d");
+      if (!isLongMonths) return dateString;
+
+      return dateString
+        .replace(/jun&nbsp;/gi, "june")
+        .replace(/jul&nbsp;/gi, "july")
+        .replace(/sep&nbsp;/gi, "sept");
+    },
+
     getDaysAheadFromObserved(date, numberOfDays) {
       // we can go 6 days ahead of the observed date
       numberOfDays = numberOfDays || 6;

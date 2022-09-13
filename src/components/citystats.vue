@@ -26,16 +26,16 @@ const HOT_COLD_SPOT_PROV_PAD_TEMP_LENGTH = 8;
 // taking away room for the `, PV .. TMP` gives us how long the city name can be
 const HOT_COLD_SPOT_CITY_MAX_LENGTH = HOT_COLD_SPOT_CITY_PROV_PAD_TEMP_LENGTH - HOT_COLD_SPOT_PROV_PAD_TEMP_LENGTH - 2;
 
-import { format } from "date-fns";
+import { mapGetters } from "vuex";
+import { parseISO, format } from "date-fns";
 import stringpadmixin from "../mixins/stringpad.mixin";
+import observedmixin from "../mixins/observed.mixin";
 // import { EventBus } from "../js/EventBus";
 
 export default {
   name: "city-stats",
-  mixins: [stringpadmixin],
+  mixins: [stringpadmixin, observedmixin],
   props: {
-    city: String,
-    riseset: Object,
     hotcold: {
       type: Object,
       default: () => {
@@ -52,30 +52,34 @@ export default {
   },
 
   computed: {
+    ...mapGetters(["ecCity", "ecObservedAtStation", "ecSunriseSet"]),
+
     cityStatsUnavailable() {
-      return !this.city;
+      return !this.ecCity || !this.ecObservedAtStation;
     },
 
     currentDate() {
-      const dateString = format(new Date().getTime(), "MMM'&nbsp;' d");
-      return dateString
-        .replace(/jun&nbsp;/gi, "june")
-        .replace(/jul&nbsp;/gi, "july")
-        .replace(/sep&nbsp;/gi, "sept");
+      return this.formatObservedMonthDate(this.ecObservedAtStation, true);
     },
 
     sunriseset() {
-      const riseSet = this.riseset;
+      const riseSet = this.ecSunriseSet;
       if (!riseSet) return "";
 
-      const rise = riseSet.dateTime[1];
-      const set = riseSet.dateTime[3];
+      const { rise } = riseSet;
+      const { set } = riseSet;
 
-      return `Sunrise..${parseInt(rise?.hour)}:${rise?.minute} AM Sunset..${set?.hour % 12}:${set?.minute} PM`;
+      const riseTime = parseISO(rise.time);
+      const setTime = parseISO(set.time);
+
+      const riseTimeFormatted = format(riseTime, "h:mm 'AM'");
+      const setTimeFormatted = format(setTime, "h:mm 'PM'");
+
+      return `Sunrise..${riseTimeFormatted} Sunset..${setTimeFormatted}`;
     },
 
     titleString() {
-      return `&nbsp;&nbsp;${this.city} Statistics - ${this.currentDate}`;
+      return `&nbsp;&nbsp;${this.ecCity} Statistics - ${this.currentDate}`;
     },
 
     hotColdTitleString() {

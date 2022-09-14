@@ -6,7 +6,7 @@
       </div>
       <div id="content">
         <currentconditions v-if="isCurrentConditions" />
-        <forecast v-if="isForecast" :forecast="ecShortForecast" />
+        <forecast v-if="isForecast" :forecast="ecShortForecast" :reload="shouldDoReloadAnimation" />
         <aqhiwarning v-if="isAQHIWarning" :aqhi="ecAirQuality" />
         <outlook v-if="isOutlook" :forecast="ecForecast" :normals="ecRegionalNormals" />
         <mbhighlow v-if="isMBHighLow" :enabled="showMBHighLowSetting" :manitoba-data="province.highLowAroundMB" />
@@ -39,7 +39,7 @@ const SCREENS = {
   CURRENT_CONDITIONS: { id: 1, length: 30 },
   FORECAST: { id: 2, length: 160 },
   SURROUNDING: { id: 3, length: 80 },
-  ALMANAC: { id: 4, length: 30 },
+  ALMANAC: { id: 4, length: 20 },
   WARNINGS: { id: 5, length: 65 * 10 }, // enough for 10 warnings if things get crazy
   WINDCHILL: { id: 6, length: 20 },
   MB_HIGH_LOW: { id: 7, length: 20 },
@@ -127,12 +127,17 @@ export default {
       showMBHighLowSetting: false,
       backgroundCol: BLUE_COL,
       backgroundColDebouncer: null,
+      shouldDoReloadAnimation: false,
     };
   },
 
   watch: {
     rotationIndex() {
       this.switchBackgroundColour();
+    },
+
+    ecUUID(val, old) {
+      if (old) this.forceReloadForNewData();
     },
   },
 
@@ -229,6 +234,7 @@ export default {
       "ecAirQuality",
       "ecAlmanac",
       "ecWarnings",
+      "ecUUID",
     ]),
   },
 
@@ -429,6 +435,8 @@ export default {
     },
 
     switchToNextScreen() {
+      this.shouldDoReloadAnimation = false;
+
       this.rotationIndex += 1;
       if (this.rotationIndex === SCREEN_ROTATION.length) this.rotationIndex = 0;
       this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
@@ -459,6 +467,15 @@ export default {
       }, 50);
     },
 
+    forceReloadForNewData() {
+      // set stuff back to the very first page
+      this.rotationIndex = 0;
+      this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
+      this.shouldDoReloadAnimation = true;
+
+      // handle stuff as usual
+      this.handleScreenCycle();
+    },
     timezoneAdjustedDate(date) {
       if (!this.weather || !this.weather.currentConditions) return date;
       const localOffset = -date.getTimezoneOffset();

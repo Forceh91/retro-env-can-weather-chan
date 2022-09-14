@@ -1,27 +1,43 @@
 <template>
   <div id="conditions_table">
     <div id="conditions_table_content">
-      <div id="title" v-html="titleString"></div>
+      <div class="reloadable reloadable-1" id="title" v-html="titleString"></div>
       <div>
-        <span>Temp&nbsp;</span><span v-html="padString(temperature, 5, true)"></span>
-        <span v-html="padString('', 6)"></span><span>Wind&nbsp;</span><span v-html="wind"></span>
+        <div class="reloadable reloadable-2">
+          <span>Temp&nbsp;</span><span v-html="padString(temperature, 5, true)"></span>
+        </div>
+        <div class="reloadable reloadable-3">
+          <span v-html="padString('', 6)"></span><span>Wind&nbsp;</span><span v-html="wind"></span>
+        </div>
       </div>
       <div>
-        <span>Hum&nbsp;&nbsp;</span><span v-html="padString(humidity, 5, true)"></span>
-        <span v-html="padString('', 6)"></span><span>{{ currentCondition }}</span>
+        <div class="reloadable reloadable-4">
+          <span>Hum&nbsp;&nbsp;</span><span v-html="padString(humidity, 5, true)"></span>
+        </div>
+        <div class="reloadable reloadable-5">
+          <span v-html="padString('', 6)"></span><span>{{ currentCondition }}</span>
+        </div>
       </div>
       <div>
         <template v-if="shouldShowExtraData">
-          <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
-          <span v-html="padString('', 5)"></span>
-          <span v-if="shouldShowWindchill">Wind Chill {{ ecWindchill }}</span>
-          <span v-if="shouldShowAQHI">Air Quality {{ aqhiSummary }}</span>
+          <div class="reloadable reloadable-6">
+            <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
+          </div>
+          <span v-html="padString('', 5, true)"></span>
+          <div class="reloadable reloadable-7">
+            <span v-if="shouldShowWindchill">Wind Chill {{ ecWindchill }}</span>
+          </div>
+          <div class="reloadable reloadable-7">
+            <span v-if="shouldShowAQHI">Air Quality {{ aqhiSummary }}</span>
+          </div>
         </template>
         <template v-else>
-          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visibility&nbsp;&nbsp;</span><span v-html="visibility"></span>
+          <div class="reloadable reloadable-6">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visibility&nbsp;&nbsp;</span><span v-html="visibility"></span>
+          </div>
         </template>
       </div>
-      <div v-if="showPressure">
+      <div v-if="showPressure" class="reloadable">
         <span v-html="padString('pressure', 11, true)"></span>&nbsp;<span v-html="pressure"></span>
       </div>
     </div>
@@ -136,6 +152,10 @@ export default {
 
   #conditions_table_content div {
     margin-bottom: 5px;
+  }
+
+  .reloadable {
+    display: inline-block;
   }
 }
 </style>

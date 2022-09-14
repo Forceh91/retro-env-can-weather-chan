@@ -14,13 +14,15 @@
 </template>
 
 <script>
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
 import { EventBus } from "../js/EventBus";
 import temperaturemixin from "../mixins/temperature.mixin";
+import observedmixin from "../mixins/observed.mixin";
+import { mapGetters } from "vuex";
 
 export default {
   name: "mbhighlow",
-  mixins: [temperaturemixin],
+  mixins: [temperaturemixin, observedmixin],
   props: {
     enabled: Boolean,
     timezone: String,
@@ -33,6 +35,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(["ecObservedAtStation"]),
+
     period() {
       return this.manitobaData?.period;
     },
@@ -48,7 +52,7 @@ export default {
     },
 
     yesterday() {
-      return subDays(new Date(), 1);
+      return this.getDaysBehindFromObserved(this.ecObservedAtStation, 1);
     },
 
     yesterdayDateFormatted() {

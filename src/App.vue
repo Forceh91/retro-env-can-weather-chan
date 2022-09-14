@@ -9,19 +9,14 @@
         <forecast v-if="isForecast" :forecast="ecShortForecast" />
         <aqhiwarning v-if="isAQHIWarning" :aqhi="ecAirQuality" />
         <outlook v-if="isOutlook" :forecast="ecForecast" :normals="ecRegionalNormals" />
-        <mbhighlow
-          v-if="isMBHighLow"
-          :enabled="showMBHighLowSetting"
-          :manitoba-data="weather.highLowAroundMB"
-          :timezone="timeZone"
-        />
-        <surrounding v-if="isSurrounding" :observations="weather.surroundingObservations" />
-        <surrounding v-if="isUSSurrounding" :observations="weather.surroundingUSObservations" />
+        <mbhighlow v-if="isMBHighLow" :enabled="showMBHighLowSetting" :manitoba-data="province.highLowAroundMB" />
+        <surrounding v-if="isSurrounding" :observations="surrounding.canada" />
+        <surrounding v-if="isUSSurrounding" :observations="surrounding.usa" />
         <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
         <warnings v-if="isWarnings" :warnings="ecWarnings" />
         <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
         <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
-        <lastmonth v-if="isLastMonthSummary" :city="weather.city" :last-month="climate.lastMonth" />
+        <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
       </div>
       <div id="bottom_bar">
         <div id="clock">
@@ -113,20 +108,12 @@ export default {
       now: new Date(),
       rotationIndex: 0,
       currentScreen: SCREENS.FORECAST,
-      weather: {
-        conditions: null,
-        city: null,
-        observed: null,
-        riseSet: null,
-        forecast: null,
-        surroundingObservations: null,
-        surroundingUSObservations: null,
-        almanac: null,
-        airQuality: null,
+      province: {
         highLowAroundMB: {},
-        hotColdSpots: {},
-        lastYear: {},
-        regionalNormals: {},
+      },
+      surrounding: {
+        canada: null,
+        usa: null,
       },
       season: {
         precip: null,
@@ -341,19 +328,6 @@ export default {
           if (!data) return;
 
           this.$store.commit("storeECData", data);
-
-          // this.weather.city = data.location && data.location.name && data.location.name.value;
-          // this.weather.currentConditions = data.current;
-          // this.weather.riseSet = data.riseSet;
-          // this.weather.forecast = data.upcomingForecast.slice(0, 5);
-          // this.weather.fullForecast = data.upcomingForecast;
-          // this.weather.almanac = data.almanac;
-          // this.weather.airQuality = data.airQuality;
-          // this.weather.warnings = data.warnings;
-          // this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
-          // this.weather.lastYear = data.last_year || {};
-          // this.weather.hotColdSpots = data.hot_cold || {};
-          // this.weather.regionalNormals = data.regionalNormals || {};
         })
         .catch((err) => {
           console.error(err);
@@ -368,11 +342,11 @@ export default {
           const data = resp.data;
           if (!data || !data.observations || !data.observations.length) return;
 
-          this.weather.surroundingObservations = data.observations;
+          this.surrounding.canada = data.observations;
         })
         .catch((err) => {
           console.error(err);
-          this.weather.surroundingObservations = null;
+          this.surrounding.canada = null;
         });
     },
 
@@ -383,11 +357,11 @@ export default {
           const data = resp.data;
           if (!data || !data.observations || !data.observations.length) return;
 
-          this.weather.surroundingUSObservations = data.observations;
+          this.surrounding.usa = data.observations;
         })
         .catch((err) => {
           console.error(err);
-          this.weather.surroundingUSObservations = null;
+          this.surrounding.usa = null;
         });
     },
 
@@ -400,7 +374,7 @@ export default {
           const data = resp.data;
           if (!data || !data.stations || !data.stations.length) return;
 
-          this.weather.highLowAroundMB = data;
+          this.province.highLowAroundMB = data;
         })
         .catch((err) => {
           console.error(err);

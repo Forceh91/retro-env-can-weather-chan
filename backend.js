@@ -1,7 +1,5 @@
-const Weather = require("ec-weather-js");
 const express = require("express");
 const cors = require("cors");
-const axios = require("axios");
 const fs = require("fs");
 const { exit } = require("process");
 const path = require("path");
@@ -18,9 +16,9 @@ const historicalDataAPI = ({
   getSeasonPrecipNormalsData,
   getLastMonthSummary,
 } = require("./historical-data.js"));
-const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
+const { fetchProvinceObservationData } = require("./province-today-observation.js");
 const { startAlertMonitoring } = require("./alert-monitoring");
-const { initAQHIObservation, getAQHIObservation } = require("./aqhi-observation");
+const { initAQHIObservation } = require("./aqhi-observation");
 const { isWinterSeason } = require("./date-utils.js");
 
 const corsOptions = {
@@ -115,37 +113,6 @@ function startBackend(config) {
   // provincial today observations
   fetchProvinceObservationData(config?.primaryLocation?.province);
   setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
-
-  const primaryLocation = config?.primaryLocation || {};
-  // const capAlerts = getAlertsFromCAP();
-  app.get("/api/weather2", (req, res) => {
-    axios
-      .get(
-        `https://dd.weather.gc.ca/citypage_weather/xml/${primaryLocation.province}/${primaryLocation.location}_e.xml`
-      )
-      .then((resp) => {
-        const weather = new Weather(resp.data);
-        if (!weather) return;
-
-        res.send({
-          location: weather.all.location,
-          current: weather.current,
-          riseSet: weather.all.riseSet,
-          observed: weather.date,
-          upcomingForecast: weather.weekly,
-          regionalNormals: weather.all.regionalNormals,
-          warnings: capAlerts || [],
-          almanac: weather.all.almanac,
-          airQuality: getAQHIObservation(),
-          last_year: lastYearObservation(),
-          hot_cold: getHotColdSpotsCanada(),
-          isWinter: isWinterSeason(),
-        });
-      })
-      .catch(() => {
-        res.sendStatus(404);
-      });
-  });
 
   app.get("/api/climate/season/precip", (req, res) => {
     res.send({

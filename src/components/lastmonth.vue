@@ -17,6 +17,7 @@
 <script>
 import stringmixin from "../mixins/stringpad.mixin";
 import { format, isValid } from "date-fns";
+import { mapGetters } from "vuex";
 
 export default {
   name: "last-month",
@@ -28,16 +29,17 @@ export default {
         return {};
       },
     },
-    city: String,
   },
 
   computed: {
+    ...mapGetters(["ecCity"]),
+
     summaryTitle() {
       return `Weather Statistics for ${this.lastMonth.month || ""}`;
     },
 
     tableHeader() {
-      return `&nbsp;${this.padString(this.city, 11, false)}&nbsp;This Year&nbsp;&nbsp;Normal`;
+      return `&nbsp;${this.padString(this.ecCity, 11, false)}&nbsp;This Year&nbsp;&nbsp;Normal`;
     },
 
     averageHighData() {

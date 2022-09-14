@@ -15,6 +15,9 @@ const defaultConfig = () => {
       name: "Winnipeg",
     },
     proviceHighLowEnabled: true,
+    historicalDataStationID: 27174, // (used for last year temps + precip data) winnipeg a cs
+    climateNormalsStationID: 3698, // winnipeg richardson a (used for climate normals on last month summary)
+    climateNormalsClimateID: 5023222, // (used for climate normals on last month summary)
   };
 };
 
@@ -24,13 +27,28 @@ const initWeatherChannel = (app, callback) => {
 };
 
 const checkConfigFileExists = (callback) => {
+  let hasConfigFile = false;
   fs.stat(CONFIG_FILE, (err, stats) => {
-    if (err || !(stats.size > 0)) {
-      return console.error("[CONFIG] No config file found, loading defaults");
+    if (err) {
+      // error whilst loading this file so do defaults and callback
+      console.error("[CONFIG] No config file found, loading defaults");
+      if (typeof callback === "function") callback();
+    } else {
+      // no error loading, check the size and either callback or load the file
+      hasConfigFile = stats.size > 0;
+      if (hasConfigFile) loadConfigFile(CONFIG_FILE, callback);
+      else {
+        loadConfigDefaults();
+        if (typeof callback === "function") callback();
+      }
     }
   });
 
-  loadConfigFile(CONFIG_FILE, callback);
+  // load the crawler
+  generateCrawler();
+
+  // load the playlist
+  generatePlaylist();
 };
 
 const loadConfigFile = (configFilePath, callback) => {
@@ -53,12 +71,6 @@ const loadConfigFile = (configFilePath, callback) => {
 
     // store whether the province high/low should load
     config.proviceHighLowEnabled = proviceHighLowEnabled;
-
-    // load the crawler
-    generateCrawler();
-
-    // load the playlist
-    generatePlaylist();
 
     // say the config was loaded
     console.log(

@@ -29,6 +29,8 @@ const port = 8600;
 config.initWeatherChannel(app, startBackend);
 
 function startBackend() {
+  console.log("[RECW]", `Application started, listening on http://localhost:${port}`);
+
   app.get("/api/init", (req, res) => {
     const playlist = config.playlist();
     const crawler = config.crawler();

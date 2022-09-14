@@ -25,7 +25,6 @@ export default {
   mixins: [temperaturemixin, observedmixin],
   props: {
     enabled: Boolean,
-    timezone: String,
     manitobaData: {
       type: Object,
       default: () => {

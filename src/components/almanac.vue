@@ -2,7 +2,7 @@
   <div id="almanac">
     <div v-if="almanacUnavailable" id="no_data">Almanac temporarily unavailable</div>
     <template v-else>
-      <conditions :city="city" :observed="observed" :conditions="conditions" :air-quality="airQuality" />
+      <conditions />
 
       <!-- almanac data -->
       <div id="almanac_table">

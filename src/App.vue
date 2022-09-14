@@ -18,7 +18,7 @@
         <surrounding v-if="isSurrounding" :observations="weather.surroundingObservations" />
         <surrounding v-if="isUSSurrounding" :observations="weather.surroundingUSObservations" />
         <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
-        <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
+        <warnings v-if="isWarnings" :warnings="ecWarnings" />
         <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
         <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
         <lastmonth v-if="isLastMonthSummary" :city="weather.city" :last-month="climate.lastMonth" />
@@ -234,7 +234,15 @@ export default {
     },
 
     // data returned from eccc
-    ...mapGetters(["ecForecast", "ecRegionalNormals", "ecShortForecast", "ecWindchill", "ecAirQuality", "ecAlmanac"]),
+    ...mapGetters([
+      "ecForecast",
+      "ecRegionalNormals",
+      "ecShortForecast",
+      "ecWindchill",
+      "ecAirQuality",
+      "ecAlmanac",
+      "ecWarnings",
+    ]),
   },
 
   mounted() {
@@ -247,6 +255,7 @@ export default {
         this.getSurroundingWeather();
         this.getSurroundingUSWeather();
         this.getWeather();
+        this.getWarnings();
         if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       }, FETCH_WEATHER_INTERVAL);
 
@@ -261,6 +270,7 @@ export default {
       this.getSurroundingUSWeather();
       this.getSeasonPrecipData();
       this.getLastMonthSummary();
+      this.getWarnings();
       if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       this.handleScreenCycle();
     });
@@ -424,6 +434,15 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+    },
+
+    getWarnings() {
+      this.$http.get("/api/warnings").then((resp) => {
+        const data = resp.data;
+        if (!data || !data.warnings) return;
+
+        this.$store.commit("storeECWarnings", data.warnings);
+      });
     },
 
     handleScreenCycle(isForced) {

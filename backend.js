@@ -1,10 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const fs = require("fs");
-const { exit } = require("process");
 const path = require("path");
-const { generatePlaylist, getPlaylist } = require("./generate-playlist.js");
-const { generateCrawler, getCrawler } = require("./generate-crawler.js");
 const { initCurrentConditions } = require("./current-conditions");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
@@ -20,6 +16,7 @@ const { fetchProvinceObservationData } = require("./province-today-observation.j
 const { startAlertMonitoring } = require("./alert-monitoring");
 const { initAQHIObservation } = require("./aqhi-observation");
 const { isWinterSeason } = require("./date-utils.js");
+const config = require("./config/config");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -28,72 +25,22 @@ const corsOptions = {
 const app = express().use(cors(corsOptions));
 const port = 8600;
 
-let configHasSize = false;
-const CONFIG_FILE = "./cfg/retro-evc-config.json";
-let loadedConfig = null;
-fs.stat(CONFIG_FILE, (err, stats) => {
-  if (err) {
-    console.error("No config file found, run setup first!");
-    exit();
-  } else configHasSize = stats.size > 0;
+// load in the config for the weather channel
+config.initWeatherChannel(app, startBackend);
 
-  // double check its not empty
-  if (!configHasSize) {
-    console.error("No config file found, run setup first!");
-    exit();
-  }
-
-  // load it
-  fs.readFile(CONFIG_FILE, "utf8", (err, data) => {
-    if (err || !data || !data.length) {
-      console.error("Config file has no data");
-      exit();
-    }
-
-    const parsedJSON = JSON.parse(data);
-    if (!parsedJSON) return;
-
-    const primaryLocation = parsedJSON.primaryLocation;
-    if (
-      !primaryLocation.province ||
-      !primaryLocation.province.length ||
-      !primaryLocation.location ||
-      !primaryLocation.location.length
-    ) {
-      console.error("Config file is corrupted");
-      exit();
-    }
-
-    console.log(
-      `Loading retro-envcan with primary location of ${primaryLocation.name || "N/A"} - ${primaryLocation.province}`
-    );
-    console.log(`Listening on ${port}...`);
-    console.log(`Navigate to http://localhost:8600/ in your browser`);
-
-    loadedConfig = parsedJSON;
-    startBackend(parsedJSON);
-  });
-});
-
-function startBackend(config) {
-  // generate channel playlist from music folder
-  generatePlaylist();
-
-  // generate crawler messages
-  generateCrawler();
-
+function startBackend() {
   app.get("/api/init", (req, res) => {
-    const playlist = getPlaylist();
-    const crawler = getCrawler();
+    const playlist = config.playlist();
+    const crawler = config.crawler();
     res.send({
       playlist: { files: playlist, file_count: playlist.length },
       crawler: { messages: crawler, message_count: crawler.length },
-      showMBHighLow: loadedConfig.showMBHighLow,
+      showMBHighLow: config.isProvinceHighLowEnabled(),
     });
   });
 
   // current conditions info
-  initCurrentConditions(config?.primaryLocation, app, historicalDataAPI);
+  initCurrentConditions(config.primaryLocation(), app, historicalDataAPI);
 
   // handling api requests
   fetchWeatherForObservedCities();
@@ -104,15 +51,15 @@ function startBackend(config) {
   setInterval(fetchWeatherForObservedUSCities, 7.5 * 60 * 1000);
 
   // air quality readings
-  initAQHIObservation(config?.primaryLocation?.name);
+  initAQHIObservation(config.primaryLocation()?.name);
 
   // MB regional high/low screen
   // winnipeg, portage, brandon, dauphin, kenora, thompson
-  if (config.showMBHighLow) initManitobaTracking();
+  if (config.isProvinceHighLowEnabled()) initManitobaTracking();
 
   // provincial today observations
-  fetchProvinceObservationData(config?.primaryLocation?.province);
-  setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
+  fetchProvinceObservationData(config.primaryLocation()?.province);
+  setInterval(() => fetchProvinceObservationData(config.primaryLocation()?.province), 5 * 60 * 1000);
 
   app.get("/api/climate/season/precip", (req, res) => {
     res.send({
@@ -137,12 +84,12 @@ function startBackend(config) {
   });
 
   app.get("/api/weather/mb_highlow", (req, res) => {
-    if (!loadedConfig.showMBHighLow) return;
+    if (!config.isProvinceHighLowEnabled()) return;
     res.send(manitobaHighLow());
   });
 
   // start the amqp alert monitoring of cap
-  startAlertMonitoring(config?.primaryLocation?.name, app);
+  startAlertMonitoring(config.primaryLocation()?.name, app);
 }
 
 app.listen(port);

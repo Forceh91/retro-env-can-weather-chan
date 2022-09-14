@@ -22,6 +22,4 @@ module.exports = {
   getPlaylist() {
     return playlistArray || [];
   },
-
-  playlistArray: [],
 };

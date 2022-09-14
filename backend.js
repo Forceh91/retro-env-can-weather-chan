@@ -19,7 +19,7 @@ const historicalDataAPI = ({
   getLastMonthSummary,
 } = require("./historical-data.js"));
 const { fetchProvinceObservationData, getHotColdSpotsCanada } = require("./province-today-observation.js");
-const { startAlertMonitoring, getAlertsFromCAP } = require("./alert-monitoring");
+const { startAlertMonitoring } = require("./alert-monitoring");
 const { initAQHIObservation, getAQHIObservation } = require("./aqhi-observation");
 const { isWinterSeason } = require("./date-utils.js");
 
@@ -117,7 +117,7 @@ function startBackend(config) {
   setInterval(() => fetchProvinceObservationData(config?.primaryLocation?.province), 5 * 60 * 1000);
 
   const primaryLocation = config?.primaryLocation || {};
-  const capAlerts = getAlertsFromCAP();
+  // const capAlerts = getAlertsFromCAP();
   app.get("/api/weather2", (req, res) => {
     axios
       .get(
@@ -175,7 +175,7 @@ function startBackend(config) {
   });
 
   // start the amqp alert monitoring of cap
-  startAlertMonitoring(config?.primaryLocation?.name);
+  startAlertMonitoring(config?.primaryLocation?.name, app);
 }
 
 app.listen(port);

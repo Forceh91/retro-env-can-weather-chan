@@ -7,7 +7,7 @@ const alertsFromCAP = [];
 const ALERTS_FOLDER = "./alerts";
 const ALERTS_FILE = "alerts.txt";
 
-function startAlertMonitoring(city) {
+function startAlertMonitoring(city, app) {
   console.log("[ALERT MONITORING] Starting alert monitoring via AMQP...");
 
   listen({ amqp_subtopic: "alerts.cap.#" })
@@ -22,6 +22,10 @@ function startAlertMonitoring(city) {
   // load anything we knew about before we rebooted the system
   loadCurrentAlerts(city);
 
+  // setup the endpoint to fetch warnings from
+  setupWarningsAPI(app);
+
+  // cleanup potentially stale alerts every 15 seconds
   setInterval(periodicCleanup, 15 * 1000 * 60);
 }
 
@@ -94,8 +98,12 @@ function loadCurrentAlerts(city) {
   });
 }
 
-function getAlertsFromCAP() {
-  return alertsFromCAP;
+function setupWarningsAPI(app) {
+  if (!app) return;
+
+  app.get("/api/warnings", (req, res) => {
+    res.send({ warnings: alertsFromCAP || [] });
+  });
 }
 
-module.exports = { startAlertMonitoring, getAlertsFromCAP };
+module.exports = { startAlertMonitoring };

@@ -22,7 +22,9 @@ const corsOptions = {
   origin: "http://localhost:8080",
   optionsSuccessStatus: 200,
 };
-const app = express().use(cors(corsOptions));
+const app = express()
+  .use(cors(corsOptions))
+  .use(express.json());
 const port = 8600;
 
 // load in the config for the weather channel

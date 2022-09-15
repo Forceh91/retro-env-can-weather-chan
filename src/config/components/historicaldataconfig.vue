@@ -56,7 +56,7 @@ export default {
 
   data() {
     return {
-      mutableHistoricalDataStation: -1,
+      mutableHistoricalDataStation: 0,
     };
   },
 

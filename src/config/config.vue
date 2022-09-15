@@ -5,13 +5,7 @@
     </div>
     <div v-if="hasLoadedConfig">
       <b-tabs content-class="mt-3">
-        <b-tab title="Crawler Messages" active>
-          <crawlermessages :crawler-messages="config.crawler" :save-state="saveState" @save="saveCrawlerMessages" />
-        </b-tab>
-        <b-tab title="Playlist">
-          <playlistconfig :playlist="config.playlist" :save-state="saveState" @save="reloadPlaylist" />
-        </b-tab>
-        <b-tab title="Weather Station">
+        <b-tab title="Weather Station" active>
           <weatherstationconfig
             :weather-station="config.config.primaryLocation"
             :save-state="saveState"
@@ -26,6 +20,22 @@
             @save="saveHistoricalDataStation"
           />
         </b-tab>
+        <b-tab title="Climate Normals">
+          <climatenormalsconfig
+            :weather-station="config.config.primaryLocation"
+            :climate-normals-climateID="config.config.climateNormalsClimateID"
+            :climate-normals-stationID="config.config.climateNormalsStationID"
+            :climate-normals-province="config.config.climateNormalsProvince"
+            :save-state="saveState"
+            @save="saveClimateNormalsStation"
+          />
+        </b-tab>
+        <b-tab title="Crawler Messages">
+          <crawlermessages :crawler-messages="config.crawler" :save-state="saveState" @save="saveCrawlerMessages" />
+        </b-tab>
+        <b-tab title="Playlist">
+          <playlistconfig :playlist="config.playlist" :save-state="saveState" @save="reloadPlaylist" />
+        </b-tab>
       </b-tabs>
     </div>
   </div>
@@ -36,11 +46,12 @@ import crawlermessages from "./components/crawlermesages.vue";
 import playlistconfig from "./components/playlistconfig.vue";
 import weatherstationconfig from "./components/weatherstationconfig.vue";
 import historicaldataconfig from "./components/historicaldataconfig.vue";
+import climatenormalsconfig from "./components/climatenormalsconfig.vue";
 
 export default {
   name: "config",
 
-  components: { crawlermessages, playlistconfig, weatherstationconfig, historicaldataconfig },
+  components: { crawlermessages, playlistconfig, weatherstationconfig, historicaldataconfig, climatenormalsconfig },
 
   data() {
     return {
@@ -181,6 +192,26 @@ export default {
           if (!data) return;
 
           this.config.config.historicalDataStationID = data.historicalDataStationID;
+          this.saveSuccess();
+        })
+        .catch(() => {
+          this.saveFailed();
+        });
+    },
+
+    saveClimateNormalsStation(e) {
+      const { climateID, stationID, province } = e || {};
+      if (!climateID || !stationID || !province) return;
+
+      this.$http
+        .post("config/climate-normals-station", { climateID, stationID, province })
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          this.config.config.climateNormalsClimateID = data.climateNormalsClimateID;
+          this.config.config.climateNormalsStationID = data.climateNormalsStationID;
+          this.config.config.climateNormalsProvince = data.climateNormalsProvince;
           this.saveSuccess();
         })
         .catch(() => {

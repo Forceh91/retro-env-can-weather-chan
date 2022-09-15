@@ -20,9 +20,9 @@ const {
 } = require("./date-utils");
 
 const { getStationLastObservedDateTime } = require("./current-conditions");
+const { historicalDataStationID } = require("./config/config");
 
 // this is loaded from config but here's a backup for it
-const STATION_ID_TO_FETCH = 27174; // winnipeg a cs//51097; // winnipeg intl a
 const HISTORICAL_DATA_URL =
   "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=xml&stationID=$STATION_ID&Year=$YEAR&time=&timeframe=2";
 
@@ -38,13 +38,14 @@ function initHistoricalData(climateStationID) {
 
 const pad = (val) => (val < 10 ? `0${val}` : val);
 
-function fetchHistoricalData(stationID) {
+function fetchHistoricalData() {
+  const stationIDToFetch = historicalDataStationID();
+  if (!stationIDToFetch) return;
+
   fetchClimateNormals();
 
-  stationID = stationID || STATION_ID_TO_FETCH;
-
   // fill in the station id
-  let url = HISTORICAL_DATA_URL.replace("$STATION_ID", STATION_ID_TO_FETCH);
+  let url = HISTORICAL_DATA_URL.replace("$STATION_ID", stationIDToFetch);
 
   // use the current conditions observed data to decide what date to use for historical temp data
   const today = getStationLastObservedDateTime();

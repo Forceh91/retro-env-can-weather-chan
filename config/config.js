@@ -67,7 +67,7 @@ const loadConfigFile = (configFilePath, callback) => {
     const parsedJSON = JSON.parse(data);
     if (!parsedJSON) return loadConfigDefaults();
 
-    const { primaryLocation, proviceHighLowEnabled } = parsedJSON;
+    const { primaryLocation, proviceHighLowEnabled, historicalDataStationID } = parsedJSON;
     const { province, location } = primaryLocation || {};
     if (!primaryLocation || !province || !province.length || !location || !location.length) return loadConfigDefaults();
 
@@ -76,6 +76,9 @@ const loadConfigFile = (configFilePath, callback) => {
 
     // store whether the province high/low should load
     config.proviceHighLowEnabled = proviceHighLowEnabled;
+
+    // load the historical weather station id
+    config.historicalDataStationID = historicalDataStationID || null;
 
     // say the config was loaded
     console.log(

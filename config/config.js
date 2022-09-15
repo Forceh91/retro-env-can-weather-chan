@@ -1,7 +1,10 @@
 const fs = require("fs");
+const axios = require("axios");
+const { xml2js } = require("xml-js");
 
 const { generatePlaylist, getPlaylist, reloadPlaylist } = require("../generate-playlist.js");
 const { generateCrawler, getCrawler, saveCrawler } = require("../generate-crawler.js");
+const { reloadCurrentConditions } = require("../current-conditions");
 
 const CONFIG_FOLDER = "./cfg";
 const CONFIG_FILE_NAME = "retro-evc-config.json";
@@ -85,17 +88,45 @@ const loadConfigFile = (configFilePath, callback) => {
   });
 };
 
-const saveConfigFile = () => {
+const saveConfigFile = (callback) => {
+  function doCallback(v) {
+    if (typeof callback === "function") callback(v);
+  }
+
   console.log("[CONFIG] Saving config file to", CONFIG_FILE, "...");
   const configAsJSONString = JSON.stringify(config);
 
   fs.writeFile(CONFIG_FILE, configAsJSONString, "utf8", (err, data) => {
-    if (!err) console.log("[CONFIG] Config file saved!");
+    if (!err) {
+      doCallback(true);
+      console.log("[CONFIG] Config file saved!");
+    } else {
+      doCallback(false);
+    }
   });
 };
 
 const loadConfigDefaults = () => {
   console.error("[CONFIG] Config file is invalid, loading defaults");
+};
+
+const storePrimaryLocation = (stationObj, callback) => {
+  const { name, province, code } = stationObj;
+  if (!name || !name.length || !province || !province.length || !code || !code.length) return;
+
+  config.primaryLocation = {
+    name,
+    province,
+    location: code,
+  };
+
+  saveConfigFile((result) => {
+    if (!result) typeof callback === "function" && callback(result);
+    else {
+      reloadCurrentConditions(config.primaryLocation);
+      typeof callback === "function" && callback(stationObj);
+    }
+  });
 };
 
 const setupRoutes = (app) => {
@@ -123,6 +154,56 @@ const setupRoutes = (app) => {
         res.send({ playlist: result });
       }
     });
+  });
+
+  app.post("/config/weather-station", (req, res) => {
+    const { station } = req.body;
+    if (!station) return res.sendStatus(400);
+
+    storePrimaryLocation(station, (result) => {
+      if (!result) res.sendStatus(500);
+      else {
+        res.send({ station: config.primaryLocation });
+      }
+    });
+  });
+
+  app.get("/config/eccc-weather-stations", (req, res) => {
+    fetchAvailableWeatherStations((result) => {
+      if (!result) res.sendStatus(500);
+      else res.send(result);
+    });
+  });
+};
+
+const fetchAvailableWeatherStations = (callback) => {
+  axios.get("https://dd.weather.gc.ca/citypage_weather/xml/siteList.xml").then((resp) => {
+    const data = resp.data;
+    if (!data) return;
+
+    const options = xml2js(data, { compact: true });
+    if (!options || !options.siteList || !options.siteList.site) {
+      if (typeof callback === "function") callback(false);
+      throw "Unable to parse siteList";
+    }
+
+    const sortedByLocationProvince = options.siteList.site
+      .sort((a, b) => {
+        const provinceLocationA = `${a?.provinceCode._text} - ${a?.nameEn._text}`.toUpperCase();
+        const provinceLocationB = `${b?.provinceCode._text} - ${b?.nameEn._text}`.toUpperCase();
+
+        if (provinceLocationA < provinceLocationB) return -1;
+        if (provinceLocationA > provinceLocationB) return 1;
+
+        return 0;
+      })
+      .map((station) => ({
+        name: station.nameEn._text,
+        province: station.provinceCode._text,
+        code: station._attributes.code,
+      }));
+
+    if (typeof callback === "function") callback(sortedByLocationProvince);
   });
 };
 

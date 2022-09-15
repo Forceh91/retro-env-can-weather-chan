@@ -43,6 +43,12 @@ const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
     });
 };
 
+const reloadCurrentConditions = (location) => {
+  if (!location) return;
+  currentConditionsLocation = { ...location };
+  fetchCurrentConditions();
+};
+
 const getStationLastObservedDateTime = () => {
   // we'll use this in future methods when retrieving historical data to stop things being
   // weirdly timezoned and data being inaccurate to what was actually sent over last
@@ -197,4 +203,4 @@ const generateWeatherResponse = () => {
   };
 };
 
-module.exports = { initCurrentConditions, getStationLastObservedDateTime };
+module.exports = { initCurrentConditions, getStationLastObservedDateTime, reloadCurrentConditions };

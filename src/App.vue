@@ -222,7 +222,7 @@ export default {
     },
 
     isWeatherChannel() {
-      return this.$route.name === "weather-channel";
+      return this.$route.path === "/";
     },
 
     // data returned from eccc

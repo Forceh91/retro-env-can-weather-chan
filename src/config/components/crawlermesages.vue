@@ -6,7 +6,7 @@
       Add one message per line
     </p>
     <textarea class="form-control mb-3" v-model="mutableCrawlerMessages" :rows="rows" />
-    <b-button variant="success" @click="saveCrawlerMessages">Save</b-button>
+    <b-button variant="success" @click="saveCrawlerMessages" :disabled="saveState.saving">Save</b-button>
   </div>
 </template>
 
@@ -16,7 +16,15 @@ export default {
   props: {
     crawlerMessages: {
       type: Array,
-      default: () => [],
+      default: () => {
+        return [];
+      },
+    },
+    saveState: {
+      type: Object,
+      default: () => {
+        return {};
+      },
     },
   },
 

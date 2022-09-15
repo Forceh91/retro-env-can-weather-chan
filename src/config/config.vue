@@ -6,7 +6,7 @@
     <div v-if="hasLoadedConfig">
       <b-tabs content-class="mt-3">
         <b-tab title="Crawler Messages" active>
-          <crawlermessages :crawler-messages="config.crawler" @save="saveCrawlerMessages" />
+          <crawlermessages :crawler-messages="config.crawler" :save-state="saveState" @save="saveCrawlerMessages" />
         </b-tab>
         <b-tab title="Playlist"><p>I'm the second tab</p></b-tab>
         <b-tab title="Weather Station"><p>I'm a disabled tab!</p></b-tab>
@@ -28,6 +28,11 @@ export default {
     return {
       state: {
         fetching: false,
+      },
+      saveState: {
+        saving: false,
+        success: false,
+        error: false,
       },
       config: null,
     };
@@ -72,6 +77,28 @@ export default {
       this.state.fetching = false;
     },
 
+    startSaving() {
+      this.saveState.saving = true;
+      this.resetSaving();
+    },
+
+    resetSaving() {
+      this.saveState.success = false;
+      this.saveState.error = false;
+    },
+
+    saveSuccess() {
+      this.saveState.saving = false;
+      this.saveState.success = true;
+      this.saveState.error = false;
+    },
+
+    saveFailed() {
+      this.saveState.saving = false;
+      this.saveState.success = false;
+      this.saveState.error = true;
+    },
+
     saveCrawlerMessages(e) {
       const { value } = e || {};
       if (value === null || value === undefined) return;
@@ -82,9 +109,11 @@ export default {
           const data = resp.data;
           if (!data) return;
 
-          console.log(data);
+          this.saveSuccess();
         })
-        .then(() => {});
+        .catch(() => {
+          this.saveFailed();
+        });
     },
   },
 };

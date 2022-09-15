@@ -30,6 +30,7 @@ module.exports = {
     function doCallback(v) {
       if (typeof callback === "function") callback(v);
     }
+
     const isArray = Array.isArray(messages);
     if (!isArray) return doCallback(false);
 

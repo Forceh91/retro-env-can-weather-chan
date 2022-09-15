@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const { generatePlaylist, getPlaylist } = require("../generate-playlist.js");
+const { generatePlaylist, getPlaylist, reloadPlaylist } = require("../generate-playlist.js");
 const { generateCrawler, getCrawler, saveCrawler } = require("../generate-crawler.js");
 
 const CONFIG_FOLDER = "./cfg";
@@ -114,6 +114,15 @@ const setupRoutes = (app) => {
         else res.sendStatus(200);
       });
     }
+  });
+
+  app.post("/config/playlist", (req, res) => {
+    reloadPlaylist((result) => {
+      if (!result) res.sendStatus(500);
+      else {
+        res.send({ playlist: result });
+      }
+    });
   });
 };
 

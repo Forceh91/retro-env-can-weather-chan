@@ -20,7 +20,12 @@ const {
 } = require("./date-utils");
 
 const { getStationLastObservedDateTime } = require("./current-conditions");
-const { historicalDataStationID } = require("./config/config");
+const {
+  historicalDataStationID,
+  climateNormalsClimateID,
+  climateNormalsStationID,
+  climateNormalsProvince,
+} = require("./config/config");
 
 // this is loaded from config but here's a backup for it
 const HISTORICAL_DATA_URL =
@@ -140,11 +145,10 @@ function fetchHistoricalData() {
 }
 
 function fetchClimateNormals() {
-  // this is winnipeg richardson intl a
-  // TODO: make this a config option
-  const STATION_ID = 3698;
-  const CLIMATE_ID = 5023222;
-  const PROVINCE = "MB";
+  const CLIMATE_ID = climateNormalsClimateID();
+  const STATION_ID = climateNormalsStationID();
+  const PROVINCE = climateNormalsProvince();
+  if (!CLIMATE_ID || !STATION_ID || !PROVINCE) return;
 
   // base url
   let url =

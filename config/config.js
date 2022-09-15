@@ -132,6 +132,15 @@ const storePrimaryLocation = (stationObj, callback) => {
   });
 };
 
+const storeHistoricalDataStationID = (stationID, callback) => {
+  if (!stationID) return;
+
+  config.historicalDataStationID = stationID;
+  saveConfigFile((result) => {
+    typeof callback === "function" && callback(result);
+  });
+};
+
 const setupRoutes = (app) => {
   if (!app) return;
 
@@ -167,6 +176,18 @@ const setupRoutes = (app) => {
       if (!result) res.sendStatus(500);
       else {
         res.send({ station: config.primaryLocation });
+      }
+    });
+  });
+
+  app.post("/config/historical-data-station", (req, res) => {
+    const { stationID } = req.body;
+    if (!stationID) return res.sendStatus(400);
+
+    storeHistoricalDataStationID(stationID, (result) => {
+      if (!result) res.sendStatus(500);
+      else {
+        res.send({ historicalDataStationID: config.historicalDataStationID });
       }
     });
   });
@@ -218,6 +239,10 @@ const primaryLocation = () => {
   return config.primaryLocation || {};
 };
 
+const historicalDataStationID = () => {
+  return config.historicalDataStationID || null;
+};
+
 const playlist = () => {
   return getPlaylist() || [];
 };
@@ -228,4 +253,11 @@ const crawler = () => {
 
 const config = defaultConfig();
 
-module.exports = { initWeatherChannel, isProvinceHighLowEnabled, primaryLocation, playlist, crawler };
+module.exports = {
+  initWeatherChannel,
+  isProvinceHighLowEnabled,
+  primaryLocation,
+  historicalDataStationID,
+  playlist,
+  crawler,
+};

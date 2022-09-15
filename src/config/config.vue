@@ -18,7 +18,14 @@
             @save="saveWeatherStation"
           />
         </b-tab>
-        <b-tab title="Historical Data"><p>I'm a disabled tab!</p></b-tab>
+        <b-tab title="Historical Data">
+          <historicaldataconfig
+            :weather-station="config.config.primaryLocation"
+            :historical-data-station="config.config.historicalDataStationID"
+            :save-state="saveState"
+            @save="saveHistoricalDataStation"
+          />
+        </b-tab>
       </b-tabs>
     </div>
   </div>
@@ -28,11 +35,12 @@
 import crawlermessages from "./components/crawlermesages.vue";
 import playlistconfig from "./components/playlistconfig.vue";
 import weatherstationconfig from "./components/weatherstationconfig.vue";
+import historicaldataconfig from "./components/historicaldataconfig.vue";
 
 export default {
   name: "config",
 
-  components: { crawlermessages, playlistconfig, weatherstationconfig },
+  components: { crawlermessages, playlistconfig, weatherstationconfig, historicaldataconfig },
 
   data() {
     return {
@@ -155,6 +163,24 @@ export default {
           if (!data) return;
 
           this.config.config.primaryLocation = data.station;
+          this.saveSuccess();
+        })
+        .catch(() => {
+          this.saveFailed();
+        });
+    },
+
+    saveHistoricalDataStation(e) {
+      const { stationID } = e || {};
+      if (!stationID) return;
+
+      this.$http
+        .post("config/historical-data-station", { stationID })
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          this.config.config.historicalDataStationID = data.historicalDataStationID;
           this.saveSuccess();
         })
         .catch(() => {

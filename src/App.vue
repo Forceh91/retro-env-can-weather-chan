@@ -34,6 +34,7 @@
 </template>
 
 <script>
+const FETCH_CONFIG_INTERVAL = 60 * 1000 * 5;
 const FETCH_WEATHER_INTERVAL = 60 * 1000 * 1;
 const FETCH_EXTRA_DATA_INTERVAL = 60 * 1000 * 10;
 // pages with subscreens (forecast, surrounding) have a fallback timeout incase
@@ -258,6 +259,11 @@ export default {
         this.getSeasonPrecipData();
         this.getLastMonthSummary();
       }, FETCH_EXTRA_DATA_INTERVAL);
+
+      // reload the config every FETCH_CONFIG_INTERVAL
+      setInterval(() => {
+        this.initWeatherChannel();
+      }, FETCH_CONFIG_INTERVAL);
 
       this.setupEventCallbacks();
       this.getWeather();

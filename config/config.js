@@ -21,6 +21,7 @@ const defaultConfig = () => {
     historicalDataStationID: 27174, // (used for last year temps + precip data) winnipeg a cs
     climateNormalsStationID: 3698, // winnipeg richardson a (used for climate normals on last month summary)
     climateNormalsClimateID: 5023222, // (used for climate normals on last month summary)
+    climateNormalsProvince: "MB",
   };
 };
 
@@ -67,7 +68,14 @@ const loadConfigFile = (configFilePath, callback) => {
     const parsedJSON = JSON.parse(data);
     if (!parsedJSON) return loadConfigDefaults();
 
-    const { primaryLocation, proviceHighLowEnabled, historicalDataStationID } = parsedJSON;
+    const {
+      primaryLocation,
+      proviceHighLowEnabled,
+      historicalDataStationID,
+      climateNormalsClimateID,
+      climateNormalsStationID,
+      climateNormalsProvince,
+    } = parsedJSON;
     const { province, location } = primaryLocation || {};
     if (!primaryLocation || !province || !province.length || !location || !location.length) return loadConfigDefaults();
 
@@ -78,7 +86,12 @@ const loadConfigFile = (configFilePath, callback) => {
     config.proviceHighLowEnabled = proviceHighLowEnabled;
 
     // load the historical weather station id
-    config.historicalDataStationID = historicalDataStationID || null;
+    config.historicalDataStationID = historicalDataStationID || config.historicalDataStationID;
+
+    // load the climate normals ids
+    config.climateNormalsClimateID = climateNormalsClimateID || config.climateNormalsStationID;
+    config.climateNormalsStationID = climateNormalsStationID || config.climateNormalsStationID;
+    config.climateNormalsProvince = climateNormalsProvince || config.climateNormalsProvince;
 
     // say the config was loaded
     console.log(
@@ -141,6 +154,18 @@ const storeHistoricalDataStationID = (stationID, callback) => {
   });
 };
 
+const storeClimateStationIDs = (climateID, stationID, province, callback) => {
+  if (!climateID || !stationID) return;
+
+  config.climateNormalsClimateID = climateID;
+  config.climateNormalsStationID = stationID;
+  config.climateNormalsProvince = province;
+
+  saveConfigFile((result) => {
+    typeof callback === "function" && callback(result);
+  });
+};
+
 const setupRoutes = (app) => {
   if (!app) return;
 
@@ -188,6 +213,22 @@ const setupRoutes = (app) => {
       if (!result) res.sendStatus(500);
       else {
         res.send({ historicalDataStationID: config.historicalDataStationID });
+      }
+    });
+  });
+
+  app.post("/config/climate-normals-station", (req, res) => {
+    const { climateID, stationID, province } = req.body;
+    if (!climateID || !stationID || !province) return res.sendStatus(400);
+
+    storeClimateStationIDs(climateID, stationID, province, (result) => {
+      if (!result) res.sendStatus(500);
+      else {
+        res.send({
+          climateNormalsClimateID: config.climateNormalsClimateID,
+          climateNormalsStationID: config.climateNormalsStationID,
+          climateNormalsProvince: config.climateNormalsProvince,
+        });
       }
     });
   });
@@ -243,6 +284,18 @@ const historicalDataStationID = () => {
   return config.historicalDataStationID || null;
 };
 
+const climateNormalsClimateID = () => {
+  return config.climateNormalsClimateID || null;
+};
+
+const climateNormalsStationID = () => {
+  return config.climateNormalsStationID || null;
+};
+
+const climateNormalsProvince = () => {
+  return config.climateNormalsProvince || null;
+};
+
 const playlist = () => {
   return getPlaylist() || [];
 };
@@ -258,6 +311,9 @@ module.exports = {
   isProvinceHighLowEnabled,
   primaryLocation,
   historicalDataStationID,
+  climateNormalsClimateID,
+  climateNormalsStationID,
+  climateNormalsProvince,
   playlist,
   crawler,
 };

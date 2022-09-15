@@ -1,32 +1,35 @@
 <template>
-  <div id="body">
-    <div id="main_screen" :style="{ 'background-color': backgroundCol }">
-      <div id="top_bar">
-        <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
-      </div>
-      <div id="content">
-        <currentconditions v-if="isCurrentConditions" />
-        <forecast v-if="isForecast" :forecast="ecShortForecast" :reload="shouldDoReloadAnimation" />
-        <aqhiwarning v-if="isAQHIWarning" :aqhi="ecAirQuality" />
-        <outlook v-if="isOutlook" :forecast="ecForecast" :normals="ecRegionalNormals" />
-        <mbhighlow v-if="isMBHighLow" :enabled="showMBHighLowSetting" :manitoba-data="province.highLowAroundMB" />
-        <surrounding v-if="isSurrounding" :observations="surrounding.canada" />
-        <surrounding v-if="isUSSurrounding" :observations="surrounding.usa" />
-        <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
-        <warnings v-if="isWarnings" :warnings="ecWarnings" />
-        <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
-        <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
-        <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
-      </div>
-      <div id="bottom_bar">
-        <div id="clock">
-          TIME <span>{{ currentTime }}</span>
+  <div>
+    <router-view v-if="!isWeatherChannel" />
+    <div v-else id="weather_channel">
+      <div id="main_screen" :style="{ 'background-color': backgroundCol }">
+        <div id="top_bar">
+          <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
         </div>
-        <div id="date" v-html="currentDate"></div>
-        <div id="banner">Environment Canada Weather</div>
+        <div id="content">
+          <currentconditions v-if="isCurrentConditions" />
+          <forecast v-if="isForecast" :forecast="ecShortForecast" :reload="shouldDoReloadAnimation" />
+          <aqhiwarning v-if="isAQHIWarning" :aqhi="ecAirQuality" />
+          <outlook v-if="isOutlook" :forecast="ecForecast" :normals="ecRegionalNormals" />
+          <mbhighlow v-if="isMBHighLow" :enabled="showMBHighLowSetting" :manitoba-data="province.highLowAroundMB" />
+          <surrounding v-if="isSurrounding" :observations="surrounding.canada" />
+          <surrounding v-if="isUSSurrounding" :observations="surrounding.usa" />
+          <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
+          <warnings v-if="isWarnings" :warnings="ecWarnings" />
+          <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
+          <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
+          <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
+        </div>
+        <div id="bottom_bar">
+          <div id="clock">
+            TIME <span>{{ currentTime }}</span>
+          </div>
+          <div id="date" v-html="currentDate"></div>
+          <div id="banner">Environment Canada Weather</div>
+        </div>
       </div>
+      <playlist :playlist="playlist" />
     </div>
-    <playlist :playlist="playlist" />
   </div>
 </template>
 
@@ -165,10 +168,6 @@ export default {
       return this.currentScreen.length;
     },
 
-    currentTemp() {
-      return Math.round(this.weather?.currentConditions?.temperature?.value) || 0;
-    },
-
     isCurrentConditions() {
       return this.currentScreenID === SCREENS.CURRENT_CONDITIONS.id;
     },
@@ -218,15 +217,16 @@ export default {
     },
 
     timeZone() {
-      return this.weather.currentConditions?.dateTime[1]?.zone || "";
+      return this.ecData?.observed?.stationTimezone || null;
     },
 
-    reportingStation() {
-      return this.weather.currentConditions?.station?.code;
+    isWeatherChannel() {
+      return this.$route.name === "weather-channel";
     },
 
     // data returned from eccc
     ...mapGetters([
+      "ecData",
       "ecForecast",
       "ecRegionalNormals",
       "ecShortForecast",
@@ -239,6 +239,8 @@ export default {
   },
 
   mounted() {
+    if (!this.isWeatherChannel) return;
+
     setInterval(() => {
       this.now = new Date();
     }, 1000);
@@ -476,10 +478,11 @@ export default {
       // handle stuff as usual
       this.handleScreenCycle();
     },
+
     timezoneAdjustedDate(date) {
-      if (!this.weather || !this.weather.currentConditions) return date;
+      if (!this.timeZone) return date;
       const localOffset = -date.getTimezoneOffset();
-      const stationUTCOffset = parseInt(this.weather.currentConditions.dateTime[1].UTCOffset) * 60;
+      const stationUTCOffset = -5 * 60; // parseInt(this.weather.currentConditions.dateTime[1].UTCOffset) * 60;
       const adjustedTime = stationUTCOffset - localOffset;
 
       return addMinutes(date, adjustedTime);
@@ -558,6 +561,21 @@ export default {
     }
   }
 }
+
+@font-face {
+  font-family: "VCRMono";
+  src: local("VCRMono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
+}
+
+#weather_channel {
+  background: #000;
+  /* font-family: "Star4000", consolas; */
+  font-family: "VCRMono", consolas;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  width: 100vw;
+}
 </style>
 
 <style>
@@ -576,19 +594,4 @@ body {
   font-family: "Star4000";
   src: local("Star4000"), url(./fonts/star4000/Star4000.ttf) format("truetype");
 } */
-
-@font-face {
-  font-family: "VCRMono";
-  src: local("VCRMono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
-}
-
-#app {
-  background: #000;
-  /* font-family: "Star4000", consolas; */
-  font-family: "VCRMono", consolas;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  height: 100vh;
-  width: 100vw;
-}
 </style>

@@ -11,7 +11,13 @@
         <b-tab title="Playlist">
           <playlistconfig :playlist="config.playlist" :save-state="saveState" @save="reloadPlaylist" />
         </b-tab>
-        <b-tab title="Weather Station"><p>I'm a disabled tab!</p></b-tab>
+        <b-tab title="Weather Station">
+          <weatherstationconfig
+            :weather-station="config.config.primaryLocation"
+            :save-state="saveState"
+            @save="saveWeatherStation"
+          />
+        </b-tab>
         <b-tab title="Historical Data"><p>I'm a disabled tab!</p></b-tab>
       </b-tabs>
     </div>
@@ -21,11 +27,12 @@
 <script>
 import crawlermessages from "./components/crawlermesages.vue";
 import playlistconfig from "./components/playlistconfig.vue";
+import weatherstationconfig from "./components/weatherstationconfig.vue";
 
 export default {
   name: "config",
 
-  components: { crawlermessages, playlistconfig },
+  components: { crawlermessages, playlistconfig, weatherstationconfig },
 
   data() {
     return {
@@ -130,6 +137,24 @@ export default {
           if (!playlist) return;
 
           this.config.playlist.splice(0, this.config.playlist.length, ...playlist);
+          this.saveSuccess();
+        })
+        .catch(() => {
+          this.saveFailed();
+        });
+    },
+
+    saveWeatherStation(e) {
+      const { station } = e || {};
+      if (station === null || station === undefined) return;
+
+      this.$http
+        .post("config/weather-station", { station })
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          this.config.config.primaryLocation = data.station;
           this.saveSuccess();
         })
         .catch(() => {

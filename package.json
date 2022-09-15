@@ -9,8 +9,11 @@
     "test": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
     "amqp": "^0.2.7",
     "axios": "^0.27.2",
+    "bootstrap": "^5.2.1",
+    "bootstrap-vue-3": "^0.3.3",
     "cli-select": "^1.1.2",
     "core-js": "^3.25.0",
     "cors": "^2.8.5",
@@ -20,6 +23,7 @@
     "mitt": "^3.0.0",
     "vue": "^3.2.38",
     "vue-axios": "^3.4.1",
+    "vue-router": "4",
     "vuex": "^4.0.2",
     "xml-js": "^1.6.11"
   },

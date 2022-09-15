@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const { generatePlaylist, getPlaylist } = require("../generate-playlist.js");
-const { generateCrawler, getCrawler } = require("../generate-crawler.js");
+const { generateCrawler, getCrawler, saveCrawler } = require("../generate-crawler.js");
 
 const CONFIG_FOLDER = "./cfg";
 const CONFIG_FILE_NAME = "retro-evc-config.json";
@@ -22,6 +22,8 @@ const defaultConfig = () => {
 };
 
 const initWeatherChannel = (app, callback) => {
+  setupRoutes(app);
+
   // check file size
   checkConfigFileExists(callback);
 };
@@ -94,6 +96,25 @@ const saveConfigFile = () => {
 
 const loadConfigDefaults = () => {
   console.error("[CONFIG] Config file is invalid, loading defaults");
+};
+
+const setupRoutes = (app) => {
+  if (!app) return;
+
+  app.get("/config/all", (req, res) => {
+    res.send({ config, playlist: playlist(), crawler: crawler() });
+  });
+
+  app.post("/config/crawler", (req, res) => {
+    const { crawler_messages } = req.body;
+    if (!crawler_messages) return res.sendStatus(400);
+    else {
+      saveCrawler(crawler_messages, (result) => {
+        if (!result) res.sendStatus(500);
+        else res.sendStatus(200);
+      });
+    }
+  });
 };
 
 const isProvinceHighLowEnabled = () => {

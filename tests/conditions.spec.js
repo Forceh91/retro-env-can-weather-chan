@@ -46,8 +46,13 @@ test("observedFormatted: is computed properly", (done) => {
   time = "2022-09-16T22:00:00.000Z";
   vm.$store.commit("setObservedStationTime", time);
 
-  hourFormat = format(parseISO(time), "h aa");
-  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}&nbsp;&nbsp;Sep 16/22`);
+  let timeObj = parseISO(time);
+  hourFormat = format(timeObj, "h aa");
+
+  const hours = timeObj.getHours();
+  let spacing = "&nbsp;";
+  if (hours < 10 || (hours > 12 && hours < 22)) spacing = "&nbsp;&nbsp;";
+  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}${spacing}Sep 16/22`);
 
   time = "2022-09-09T12:00:00.000Z";
   vm.$store.commit("setObservedStationTime", time);

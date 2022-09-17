@@ -38,6 +38,7 @@ const checkConfigFileExists = (callback) => {
     if (err) {
       // error whilst loading this file so do defaults and callback
       console.error("[CONFIG] No config file found, loading defaults");
+      console.error("[CONFIG] Configuration can be set via http://localhost:8600/#/config");
       if (typeof callback === "function") callback();
     } else {
       // no error loading, check the size and either callback or load the file
@@ -124,6 +125,7 @@ const saveConfigFile = (callback) => {
 
 const loadConfigDefaults = () => {
   console.error("[CONFIG] Config file is invalid, loading defaults");
+  console.error("[CONFIG] Configuration can be set via http://localhost:8600/#/config");
 };
 
 const storePrimaryLocation = (stationObj, callback) => {

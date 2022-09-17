@@ -11,7 +11,7 @@ import store from "./vuex/store";
 import router from "./js/router";
 
 const BASE_URL = `http://${window.location.hostname}`;
-const BASE_PORT = 8600; //window.location.port;
+const BASE_PORT = window.location.port;
 const API_URL = `${BASE_URL}:${BASE_PORT}/`;
 
 const app = createApp(App);

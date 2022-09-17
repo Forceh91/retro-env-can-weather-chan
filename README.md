@@ -1,33 +1,33 @@
 # Retro Environment Canada Weather Channel
 
-This project is intended to be a loose recreation of the Environment Canada Weather Channel that was commonly found in Winnipeg in the 80s-90s. This is modeled after the 1995 version. I've tried to be as accurate as possible however there are still some tweaks that could be made to make them more true to life.
+This project is intended to be a loose recreation of the Environment Canada Weather Channel that was commonly found in Winnipeg in the 80s-90s. This is modeled after the 1995 version. This is the most accurate version of this you will find outside of the original weather channel.
 
 All data for the weather channel is sourced from [Environment Canada](https://weather.gc.ca/).
 
-Once up and running the weather channel will be accessible from your browser.
+Once up and running the weather channel will be accessible from your [browser](http://localhost:8600/#/).
 
-![current-conditions](images/current-conditions.png)
 ![forecast](images/forecast.png)
+![outlook](images/outlook.png)
 ![almanac](images/almanac-temps.png)
+![province-tracking](images/province-tracking.png)
 ![observations](images/observations.png)
+![citystats](images/citystats.png)
 
 ## Current Features
 
-- Current conditions
-- Forecast
+- Air Quality readings
 - Windchill
-- Almanac Data (Sunset/Rise, High/Low Temp Records)
-- Latest Hourly Observation for various cities
-- Snowfall/Precipitation Amounts
-- High/Low for the day around province of your choice (config coming soon)
-- Weather Warnings
+- Forecast (+ Current conditions)
+- Outlook
+- Almanac Data (Sunset/Rise, High/Low Temp Records, Last Year Temp)
+- Alerts/Warnings/Watches
+- High/Low/Precip for the day around the province of your choice (config coming soon)
+- Latest Hourly Observation for various cities (Canada/US)
+- Precipitation Amounts per season (Apr 1st - Sept 30th / Oct 1st - Mar 31st)
+- Canada Hot/Cold Spots for the day
+- Last month summary (first 5 days of month)
 - Custom playlist
 - Custom crawler messages for adverts/general info
-
-## Missing Features
-
-- Alerts
-- Last Year temps on almanac
 
 ## Planned Features
 
@@ -47,11 +47,11 @@ yarn install
 
 ## Server Configuration
 
-Before you can start the server you will need to run the setup file to select which Canadian location to pull your weather info from. You will be presented with a list of every location available, or you can use the `--search <town/city>` option to narrow down the results.
+You can start the app without configuration if you want to setup a weather channel for Winnipeg, however if you want to customize where the weather channel is located you should head over to the configuration page.
 
-```
-node setup.js [--search town/city]
-```
+http://localhost:8600/#/config
+
+![config](images/config.png)
 
 Now that the server is configured you can run the backend component and the frontend will connect to this to retrieve relevant info.
 
@@ -62,9 +62,15 @@ node backend.js
 If sucessful you should see the following in your command prompt:
 
 ```
-Loading retro-envcan with primary location of <location> - <province>
-Listening on 8600...
-Navigate to http://localhost:8600/ in your browser
+Generating crawler from ./cfg/crawl.txt...
+Generating playlist from `music` folder...
+[CONFIG] No config file found, loading defaults
+[CONFIG] Configuration can be set via http://localhost:8600/#/config
+[RECW] Application started, listening on http://localhost:8600
+[ALERT MONITORING] Starting alert monitoring via AMQP...
+[ALERT MONITORING] No stored alerts
+Generated a playlist of 1 files...
+Generated a crawler list of 2 messages
 ```
 
 ## Adding music to your channel
@@ -75,6 +81,8 @@ Playlist creation is done simply by placing `.mp3` files into a `music` folder i
 
 When you start the backend you will then see it check and generate a playlist for you based off of the files found in that directory.
 
+The [config](http://localhost:8600/#/config) page has the option to reload the playlist without restarting the backend portion of the application.
+
 ```
 Generating playlist from `music` folder...
 Generated a playlist of 62 files...
@@ -84,9 +92,7 @@ Generated a playlist of 62 files...
 
 **retro-env-canada-weather-chan** supports adding custom crawler messages along the top bar for adverts and general info.
 
-This is done by creating a `crawl.txt` file in the `cfg` directory. These messages are loaded when the application starts and the data is sent to the channel when it is first loaded.
-
-The `crawl.txt` supports an unlimited number of messages and all you have to do is add in one message per line
+Crawler messages can be added using the [config](http://localhost:8600/#/config) page and saving the crawler messages will force a reload on the channel within the next 5 minutes.
 
 ```
 a small crawler message

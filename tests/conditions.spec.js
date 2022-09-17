@@ -49,7 +49,7 @@ test("observedFormatted: is computed properly", (done) => {
   let timeObj = parseISO(time);
   hourFormat = format(timeObj, "h aa");
 
-  const hours = timeObj.getHours();
+  let hours = timeObj.getHours();
   let spacing = "&nbsp;";
   if (hours < 10 || (hours > 12 && hours < 22)) spacing = "&nbsp;&nbsp;";
   expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}${spacing}Sep 16/22`);
@@ -57,15 +57,19 @@ test("observedFormatted: is computed properly", (done) => {
   time = "2022-09-09T14:00:00.000Z";
   vm.$store.commit("setObservedStationTime", time);
 
-  hourFormat = format(parseISO(time), "h aa");
-  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}&nbsp;&nbsp;Sep&nbsp;&nbsp;9/22`);
+  timeObj = parseISO(time);
+  hourFormat = format(timeObj, "h aa");
+  hours = timeObj.getHours();
+  spacing = "&nbsp;";
+  if (hours < 10 || (hours > 12 && hours < 22)) spacing = "&nbsp;&nbsp;";
+  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}${spacing}Sep&nbsp;&nbsp;9/22`);
 
-  time = "2022-09-09T16:00:00.000Z";
-  vm.$store.commit("setObservedStationTime", time);
+  const noon = new Date(2022, 8, 9, 12, 0, 0);
+  vm.$store.commit("setObservedStationTime", noon.toISOString());
   expect(vm.observedFormatted).toStrictEqual(`Noon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sep&nbsp;&nbsp;9/22`);
 
-  time = "2022-09-09T04:00:00.000Z";
-  vm.$store.commit("setObservedStationTime", time);
+  const midnight = new Date(2022, 8, 9, 0, 0, 0);
+  vm.$store.commit("setObservedStationTime", midnight.toISOString());
   expect(vm.observedFormatted).toStrictEqual(`Midnight&nbsp;&nbsp;Sep&nbsp;&nbsp;9/22`);
   done();
 });

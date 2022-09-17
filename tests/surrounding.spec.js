@@ -47,9 +47,6 @@ test("observationsUnavailable: correctly computes based on observations", async 
 test("dateTime: correctly produces the date/time string with filled in timezone", async (done) => {
   const expectedDate = format(parseISO(ecdata.observed.stationTime), "MMM dd/yy");
   expect(vm.dateTime).toContain(`${ecdata.observed.stationTimezone}&nbsp;&nbsp;${expectedDate}`);
-
-  await wrapper.setProps({ timezone: "CDT" });
-  expect(vm.dateTime).toContain(`CDT&nbsp;&nbsp;Sep 16/22`);
   done();
 });
 

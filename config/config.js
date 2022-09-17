@@ -17,7 +17,7 @@ const defaultConfig = () => {
       location: "s0000193",
       name: "Winnipeg",
     },
-    proviceHighLowEnabled: true,
+    provinceHighLowEnabled: true, // eventually you can choose what cities this tracks but for now this is true/false
     historicalDataStationID: 27174, // (used for last year temps + precip data) winnipeg a cs
     climateNormalsStationID: 3698, // winnipeg richardson a (used for climate normals on last month summary)
     climateNormalsClimateID: 5023222, // (used for climate normals on last month summary)
@@ -70,7 +70,7 @@ const loadConfigFile = (configFilePath, callback) => {
 
     const {
       primaryLocation,
-      proviceHighLowEnabled,
+      provinceHighLowEnabled,
       historicalDataStationID,
       climateNormalsClimateID,
       climateNormalsStationID,
@@ -83,7 +83,7 @@ const loadConfigFile = (configFilePath, callback) => {
     config.primaryLocation = primaryLocation;
 
     // store whether the province high/low should load
-    config.proviceHighLowEnabled = proviceHighLowEnabled;
+    config.provinceHighLowEnabled = provinceHighLowEnabled || config.provinceHighLowEnabled;
 
     // load the historical weather station id
     config.historicalDataStationID = historicalDataStationID || config.historicalDataStationID;
@@ -166,6 +166,14 @@ const storeClimateStationIDs = (climateID, stationID, province, callback) => {
   });
 };
 
+const storeProvinceHighLowPrecipTracking = (enabled, callback) => {
+  config.provinceHighLowEnabled = enabled;
+
+  saveConfigFile((result) => {
+    typeof callback === "function" && callback(result);
+  });
+};
+
 const setupRoutes = (app) => {
   if (!app) return;
 
@@ -233,6 +241,17 @@ const setupRoutes = (app) => {
     });
   });
 
+  app.post("/config/province-high-low-precip-tracking", (req, res) => {
+    const { provinceHighLowTracking } = req.body || {};
+    storeProvinceHighLowPrecipTracking(provinceHighLowTracking, (result) => {
+      if (!result) res.sendStatus(500);
+      else
+        res.send({
+          provinceHighLowEnabled: config.provinceHighLowEnabled,
+        });
+    });
+  });
+
   app.get("/config/eccc-weather-stations", (req, res) => {
     fetchAvailableWeatherStations((result) => {
       if (!result) res.sendStatus(500);
@@ -273,7 +292,7 @@ const fetchAvailableWeatherStations = (callback) => {
 };
 
 const isProvinceHighLowEnabled = () => {
-  return config.proviceHighLowEnabled || false;
+  return config.provinceHighLowEnabled || false;
 };
 
 const primaryLocation = () => {

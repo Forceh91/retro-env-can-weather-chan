@@ -1,11 +1,27 @@
-import { shallowMount } from "@vue/test-utils";
-import { subDays, format } from "date-fns";
+import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
+import { subDays, format, parseISO } from "date-fns";
+
+import { getFreshStore } from "./build";
+import ecdata from "./data/ecdata";
+
 import { EventBus } from "../src/js/EventBus";
 import mbhighlow from "../src/components/mbhighlow";
 import mbhighlowdata from "./data/mbhighlow";
 
-const wrapper = shallowMount(mbhighlow, { props: {} });
-const { vm } = wrapper;
+enableAutoUnmount(afterEach);
+
+let wrapper, vm;
+const build = () => shallowMount(mbhighlow, { global: { plugins: [getFreshStore(ecdata)] } });
+
+beforeEach(() => {
+  wrapper = build();
+  vm = wrapper.vm;
+});
+
+afterEach(() => {
+  wrapper = null;
+  vm = null;
+});
 
 test("checkScreenIsEnabled: sends off an event correctly when the screen isn't enabled", (done) => {
   EventBus.on("mbhighlow-complete", () => {
@@ -81,32 +97,22 @@ test("padString: pads strings correctly when a length is given", (done) => {
   done();
 });
 
-test("padString: doesn't error when no string is passed", (done) => {
-  const stringA = vm.padString(null, 5);
-  expect(stringA).toBe("N/A&nbsp;&nbsp;");
-
-  const stringB = vm.padString("", 5);
-  expect(stringB).toBe("N/A&nbsp;&nbsp;");
-
-  done();
-});
-
 test("timeOfDay: computes correctly for overnight", (done) => {
   wrapper.setProps({ manitobaData: { period: "min_temp" } });
   vm.$nextTick(() => {
     expect(vm.timeOfDay).toBe("Overnight");
+    done();
   });
-  done();
 });
 
 test("yesterday: computes correctly", (done) => {
-  const yesterday = subDays(new Date(), 1);
+  const yesterday = subDays(parseISO(vm.ecObservedAtStation.time), 1);
   expect(vm.yesterday.getDate()).toBe(yesterday.getDate());
   done();
 });
 
 test("yesterdayDateFormatted: computes correctly", (done) => {
-  const yesterday = subDays(new Date(), 1);
+  const yesterday = subDays(parseISO(vm.ecObservedAtStation.time), 1);
   const yesterdayFormatted = format(yesterday, "MMM dd");
 
   expect(vm.yesterdayDateFormatted).toBe(yesterdayFormatted);
@@ -114,22 +120,35 @@ test("yesterdayDateFormatted: computes correctly", (done) => {
 });
 
 test("tempClass: computes correctly for overnight", (done) => {
-  expect(vm.tempClass).toBe("Low:");
-  done();
+  wrapper.setProps({ manitobaData: { period: "min_temp" } });
+  vm.$nextTick(() => {
+    expect(vm.tempClass).toBe("Low:");
+    done();
+  });
 });
 
-test("topLine: computes correctly for low temp class", (done) => {
+test("tempClass: computes correctly for today/yesterday", (done) => {
+  wrapper.setProps({ manitobaData: { period: "max_temp" } });
+  vm.$nextTick(() => {
+    expect(vm.tempClass).toBe("High");
+    done();
+  });
+});
+
+test("topLine: computes correctly for low temp class", async (done) => {
+  await wrapper.setProps({ manitobaData: { period: "min_temp" } });
   expect(vm.topLine).toContain(vm.padString("Overnight", 17, true));
   done();
 });
 
-test("bottomLine: computes correctly for low temp class", (done) => {
+test("bottomLine: computes correctly for low temp class", async (done) => {
+  await wrapper.setProps({ manitobaData: { period: "min_temp" } });
   expect(vm.bottomLine).toContain(vm.padString("Low:", 17, true));
   done();
 });
 
-test("timeOfDay: computes correctly for today", (done) => {
-  wrapper.setProps({ manitobaData: { period: "max_temp" } });
+test("timeOfDay: computes correctly for today", async (done) => {
+  await wrapper.setProps({ manitobaData: { period: "max_temp" } });
   vm.$nextTick(() => {
     const date = new Date();
     const todayYesterdayForMaxTemp = date.getHours() < 20 ? "Yesterday:" : "Today:";
@@ -156,7 +175,7 @@ test("bottomLine: computes correctly for high temp class", (done) => {
 });
 
 test("bottomPrecipLine: includes the timezone correctly", (done) => {
-  const yesterday = subDays(new Date(), 1);
+  const yesterday = subDays(parseISO(vm.ecObservedAtStation.time), 1);
   const yesterdayFormatted = format(yesterday, "MMM dd");
 
   expect(vm.bottomPrecipLine).toBe(`&nbsp;&nbsp;&nbsp;&nbsp;For ${yesterdayFormatted}`);

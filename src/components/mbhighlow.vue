@@ -18,11 +18,12 @@ import { format } from "date-fns";
 import { EventBus } from "../js/EventBus";
 import temperaturemixin from "../mixins/temperature.mixin";
 import observedmixin from "../mixins/observed.mixin";
+import stringpadmixin from "../mixins/stringpad.mixin";
 import { mapGetters } from "vuex";
 
 export default {
   name: "mbhighlow",
-  mixins: [temperaturemixin, observedmixin],
+  mixins: [temperaturemixin, observedmixin, stringpadmixin],
   props: {
     enabled: Boolean,
     manitobaData: {
@@ -96,16 +97,6 @@ export default {
       if (!this.enabled || !this.manitobaData || !this.weatherStations || !this.weatherStations.length) {
         EventBus.emit("mbhighlow-complete");
       }
-    },
-
-    padString(val, minLength, isFront) {
-      if (!val) val = "N/A";
-
-      const paddingToAdd = minLength - val.length;
-      let paddingString = ``;
-      for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
-
-      return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
     },
 
     generatePrecipString(precipData) {

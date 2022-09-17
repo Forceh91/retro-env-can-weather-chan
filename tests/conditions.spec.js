@@ -1,9 +1,9 @@
 import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
 import { parseISO, format } from "date-fns";
 import conditions from "../src/components/conditions";
-import ecdata from "./data/ecdata";
 
 import { getFreshStore } from "./build";
+import ecdata from "./data/ecdata";
 
 enableAutoUnmount(afterEach);
 

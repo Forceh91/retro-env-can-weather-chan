@@ -65,11 +65,14 @@ export default {
     },
 
     getDaysBehindFromObserved(date, numberOfDays) {
+      const { time } = date || {};
+      if (!time) return;
+
       // we can go back anytime but default to 1
       numberOfDays = numberOfDays || 1;
 
       // turn it into a date and count back
-      const parsedDate = parseISO(date.time);
+      const parsedDate = parseISO(time);
       const daysBehind = subDays(parsedDate, numberOfDays);
 
       return daysBehind;

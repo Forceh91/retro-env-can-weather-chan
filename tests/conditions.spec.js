@@ -35,7 +35,8 @@ test("observedFormatted: is computed properly", (done) => {
   const timezone = ecdata.observed.stationTimezone;
 
   let hourFormat = format(time, "h aa");
-  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}&nbsp;Sep 16/22`);
+  let monthFormat = format(time, "MMM dd/yy");
+  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}&nbsp;${monthFormat}`);
 
   time = "2022-09-16T22:00:00.000Z";
   vm.$store.commit("setObservedStationTime", time);

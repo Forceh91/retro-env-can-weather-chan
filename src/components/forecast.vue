@@ -59,6 +59,12 @@ export default {
     },
   },
 
+  watch: {
+    reload() {
+      if (this.reload) this.generateForecastPages();
+    },
+  },
+
   mounted() {
     this.generateForecastPages();
   },
@@ -69,6 +75,8 @@ export default {
 
   methods: {
     generateForecastPages() {
+      if (this.pageChangeInterval) clearInterval(this.pageChangeInterval);
+
       this.page = 0;
 
       this.pageChangeInterval = setInterval(() => {

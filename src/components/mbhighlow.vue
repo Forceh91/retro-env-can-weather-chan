@@ -137,8 +137,9 @@ export default {
 
 <style lang="scss" scoped>
 #city_list {
-  margin: 0;
   list-style: none;
+  margin: 0;
+  padding: 0;
 
   li {
     display: flex;

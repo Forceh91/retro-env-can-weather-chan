@@ -15,7 +15,7 @@ export default {
       additionalTimeZonePadding = additionalTimeZonePadding || "";
 
       const hours = parsedDate.getHours();
-      let hourTimezoneFormat = `hh aa `;
+      let hourTimezoneFormat = `h aa `;
       // we need to double space after timezone if its a single digit hour
       // otherwise it should be a single space because 10/11 eat into that space
       let timeZoneString = `'${timeZone}&nbsp;${additionalTimeZonePadding}'`;
@@ -36,7 +36,7 @@ export default {
       const dateString = format(parsedDate, `${hourTimezoneFormat}${monthDateYearFormat}`);
 
       // clear out leading 0s from time/date as we dont want those
-      const displayDateString = dateString.replace(/0([0-9])/, "$1").replace(/\s0/, "&nbsp;&nbsp;");
+      const displayDateString = dateString.replace(/\s0/, "&nbsp;&nbsp;");
       return displayDateString;
     },
 

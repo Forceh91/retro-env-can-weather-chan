@@ -1,4 +1,6 @@
 import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
+import { parseISO, format } from "date-fns";
+
 import { EventBus } from "../src/js/EventBus";
 import Surrounding from "../src/components/surrounding";
 
@@ -43,7 +45,8 @@ test("observationsUnavailable: correctly computes based on observations", async 
 });
 
 test("dateTime: correctly produces the date/time string with filled in timezone", async (done) => {
-  expect(vm.dateTime).toContain(`${ecdata.observed.stationTimezone}&nbsp;&nbsp;Sep 16/22`);
+  const expectedDate = format(parseISO(ecdata.observed.stationTime), "MMM dd/yy");
+  expect(vm.dateTime).toContain(`${ecdata.observed.stationTimezone}&nbsp;&nbsp;${expectedDate}`);
 
   await wrapper.setProps({ timezone: "CDT" });
   expect(vm.dateTime).toContain(`CDT&nbsp;&nbsp;Sep 16/22`);

@@ -3,10 +3,17 @@ import outlook from "../src/components/outlook";
 import outlookdata from "./data/outlook";
 import normalsdata from "./data/outlooknormals";
 
+import { getFreshStore } from "./build";
+import ecdata from "./data/ecdata";
+
 enableAutoUnmount(afterEach);
 
 let wrapper, vm;
-const build = () => shallowMount(outlook, { props: { city: "Winnipeg", forecast: outlookdata, normals: normalsdata } });
+const build = () =>
+  shallowMount(outlook, {
+    props: { forecast: outlookdata, normals: normalsdata },
+    global: { plugins: [getFreshStore(ecdata)] },
+  });
 
 beforeEach(() => {
   wrapper = build();

@@ -36,6 +36,13 @@
         <b-tab title="Playlist">
           <playlistconfig :playlist="config.playlist" :save-state="saveState" @save="reloadPlaylist" />
         </b-tab>
+        <b-tab title="Misc.">
+          <miscconfig
+            :province-high-low-tracking="config.config.provinceHighLowEnabled"
+            :save-state="saveState"
+            @save="saveMiscConfig"
+          />
+        </b-tab>
       </b-tabs>
     </div>
   </div>
@@ -47,11 +54,19 @@ import playlistconfig from "./components/playlistconfig.vue";
 import weatherstationconfig from "./components/weatherstationconfig.vue";
 import historicaldataconfig from "./components/historicaldataconfig.vue";
 import climatenormalsconfig from "./components/climatenormalsconfig.vue";
+import miscconfig from "./components/miscconfig.vue";
 
 export default {
   name: "config",
 
-  components: { crawlermessages, playlistconfig, weatherstationconfig, historicaldataconfig, climatenormalsconfig },
+  components: {
+    crawlermessages,
+    playlistconfig,
+    weatherstationconfig,
+    historicaldataconfig,
+    climatenormalsconfig,
+    miscconfig,
+  },
 
   data() {
     return {
@@ -212,6 +227,24 @@ export default {
           this.config.config.climateNormalsClimateID = data.climateNormalsClimateID;
           this.config.config.climateNormalsStationID = data.climateNormalsStationID;
           this.config.config.climateNormalsProvince = data.climateNormalsProvince;
+          this.saveSuccess();
+        })
+        .catch(() => {
+          this.saveFailed();
+        });
+    },
+
+    saveMiscConfig(e) {
+      if (!e) return;
+
+      this.$http
+        .post("/config/province-high-low-precip-tracking", e)
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          const { provinceHighLowEnabled } = data || {};
+          this.config.config.provinceHighLowEnabled = provinceHighLowEnabled;
           this.saveSuccess();
         })
         .catch(() => {

@@ -1,11 +1,13 @@
 import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
 import citystats from "../src/components/citystats";
-import risesetdata from "./data/riseset";
+import ecdata from "./data/ecdata";
+
+import { getFreshStore } from "./build";
 
 enableAutoUnmount(afterEach);
 
 let wrapper, vm;
-const build = () => shallowMount(citystats, { props: { riseset: risesetdata } });
+const build = () => shallowMount(citystats, { global: { plugins: [getFreshStore(ecdata)] } });
 
 beforeEach(() => {
   wrapper = build();
@@ -84,13 +86,8 @@ test("padString: doesn't error when no string is passed", (done) => {
 });
 
 test("sunriseset: is computed properly", (done) => {
-  expect(vm.sunriseset).toBe(`Sunrise..6:53 AM Sunset..8:00 PM`);
-
-  wrapper.setProps({ riseset: null });
-  vm.$nextTick(() => {
-    expect(vm.sunriseset).toBe("");
-    done();
-  });
+  expect(vm.sunriseset).toBe(`Sunrise..8:06 AM Sunset..8:41 PM`);
+  done();
 });
 
 test("pad: pads out numbers less than 10 with a 0", (done) => {
@@ -117,25 +114,13 @@ test("hotColdTitleString: is computed correctly", (done) => {
 });
 
 test("hotSpotString: is computed correctly", (done) => {
-  wrapper.setProps({ hotcold: { hot: { city: "some place", province: "on", temp: "20" } } });
-  vm.$nextTick(() => {
-    expect(vm.hotSpotString).toStrictEqual(
-      `&nbsp;${vm.hotcold.hot.city},&nbsp;${vm.hotcold.hot.province}&nbsp;............&nbsp;${vm.hotcold.hot.temp}`
-    );
-    done();
-  });
+  expect(vm.hotSpotString).toStrictEqual(`&nbsp;Sarnia,&nbsp;ON&nbsp;................&nbsp;28`);
+  done();
 });
 
 test("coldSpotString: is computed correctly", (done) => {
-  expect(vm.coldSpotString).toStrictEqual(`&nbsp;N/A,&nbsp;N/A&nbsp;...................N/A`);
-
-  wrapper.setProps({ hotcold: { cold: { city: "another place", province: "on", temp: "-5" } } });
-  vm.$nextTick(() => {
-    expect(vm.coldSpotString).toStrictEqual(
-      `&nbsp;${vm.hotcold.cold.city},&nbsp;${vm.hotcold.cold.province}&nbsp;.........&nbsp;${vm.hotcold.cold.temp}`
-    );
-    done();
-  });
+  expect(vm.coldSpotString).toStrictEqual(`&nbsp;Isachsen,&nbsp;NU&nbsp;..............&nbsp;-9`);
+  done();
 });
 
 test("precipTitle: is computed correctly", (done) => {

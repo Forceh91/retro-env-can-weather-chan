@@ -21,8 +21,12 @@ afterEach(() => {
 });
 
 test("titleString: is computed properly", (done) => {
+  const time = parseISO(ecdata.observed.stationTime);
+  let monthFormat = format(time, "MMM dd/yy");
+
   expect(vm.titleString).toContain(`&nbsp;Winnipeg&nbsp;&nbsp;&nbsp;`);
-  expect(vm.titleString).toContain(`${ecdata.observed.stationTimezone}&nbsp;Sep 16/22`);
+  expect(vm.titleString).toContain(`${ecdata.observed.stationTimezone}&nbsp;`);
+  expect(vm.titleString).toContain(`${monthFormat}`);
   done();
 });
 
@@ -36,7 +40,8 @@ test("observedFormatted: is computed properly", (done) => {
 
   let hourFormat = format(time, "h aa");
   let monthFormat = format(time, "MMM dd/yy");
-  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}&nbsp;${monthFormat}`);
+  expect(vm.observedFormatted).toContain(`${hourFormat} ${timezone}`);
+  expect(vm.observedFormatted).toContain(`${monthFormat}`);
 
   time = "2022-09-16T22:00:00.000Z";
   vm.$store.commit("setObservedStationTime", time);

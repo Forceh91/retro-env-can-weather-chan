@@ -45,8 +45,10 @@ test("observationsUnavailable: correctly computes based on observations", async 
 });
 
 test("dateTime: correctly produces the date/time string with filled in timezone", async (done) => {
-  const expectedDate = format(parseISO(ecdata.observed.stationTime), "MMM dd/yy");
-  expect(vm.dateTime).toContain(`${ecdata.observed.stationTimezone}&nbsp;&nbsp;${expectedDate}`);
+  const time = parseISO(ecdata.observed.stationTime);
+  const expectedDate = format(time, "MMM dd/yy");
+  expect(vm.dateTime).toContain(`${ecdata.observed.stationTimezone}`);
+  expect(vm.dateTime).toContain(`&nbsp;&nbsp;${expectedDate}`);
   done();
 });
 

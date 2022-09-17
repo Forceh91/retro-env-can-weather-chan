@@ -78,7 +78,7 @@ export default {
 
     temperature() {
       let temp = this.ecConditions?.temperature?.value;
-      if (!isNaN(temp)) temp = Math.round(temp);
+      if (temp !== null && !isNaN(temp)) temp = Math.round(temp);
       else temp = "N/A";
 
       return `${temp} ${(this.ecConditions.temperature && this.ecConditions.temperature.units) || ""}`;
@@ -99,21 +99,27 @@ export default {
       const humidity = this.ecConditions.relativeHumidity;
       if (!humidity) return "";
 
-      return `${humidity.value} ${humidity.units}`;
+      return this.padString(`${humidity.value || "N/A"} ${humidity.units}`, 4, true);
     },
 
     visibility() {
       const visibility = this.ecConditions.visibility;
       if (!visibility) return "";
 
-      return `${Math.round(visibility.value)} ${visibility.units}`;
+      const { value, units } = visibility;
+      if (!value) return "";
+
+      return `${Math.round(value)} ${units}`;
     },
 
     pressure() {
       const pressure = this.ecConditions.pressure;
       if (!pressure) return "";
 
-      return `${pressure.value} ${pressure.units}&nbsp;&nbsp;${pressure.tendency}`;
+      const { value, units, tendency } = pressure;
+      if (!value) return "";
+
+      return `${value} ${units}&nbsp;&nbsp;${tendency}`;
     },
 
     shouldShowWindchill() {
@@ -125,21 +131,11 @@ export default {
     },
 
     shouldShowAQHI() {
-      return (!this.shouldShowWindchill && this.ecAirQuality) || false;
+      return (!this.shouldShowWindchill && this.ecAirQuality !== null) || false;
     },
 
     shouldShowExtraData() {
       return this.shouldShowWindchill || this.shouldShowAQHI || false;
-    },
-  },
-
-  methods: {
-    padString(val, minLength, isFront) {
-      const paddingToAdd = minLength - val.length;
-      let paddingString = ``;
-      for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
-
-      return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
     },
   },
 };

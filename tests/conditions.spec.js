@@ -1,148 +1,200 @@
-import { shallowMount } from "@vue/test-utils";
-import Conditions from "../src/components/conditions";
-import data from "./data/conditions";
+import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
+import { parseISO, format } from "date-fns";
+import conditions from "../src/components/conditions";
+import ecdata from "./data/ecdata";
 
-const wrapper = shallowMount(Conditions, {
-  props: { city: "Winnipeg", observed: "2021-09-07T21:00:00.000Z", conditions: { ...data.current } },
+import { getFreshStore } from "./build";
+
+enableAutoUnmount(afterEach);
+
+let wrapper, vm;
+const build = () => shallowMount(conditions, { global: { plugins: [getFreshStore(ecdata)] } });
+
+beforeEach(() => {
+  wrapper = build();
+  vm = wrapper.vm;
 });
-const { vm } = wrapper;
+
+afterEach(() => {
+  wrapper = null;
+  vm = null;
+});
 
 test("titleString: is computed properly", (done) => {
   expect(vm.titleString).toContain(`&nbsp;Winnipeg&nbsp;&nbsp;&nbsp;`);
-  expect(vm.titleString).toContain(`${vm.conditions.dateTime[1].zone}&nbsp;Sep 07/21`);
+  expect(vm.titleString).toContain(`${ecdata.observed.stationTimezone}&nbsp;Sep 16/22`);
   done();
 });
 
 test("observedFormatted: is computed properly", (done) => {
-  expect(vm.observedFormatted).toContain(`${vm.conditions.dateTime[1].zone}&nbsp;Sep 07/21`);
+  //WINNIPEG   11 AM CDT SEP 17/22
+  //WINNIPEG   NOON      SEP 17/22
+  //WINNIPEG   MIDNIGHT  SEP 17/22
+  //WINNIPEG   6 AM CDT  SEP 17/22
+  let time = parseISO(ecdata.observed.stationTime);
+  const timezone = ecdata.observed.stationTimezone;
+
+  let hourFormat = format(time, "h aa");
+  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}&nbsp;Sep 16/22`);
+
+  time = "2022-09-16T22:00:00.000Z";
+  vm.$store.commit("setObservedStationTime", time);
+
+  hourFormat = format(parseISO(time), "h aa");
+  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}&nbsp;&nbsp;Sep 16/22`);
+
+  time = "2022-09-09T12:00:00.000Z";
+  vm.$store.commit("setObservedStationTime", time);
+
+  hourFormat = format(parseISO(time), "h aa");
+  expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}&nbsp;&nbsp;Sep&nbsp;&nbsp;9/22`);
+
+  time = "2022-09-09T16:00:00.000Z";
+  vm.$store.commit("setObservedStationTime", time);
+  expect(vm.observedFormatted).toStrictEqual(`Noon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sep&nbsp;&nbsp;9/22`);
+
+  time = "2022-09-09T04:00:00.000Z";
+  vm.$store.commit("setObservedStationTime", time);
+  expect(vm.observedFormatted).toStrictEqual(`Midnight&nbsp;&nbsp;Sep&nbsp;&nbsp;9/22`);
   done();
 });
 
 test("currentCondition: is computed properly", (done) => {
-  expect(vm.currentCondition).toBe("Partly Cloudy");
+  expect(vm.currentCondition).toBe("Rain");
 
-  vm.conditions.condition = "Thunderstorms with heavy rain shower";
+  vm.$store.commit("setCurrentConditions", "Thunderstorms with heavy rain shower");
   expect(vm.currentCondition).toBe("Thunderstorms");
 
-  vm.conditions.condition = "snow and freezing rain";
+  vm.$store.commit("setCurrentConditions", "snow and freezing rain");
   expect(vm.currentCondition).toBe("snow");
 
-  vm.conditions.condition = "light rainshower";
+  vm.$store.commit("setCurrentConditions", "light rainshower");
   expect(vm.currentCondition).toBe("light rainshower");
 
-  vm.conditions.condition = "freezing rain";
+  vm.$store.commit("setCurrentConditions", "freezing rain");
   expect(vm.currentCondition).toBe("freezing rain");
+
+  vm.$store.commit("setCurrentConditions", "partly cloudy");
+  expect(vm.currentCondition).toBe("partly cloudy");
+
+  vm.$store.commit("setCurrentConditions", "clear");
+  expect(vm.currentCondition).toBe("clear");
   done();
 });
 
 test("temperature: is computed properly", (done) => {
-  const oldTempValue = Object.assign({}, vm.conditions.temperature);
-  expect(vm.temperature).toBe("23 C");
+  expect(vm.temperature).toBe("12 C");
 
-  vm.conditions.temperature.value = 0.3;
+  vm.$store.commit("setCurrentTemperature", 0.3);
   expect(vm.temperature).toBe("0 C");
 
-  vm.conditions.temperature.value = 0.6;
+  vm.$store.commit("setCurrentTemperature", 0.6);
   expect(vm.temperature).toBe("1 C");
 
-  vm.conditions.temperature.value = -0.4;
+  vm.$store.commit("setCurrentTemperature", -0.4);
   expect(vm.temperature).toBe("0 C");
 
-  vm.conditions.temperature.value = -11.4;
+  vm.$store.commit("setCurrentTemperature", -11.4);
   expect(vm.temperature).toBe("-11 C");
 
-  vm.conditions.temperature.value = oldTempValue.value;
-
-  vm.conditions.temperature = null;
-  expect(vm.temperature).toBe("N/A ");
+  vm.$store.commit("setCurrentTemperature", null);
+  expect(vm.temperature).toBe("N/A C");
 
   done();
 });
 
 test("wind: is computed properly", (done) => {
-  vm.conditions.wind.gust.value = 0;
-  expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp;45 KMH");
+  expect(vm.wind).toBe("ENE&nbsp;&nbsp;13 KMH");
 
-  const oldSpeed = { ...vm.conditions.wind.speed };
-  vm.conditions.wind.speed.value = null;
-  expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp; KMH");
+  vm.$store.commit("setCurrentWind", null);
+  expect(vm.wind).toBe("ENE&nbsp;&nbsp; KMH");
 
-  vm.conditions.wind.speed = oldSpeed;
-  vm.conditions.wind.gust.value = 72;
+  vm.$store.commit("setCurrentWind", { gust: 72, speed: 45, direction: "NW" });
   expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp;45G72&nbsp;");
 
-  vm.conditions.wind = null;
-  expect(vm.wind).toBe("");
+  vm.$store.commit("setCurrentWind", { gust: null, speed: 22, direction: "S" });
+  expect(vm.wind).toBe("&nbsp;&nbsp;S&nbsp;&nbsp;22 KMH");
 
-  wrapper.setProps({ conditions: data.current });
-  vm.$nextTick(() => {
-    done();
-  });
+  done();
 });
 
 test("humidity: is computed correctly", (done) => {
-  expect(vm.humidity).toBe("36 %");
+  expect(vm.humidity).toBe("99 %");
 
-  vm.conditions.relativeHumidity = null;
-  expect(vm.humidity).toBe("");
+  vm.$store.commit("setCurrentHumidity", 9);
+  expect(vm.humidity).toBe("&nbsp;9 %");
+
+  vm.$store.commit("setCurrentHumidity", null);
+  expect(vm.humidity).toBe("N/A %");
   done();
 });
 
 test("visibility: is computed correctly", (done) => {
+  expect(vm.visibility).toBe("16 km");
+
+  vm.$store.commit("setCurrentVisibility", 24);
   expect(vm.visibility).toBe("24 km");
 
-  vm.conditions.visibility = null;
+  vm.$store.commit("setCurrentVisibility", null);
   expect(vm.visibility).toBe("");
 
   done();
 });
 
 test("pressure: is computed correctly", (done) => {
+  expect(vm.pressure).toBe("101.1 kPa&nbsp;&nbsp;rising");
+
+  vm.$store.commit("setCurrentPressure", { value: 100.8, tendency: "falling" });
   expect(vm.pressure).toBe("100.8 kPa&nbsp;&nbsp;falling");
 
-  vm.conditions.pressure = undefined;
+  vm.$store.commit("setCurrentPressure", null);
   expect(vm.pressure).toBe("");
 
   done();
 });
 
-test("windchill: is computed correctly", (done) => {
-  expect(vm.windchill).toBe(0);
+test("shouldShowWindchill: is computed correctly", (done) => {
+  expect(vm.shouldShowWindchill).toBe(false);
 
-  vm.conditions.temperature.value = -5;
-  expect(vm.windchill).toBe(1470);
+  vm.$store.commit("setWindchill", 1650);
+  expect(vm.shouldShowWindchill).toBe(true);
 
   done();
 });
 
-test("shouldShowWindchill: is computed correctly", (done) => {
-  expect(vm.shouldShowWindchill).toBe(true);
+test("windchill: is computed correctly", (done) => {
+  expect(vm.ecWindchill).toBe(0);
 
-  vm.conditions.temperature.value = 1;
-  expect(vm.shouldShowWindchill).toBe(false);
+  const chillsToTest = [1650, 1400, 1500, 1700];
+  chillsToTest.forEach((chill) => {
+    vm.$store.commit("setWindchill", chill);
+    expect(vm.ecWindchill).toBe(chill);
+  });
 
   done();
 });
 
 it("shouldShowExtraData: is computed correctly", (done) => {
+  expect(vm.shouldShowExtraData).toBe(true);
+
+  vm.$store.commit("setAirQuality", null);
   expect(vm.shouldShowExtraData).toBe(false);
 
-  wrapper.setProps({ airQuality: { summary: "Good", aqhi: 2.4, hourObserved: "10PM" } });
-  vm.$nextTick(() => {
-    vm.conditions.temperature.value = -1;
-    expect(vm.shouldShowExtraData).not.toBe(false);
-    expect(vm.shouldShowWindchill).toBe(true);
-    expect(vm.shouldShowAQHI).toBe(false);
-    expect(vm.aqhiSummary).toBe(false);
-    done();
-  });
+  vm.$store.commit("setWindchill", 1350);
+  expect(vm.shouldShowExtraData).toBe(true);
+
+  done();
 });
 
 it("shouldShowAQHI: is computed correctly", (done) => {
-  vm.conditions.temperature.value = 1;
-  expect(vm.shouldShowExtraData).not.toBe(false);
-  expect(vm.shouldShowAQHI).not.toBe(false);
+  expect(vm.shouldShowExtraData).toBe(true);
+  expect(vm.shouldShowAQHI).toBe(true);
   expect(vm.aqhiSummary).toBe("Good");
+
+  vm.$store.commit("setWindchill", 1350);
+  expect(vm.shouldShowAQHI).toBe(false);
+  expect(vm.shouldShowWindchill).toBe(true);
+  expect(vm.shouldShowExtraData).toBe(true);
   done();
 });
 

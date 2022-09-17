@@ -1,11 +1,14 @@
 import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
+import { getFreshStore } from "./build";
+import ecdata from "./data/ecdata";
 import lastmonth from "../src/components/lastmonth";
 import lastmonthdata from "./data/lastmonthdata";
 
 enableAutoUnmount(afterEach);
 
 let wrapper, vm;
-const build = () => shallowMount(lastmonth, { props: { lastMonth: lastmonthdata, city: "Winnipeg" } });
+const build = () =>
+  shallowMount(lastmonth, { props: { lastMonth: lastmonthdata }, global: { plugins: [getFreshStore(ecdata)] } });
 
 beforeEach(() => {
   wrapper = build();

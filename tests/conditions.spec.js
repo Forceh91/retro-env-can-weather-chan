@@ -54,7 +54,7 @@ test("observedFormatted: is computed properly", (done) => {
   if (hours < 10 || (hours > 12 && hours < 22)) spacing = "&nbsp;&nbsp;";
   expect(vm.observedFormatted).toStrictEqual(`${hourFormat} ${timezone}${spacing}Sep 16/22`);
 
-  time = "2022-09-09T12:00:00.000Z";
+  time = "2022-09-09T14:00:00.000Z";
   vm.$store.commit("setObservedStationTime", time);
 
   hourFormat = format(parseISO(time), "h aa");

@@ -1,112 +1,141 @@
 <template>
   <div id="conditions_table">
     <div id="conditions_table_content">
-      <div id="title" v-html="titleString"></div>
+      <div class="reloadable reloadable-1" id="title" v-html="titleString"></div>
       <div>
-        <span>Temp&nbsp;</span><span v-html="padString(temperature, 5, true)"></span>
-        <span v-html="padString('', 5)"></span><span>Wind&nbsp;</span><span v-html="wind"></span>
+        <div class="reloadable reloadable-2">
+          <span>Temp&nbsp;</span><span v-html="padString(temperature, 5, true)"></span>
+        </div>
+        <div class="reloadable reloadable-3">
+          <span v-html="padString('', 6)"></span><span>Wind&nbsp;</span><span v-html="wind"></span>
+        </div>
       </div>
       <div>
-        <span>Hum&nbsp;&nbsp;</span><span v-html="padString(humidity, 5, true)"></span>
-        <span v-html="padString('', 5)"></span><span>{{ currentCondition }}</span>
+        <div class="reloadable reloadable-4">
+          <span>Hum&nbsp;&nbsp;</span><span v-html="padString(humidity, 5, true)"></span>
+        </div>
+        <div class="reloadable reloadable-5">
+          <span v-html="padString('', 6)"></span><span>{{ currentCondition }}</span>
+        </div>
       </div>
       <div>
-        <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
-        <template v-if="windchill > 0"
-          ><span v-html="padString('', 4)"></span><span>Wind Chill {{ windchill }}</span></template
-        >
+        <template v-if="shouldShowExtraData">
+          <div class="reloadable reloadable-6">
+            <span>Vsby&nbsp;</span><span v-html="padString(visibility, 6, true)"></span>
+          </div>
+          <span v-html="padString('', 5, true)"></span>
+          <div class="reloadable reloadable-7">
+            <span v-if="shouldShowWindchill">Wind Chill {{ ecWindchill }}</span>
+          </div>
+          <div class="reloadable reloadable-7">
+            <span v-if="shouldShowAQHI">Air Quality {{ aqhiSummary }}</span>
+          </div>
+        </template>
+        <template v-else>
+          <div class="reloadable reloadable-6">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visibility&nbsp;&nbsp;</span><span v-html="visibility"></span>
+          </div>
+        </template>
       </div>
-      <div><span v-html="padString('pressure', 11, true)"></span>&nbsp;<span v-html="pressure"></span></div>
+      <div v-if="showPressure" class="reloadable">
+        <span v-html="padString('pressure', 11, true)"></span>&nbsp;<span v-html="pressure"></span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { parseISO, format } from "date-fns";
-import { calculateWindChillNumber } from "../js/windChill";
+import { mapGetters } from "vuex";
 import conditionmixin from "../mixins/condition.mixin";
+import observedmixin from "../mixins/observed.mixin";
+import stringpadmixin from "../mixins/stringpad.mixin";
 
 export default {
   name: "Conditions",
   props: {
-    city: String,
-    observed: String,
-    conditions: Object,
+    showPressure: {
+      type: Boolean,
+      default: true,
+    },
   },
 
-  mixins: [conditionmixin],
+  mixins: [stringpadmixin, conditionmixin, observedmixin],
 
   computed: {
+    ...mapGetters(["ecCity", "ecObservedAtStation", "ecConditions", "ecWindchill", "ecAirQuality"]),
+
     titleString() {
-      return `&nbsp;${this.city}&nbsp;&nbsp;&nbsp;${this.observedFormatted}`;
+      return `&nbsp;${this.ecCity}&nbsp;&nbsp;&nbsp;${this.observedFormatted}`;
     },
 
     observedFormatted() {
-      return format(parseISO(this.observed), "h aa ???'&nbsp;'MMM dd/yy").replace(
-        `???`,
-        this.conditions?.dateTime[1]?.zone
-      );
+      return this.formatObservedLong(this.ecObservedAtStation, true);
     },
 
     currentCondition() {
-      return this.truncateConditions(this.conditions?.condition);
+      return this.truncateConditions(this.ecConditions?.condition);
     },
 
     temperature() {
-      let temp = this.conditions?.temperature?.value;
-      if (!isNaN(temp)) temp = Math.round(temp);
+      let temp = this.ecConditions?.temperature?.value;
+      if (temp !== null && !isNaN(temp)) temp = Math.round(temp);
       else temp = "N/A";
 
-      return `${temp} ${(this.conditions.temperature && this.conditions.temperature.units) || ""}`;
+      return `${temp} ${(this.ecConditions.temperature && this.ecConditions.temperature.units) || ""}`;
     },
 
     wind() {
-      const wind = this.conditions.wind;
+      const wind = this.ecConditions.wind;
       if (!wind) return "";
 
       const speed = (wind.speed && wind.speed.value) || "";
+      const gust = (wind.gust && wind.gust.value) || 0;
       const direction = wind.direction;
-      const units = wind.speed && wind.speed.units;
-      return `${this.padString(direction, 3, true)}&nbsp;&nbsp;${speed} ${units}`;
+      if (gust) return `${this.padString(direction, 3, true)}&nbsp;&nbsp;${speed}G${gust}&nbsp;`;
+      return `${this.padString(direction, 3, true)}&nbsp;&nbsp;${speed} KMH`;
     },
 
     humidity() {
-      const humidity = this.conditions.relativeHumidity;
+      const humidity = this.ecConditions.relativeHumidity;
       if (!humidity) return "";
 
-      return `${humidity.value} ${humidity.units}`;
+      return this.padString(`${humidity.value || "N/A"} ${humidity.units}`, 4, true);
     },
 
     visibility() {
-      const visibility = this.conditions.visibility;
+      const visibility = this.ecConditions.visibility;
       if (!visibility) return "";
 
-      return `${Math.round(visibility.value)} ${visibility.units}`;
+      const { value, units } = visibility;
+      if (!value) return "";
+
+      return `${Math.round(value)} ${units}`;
     },
 
     pressure() {
-      const pressure = this.conditions.pressure;
+      const pressure = this.ecConditions.pressure;
       if (!pressure) return "";
 
-      return `${pressure.value} ${pressure.units}&nbsp;&nbsp;${pressure.tendency}`;
+      const { value, units, tendency } = pressure;
+      if (!value) return "";
+
+      return `${value} ${units}&nbsp;&nbsp;${tendency}`;
     },
 
-    windchill() {
-      const temp = this.conditions.temperature && this.conditions.temperature.value;
-      if (temp > 0) return 0;
-
-      const windspeed = this.conditions?.wind?.speed?.value;
-      return calculateWindChillNumber(temp, windspeed);
+    shouldShowWindchill() {
+      return this.ecWindchill > 0;
     },
-  },
 
-  methods: {
-    padString(val, minLength, isFront) {
-      const paddingToAdd = minLength - val.length;
-      let paddingString = ``;
-      for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
+    aqhiSummary() {
+      return this.shouldShowAQHI && this.ecAirQuality?.summary;
+    },
 
-      return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
+    shouldShowAQHI() {
+      return (!this.shouldShowWindchill && this.ecAirQuality !== null) || false;
+    },
+
+    shouldShowExtraData() {
+      return this.shouldShowWindchill || this.shouldShowAQHI || false;
     },
   },
 };
@@ -119,6 +148,10 @@ export default {
 
   #conditions_table_content div {
     margin-bottom: 5px;
+  }
+
+  .reloadable {
+    display: inline-block;
   }
 }
 </style>

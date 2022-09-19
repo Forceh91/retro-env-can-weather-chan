@@ -18,9 +18,10 @@ const MAX_TITLE_LENGTH = 13;
 const MAX_CITIES_PER_PAGE = 7;
 const PAGE_CHANGE_FREQUENCY = 15 * 1000;
 
-import { format, parseISO } from "date-fns";
+import { mapGetters } from "vuex";
 import { EventBus } from "../js/EventBus";
 import conditionmixin from "../mixins/condition.mixin";
+import observedmixin from "../mixins/observed.mixin";
 
 export default {
   name: "Surrounding",
@@ -33,22 +34,21 @@ export default {
     },
   },
 
-  mixins: [conditionmixin],
+  mixins: [conditionmixin, observedmixin],
 
   computed: {
+    ...mapGetters(["ecObservedAtStation"]),
+
     observationsUnavailable() {
       return !this.observations || !this.observations.length;
     },
 
     dateTime() {
-      const padding = this.padString("", 6, true);
-      const currentHour = this.observed ? this.padString(format(parseISO(this.observed), "h aa "), 6, true) : "";
-      return (
-        padding +
-        (this.observed
-          ? currentHour + format(parseISO(this.observed), "???'&nbsp;&nbsp;'MMM dd/yy").replace(`???`, this.timezone)
-          : "")
-      );
+      if (!this.ecObservedAtStation) return "";
+
+      const padding = this.padString("", 5, true);
+      const dateString = this.formatObservedLong(this.ecObservedAtStation, true, "&nbsp;");
+      return `${padding} ${dateString}`;
     },
 
     paginatedObservations() {
@@ -95,7 +95,7 @@ export default {
     },
 
     trimCondition(val) {
-      return this.truncateConditions(val);
+      return this.harshTruncateConditions(val);
     },
 
     padString(val, minLength, isFront) {
@@ -111,7 +111,7 @@ export default {
     },
 
     roundTemp(temp) {
-      if (isNaN(temp)) return "";
+      if (isNaN(temp) || temp === null) return "";
       return Math.round(temp);
     },
   },

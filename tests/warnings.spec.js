@@ -1,6 +1,24 @@
-import { shallowMount } from "@vue/test-utils";
+import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
 import { EventBus } from "../src/js/EventBus";
 import Warnings from "../src/components/warnings";
+
+import { getFreshStore } from "./build";
+import ecdata from "./data/ecdata";
+
+enableAutoUnmount(afterEach);
+
+let wrapper, vm;
+const build = () => shallowMount(Warnings, { global: { plugins: [getFreshStore(ecdata)] } });
+
+beforeEach(() => {
+  wrapper = build();
+  vm = wrapper.vm;
+});
+
+afterEach(() => {
+  wrapper = null;
+  vm = null;
+});
 
 const fakeWarning = {
   identifier: "a",
@@ -39,9 +57,6 @@ const fakeEndedUrgentWarning = {
   urgency: "Past",
 };
 
-const wrapper = shallowMount(Warnings, { props: { city: "City" } });
-const { vm } = wrapper;
-
 test("warningsUnavailable: computes correctly", (done) => {
   expect(vm.warningsUnavailable).toBe(true);
   done();
@@ -56,50 +71,47 @@ test("generateWarningsScreen: skips over generating warnings list if there are n
   vm.generateWarningsScreen();
 });
 
-test("generateWarningsScreen: converts the warnings into a list if there is just one warning", (done) => {
-  wrapper.setProps({ warnings: [fakeWarning] });
-  vm.$nextTick(() => {
-    vm.generateWarningsScreen();
+test("generateWarningsScreen: converts the warnings into a list if there is just one warning", async (done) => {
+  await wrapper.setProps({ warnings: [fakeWarning] });
+  vm.generateWarningsScreen();
 
-    expect(vm.warningsUnavailable).toBe(false);
-    expect(vm.warningsList.length).toBe(1);
-    done();
-  });
+  expect(vm.warningsUnavailable).toBe(false);
+  expect(vm.warningsList.length).toBe(1);
+  done();
 });
 
-test("generateWarningsScreen: copies warnings over correctly when there are multiple", (done) => {
-  wrapper.setProps({ warnings: [fakeWarning, fakeWarning] });
+test("generateWarningsScreen: copies warnings over correctly when there are multiple", async (done) => {
+  await wrapper.setProps({ warnings: [fakeWarning, fakeWarning] });
 
-  vm.$nextTick(() => {
-    vm.generateWarningsScreen();
+  vm.generateWarningsScreen();
 
-    expect(vm.warningsUnavailable).toBe(false);
-    expect(vm.warningsList.length).toBe(2);
-    done();
-  });
+  expect(vm.warningsUnavailable).toBe(false);
+  expect(vm.warningsList.length).toBe(2);
+  done();
 });
 
-test("generateWarningsScreen: generates the correct number of pages", (done) => {
+test("generateWarningsScreen: generates the correct number of pages", async (done) => {
+  await wrapper.setProps({ warnings: [fakeWarning, fakeWarning] });
   vm.generateWarningsScreen();
   expect(vm.pages).toBe(2);
 
-  wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
-
-  vm.$nextTick(() => {
-    vm.generateWarningsScreen();
-    expect(vm.pages).toBe(3);
-    done();
-  });
+  await wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
+  vm.generateWarningsScreen();
+  expect(vm.pages).toBe(3);
+  done();
 });
 
-test("generateWarningsScreen: changes page after 60s", (done) => {
+test("generateWarningsScreen: changes page after 30s", async (done) => {
+  await wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
+  vm.generateWarningsScreen();
+
   jest.useFakeTimers();
   const spy = jest.spyOn(vm, "changePage");
 
   vm.generateWarningsScreen();
-  jest.advanceTimersByTime(60 * 1000);
+  jest.advanceTimersByTime(30 * 1000);
   expect(spy).toHaveBeenCalled();
-  expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 60 * 1000);
+  expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 30 * 1000);
   done();
 });
 
@@ -112,20 +124,21 @@ test("shouldFlashWarning: will flash a warning if it is urgent", (done) => {
   done();
 });
 
-test("changePage: changes page correctly when there are multiple pages", (done) => {
-  wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
-  vm.$nextTick(() => {
-    vm.generateWarningsScreen();
-    vm.changePage();
-    expect(vm.page).toBe(2);
-    done();
-  });
+test("changePage: changes page correctly when there are multiple pages", async (done) => {
+  await wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
+  vm.generateWarningsScreen();
+
+  vm.changePage();
+  expect(vm.page).toBe(2);
+  done();
 });
 
-test("changePage: switches away from the warnings screen when on the last page", (done) => {
+test("changePage: switches away from the warnings screen when on the last page", async (done) => {
+  await wrapper.setProps({ warnings: [fakeWarning, fakeWarning] });
+  vm.generateWarningsScreen();
+
   EventBus.off("warnings-complete");
   EventBus.on("warnings-complete", () => {
-    expect(vm.page).toBe(0);
     done();
   });
 

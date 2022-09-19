@@ -1,20 +1,30 @@
-import { shallowMount } from "@vue/test-utils";
-import Forecast from "../src/components/forecast";
-import { EventBus } from "../src/js/EventBus";
-import data from "./data/conditions";
-import forecast from "./data/forecast";
+import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
+import { getFreshStore } from "./build";
+import ecdata from "./data/ecdata";
+import ecForecast from "./data/forecast";
 
-const wrapper = shallowMount(Forecast, { props: {} });
-const { vm } = wrapper;
+import forecast from "../src/components/forecast";
+import { EventBus } from "../src/js/EventBus";
+
+enableAutoUnmount(afterEach);
+
+let wrapper, vm;
+const build = () => shallowMount(forecast, { global: { plugins: [getFreshStore(ecdata)] } });
+
+beforeEach(() => {
+  wrapper = build();
+  vm = wrapper.vm;
+});
+
+afterEach(() => {
+  wrapper = null;
+  vm = null;
+});
 
 test("forecastUnavailable: computes correctly", (done) => {
   expect(vm.forecastUnavailable).toBe(true);
 
-  wrapper.setProps({ forecast: forecast });
-  expect(vm.forecastUnavailable).toBe(true);
-
-  wrapper.setProps({ conditions: data.current });
-
+  wrapper.setProps({ forecast: ecForecast });
   vm.$nextTick(() => {
     expect(vm.forecastUnavailable).toBe(false);
     done();
@@ -35,9 +45,13 @@ test("generateForecastPages: sets the page to 0 and changes page after 15s", (do
 });
 
 test("changePage: moves the 'page' forward by 2 if we're not on the first page", (done) => {
-  vm.changePage();
-  expect(vm.page).toBe(3);
-  done();
+  wrapper.setProps({ forecast: ecForecast });
+  vm.$nextTick(() => {
+    vm.page = 1;
+    vm.changePage();
+    expect(vm.page).toBe(3);
+    done();
+  });
 });
 
 test("changePage: switches away from the forecast screen on the last page", (done) => {
@@ -47,8 +61,12 @@ test("changePage: switches away from the forecast screen on the last page", (don
     done();
   });
 
-  vm.changePage();
-  vm.changePage();
+  wrapper.setProps({ forecast: ecForecast });
+  vm.$nextTick(() => {
+    vm.page = 3;
+    vm.changePage();
+    vm.changePage();
+  });
 });
 
 test("prettifyForecastDay: returns 'tonight' correctly", (done) => {

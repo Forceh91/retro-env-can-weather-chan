@@ -26,7 +26,7 @@ export default {
 
   watch: {
     playlist() {
-      this.selectRandomTrackFromPlaylist();
+      if (!this.currentTrack) this.selectRandomTrackFromPlaylist();
     },
   },
 

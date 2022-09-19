@@ -1,6 +1,11 @@
-import { shallowMount } from "@vue/test-utils";
+import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
+import { parseISO, format } from "date-fns";
+
 import { EventBus } from "../src/js/EventBus";
 import Surrounding from "../src/components/surrounding";
+
+import { getFreshStore } from "./build";
+import ecdata from "./data/ecdata";
 
 const cityA = { name: "a", observation: { temp: 10, condition: "sunny" } };
 const cityB = { name: "b", observation: { temp: 15, condition: "mostly cloudy" } };
@@ -16,67 +21,62 @@ const cityK = { name: "k", observation: { temp: 11, condition: "mist" } };
 const cityL = { name: "l", observation: { temp: 12, condition: "mist" } };
 const cityM = { name: "m", observation: { temp: 13, condition: "mist" } };
 
-const wrapper = shallowMount(Surrounding, {
-  props: { observed: "2021-09-05T21:00:00.000Z", timezone: "EDT" },
-});
-const { vm } = wrapper;
+enableAutoUnmount(afterEach);
 
-test("observationsUnavailable: correctly computes based on observations", (done) => {
+let wrapper, vm;
+const build = () => shallowMount(Surrounding, { global: { plugins: [getFreshStore(ecdata)] } });
+
+beforeEach(() => {
+  wrapper = build();
+  vm = wrapper.vm;
+});
+
+afterEach(() => {
+  wrapper = null;
+  vm = null;
+});
+
+test("observationsUnavailable: correctly computes based on observations", async (done) => {
   expect(vm.observationsUnavailable).toBe(true);
 
-  wrapper.setProps({ observations: [cityB, cityA, cityC] });
-  vm.$nextTick(() => {
-    expect(vm.observationsUnavailable).toBe(false);
-  });
+  await wrapper.setProps({ observations: [cityB, cityA, cityC] });
+  expect(vm.observationsUnavailable).toBe(false);
   done();
 });
 
-test("dateTime: correctly produces the date/time string with filled in timezone", (done) => {
-  expect(vm.dateTime).toContain(`${vm.timezone}&nbsp;&nbsp;Sep 05/21`);
-
-  wrapper.setProps({ timezone: "CDT" });
-  vm.$nextTick(() => {
-    expect(vm.dateTime).toContain(`CDT&nbsp;&nbsp;Sep 05/21`);
-    done();
-  });
+test("dateTime: correctly produces the date/time string with filled in timezone", async (done) => {
+  const time = parseISO(ecdata.observed.stationTime);
+  const expectedDate = format(time, "MMM dd/yy");
+  expect(vm.dateTime).toContain(`${ecdata.observed.stationTimezone}`);
+  expect(vm.dateTime).toContain(`&nbsp;&nbsp;${expectedDate}`);
+  done();
 });
 
-test("dateTime: is a padded blank string when theres no observed info", (done) => {
-  wrapper.setProps({ observed: null });
-  vm.$nextTick(() => {
-    expect(vm.dateTime).toBe("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-    done();
-  });
-});
-
-test("paginatedObservations: correctly paginates observations", (done) => {
-  wrapper.setProps({
+test("paginatedObservations: correctly paginates observations", async (done) => {
+  await wrapper.setProps({
     observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
   });
-  vm.$nextTick(() => {
-    expect(vm.paginatedObservations).toStrictEqual([cityB, cityA, cityC, cityD, cityE, cityF, cityG]);
 
-    vm.page += 1;
-    expect(vm.paginatedObservations).toStrictEqual([cityH, cityI, cityJ, cityK, cityL, cityM]);
-    done();
-  });
+  expect(vm.paginatedObservations).toStrictEqual([cityB, cityA, cityC, cityD, cityE, cityF, cityG]);
+
+  vm.page += 1;
+  expect(vm.paginatedObservations).toStrictEqual([cityH, cityI, cityJ, cityK, cityL, cityM]);
+  done();
 });
 
-test("generateObservationsScreen: correctly generates the page count", (done) => {
+test("generateObservationsScreen: correctly generates the page count", async (done) => {
   vm.generateObservationsScreen();
-  expect(vm.pages).toBe(2);
+  expect(vm.pages).toBe(0);
 
-  wrapper.setProps({ observations: [cityB, cityA, cityC] });
-  vm.$nextTick(() => {
-    vm.generateObservationsScreen();
-    expect(vm.pages).toBe(1);
+  await wrapper.setProps({ observations: [cityB, cityA, cityC] });
+  vm.generateObservationsScreen();
+  expect(vm.pages).toBe(1);
 
-    done();
-  });
+  done();
 });
 
-test("generateObservationsScreen: changes page after 15s", (done) => {
-  wrapper.setProps({
+test("generateObservationsScreen: changes page after 15s", async (done) => {
+  await wrapper.setProps({
     observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
   });
 
@@ -87,10 +87,15 @@ test("generateObservationsScreen: changes page after 15s", (done) => {
   jest.advanceTimersByTime(15 * 1000);
   expect(spy).toHaveBeenCalled();
   expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), 15 * 1000);
+  expect(vm.page).toBe(2);
   done();
 });
 
-test("changePage: changes page correctly", (done) => {
+test("changePage: changes page correctly", async (done) => {
+  await wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
+  });
+
   vm.generateObservationsScreen();
   vm.changePage();
   expect(vm.page).toBe(2);
@@ -119,7 +124,7 @@ test("padTitle: makes sure a city name is always 13 characters", (done) => {
   done();
 });
 
-test("trimCondition: makes sure condition string is only 16 characters", (done) => {
+test("trimCondition: makes sure condition string is only 13 characters", (done) => {
   const conditionA = vm.trimCondition("sunny");
   expect(conditionA).toBe("sunny");
 
@@ -132,12 +137,21 @@ test("trimCondition: makes sure condition string is only 16 characters", (done) 
   done();
 });
 
-test("trimCondition: replaces 'shower' with a blank string", (done) => {
+test("trimCondition: handles light/heavy and rainshower better", (done) => {
   const conditionA = vm.trimCondition("sunny");
   expect(conditionA).toBe("sunny");
 
   const conditionB = vm.trimCondition("light rainshower");
-  expect(conditionB).toBe("light rainshower");
+  expect(conditionB).toBe("lght rainshwr");
+
+  expect(vm.trimCondition("")).toBe("");
+  expect(vm.trimCondition("heavy thunderstorm")).toBe("heavy tstorm");
+  expect(vm.trimCondition("heavy rainshower")).toBe("hvy rainshwr");
+  expect(vm.trimCondition("mostly cloudy")).toBe("mostly cloudy");
+  expect(vm.trimCondition("partly cloudy")).toBe("partly cloudy");
+  expect(vm.trimCondition("mostly clear")).toBe("mostly clear");
+  expect(vm.trimCondition("light rain")).toBe("light rain");
+  expect(vm.trimCondition("rainshower")).toBe("rainshower");
 
   done();
 });

@@ -1,90 +1,79 @@
 <template>
-  <div id="body">
-    <div id="main_screen" :style="{ 'background-color': backgroundCol }">
-      <div id="top_bar">
-        <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
-      </div>
-      <div id="content">
-        <currentconditions
-          v-if="isCurrentConditions"
-          :city="weather.city"
-          :observed="weather.observed"
-          :conditions="weather.currentConditions"
-          :riseset="weather.riseSet"
-        />
-        <forecast
-          v-if="isForecast"
-          :city="weather.city"
-          :observed="weather.observed"
-          :conditions="weather.currentConditions"
-          :forecast="weather.forecast"
-        />
-        <mbhighlow
-          v-if="isMBHighLow"
-          :enabled="showMBHighLowSetting"
-          :data="weather.highLowAroundMB.values"
-          :tempclass="weather.highLowAroundMB.tempClass"
-          :timezone="timeZone"
-        />
-        <surrounding
-          v-if="isSurrounding"
-          :observed="weather.observed"
-          :timezone="timeZone"
-          :observations="weather.surroundingObservations"
-        />
-        <almanac
-          v-if="isAlmanac"
-          :city="weather.city"
-          :observed="weather.observed"
-          :conditions="weather.currentConditions"
-          :almanac="weather.almanac"
-          :last-year="weather.lastYear"
-        />
-        <warnings v-if="isWarnings" :city="weather.city" :warnings="weather.warnings" />
-        <windchill v-if="isWindChillEffects" :temp="currentTemp" />
-        <citystats v-if="isCityStats" :city="weather.city" :riseset="weather.riseSet" :hotcold="weather.hotColdSpots" />
-      </div>
-      <div id="bottom_bar">
-        <div id="clock">
-          TIME <span>{{ currentTime }}</span>
+  <div>
+    <router-view v-if="!isWeatherChannel" />
+    <div v-else id="weather_channel">
+      <div id="main_screen" :style="{ 'background-color': backgroundCol }">
+        <div id="top_bar">
+          <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
         </div>
-        <div id="date">{{ currentDate }}</div>
-        <div id="banner">Environment Canada Weather</div>
+        <div id="content">
+          <currentconditions v-if="isCurrentConditions" />
+          <forecast v-if="isForecast" :forecast="ecShortForecast" :reload="shouldDoReloadAnimation" />
+          <aqhiwarning v-if="isAQHIWarning" :aqhi="ecAirQuality" />
+          <outlook v-if="isOutlook" :forecast="ecForecast" :normals="ecRegionalNormals" />
+          <mbhighlow v-if="isMBHighLow" :enabled="showMBHighLowSetting" :manitoba-data="province.highLowAroundMB" />
+          <surrounding v-if="isSurrounding" :observations="surrounding.canada" />
+          <surrounding v-if="isUSSurrounding" :observations="surrounding.usa" />
+          <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
+          <warnings v-if="isWarnings" :warnings="ecWarnings" />
+          <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
+          <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
+          <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
+        </div>
+        <div id="bottom_bar">
+          <div id="clock">
+            TIME <span>{{ currentTime }}</span>
+          </div>
+          <div id="date" v-html="currentDate"></div>
+          <div id="banner">Environment Canada Weather</div>
+        </div>
       </div>
+      <playlist :playlist="playlist" />
     </div>
-    <playlist :playlist="playlist" />
   </div>
 </template>
 
 <script>
+const FETCH_CONFIG_INTERVAL = 60 * 1000 * 5;
 const FETCH_WEATHER_INTERVAL = 60 * 1000 * 1;
+const FETCH_EXTRA_DATA_INTERVAL = 60 * 1000 * 10;
 // pages with subscreens (forecast, surrounding) have a fallback timeout incase
 // the subscreens fail to complete correctly
 const SCREENS = {
   CURRENT_CONDITIONS: { id: 1, length: 30 },
   FORECAST: { id: 2, length: 160 },
   SURROUNDING: { id: 3, length: 80 },
-  ALMANAC: { id: 4, length: 30 },
+  ALMANAC: { id: 4, length: 20 },
   WARNINGS: { id: 5, length: 65 * 10 }, // enough for 10 warnings if things get crazy
   WINDCHILL: { id: 6, length: 20 },
   MB_HIGH_LOW: { id: 7, length: 20 },
   CITY_STATS: { id: 8, length: 20 },
+  US_SURROUNDING: { id: 9, length: 30 },
+  OUTLOOK: { id: 10, length: 20 },
+  RANDOM: { id: 11, length: 20 },
+  SUMMARY: { id: 12, length: 20 },
+  AQHI_WARNING: { id: 13, length: 20 },
 };
 const SCREEN_ROTATION = [
-  SCREENS.CURRENT_CONDITIONS,
-  SCREENS.CITY_STATS,
-  SCREENS.WARNINGS,
+  // SCREENS.CURRENT_CONDITIONS,
   SCREENS.FORECAST,
+  SCREENS.OUTLOOK,
   SCREENS.WINDCHILL,
-  SCREENS.MB_HIGH_LOW,
+  SCREENS.WARNINGS,
   SCREENS.ALMANAC,
+  SCREENS.AQHI_WARNING,
+  SCREENS.MB_HIGH_LOW,
   SCREENS.SURROUNDING,
+  SCREENS.US_SURROUNDING,
+  SCREENS.CITY_STATS,
+  SCREENS.RANDOM,
 ];
 
 const BLUE_COL = "rgb(0,0,135)";
 const RED_COL = "#610b00";
 
-import { format, addMinutes, formatRFC3339 } from "date-fns";
+import { mapGetters } from "vuex";
+import { format, addMinutes /*, formatRFC3339*/ } from "date-fns";
 import { EventBus } from "./js/EventBus";
 import currentconditions from "./components/currentconditions.vue";
 import forecast from "./components/forecast.vue";
@@ -96,6 +85,9 @@ import mbhighlow from "./components/mbhighlow.vue";
 import citystats from "./components/citystats.vue";
 import playlist from "./components/playlist";
 import crawler from "./components/crawler";
+import Outlook from "./components/outlook.vue";
+import lastmonth from "./components/lastmonth.vue";
+import aqhiwarning from "./components/aqhiwarning.vue";
 
 export default {
   name: "App",
@@ -110,36 +102,46 @@ export default {
     citystats,
     playlist,
     crawler,
+    Outlook,
+    lastmonth,
+    aqhiwarning,
   },
   data() {
     return {
       screenChanger: null,
       now: new Date(),
       rotationIndex: 0,
-      currentScreen: SCREENS.CURRENT_CONDITIONS,
-      weather: {
-        currentConditions: null,
-        city: null,
-        observed: null,
-        riseSet: null,
-        forecast: null,
-        surroundingObservations: null,
-        almanac: null,
+      currentScreen: SCREENS.FORECAST,
+      province: {
         highLowAroundMB: {},
-        hotColdSpots: {},
-        lastYear: {},
+      },
+      surrounding: {
+        canada: null,
+        usa: null,
+      },
+      season: {
+        precip: null,
+        isWinter: false,
+      },
+      climate: {
+        lastMonth: false,
       },
       playlist: [],
       crawlerMessages: [],
       showMBHighLowSetting: false,
       backgroundCol: BLUE_COL,
       backgroundColDebouncer: null,
+      shouldDoReloadAnimation: false,
     };
   },
 
   watch: {
     rotationIndex() {
       this.switchBackgroundColour();
+    },
+
+    ecUUID(val, old) {
+      if (old) this.forceReloadForNewData();
     },
   },
 
@@ -149,7 +151,14 @@ export default {
     },
 
     currentDate() {
-      return format(this.timezoneAdjustedDate(this.now), "EEE MMM dd");
+      const dateString = format(this.timezoneAdjustedDate(this.now), "EEE'&nbsp;' MMM'&nbsp;' dd");
+      return dateString
+        .replace(/tue&nbsp;/gi, "tues")
+        .replace(/thu&nbsp;/gi, "thur")
+        .replace(/jun&nbsp;/gi, "june")
+        .replace(/jul&nbsp;/gi, "july")
+        .replace(/sep&nbsp;/gi, "sept")
+        .replace(/\s0/, "&nbsp;&nbsp;");
     },
 
     currentScreenID() {
@@ -160,10 +169,6 @@ export default {
       return this.currentScreen.length;
     },
 
-    currentTemp() {
-      return Math.round(this.weather?.currentConditions?.temperature?.value) || 0;
-    },
-
     isCurrentConditions() {
       return this.currentScreenID === SCREENS.CURRENT_CONDITIONS.id;
     },
@@ -172,8 +177,16 @@ export default {
       return this.currentScreenID === SCREENS.FORECAST.id;
     },
 
+    isOutlook() {
+      return this.currentScreenID === SCREENS.OUTLOOK.id;
+    },
+
     isSurrounding() {
       return this.currentScreenID === SCREENS.SURROUNDING.id;
+    },
+
+    isUSSurrounding() {
+      return this.currentScreenID === SCREENS.US_SURROUNDING.id;
     },
 
     isAlmanac() {
@@ -196,16 +209,39 @@ export default {
       return this.currentScreenID === SCREENS.CITY_STATS.id;
     },
 
-    timeZone() {
-      return this.weather.currentConditions?.dateTime[1]?.zone || "";
+    isLastMonthSummary() {
+      return this.currentScreenID === SCREENS.SUMMARY.id;
     },
 
-    reportingStation() {
-      return this.weather.currentConditions?.station?.code;
+    isAQHIWarning() {
+      return this.currentScreenID === SCREENS.AQHI_WARNING.id;
     },
+
+    timeZone() {
+      return this.ecData?.observed?.stationTimezone || null;
+    },
+
+    isWeatherChannel() {
+      return this.$route.path === "/";
+    },
+
+    // data returned from eccc
+    ...mapGetters([
+      "ecData",
+      "ecForecast",
+      "ecRegionalNormals",
+      "ecShortForecast",
+      "ecWindchill",
+      "ecAirQuality",
+      "ecAlmanac",
+      "ecWarnings",
+      "ecUUID",
+    ]),
   },
 
   mounted() {
+    if (!this.isWeatherChannel) return;
+
     setInterval(() => {
       this.now = new Date();
     }, 1000);
@@ -213,13 +249,29 @@ export default {
     this.initWeatherChannel(() => {
       setInterval(() => {
         this.getSurroundingWeather();
+        this.getSurroundingUSWeather();
         this.getWeather();
+        this.getWarnings();
         if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       }, FETCH_WEATHER_INTERVAL);
+
+      setInterval(() => {
+        this.getSeasonPrecipData();
+        this.getLastMonthSummary();
+      }, FETCH_EXTRA_DATA_INTERVAL);
+
+      // reload the config every FETCH_CONFIG_INTERVAL
+      setInterval(() => {
+        this.initWeatherChannel();
+      }, FETCH_CONFIG_INTERVAL);
 
       this.setupEventCallbacks();
       this.getWeather();
       this.getSurroundingWeather();
+      this.getSurroundingUSWeather();
+      this.getSeasonPrecipData();
+      this.getLastMonthSummary();
+      this.getWarnings();
       if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       this.handleScreenCycle();
     });
@@ -267,6 +319,10 @@ export default {
       EventBus.on("mbhighlow-complete", () => {
         this.handleScreenCycle(true);
       });
+
+      EventBus.on("aqhi-not-needed", () => {
+        this.handleScreenCycle(true);
+      });
     },
 
     destroyEventCallbacks() {
@@ -274,6 +330,8 @@ export default {
       EventBus.off("observation-complete");
       EventBus.off("warnings-complete");
       EventBus.off("windchill-complete");
+      EventBus.off("mbhighlow-complete");
+      EventBus.off("aqhi-not-needed");
     },
 
     getWeather() {
@@ -283,15 +341,7 @@ export default {
           const data = resp.data;
           if (!data) return;
 
-          this.weather.city = data.location && data.location.name && data.location.name.value;
-          this.weather.currentConditions = data.current;
-          this.weather.riseSet = data.riseSet;
-          this.weather.forecast = data.upcomingForecast.slice(0, 5);
-          this.weather.almanac = data.almanac;
-          this.weather.warnings = data.warnings;
-          this.weather.observed = formatRFC3339(this.timezoneAdjustedDate(new Date(data.observed)));
-          this.weather.lastYear = data.last_year || {};
-          this.weather.hotColdSpots = data.hot_cold || {};
+          this.$store.commit("storeECData", data);
         })
         .catch((err) => {
           console.error(err);
@@ -306,11 +356,26 @@ export default {
           const data = resp.data;
           if (!data || !data.observations || !data.observations.length) return;
 
-          this.weather.surroundingObservations = data.observations;
+          this.surrounding.canada = data.observations;
         })
         .catch((err) => {
           console.error(err);
-          this.weather.surroundingObservations = null;
+          this.surrounding.canada = null;
+        });
+    },
+
+    getSurroundingUSWeather() {
+      this.$http
+        .get("api/weather/usa")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.observations || !data.observations.length) return;
+
+          this.surrounding.usa = data.observations;
+        })
+        .catch((err) => {
+          console.error(err);
+          this.surrounding.usa = null;
         });
     },
 
@@ -321,13 +386,51 @@ export default {
         .get("api/weather/mb_highlow")
         .then((resp) => {
           const data = resp.data;
-          if (!data || !data.values || !data.values.length) return;
+          if (!data || !data.stations || !data.stations.length) return;
 
-          this.weather.highLowAroundMB = data;
+          this.province.highLowAroundMB = data;
         })
         .catch((err) => {
           console.error(err);
         });
+    },
+
+    getSeasonPrecipData() {
+      this.$http
+        .get("/api/climate/season/precip")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.normalPrecip) return;
+
+          this.season.precip = data;
+          this.season.isWinter = data.isWinter;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+
+    getLastMonthSummary() {
+      this.$http
+        .get("/api/climate/lastmonth")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.summary) return (this.climate.lastMonth = false);
+
+          this.climate.lastMonth = data.summary;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+
+    getWarnings() {
+      this.$http.get("/api/warnings").then((resp) => {
+        const data = resp.data;
+        if (!data || !data.warnings) return;
+
+        this.$store.commit("storeECWarnings", data.warnings);
+      });
     },
 
     handleScreenCycle(isForced) {
@@ -340,9 +443,25 @@ export default {
     },
 
     switchToNextScreen() {
+      this.shouldDoReloadAnimation = false;
+
       this.rotationIndex += 1;
       if (this.rotationIndex === SCREEN_ROTATION.length) this.rotationIndex = 0;
       this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
+
+      // if its a random extra screen then decide what to throw in
+      if (this.currentScreenID === SCREENS.RANDOM.id) {
+        // available screens are... LAST MONTH SUMMARY (if data is there)
+        const availableScreens = [];
+        if (this.climate.lastMonth) availableScreens.push(SCREENS.SUMMARY);
+        if (!availableScreens) return this.switchToNextScreen();
+
+        // pick a random screen from that
+        const randomScreen = availableScreens[Math.floor(Math.random() * availableScreens.length)];
+        if (!randomScreen) return this.switchToNextScreen();
+        this.currentScreen = randomScreen;
+      }
+
       this.handleScreenCycle();
     },
 
@@ -356,10 +475,20 @@ export default {
       }, 50);
     },
 
+    forceReloadForNewData() {
+      // set stuff back to the very first page
+      this.rotationIndex = 0;
+      this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
+      this.shouldDoReloadAnimation = true;
+
+      // handle stuff as usual
+      this.handleScreenCycle();
+    },
+
     timezoneAdjustedDate(date) {
-      if (!this.weather || !this.weather.currentConditions) return date;
+      if (!this.timeZone) return date;
       const localOffset = -date.getTimezoneOffset();
-      const stationUTCOffset = parseInt(this.weather.currentConditions.dateTime[1].UTCOffset) * 60;
+      const stationUTCOffset = -5 * 60; // parseInt(this.weather.currentConditions.dateTime[1].UTCOffset) * 60;
       const adjustedTime = stationUTCOffset - localOffset;
 
       return addMinutes(date, adjustedTime);
@@ -438,6 +567,21 @@ export default {
     }
   }
 }
+
+@font-face {
+  font-family: "VCRMono";
+  src: local("VCRMono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
+}
+
+#weather_channel {
+  background: #000;
+  /* font-family: "Star4000", consolas; */
+  font-family: "VCRMono", consolas;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  width: 100vw;
+}
 </style>
 
 <style>
@@ -456,19 +600,4 @@ body {
   font-family: "Star4000";
   src: local("Star4000"), url(./fonts/star4000/Star4000.ttf) format("truetype");
 } */
-
-@font-face {
-  font-family: "VCRMono";
-  src: local("VCRMono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
-}
-
-#app {
-  background: #000;
-  /* font-family: "Star4000", consolas; */
-  font-family: "VCRMono", consolas;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  height: 100vh;
-  width: 100vw;
-}
 </style>

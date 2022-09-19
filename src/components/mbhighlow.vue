@@ -3,40 +3,56 @@
     <div v-html="topLine"></div>
     <div v-html="bottomLine"></div>
     <ul id="city_list">
-      <li v-for="(cityObj, ix) in data" :key="`mb.city.${ix}`">
-        <span v-html="padString(cityObj.name, 10)"></span>
-        <span v-html="`${padString(cityObj.temp, 6, true)}`"></span>
+      <li v-for="(station, ix) in weatherStations" :key="`mb.city.${ix}`">
+        <span v-html="padString(station.name, 10)"></span>
+        <span v-html="parseDisplayTemp(station.display_temp)"></span>
         <span v-html="padString('&nbsp;', 6, true)"></span>
-        <span v-html="generatePrecipString(cityObj.precip)" class="precip-amount"></span>
+        <span v-html="generatePrecipString(station.yesterday_precip)" class="precip-amount"></span>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
 import { EventBus } from "../js/EventBus";
+import temperaturemixin from "../mixins/temperature.mixin";
+import observedmixin from "../mixins/observed.mixin";
+import stringpadmixin from "../mixins/stringpad.mixin";
+import { mapGetters } from "vuex";
 
 export default {
   name: "mbhighlow",
+  mixins: [temperaturemixin, observedmixin, stringpadmixin],
   props: {
     enabled: Boolean,
-    data: Object,
-    tempclass: String,
-    timezone: String,
+    manitobaData: {
+      type: Object,
+      default: () => {
+        return null;
+      },
+    },
   },
 
   computed: {
-    sortedHighsLows() {
-      return this.data && [...this.data].sort((a, b) => (a.city > b.city ? 1 : -1));
+    ...mapGetters(["ecObservedAtStation"]),
+
+    period() {
+      return this.manitobaData?.period;
+    },
+
+    weatherStations() {
+      return this.manitobaData?.stations || [];
     },
 
     timeOfDay() {
-      return this.tempclass === "low" ? "Overnight" : "Today:";
+      const date = new Date();
+      const todayYesterdayForMaxTemp = date.getHours() < 20 ? "Yesterday:" : "Today:";
+      return this.period === "min_temp" ? "Overnight" : todayYesterdayForMaxTemp;
     },
 
     yesterday() {
-      return subDays(new Date(), 1);
+      return this.getDaysBehindFromObserved(this.ecObservedAtStation, 1);
     },
 
     yesterdayDateFormatted() {
@@ -44,12 +60,12 @@ export default {
     },
 
     tempClass() {
-      return this.tempclass === "low" ? `${this.tempclass}:` : this.tempclass;
+      return this.period === "min_temp" ? `Low:` : `High`;
     },
 
     topLine() {
       return (
-        (this.tempclass === "low"
+        (this.period === "min_temp"
           ? this.padString(this.timeOfDay, 17, true)
           : this.padString(this.tempClass, 17, true)) + this.topPrecipLine
       );
@@ -61,7 +77,7 @@ export default {
 
     bottomLine() {
       return (
-        (this.tempclass !== "low"
+        (this.period !== "min_temp"
           ? this.padString(this.timeOfDay, 17, true)
           : this.padString(this.tempClass, 17, true)) + this.bottomPrecipLine
       );
@@ -78,17 +94,9 @@ export default {
 
   methods: {
     checkScreenIsEnabled() {
-      if (!this.enabled || !this.data || !this.data.length) EventBus.emit("mbhighlow-complete");
-    },
-
-    padString(val, minLength, isFront) {
-      if (!val) return "";
-
-      const paddingToAdd = minLength - val.length;
-      let paddingString = ``;
-      for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
-
-      return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
+      if (!this.enabled || !this.manitobaData || !this.weatherStations || !this.weatherStations.length) {
+        EventBus.emit("mbhighlow-complete");
+      }
     },
 
     generatePrecipString(precipData) {
@@ -109,18 +117,20 @@ export default {
       // otherwise show correct data
       return this.padString(`${precipValue} ${precipData?.units}`, 8, true);
     },
+
+    parseDisplayTemp(temp) {
+      const roundedTemp = this.roundTemperatureToInt(temp, "M");
+      return this.padString(`${roundedTemp}`, 6, true);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-#mb_high_low_screen {
-  width: calc(100% - 120px);
-}
-
 #city_list {
-  margin: 0;
   list-style: none;
+  margin: 0;
+  padding: 0;
 
   li {
     display: flex;

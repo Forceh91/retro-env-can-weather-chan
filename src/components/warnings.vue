@@ -3,8 +3,6 @@
     <div v-if="warningsUnavailable">Warnings/Alerts temporarily unavailable</div>
     <ul v-else id="warnings_table">
       <li v-for="(warning, ix) in paginatedWarnings" :key="ix" :class="{ flash: shouldFlashWarning(warning) }">
-        <!-- <div class="description">{{ warning.description }}</div>
-        <div class="city"><template v-if="warning.type !== `ended`">In Effect</template> For {{ city }}</div> -->
         <div class="headline">&nbsp;&nbsp;&nbsp;&nbsp;{{ cleanupHeadline(warning.headline) }}</div>
         <div class="description">&nbsp;&nbsp;&nbsp;&nbsp;{{ truncateWarningDescription(warning.description) }}</div>
       </li>
@@ -14,16 +12,15 @@
 
 <script>
 const MAX_WARNINGS_PER_PAGE = 1;
-const PAGE_CHANGE_FREQUENCY = 60 * 1000; // 60mins is good reading time now for descriptions
+const PAGE_CHANGE_FREQUENCY = 30 * 1000;
 
 import { EventBus } from "../js/EventBus";
 
 export default {
   name: "Warnings",
   props: {
-    city: String,
     warnings: {
-      type: Object,
+      type: Array,
       default: () => {},
     },
   },

@@ -2,7 +2,7 @@
   <div id="almanac">
     <div v-if="almanacUnavailable" id="no_data">Almanac temporarily unavailable</div>
     <template v-else>
-      <conditions :city="city" :observed="observed" :conditions="conditions" />
+      <conditions />
 
       <!-- almanac data -->
       <div id="almanac_table">
@@ -26,18 +26,16 @@
 
 <script>
 import conditions from "./conditions.vue";
+import stringpadmixin from "../mixins/stringpad.mixin";
 
 export default {
   name: "Almanac",
   props: {
-    city: String,
-    observed: String,
-    conditions: Object,
     almanac: Object,
-    lastYear: Object,
   },
 
   components: { conditions },
+  mixins: [stringpadmixin],
 
   data() {
     return {};
@@ -45,7 +43,11 @@ export default {
 
   computed: {
     almanacUnavailable() {
-      return !this.conditions || !this.almanac;
+      return !this.almanac;
+    },
+
+    lastYear() {
+      return this.almanac.lastYear || {};
     },
 
     highLastYear() {
@@ -89,15 +91,7 @@ export default {
     },
   },
 
-  methods: {
-    padString(val, minLength, isFront) {
-      const paddingToAdd = minLength - val.length;
-      let paddingString = ``;
-      for (let i = 0; i < paddingToAdd; i++) paddingString += `&nbsp;`;
-
-      return !isFront ? `${val}${paddingString}` : `${paddingString}${val}`;
-    },
-  },
+  methods: {},
 };
 </script>
 

@@ -1,9 +1,23 @@
-import { shallowMount } from "@vue/test-utils";
+import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
 import citystats from "../src/components/citystats";
-import risesetdata from "./data/riseset";
+import ecdata from "./data/ecdata";
 
-const wrapper = shallowMount(citystats, { props: { riseset: risesetdata } });
-const { vm } = wrapper;
+import { getFreshStore } from "./build";
+
+enableAutoUnmount(afterEach);
+
+let wrapper, vm;
+const build = () => shallowMount(citystats, { global: { plugins: [getFreshStore(ecdata)] } });
+
+beforeEach(() => {
+  wrapper = build();
+  vm = wrapper.vm;
+});
+
+afterEach(() => {
+  wrapper = null;
+  vm = null;
+});
 
 test("padString: pads strings correctly when a length is given", (done) => {
   const stringA = vm.padString("-15.5", 5);
@@ -72,13 +86,9 @@ test("padString: doesn't error when no string is passed", (done) => {
 });
 
 test("sunriseset: is computed properly", (done) => {
-  expect(vm.sunriseset).toBe(`Sunrise..06:53 AM Sunset..08:00 PM`);
-
-  wrapper.setProps({ riseset: null });
-  vm.$nextTick(() => {
-    expect(vm.sunriseset).toBe("");
-    done();
-  });
+  expect(vm.sunriseset).toBeTruthy();
+  expect(vm.sunriseset.length).toBeGreaterThanOrEqual(32);
+  done();
 });
 
 test("pad: pads out numbers less than 10 with a 0", (done) => {
@@ -89,21 +99,6 @@ test("pad: pads out numbers less than 10 with a 0", (done) => {
   expect(padB).toBe(11);
 
   done();
-});
-
-test("fillEllipsis: fills in ellipsis correctly", (done) => {
-  wrapper.setProps({ hotcold: { hot: { city: "some place", province: "on" } } });
-  vm.$nextTick(() => {
-    const stringA = vm.fillEllipsis(vm.hotcold.hot);
-    expect(stringA).toBe("...................");
-
-    const stringB = vm.fillEllipsis();
-    expect(stringB).toBe("...............................");
-
-    const stringC = vm.fillEllipsis({ city: "another place", province: "on" });
-    expect(stringC).toBe("................");
-    done();
-  });
 });
 
 test("titleString: is computed correctly", (done) => {
@@ -120,23 +115,42 @@ test("hotColdTitleString: is computed correctly", (done) => {
 });
 
 test("hotSpotString: is computed correctly", (done) => {
-  wrapper.setProps({ hotcold: { hot: { city: "some place", province: "on", temp: "20" } } });
+  expect(vm.hotSpotString).toStrictEqual(`&nbsp;Sarnia,&nbsp;ON&nbsp;................&nbsp;28`);
+  done();
+});
+
+test("coldSpotString: is computed correctly", (done) => {
+  expect(vm.coldSpotString).toStrictEqual(`&nbsp;Isachsen,&nbsp;NU&nbsp;..............&nbsp;-9`);
+  done();
+});
+
+test("precipTitle: is computed correctly", (done) => {
+  expect(vm.precipTitle).toBe("Total Precipitation Since");
+
+  wrapper.setProps({ isWinter: true });
   vm.$nextTick(() => {
-    expect(vm.hotSpotString).toStrictEqual(
-      `${vm.hotcold.hot.city}, ${vm.hotcold.hot.province}&nbsp;...................&nbsp;${vm.hotcold.hot.temp}`
-    );
+    expect(vm.precipTitle).toBe("Total Precipitation Since");
     done();
   });
 });
 
-test("coldSpotString: is computed correctly", (done) => {
-  expect(vm.coldSpotString).toStrictEqual(`N/A, N/A&nbsp;...............................N/A`);
-
-  wrapper.setProps({ hotcold: { cold: { city: "another place", province: "on", temp: "-5" } } });
+test("precipActual: is computed correctly", (done) => {
+  wrapper.setProps({ seasonPrecip: { totalPrecip: 400.4 } });
   vm.$nextTick(() => {
-    expect(vm.coldSpotString).toStrictEqual(
-      `${vm.hotcold.cold.city}, ${vm.hotcold.cold.province}&nbsp;................&nbsp;${vm.hotcold.cold.temp}`
-    );
+    expect(vm.precipActual).toBe("April 1st ...........400.4 MM");
+
+    wrapper.setProps({ isWinter: true });
+    vm.$nextTick(() => {
+      expect(vm.precipActual).toBe("October 1st .........400.4 MM");
+      done();
+    });
+  });
+});
+
+test("precipNormal: is computed correctly", (done) => {
+  wrapper.setProps({ seasonPrecip: { normalPrecip: 163.3 } });
+  vm.$nextTick(() => {
+    expect(vm.precipNormal).toBe("Normal ..............163.3 MM");
     done();
   });
 });

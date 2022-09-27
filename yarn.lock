@@ -3100,10 +3100,10 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-bootstrap-vue-3@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/bootstrap-vue-3/-/bootstrap-vue-3-0.3.3.tgz#7fa782ec1a9bfd4078743ebd3b5d3d6ff9aabd60"
-  integrity sha512-UOeOZXX9cex1ehI9lwzuJDZfbkOtR4roFq2ozQn1Xb3SP/KyvTm4qHk3h+oEevfgLd3DDa7HdLLVNJy6GdOe4g==
+bootstrap-vue-3@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/bootstrap-vue-3/-/bootstrap-vue-3-0.3.5.tgz#409bdc717e5cf6b9437b0ef25f635a09cec5d9b9"
+  integrity sha512-Ji2RCtsONuKw7elQgz5ymLo1IMjSf4xCQX5qRMc00FOtBmamOjRP+s6cldomHXS8f0kLiXRNtGjjtpQYfCxxNg==
 
 bootstrap@^5.2.1:
   version "5.2.1"

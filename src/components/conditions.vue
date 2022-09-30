@@ -98,6 +98,7 @@ export default {
       //   3 KMH
       //  12 KMH
       // 100 KMH
+      if (!speed || parseFloat(speed) < 2) return this.padString("CALM", 6, true);
       return `${directionString}${this.padString(`${speed} KMH`, 8, true)}`;
     },
 

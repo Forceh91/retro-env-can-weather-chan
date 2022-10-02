@@ -15,7 +15,7 @@
 </template>
 
 <script>
-const PRECIP_STRING_WITH_DATA_LENGTH = 29;
+const PRECIP_STRING_WITH_DATA_LENGTH = 28;
 
 // max length the hot/cold spot info can be including dots and temp
 const HOT_COLD_SPOT_CITY_PROV_PAD_TEMP_LENGTH = 30;
@@ -150,7 +150,7 @@ export default {
       const padLength = PRECIP_STRING_WITH_DATA_LENGTH - 8 - dateString.length;
 
       // actual string to return
-      return `&nbsp;&nbsp;${dateString}&nbsp;${this.padString(" .", padLength, false, ".")}${normalPrecip}`;
+      return `&nbsp;&nbsp;${dateString}&nbsp;${this.padString(".", padLength, false, ".")}${normalPrecip}`;
     },
   },
 

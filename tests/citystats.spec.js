@@ -134,23 +134,23 @@ test("precipTitle: is computed correctly", (done) => {
   });
 });
 
-test("precipActual: is computed correctly", (done) => {
-  wrapper.setProps({ seasonPrecip: { totalPrecip: 400.4 } });
-  vm.$nextTick(() => {
-    expect(vm.precipActual).toBe("April 1st ...........400.4 MM");
+test("precipActual: is computed correctly", async (done) => {
+  await wrapper.setProps({ seasonPrecip: { totalPrecip: "400.4" } });
+  expect(vm.precipActual).toBe("&nbsp;&nbsp;April 1st&nbsp;...........400.4 MM");
 
-    wrapper.setProps({ isWinter: true });
-    vm.$nextTick(() => {
-      expect(vm.precipActual).toBe("October 1st .........400.4 MM");
-      done();
-    });
-  });
+  await wrapper.setProps({ isWinter: true });
+  expect(vm.precipActual).toBe("&nbsp;&nbsp;October 1st&nbsp;.........400.4 MM");
+
+  await wrapper.setProps({ seasonPrecip: { totalPrecip: "0.4" } });
+  expect(vm.precipActual).toBe("&nbsp;&nbsp;October 1st&nbsp;.........&nbsp;&nbsp;0.4 MM");
+  done();
 });
 
-test("precipNormal: is computed correctly", (done) => {
-  wrapper.setProps({ seasonPrecip: { normalPrecip: 163.3 } });
-  vm.$nextTick(() => {
-    expect(vm.precipNormal).toBe("Normal ..............163.3 MM");
-    done();
-  });
+test("precipNormal: is computed correctly", async (done) => {
+  await wrapper.setProps({ seasonPrecip: { normalPrecip: "163.3" } });
+  expect(vm.precipNormal).toBe("&nbsp;&nbsp;Normal&nbsp;..............163.3 MM");
+
+  await wrapper.setProps({ seasonPrecip: { normalPrecip: "3.3" } });
+  expect(vm.precipNormal).toBe("&nbsp;&nbsp;Normal&nbsp;..............&nbsp;&nbsp;3.3 MM");
+  done();
 });

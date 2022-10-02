@@ -182,9 +182,9 @@ const generateWindchill = (conditions) => {
     (12.1452 + 11.6222 * Math.sqrt(windSpeedMs) - 1.16222 * windSpeedMs) * (33 - tempAsFloat)
   );
 
-  // round it to nearest 50 and if its >= 1350 its relevant
+  // round it to nearest 50 and if its >= 1200 with a windspeed >= 10 its relevant
   const roundedWindchill = Math.round(windchill / 50) * 50;
-  return roundedWindchill >= 1350 ? roundedWindchill : 0;
+  return roundedWindchill >= 1200 && windSpeed >= 10 ? roundedWindchill : 0;
 };
 
 const generateConditionsUniqueID = (date) => {

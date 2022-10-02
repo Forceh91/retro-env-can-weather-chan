@@ -16,12 +16,27 @@ function isDateInWinterSeason(dateString) {
 
 function isDateInCurrentWinterSeason(dateString) {
   const date = new Date();
+  const currentMonth = date.getMonth() + 1;
   const currentYear = date.getFullYear();
   const lastYear = date.getFullYear() - 1;
+  const nextYear = date.getFullYear() + 1;
+
+  let startOfCurrentWinterSeason = null;
+  let endOfCurrentWinterSeason = null;
+
+  // if the month is oct-dec then we want this years data
+  // for oct-dec and next years data for jan-mar
+  if (currentMonth >= 10) {
+    startOfCurrentWinterSeason = parseISO(`${currentYear}-10-01`);
+    endOfCurrentWinterSeason = parseISO(`${nextYear}-03-31`);
+  } else {
+    // if the month is before oct then we want last years data
+    // for oct-dec and this years data for jan-mar
+    startOfCurrentWinterSeason = parseISO(`${lastYear}-10-01`);
+    endOfCurrentWinterSeason = parseISO(`${currentYear}-03-31`);
+  }
 
   // winter season is october 1st to march 31st
-  const startOfCurrentWinterSeason = parseISO(`${lastYear}-09-01`);
-  const endOfCurrentWinterSeason = parseISO(`${currentYear}-03-31`);
   const dateToCheck = parseISO(dateString);
 
   // now we have all of our dates, we can compare them

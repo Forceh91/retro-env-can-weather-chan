@@ -5,8 +5,8 @@
       <div id="title" v-html="titleString"></div>
       <div id="rise_set">{{ sunriseset }}</div>
       <div id="precip_title">&nbsp;&nbsp;&nbsp;&nbsp;{{ precipTitle }}</div>
-      <div id="precip_actual">&nbsp;&nbsp;{{ precipActual }}</div>
-      <div id="precip_normal">&nbsp;&nbsp;{{ precipNormal }}</div>
+      <div id="precip_actual" v-html="precipActual"></div>
+      <div id="precip_normal" v-html="precipNormal"></div>
       <div id="hot_cold_title" v-html="hotColdTitleString"></div>
       <div id="hot_spot" v-html="hotSpotString"></div>
       <div id="cold_spot" v-html="coldSpotString"></div>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-const PRECIP_STRING_WITH_DATA_LENGTH = 29;
+const PRECIP_STRING_WITH_DATA_LENGTH = 28;
 
 // max length the hot/cold spot info can be including dots and temp
 const HOT_COLD_SPOT_CITY_PROV_PAD_TEMP_LENGTH = 30;
@@ -135,22 +135,22 @@ export default {
       const totalPrecip = `${this.padString(this.seasonPrecip?.totalPrecip || 0, 5, true)} MM`;
       const dateString = `${this.isWinter ? `October` : `April`} 1st`;
 
-      // how many dots we need here
-      const padLength = PRECIP_STRING_WITH_DATA_LENGTH - totalPrecip.length - dateString.length;
+      // how many dots we need here (8 is the total precip (which is always 5) + space + MM)
+      const padLength = PRECIP_STRING_WITH_DATA_LENGTH - 8 - dateString.length;
 
       // actual string to return
-      return `${dateString}${this.padString(" .", padLength, false, ".")}${totalPrecip}`;
+      return `&nbsp;&nbsp;${dateString}&nbsp;${this.padString(".", padLength, false, ".")}${totalPrecip}`;
     },
 
     precipNormal() {
       const normalPrecip = `${this.padString(this.seasonPrecip?.normalPrecip || 0, 5, true)} MM`;
       const dateString = `Normal`;
 
-      // how many dots we need here
-      const padLength = PRECIP_STRING_WITH_DATA_LENGTH - normalPrecip.length - dateString.length;
+      // how many dots we need here (8 is the total precip (which is always 5) + space + MM)
+      const padLength = PRECIP_STRING_WITH_DATA_LENGTH - 8 - dateString.length;
 
       // actual string to return
-      return `${dateString}${this.padString(" .", padLength, false, ".")}${normalPrecip}`;
+      return `&nbsp;&nbsp;${dateString}&nbsp;${this.padString(".", padLength, false, ".")}${normalPrecip}`;
     },
   },
 

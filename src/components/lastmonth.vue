@@ -70,7 +70,7 @@ export default {
     warmestDayTemp() {
       const temp = this.lastMonth?.actual?.warmestDay?.temp;
       if (temp === undefined) return null;
-      return `${temp > 0 ? "+" : "-"}${temp.toFixed(1)}`;
+      return `${temp > 0 ? "+" : "&nbsp;"}${temp.toFixed(1)}`;
     },
 
     warmestTempData() {
@@ -84,7 +84,7 @@ export default {
     coldestDayTemp() {
       const temp = this.lastMonth?.actual?.coldestDay?.temp;
       if (temp === undefined) return null;
-      return `${temp > 0 ? "+" : "-"}${temp.toFixed(1)}`;
+      return `${temp > 0 ? "+" : "&nbsp;"}${temp.toFixed(1)}`;
     },
 
     coldestTempData() {

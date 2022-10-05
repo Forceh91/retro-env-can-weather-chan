@@ -91,8 +91,15 @@ export default {
       const speed = (wind.speed && wind.speed.value) || "";
       const gust = (wind.gust && wind.gust.value) || 0;
       const direction = wind.direction;
-      if (gust) return `${this.padString(direction, 3, true)}&nbsp;&nbsp;${speed}G${gust}&nbsp;`;
-      return `${this.padString(direction, 3, true)}&nbsp;&nbsp;${speed} KMH`;
+      const directionString = this.padString(direction, 3, true);
+
+      if (gust) return `${directionString}&nbsp;&nbsp;${speed}G${gust}&nbsp;`;
+
+      //   3 KMH
+      //  12 KMH
+      // 100 KMH
+      if (!speed || parseFloat(speed) < 2) return this.padString("CALM", 6, true);
+      return `${directionString}${this.padString(`${speed} KMH`, 8, true)}`;
     },
 
     humidity() {
@@ -146,8 +153,8 @@ export default {
   display: flex;
   justify-content: center;
 
-  #conditions_table_content div {
-    margin-bottom: 5px;
+  #conditions_table_content > div {
+    margin-bottom: 2px;
   }
 
   .reloadable {

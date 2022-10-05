@@ -122,13 +122,25 @@ test("wind: is computed properly", (done) => {
   expect(vm.wind).toBe("ENE&nbsp;&nbsp;13 KMH");
 
   vm.$store.commit("setCurrentWind", null);
-  expect(vm.wind).toBe("ENE&nbsp;&nbsp; KMH");
+  expect(vm.wind).toBe("&nbsp;&nbsp;CALM");
 
   vm.$store.commit("setCurrentWind", { gust: 72, speed: 45, direction: "NW" });
   expect(vm.wind).toBe("&nbsp;NW&nbsp;&nbsp;45G72&nbsp;");
 
   vm.$store.commit("setCurrentWind", { gust: null, speed: 22, direction: "S" });
   expect(vm.wind).toBe("&nbsp;&nbsp;S&nbsp;&nbsp;22 KMH");
+
+  vm.$store.commit("setCurrentWind", { speed: 6, direction: "S" });
+  expect(vm.wind).toBe("&nbsp;&nbsp;S&nbsp;&nbsp;&nbsp;6 KMH");
+
+  vm.$store.commit("setCurrentWind", { speed: 102, direction: "S" });
+  expect(vm.wind).toBe("&nbsp;&nbsp;S&nbsp;102 KMH");
+
+  vm.$store.commit("setCurrentWind", { speed: 1, direction: "S" });
+  expect(vm.wind).toBe("&nbsp;&nbsp;CALM");
+
+  vm.$store.commit("setCurrentWind", { speed: 0, direction: "S" });
+  expect(vm.wind).toBe("&nbsp;&nbsp;CALM");
 
   done();
 });

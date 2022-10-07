@@ -76,6 +76,19 @@ test("prettifyForecastDay: returns 'tonight' correctly", (done) => {
   done();
 });
 
+test("truncateForecastText: truncates forecasts properly", (done) => {
+  expect(vm.truncateForecastText("")).toStrictEqual("");
+  expect(vm.truncateForecastText("high plus 4")).toStrictEqual("high 4");
+  expect(vm.truncateForecastText("high zero")).toStrictEqual("high 0");
+  expect(vm.truncateForecastText("low minus 6")).toStrictEqual("low -6");
+  expect(vm.truncateForecastText("low zero")).toStrictEqual("low 0");
+  expect(vm.truncateForecastText("wind northeast 20km/h")).toStrictEqual("wind northeast 20kmh");
+  expect(vm.truncateForecastText("40 percent chance of showers")).toStrictEqual("40% chance of showers");
+  expect(vm.truncateForecastText("100 percent chance of flurries")).toStrictEqual("100% chance of flurries");
+  expect(vm.truncateForecastText("5 percent chance of flurries")).toStrictEqual("5% chance of flurries");
+  done();
+});
+
 test("destroyed: removes page change interval", (done) => {
   wrapper.unmount();
   expect(clearInterval).toHaveBeenCalled();

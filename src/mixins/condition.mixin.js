@@ -20,11 +20,8 @@ export default {
       // handle light/heavy conditions
       if (condition.length > 13) condition = condition.replace(/light/gi, "lght").replace(/heavy/gi, "hvy");
 
-      // handle light/heavy rainshower
-      condition = condition.replace(/\srainshower/gi, " rainshwr");
-
-      // handle light/heacy snowshower
-      condition = condition.replace(/\ssnowshower/gi, " snowshwr");
+      // handle light/heavy rain/snow shower
+      condition = condition.replace(/\s(rain|snow)shower/gi, " $1shwr");
 
       // final truncation for and/width
       condition = this.truncateConditions(condition);

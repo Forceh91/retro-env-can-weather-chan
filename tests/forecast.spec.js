@@ -44,6 +44,19 @@ test("generateForecastPages: sets the page to 0 and changes page after 15s", (do
   done();
 });
 
+test("generateForecastPages: sets the page to 0 and changes page after 50s if it was a reload", (done) => {
+  jest.useFakeTimers();
+  const spy = jest.spyOn(vm, "changePage");
+
+  vm.generateForecastPages(true);
+  expect(vm.page).toBe(0);
+  jest.advanceTimersByTime(50 * 1000);
+  expect(spy).toHaveBeenCalled();
+  expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 50 * 1000);
+
+  done();
+});
+
 test("changePage: moves the 'page' forward by 2 if we're not on the first page", (done) => {
   wrapper.setProps({ forecast: ecForecast });
   vm.$nextTick(() => {
@@ -92,5 +105,6 @@ test("truncateForecastText: truncates forecasts properly", (done) => {
 test("destroyed: removes page change interval", (done) => {
   wrapper.unmount();
   expect(clearInterval).toHaveBeenCalled();
+  expect(clearTimeout).toHaveBeenCalled();
   done();
 });

@@ -92,8 +92,11 @@ test("prettifyForecastDay: returns 'tonight' correctly", (done) => {
 test("truncateForecastText: truncates forecasts properly", (done) => {
   expect(vm.truncateForecastText("")).toStrictEqual("");
   expect(vm.truncateForecastText("high plus 4")).toStrictEqual("high 4");
+  expect(vm.truncateForecastText("high plus 12")).toStrictEqual("high 12");
   expect(vm.truncateForecastText("high zero")).toStrictEqual("high 0");
   expect(vm.truncateForecastText("low minus 6")).toStrictEqual("low -6");
+  expect(vm.truncateForecastText("low minus 16")).toStrictEqual("low -16");
+  expect(vm.truncateForecastText("low minus 24")).toStrictEqual("low -24");
   expect(vm.truncateForecastText("low zero")).toStrictEqual("low 0");
   expect(vm.truncateForecastText("wind northeast 20km/h")).toStrictEqual("wind northeast 20kmh");
   expect(vm.truncateForecastText("40 percent chance of showers")).toStrictEqual("40% chance of showers");

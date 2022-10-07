@@ -12,10 +12,10 @@ export default {
       text = text.replace(/zero/gi, 0);
 
       // now we want to find PLUS number and change that into just number
-      text = text.replace(/plus (\d)/gi, "$1");
+      text = text.replace(/plus (\d+)/gi, "$1");
 
       // now we want to find MINUS number and change that into just -number
-      text = text.replace(/minus (\d)/gi, "-$1");
+      text = text.replace(/minus (\d+)/gi, "-$1");
 
       // now we want to find number PERCENT and change that into just number%
       text = text.replace(/(\d+) percent/gi, "$1%");

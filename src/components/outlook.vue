@@ -27,10 +27,11 @@ import { format } from "date-fns";
 
 import observedmixin from "../mixins/observed.mixin";
 import stringpadmixin from "../mixins/stringpad.mixin";
+import forecastmixin from "../mixins/forecast.mixin";
 
 export default {
   name: "outlook-screen",
-  mixins: [stringpadmixin, observedmixin],
+  mixins: [stringpadmixin, observedmixin, forecastmixin],
   props: {
     forecast: Array,
     normals: Object,
@@ -61,12 +62,12 @@ export default {
 
     normalLowString() {
       const [normalLow] = this.normals?.textSummary?.split(".");
-      return `Normal ${normalLow}.`;
+      return this.truncateForecastText(`Normal ${normalLow}.`);
     },
 
     normalHighString() {
       const [, normalHigh] = this.normals?.textSummary?.split(".");
-      return `Normal${normalHigh}.`;
+      return this.truncateForecastText(`Normal${normalHigh}.`);
     },
   },
 
@@ -93,8 +94,8 @@ export default {
         const forecastDay = this.forecast[dayIx++];
         const forecastNight = this.forecast[dayIx++];
         const day = forecastDay.day;
-        const high = forecastDay?.temperatures?.textSummary || "";
-        const low = forecastNight?.temperatures?.textSummary || "";
+        const high = this.truncateForecastText(forecastDay?.temperatures?.textSummary || "");
+        const low = this.truncateForecastText(forecastNight?.temperatures?.textSummary || "");
         const condition = forecastDay?.abbreviatedForecast?.textSummary || "";
 
         outlookForEachDay.push({ day, high, low, condition });

@@ -37,6 +37,7 @@
 
 <script>
 const PAGE_CHANGE_FREQUENCY = 15 * 1000;
+const LONG_PAGE_CHANGE_FREQUENCY = 50 * 1000;
 
 import { mapGetters } from "vuex";
 import { EventBus } from "../js/EventBus";
@@ -55,7 +56,7 @@ export default {
   mixins: [forecastmixin],
 
   data() {
-    return { page: 0, pageChangeInterval: null };
+    return { page: 0, pageChangeInterval: null, longPageChangeTimeout: null };
   },
 
   computed: {
@@ -68,7 +69,7 @@ export default {
 
   watch: {
     reload() {
-      if (this.reload) this.generateForecastPages();
+      if (this.reload) this.generateForecastPages(true);
     },
   },
 
@@ -78,17 +79,28 @@ export default {
 
   unmounted() {
     clearInterval(this.pageChangeInterval);
+    clearTimeout(this.longPageChangeTimeout);
   },
 
   methods: {
-    generateForecastPages() {
-      if (this.pageChangeInterval) clearInterval(this.pageChangeInterval);
+    generateForecastPages(wasReload) {
+      const setupPageChangeInterval = () => {
+        this.pageChangeInterval = setInterval(() => {
+          this.changePage();
+        }, PAGE_CHANGE_FREQUENCY);
+      };
 
+      if (this.pageChangeInterval) clearInterval(this.pageChangeInterval);
+      if (this.longPageChangeTimeout) clearTimeout(this.longPageChangeTimeout);
       this.page = 0;
 
-      this.pageChangeInterval = setInterval(() => {
-        this.changePage();
-      }, PAGE_CHANGE_FREQUENCY);
+      // if we reloaded then linger for 50s before the first change
+      if (wasReload) {
+        this.longPageChangeTimeout = setTimeout(() => {
+          this.changePage();
+          setupPageChangeInterval();
+        }, LONG_PAGE_CHANGE_FREQUENCY);
+      } else setupPageChangeInterval();
     },
 
     changePage() {

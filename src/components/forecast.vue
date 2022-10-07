@@ -6,7 +6,9 @@
         <conditions :show-pressure="false" />
         <div id="next_forecast" class="full-width reloadable reloadable-8">
           <span class="label"
-            >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{ forecast[0]?.textSummary }}</span></span
+            >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{
+              truncateForecastText(forecast[0]?.textSummary)
+            }}</span></span
           >
         </div>
       </template>
@@ -16,13 +18,15 @@
           <br />
           <div class="page_forecast">
             <span class="label"
-              >{{ forecast[page]?.day }}..<span>{{ forecast[page]?.textSummary }}</span></span
+              >{{ forecast[page]?.day }}..<span>{{ truncateForecastText(forecast[page]?.textSummary) }}</span></span
             >
           </div>
           <br />
           <div class="page_forecast">
             <span v-if="page + 1 <= forecast.length - 1" class="label"
-              >{{ forecast[page + 1]?.day }}..<span>{{ forecast[page + 1]?.textSummary }}</span></span
+              >{{ forecast[page + 1]?.day }}..<span>{{
+                truncateForecastText(forecast[page + 1]?.textSummary)
+              }}</span></span
             >
           </div>
         </div>
@@ -34,9 +38,10 @@
 <script>
 const PAGE_CHANGE_FREQUENCY = 15 * 1000;
 
-import conditions from "./conditions.vue";
-import { EventBus } from "../js/EventBus";
 import { mapGetters } from "vuex";
+import { EventBus } from "../js/EventBus";
+import forecastmixin from "../mixins/forecast.mixin";
+import conditions from "./conditions.vue";
 
 export default {
   name: "Forecast",
@@ -46,6 +51,8 @@ export default {
   },
 
   components: { conditions },
+
+  mixins: [forecastmixin],
 
   data() {
     return { page: 0, pageChangeInterval: null };

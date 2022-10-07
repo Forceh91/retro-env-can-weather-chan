@@ -23,6 +23,9 @@ export default {
       // handle light/heavy rainshower
       condition = condition.replace(/\srainshower/gi, " rainshwr");
 
+      // handle light/heacy snowshower
+      condition = condition.replace(/\ssnowshower/gi, " snowshwr");
+
       // final truncation for and/width
       condition = this.truncateConditions(condition);
 

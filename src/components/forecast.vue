@@ -6,7 +6,9 @@
         <conditions :show-pressure="false" />
         <div id="next_forecast" class="full-width reloadable reloadable-8">
           <span class="label"
-            >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{ forecast[0]?.textSummary }}</span></span
+            >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{
+              truncateForecastText(forecast[0]?.textSummary)
+            }}</span></span
           >
         </div>
       </template>
@@ -16,13 +18,15 @@
           <br />
           <div class="page_forecast">
             <span class="label"
-              >{{ forecast[page]?.day }}..<span>{{ forecast[page]?.textSummary }}</span></span
+              >{{ forecast[page]?.day }}..<span>{{ truncateForecastText(forecast[page]?.textSummary) }}</span></span
             >
           </div>
           <br />
           <div class="page_forecast">
             <span v-if="page + 1 <= forecast.length - 1" class="label"
-              >{{ forecast[page + 1]?.day }}..<span>{{ forecast[page + 1]?.textSummary }}</span></span
+              >{{ forecast[page + 1]?.day }}..<span>{{
+                truncateForecastText(forecast[page + 1]?.textSummary)
+              }}</span></span
             >
           </div>
         </div>
@@ -33,10 +37,12 @@
 
 <script>
 const PAGE_CHANGE_FREQUENCY = 15 * 1000;
+const LONG_PAGE_CHANGE_FREQUENCY = 50 * 1000;
 
-import conditions from "./conditions.vue";
-import { EventBus } from "../js/EventBus";
 import { mapGetters } from "vuex";
+import { EventBus } from "../js/EventBus";
+import forecastmixin from "../mixins/forecast.mixin";
+import conditions from "./conditions.vue";
 
 export default {
   name: "Forecast",
@@ -47,8 +53,10 @@ export default {
 
   components: { conditions },
 
+  mixins: [forecastmixin],
+
   data() {
-    return { page: 0, pageChangeInterval: null };
+    return { page: 0, pageChangeInterval: null, longPageChangeTimeout: null };
   },
 
   computed: {
@@ -61,7 +69,7 @@ export default {
 
   watch: {
     reload() {
-      if (this.reload) this.generateForecastPages();
+      if (this.reload) this.generateForecastPages(true);
     },
   },
 
@@ -71,17 +79,28 @@ export default {
 
   unmounted() {
     clearInterval(this.pageChangeInterval);
+    clearTimeout(this.longPageChangeTimeout);
   },
 
   methods: {
-    generateForecastPages() {
-      if (this.pageChangeInterval) clearInterval(this.pageChangeInterval);
+    generateForecastPages(wasReload) {
+      const setupPageChangeInterval = () => {
+        this.pageChangeInterval = setInterval(() => {
+          this.changePage();
+        }, PAGE_CHANGE_FREQUENCY);
+      };
 
+      if (this.pageChangeInterval) clearInterval(this.pageChangeInterval);
+      if (this.longPageChangeTimeout) clearTimeout(this.longPageChangeTimeout);
       this.page = 0;
 
-      this.pageChangeInterval = setInterval(() => {
-        this.changePage();
-      }, PAGE_CHANGE_FREQUENCY);
+      // if we reloaded then linger for 50s before the first change
+      if (wasReload) {
+        this.longPageChangeTimeout = setTimeout(() => {
+          this.changePage();
+          setupPageChangeInterval();
+        }, LONG_PAGE_CHANGE_FREQUENCY);
+      } else setupPageChangeInterval();
     },
 
     changePage() {

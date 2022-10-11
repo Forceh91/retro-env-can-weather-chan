@@ -74,7 +74,7 @@ export default {
   },
 
   mounted() {
-    this.generateForecastPages();
+    this.generateForecastPages(this.reload);
   },
 
   unmounted() {

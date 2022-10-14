@@ -24,7 +24,7 @@
     "vue": "^3.2.41",
     "vue-axios": "^3.4.1",
     "vue-router": "4",
-    "vuex": "^4.0.2",
+    "vuex": "^4.1.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {

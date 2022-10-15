@@ -174,6 +174,9 @@ test("pressure: is computed correctly", (done) => {
   vm.$store.commit("setCurrentPressure", { value: 100.8, tendency: "falling" });
   expect(vm.pressure).toBe("100.8 kPa&nbsp;&nbsp;falling");
 
+  vm.$store.commit("setCurrentPressure", { value: 99.5, tendency: "rising" });
+  expect(vm.pressure).toBe("&nbsp;99.5 kPa&nbsp;&nbsp;rising");
+
   vm.$store.commit("setCurrentPressure", null);
   expect(vm.pressure).toBe("");
 

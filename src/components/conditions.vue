@@ -126,7 +126,7 @@ export default {
       const { value, units, tendency } = pressure;
       if (!value) return "";
 
-      return `${value} ${units}&nbsp;&nbsp;${tendency}`;
+      return `${this.padString(value, 5, true)} ${units}&nbsp;&nbsp;${tendency}`;
     },
 
     shouldShowWindchill() {

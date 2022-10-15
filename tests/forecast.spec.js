@@ -91,7 +91,12 @@ test("prettifyForecastDay: returns 'tonight' correctly", (done) => {
 
 test("truncateForecastText: truncates forecasts properly", (done) => {
   expect(vm.truncateForecastText("")).toStrictEqual("");
-  expect(vm.truncateForecastText("high plus 4")).toStrictEqual("high 4");
+  expect(vm.truncateForecastText("high plus 1")).toStrictEqual("high 1");
+  expect(vm.truncateForecastText("high plus 3")).toStrictEqual("high 3");
+  expect(vm.truncateForecastText("high plus 5")).toStrictEqual("high 5");
+  expect(vm.truncateForecastText("high plus 1", true)).toStrictEqual("high +1");
+  expect(vm.truncateForecastText("high plus 3", true)).toStrictEqual("high +3");
+  expect(vm.truncateForecastText("high plus 5", true)).toStrictEqual("high +5");
   expect(vm.truncateForecastText("high plus 12")).toStrictEqual("high 12");
   expect(vm.truncateForecastText("high zero")).toStrictEqual("high 0");
   expect(vm.truncateForecastText("low minus 6")).toStrictEqual("low -6");

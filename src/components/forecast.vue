@@ -7,7 +7,7 @@
         <div id="next_forecast" class="full-width reloadable reloadable-8">
           <span class="label"
             >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{
-              truncateForecastText(forecast[0]?.textSummary)
+              truncateForecastText(forecast[0]?.textSummary, true)
             }}</span></span
           >
         </div>
@@ -18,14 +18,16 @@
           <br />
           <div class="page_forecast">
             <span class="label"
-              >{{ forecast[page]?.day }}..<span>{{ truncateForecastText(forecast[page]?.textSummary) }}</span></span
+              >{{ forecast[page]?.day }}..<span>{{
+                truncateForecastText(forecast[page]?.textSummary, true)
+              }}</span></span
             >
           </div>
           <br />
           <div class="page_forecast">
             <span v-if="page + 1 <= forecast.length - 1" class="label"
               >{{ forecast[page + 1]?.day }}..<span>{{
-                truncateForecastText(forecast[page + 1]?.textSummary)
+                truncateForecastText(forecast[page + 1]?.textSummary, true)
               }}</span></span
             >
           </div>

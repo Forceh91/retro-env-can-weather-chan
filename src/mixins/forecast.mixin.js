@@ -1,7 +1,7 @@
 export default {
   name: "forecast.mixin",
   methods: {
-    truncateForecastText(text) {
+    truncateForecastText(text, addPlusSign) {
       if (!text) return "";
 
       // this will abbreviate certain words/phrases in the forecast to behave more like the original
@@ -10,6 +10,9 @@ export default {
 
       // turn ZERO into just the number 0
       text = text.replace(/zero/gi, 0);
+
+      // now we want to find PLUS 1-5 and change that into +number
+      if (addPlusSign) text = text.replace(/plus ([1-5])/gi, "+$1");
 
       // now we want to find PLUS number and change that into just number
       text = text.replace(/plus (\d+)/gi, "$1");

@@ -137,7 +137,7 @@ test("trimCondition: makes sure condition string is only 13 characters", (done) 
   done();
 });
 
-test("trimCondition: handles light/heavy and rainshower better", (done) => {
+test("trimCondition: handles light/heavy and rain/snowshower better", (done) => {
   const conditionA = vm.trimCondition("sunny");
   expect(conditionA).toBe("sunny");
 
@@ -157,6 +157,14 @@ test("trimCondition: handles light/heavy and rainshower better", (done) => {
   expect(vm.trimCondition("light snowshower")).toBe("lght snowshwr");
   expect(vm.trimCondition("heavy snowshower")).toBe("hvy snowshwr");
 
+  done();
+});
+
+test("trimCondition: handles light/heavy rain and snow", (done) => {
+  expect(vm.trimCondition("light rain and snow")).toBe("rain/snow");
+  expect(vm.trimCondition("heavy rain and snow")).toBe("rain/snow");
+  expect(vm.trimCondition("light snow and rain")).toBe("rain/snow");
+  expect(vm.trimCondition("heavy snow and rain")).toBe("rain/snow");
   done();
 });
 

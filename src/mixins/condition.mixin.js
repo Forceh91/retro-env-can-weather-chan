@@ -17,6 +17,9 @@ export default {
       if (condition.includes("light thunderstorm") || condition.includes("heavy thunderstorm"))
         condition = condition.replace(/thunderstorm/gi, "tstorm");
 
+      // handle light snow and blowing snow
+      condition = condition.replace(/(light|heavy) (rain|snow) and (snow|rain)/gi, "rain/snow");
+
       // handle light/heavy conditions
       if (condition.length > 13) condition = condition.replace(/light/gi, "lght").replace(/heavy/gi, "hvy");
 

@@ -116,6 +116,9 @@ export default {
       const { value, units } = visibility;
       if (!value) return "";
 
+      const floatValue = parseFloat(value);
+      if (floatValue < 1) return `${floatValue * 1000} m`;
+
       return `${Math.round(value)} ${units}`;
     },
 

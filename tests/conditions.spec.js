@@ -162,6 +162,18 @@ test("visibility: is computed correctly", (done) => {
   vm.$store.commit("setCurrentVisibility", 24);
   expect(vm.visibility).toBe("24 km");
 
+  vm.$store.commit("setCurrentVisibility", 0.8);
+  expect(vm.visibility).toBe("800 m");
+
+  vm.$store.commit("setCurrentVisibility", 0.6);
+  expect(vm.visibility).toBe("600 m");
+
+  vm.$store.commit("setCurrentVisibility", 0.4);
+  expect(vm.visibility).toBe("400 m");
+
+  vm.$store.commit("setCurrentVisibility", 0.2);
+  expect(vm.visibility).toBe("200 m");
+
   vm.$store.commit("setCurrentVisibility", null);
   expect(vm.visibility).toBe("");
 

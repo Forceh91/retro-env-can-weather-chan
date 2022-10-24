@@ -45,15 +45,9 @@ Before continuing along with this guide make sure you run the following to insta
 yarn install
 ```
 
-## Server Configuration
+## Starting the channel
 
-You can start the app without configuration if you want to setup a weather channel for Winnipeg, however if you want to customize where the weather channel is located you should head over to the configuration page.
-
-http://localhost:8600/#/config
-
-![config](images/config.png)
-
-Now that the server is configured you can run the backend component and the frontend will connect to this to retrieve relevant info.
+Before you can configure the channel or even access the channel in your browser, you will need to start the server portion of the application. This is done by running the following command:
 
 ```
 node backend.js
@@ -72,6 +66,14 @@ Generating playlist from `music` folder...
 Generated a playlist of 1 files...
 Generated a crawler list of 2 messages
 ```
+
+## Server Configuration
+
+You can start the app without configuration if you want to setup a weather channel for Winnipeg, however if you want to customize where the weather channel is located you should head over to the configuration page.
+
+http://localhost:8600/#/config
+
+![config](images/config.png)
 
 ## Adding music to your channel
 

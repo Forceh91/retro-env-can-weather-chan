@@ -168,6 +168,12 @@ test("trimCondition: handles light/heavy rain and snow", (done) => {
   done();
 });
 
+test("trimCondition: handles light/heavy freezing rain", (done) => {
+  expect(vm.trimCondition("light freezing rain")).toBe("freezing rain");
+  expect(vm.trimCondition("heavy freezing rain")).toBe("freezing rain");
+  done();
+});
+
 test("padString: pads strings correctly when a length is given", (done) => {
   const stringA = vm.padString("-15.5", 5);
   expect(stringA).toBe("-15.5");

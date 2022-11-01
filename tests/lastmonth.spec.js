@@ -45,22 +45,63 @@ test("precipData: computes correctly", (done) => {
   done();
 });
 
-test("warmestDayTemp: computes correctly", (done) => {
+test("warmestDayTemp: computes correctly", async (done) => {
   expect(vm.warmestDayTemp).toStrictEqual("+37.0");
+
+  await wrapper.setProps({
+    lastMonth: { ...lastmonthdata, actual: { ...lastmonthdata.actual, warmestDay: { day: "19", temp: -7 } } },
+  });
+  expect(vm.warmestDayTemp).toStrictEqual("-7.0");
+
+  await wrapper.setProps({
+    lastMonth: { ...lastmonthdata, actual: { ...lastmonthdata.actual, warmestDay: { day: "19", temp: -17 } } },
+  });
+  expect(vm.warmestDayTemp).toStrictEqual("-17.0");
+
   done();
 });
 
-test("warmestTempData: computes correctly", (done) => {
+test("warmestTempData: computes correctly", async (done) => {
   expect(vm.warmestTempData).toBe("Warmest Temp.&nbsp;+37.0&nbsp;ON THE 19th.");
+
+  await wrapper.setProps({
+    lastMonth: { ...lastmonthdata, actual: { ...lastmonthdata.actual, warmestDay: { day: "19", temp: -7 } } },
+  });
+  expect(vm.warmestTempData).toStrictEqual("Warmest Temp.&nbsp;&nbsp;-7.0&nbsp;ON THE 19th.");
+
+  await wrapper.setProps({
+    lastMonth: { ...lastmonthdata, actual: { ...lastmonthdata.actual, warmestDay: { day: "19", temp: -17 } } },
+  });
+  expect(vm.warmestTempData).toStrictEqual("Warmest Temp.&nbsp;-17.0&nbsp;ON THE 19th.");
   done();
 });
 
-test("coldestDayTemp: computes correctly", (done) => {
+test("coldestDayTemp: computes correctly", async (done) => {
   expect(vm.coldestDayTemp).toStrictEqual("+2.2");
+
+  await wrapper.setProps({
+    lastMonth: { ...lastmonthdata, actual: { ...lastmonthdata.actual, coldestDay: { day: "19", temp: -7 } } },
+  });
+  expect(vm.coldestDayTemp).toStrictEqual("-7.0");
+
+  await wrapper.setProps({
+    lastMonth: { ...lastmonthdata, actual: { ...lastmonthdata.actual, coldestDay: { day: "19", temp: -17 } } },
+  });
+  expect(vm.coldestDayTemp).toStrictEqual("-17.0");
   done();
 });
 
-test("coldestTempData: computes correctly", (done) => {
+test("coldestTempData: computes correctly", async (done) => {
   expect(vm.coldestTempData).toBe("Coldest Temp.&nbsp;&nbsp;+2.2&nbsp;ON THE &nbsp;4th");
+
+  await wrapper.setProps({
+    lastMonth: { ...lastmonthdata, actual: { ...lastmonthdata.actual, coldestDay: { day: "4", temp: -7 } } },
+  });
+  expect(vm.coldestTempData).toBe("Coldest Temp.&nbsp;&nbsp;-7.0&nbsp;ON THE &nbsp;4th");
+
+  await wrapper.setProps({
+    lastMonth: { ...lastmonthdata, actual: { ...lastmonthdata.actual, coldestDay: { day: "4", temp: -17 } } },
+  });
+  expect(vm.coldestTempData).toBe("Coldest Temp.&nbsp;-17.0&nbsp;ON THE &nbsp;4th");
   done();
 });

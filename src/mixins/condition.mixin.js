@@ -24,7 +24,7 @@ export default {
       condition = condition.replace(/(light|heavy) freezing rain/gi, "freezing rain");
 
       // handle snow + blowing snow
-      condition = condition.replace(/(light|heavy) snow and blowing snow/gi, "snow/blw snow");
+      condition = condition.replace(/(light|heavy) snow (shower\s)?and blowing snow/gi, "snow/blw snow");
 
       // handle light/heavy conditions
       if (condition.length > 13) condition = condition.replace(/light/gi, "lght").replace(/heavy/gi, "hvy");

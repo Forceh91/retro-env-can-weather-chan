@@ -10,6 +10,15 @@ on:
       - "**.vue"
       - "**.json"
       - "**.yml"
+  push:
+    branches:
+      - master
+    paths:
+      - "**.js"
+      - "**.spec.js"
+      - "**.vue"
+      - "**.json"
+      - "**.yml"
 
 concurrency:
   group: ${{ github.head_ref }}

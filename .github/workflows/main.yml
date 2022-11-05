@@ -125,4 +125,5 @@ jobs:
             package.json
             yarn.lock
             README.md
+            *.js
           retention-days: 1

@@ -9,6 +9,7 @@ on:
       - "**.spec.js"
       - "**.vue"
       - "**.json"
+      - "**.yml"
 
 concurrency:
   group: ${{ github.head_ref }}

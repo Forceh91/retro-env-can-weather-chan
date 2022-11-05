@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [17]
+        node-version: [16]
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v2
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [17]
+        node: [16]
     needs: install-cache
     steps:
       - name: Checkout Commit
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [17]
+        node: [16]
     needs: [unit-test]
     steps:
       - name: Checkout Commit

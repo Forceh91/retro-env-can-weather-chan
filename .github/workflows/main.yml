@@ -98,6 +98,6 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.build_version }}
+          name: ${{ env.build_version }}-${{ github.head_ref }}
           path: dist
           retention-days: 1

@@ -3,7 +3,7 @@ name: Test & Build
 on:
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - "**.js"
       - "**.spec.js"
@@ -37,7 +37,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Dependencies
-        if: steps.cache-dependencies.outputs.cache-hit != 'true' || steps.cache-cypress-binary.outputs.cache-hit != 'true'
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
           yarn install --force --non-interactive
   unit-test:
@@ -87,9 +87,7 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Run build
         run: |
-          yarn add playwright@1.8.0 && yarn build
-        env:
-          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          yarn build
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:

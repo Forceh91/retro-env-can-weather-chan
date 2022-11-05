@@ -142,7 +142,7 @@ test("trimCondition: handles light/heavy and rain/snowshower better", (done) => 
   expect(conditionA).toBe("sunny");
 
   const conditionB = vm.trimCondition("light rainshower");
-  expect(conditionB).toBe("lght rainshwr");
+  expect(conditionB).toBe("lgt rainshwr");
 
   expect(vm.trimCondition("")).toBe("");
   expect(vm.trimCondition("heavy thunderstorm")).toBe("heavy tstorm");
@@ -152,9 +152,9 @@ test("trimCondition: handles light/heavy and rain/snowshower better", (done) => 
   expect(vm.trimCondition("mostly clear")).toBe("mostly clear");
   expect(vm.trimCondition("light rain")).toBe("light rain");
   expect(vm.trimCondition("rainshower")).toBe("rainshower");
-  expect(vm.trimCondition("light rainshower")).toBe("lght rainshwr");
+  expect(vm.trimCondition("light rainshower")).toBe("lgt rainshwr");
   expect(vm.trimCondition("heavy rainshower")).toBe("hvy rainshwr");
-  expect(vm.trimCondition("light snowshower")).toBe("lght snowshwr");
+  expect(vm.trimCondition("light snowshower")).toBe("lgt snowshwr");
   expect(vm.trimCondition("heavy snowshower")).toBe("hvy snowshwr");
 
   done();

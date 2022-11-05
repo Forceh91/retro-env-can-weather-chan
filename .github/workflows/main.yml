@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   install-cache:
-    name: "Install Cache"
+    name: "Generate Cache"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -95,5 +95,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-output
-          path: .next
+          path: dist
           retention-days: 1

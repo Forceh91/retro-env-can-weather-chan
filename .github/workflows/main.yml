@@ -93,10 +93,11 @@ jobs:
           yarn build
       - name: Get build version
         run: |
-          BUILD_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g') >> $GITHUB_ENV
+          BUILD_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g')
+          echo $BUILD_VERSION >> $GITHUB_ENV
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: v$BUILD_VERSION
+          name: v${{ BUILD_VERSION }}
           path: dist
           retention-days: 1

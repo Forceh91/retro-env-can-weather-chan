@@ -1,21 +1,104 @@
-name: CI
-on: [push, pull_request]
+name: Test & Build
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "**.js"
+      - "**.spec.js"
+      - "**.vue"
+      - "**.json"
+      - "**.yml"
+
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
-    name: Run tests and complete build
+  install-cache:
+    name: "Generate Cache"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16]
     steps:
-      - name: "Pull repo"
-        uses: actions/checkout@v2
-      - name: "Install Yarn packages"
-        uses: borales/actions-yarn@v3.0.0
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
         with:
-          cmd: install # will run `yarn install` command
-      - name: "Run unit tests"
-        uses: borales/actions-yarn@v3.0.0
+          node-version: ${{ matrix.node }}
+      - name: Cache yarn dependencies
+        uses: actions/cache@v3
+        id: cache-dependencies
         with:
-          cmd: test # will run `yarn test` command
-      - name: "Check production build is successful"
-        uses: borales/actions-yarn@v3.0.0
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Dependencies
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: |
+          yarn install --force --non-interactive
+  unit-test:
+    name: "Unit Testing"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16]
+    needs: install-cache
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
         with:
-          cmd: build # will run `yarn build` command
+          node-version: ${{ matrix.node }}
+      - name: Restore yarn dependencies
+        uses: actions/cache@v3
+        id: cache-dependencies
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Run test
+        run: |
+          yarn test
+  build:
+    name: "Production Build"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16]
+    needs: [unit-test]
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Restore yarn dependencies
+        uses: actions/cache@v3
+        id: cache-dependencies
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Run build
+        run: |
+          yarn build
+      - name: Get build version
+        run: |
+          BUILD_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g')
+          echo "build_version=v$BUILD_VERSION" >> $GITHUB_ENV
+          echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.build_version }}-${{ env.commit_hash }}
+          path: dist
+          retention-days: 1

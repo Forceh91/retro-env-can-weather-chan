@@ -221,6 +221,10 @@ export default {
       return this.ecData?.observed?.stationTimezone || null;
     },
 
+    stationOffsetMinutesFromLocal() {
+      return this.ecData?.observed?.stationOffsetMinutesFromLocal || 0;
+    },
+
     isWeatherChannel() {
       return this.$route.path === "/";
     },
@@ -486,12 +490,7 @@ export default {
     },
 
     timezoneAdjustedDate(date) {
-      if (!this.timeZone) return date;
-      const localOffset = -date.getTimezoneOffset();
-      const stationUTCOffset = -5 * 60; // parseInt(this.weather.currentConditions.dateTime[1].UTCOffset) * 60;
-      const adjustedTime = stationUTCOffset - localOffset;
-
-      return addMinutes(date, adjustedTime);
+      return addMinutes(date, this.stationOffsetMinutesFromLocal);
     },
   },
 };

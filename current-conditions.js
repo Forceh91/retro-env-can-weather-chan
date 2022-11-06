@@ -118,6 +118,7 @@ const generateConditionsObserved = (date) => {
     stationTime,
     stationTimeInSeconds: stationTime.getTime() / 1000,
     stationTimezone: date.zone,
+    stationOffsetMinutesFromLocal: offsetFromLocalTime,
   };
 };
 

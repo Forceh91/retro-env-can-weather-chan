@@ -62,6 +62,15 @@ function isDateInCurrentSummerSeason(dateString) {
   );
 }
 
+function isWindchillSeason(month) {
+  // remember that months are 0 indexed
+  const date = new Date();
+  if (month === undefined) month = date?.getMonth() + 1;
+
+  // if the month is november or greater, and april or less, its windchill season
+  return month >= 11 || month <= 4;
+}
+
 function getShorthandMonthNamesForSeason(stopAtCurrentMonth) {
   let months = ["apr", "may", "jun", "jul", "aug", "sep"];
   if (isWinterSeason()) months = ["oct", "nov", "dec", "jan", "feb"];
@@ -90,6 +99,7 @@ module.exports = {
   isDateInWinterSeason,
   isDateInCurrentWinterSeason,
   isDateInCurrentSummerSeason,
+  isWindchillSeason,
   getShorthandMonthNamesForSeason,
   isStartOfMonth,
   convertECCDateStringToDateObject,

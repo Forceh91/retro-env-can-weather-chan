@@ -2,7 +2,7 @@ const axios = require("axios");
 const Weather = require("ec-weather-js");
 const { addMinutes } = require("date-fns");
 
-const { convertECCDateStringToDateObject } = require("./date-utils");
+const { convertECCDateStringToDateObject, isWindchillSeason } = require("./date-utils");
 const { getAQHIObservation } = require("./aqhi-observation");
 const { getHotColdSpotsCanada } = require("./province-today-observation.js");
 const CURRENT_CONDITIONS_FETCH_INTERVAL = 5 * 60 * 1000;
@@ -201,6 +201,7 @@ const generateWeatherResponse = () => {
     almanac: { ...conditions.almanac, lastYear: (historicalData && historicalData.lastYearObservation()) || {} },
     canadaHotColdSpots: getHotColdSpotsCanada(),
     airQuality: getAQHIObservation(),
+    isWindchillSeason: isWindchillSeason(),
   };
 };
 

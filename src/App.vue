@@ -16,7 +16,7 @@
           <surrounding v-if="isUSSurrounding" :observations="surrounding.usa" />
           <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
           <warnings v-if="isWarnings" :warnings="ecWarnings" />
-          <windchill v-if="isWindChillEffects" :windchill="ecWindchill" />
+          <windchill v-if="isWindChillEffects" :windchill-season="season?.isWindchill" />
           <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
           <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
         </div>
@@ -122,6 +122,7 @@ export default {
       season: {
         precip: null,
         isWinter: false,
+        isWindchill: false,
       },
       climate: {
         lastMonth: false,
@@ -346,6 +347,7 @@ export default {
           if (!data) return;
 
           this.$store.commit("storeECData", data);
+          this.season.isWindchill = data?.isWindchillSeason;
         })
         .catch((err) => {
           console.error(err);

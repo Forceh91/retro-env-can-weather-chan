@@ -13,7 +13,7 @@
     "amqp": "^0.2.7",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.2",
-    "bootstrap-vue-3": "^0.3.3",
+    "bootstrap-vue-3": "^0.4.8",
     "cli-select": "^1.1.2",
     "core-js": "^3.26.1",
     "cors": "^2.8.5",

@@ -21,10 +21,10 @@
           <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
         </div>
         <div id="bottom_bar">
-          <div id="clock">
-            TIME <span>{{ currentTime }}</span>
+          <div>
+            TIME <span>{{ currentTime }}</span
+            >&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="currentDate"></span>
           </div>
-          <div id="date" v-html="currentDate"></div>
           <div id="banner">Environment Canada Weather</div>
         </div>
       </div>
@@ -511,7 +511,6 @@ export default {
   background: darkblue;
   color: #fff;
   height: 480px;
-  font-size: 21px;
   position: relative;
   text-transform: uppercase;
   width: 640px;
@@ -520,7 +519,7 @@ export default {
     align-items: flex-end;
     background: rgb(22, 90, 22);
     display: flex;
-    font-size: 15px;
+    font-size: 24px;
     height: 75px;
     overflow: hidden;
     padding: 10px 50px;
@@ -541,7 +540,6 @@ export default {
     display: flex;
     height: calc(100% - 175px);
     justify-content: center;
-    line-height: 1.6rem;
     padding: 10px;
     width: 100%;
   }
@@ -570,17 +568,20 @@ export default {
 }
 
 @font-face {
-  font-family: "VCRMono";
-  src: local("VCRMono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
+  font-family: "vt323";
+  font-weight: 400;
+  src: local("vt323"), url(./fonts/vt323/VT323-Regular.ttf) format("truetype");
 }
 
 #weather_channel {
-  background: #000;
-  /* font-family: "Star4000", consolas; */
-  font-family: "VCRMono", consolas;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #000;
+  font-family: "vt323", consolas;
+  font-weight: 400;
+  font-size: 30px;
   height: 100vh;
+  line-height: 1;
   width: 100vw;
 }
 </style>

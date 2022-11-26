@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-view v-if="!isWeatherChannel" />
-    <div v-else id="weather_channel">
+    <div v-else id="weather_channel" :class="{ 'is-vcr': isVCRFont }">
       <div id="main_screen" :style="{ 'background-color': backgroundCol }">
         <div id="top_bar">
           <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
@@ -133,6 +133,7 @@ export default {
       backgroundCol: BLUE_COL,
       backgroundColDebouncer: null,
       shouldDoReloadAnimation: false,
+      lookAndFeelConfig: null,
     };
   },
 
@@ -230,6 +231,10 @@ export default {
       return this.$route.path === "/";
     },
 
+    isVCRFont() {
+      return this.lookAndFeelConfig?.font === "vcr";
+    },
+
     // data returned from eccc
     ...mapGetters([
       "ecData",
@@ -297,6 +302,7 @@ export default {
           if (data.playlist && data.playlist.file_count) this.playlist = data.playlist.files;
           if (data.crawler && data.crawler.message_count) this.crawlerMessages = data.crawler.messages;
           if (data.showMBHighLow) this.showMBHighLowSetting = data.showMBHighLow;
+          if (data.lookAndFeel) this.lookAndFeelConfig = data.lookAndFeel;
           if (typeof callback === "function") callback();
         })
         .catch(() => {
@@ -573,6 +579,12 @@ export default {
   src: local("vt323"), url(./fonts/vt323/VT323-Regular.ttf) format("truetype");
 }
 
+@font-face {
+  font-family: "vcr mono";
+  font-weight: 400;
+  src: local("vcr mono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
+}
+
 #weather_channel {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -583,6 +595,15 @@ export default {
   height: 100vh;
   line-height: 1;
   width: 100vw;
+
+  &.is-vcr {
+    font-family: "vcr mono", consolas;
+    font-size: 21px;
+
+    #top_bar {
+      font-size: 15px;
+    }
+  }
 }
 </style>
 

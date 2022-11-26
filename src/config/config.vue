@@ -43,6 +43,13 @@
             @save="saveMiscConfig"
           />
         </b-tab>
+        <b-tab title="Look and Feel">
+          <lookandfeelconfig
+            :look-and-feel="config.config.lookAndFeel"
+            :save-state="saveState"
+            @save="saveLookAndFeelConfig"
+          />
+        </b-tab>
       </b-tabs>
     </div>
   </div>
@@ -55,6 +62,7 @@ import weatherstationconfig from "./components/weatherstationconfig.vue";
 import historicaldataconfig from "./components/historicaldataconfig.vue";
 import climatenormalsconfig from "./components/climatenormalsconfig.vue";
 import miscconfig from "./components/miscconfig.vue";
+import lookandfeelconfig from "./components/lookandfeel.vue";
 
 export default {
   name: "config",
@@ -66,6 +74,7 @@ export default {
     historicaldataconfig,
     climatenormalsconfig,
     miscconfig,
+    lookandfeelconfig,
   },
 
   data() {
@@ -245,6 +254,24 @@ export default {
 
           const { provinceHighLowEnabled } = data || {};
           this.config.config.provinceHighLowEnabled = provinceHighLowEnabled;
+          this.saveSuccess();
+        })
+        .catch(() => {
+          this.saveFailed();
+        });
+    },
+
+    saveLookAndFeelConfig(e) {
+      if (!e) return;
+
+      this.$http
+        .post("/config/look-and-feel/font", e)
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          const { lookAndFeel } = data || {};
+          this.config.config.lookAndFeel = lookAndFeel;
           this.saveSuccess();
         })
         .catch(() => {

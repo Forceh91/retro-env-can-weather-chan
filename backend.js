@@ -40,6 +40,7 @@ function startBackend() {
       playlist: { files: playlist, file_count: playlist.length },
       crawler: { messages: crawler, message_count: crawler.length },
       showMBHighLow: config.isProvinceHighLowEnabled(),
+      lookAndFeel: config.lookAndFeel(),
     });
   });
 

@@ -351,8 +351,8 @@ const crawler = () => {
   return getCrawler() || [];
 };
 
-const fontChoice = () => {
-  return config.font || "vt323";
+const lookAndFeel = () => {
+  return config.lookAndFeel || {};
 };
 
 const config = defaultConfig();
@@ -367,5 +367,5 @@ module.exports = {
   climateNormalsProvince,
   playlist,
   crawler,
-  fontChoice,
+  lookAndFeel,
 };

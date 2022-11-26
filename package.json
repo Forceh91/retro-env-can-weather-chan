@@ -33,7 +33,7 @@
     "@vue/cli-plugin-unit-jest": "^4.5.19",
     "@vue/cli-service": "~4.5.15",
     "@vue/compiler-sfc": "^3.2.32",
-    "@vue/test-utils": "^2.2.3",
+    "@vue/test-utils": "^2.2.4",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.20.0",

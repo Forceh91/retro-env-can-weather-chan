@@ -3392,10 +3392,10 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-bootstrap-vue-3@^0.4.10:
-  version "0.4.10"
-  resolved "https://registry.yarnpkg.com/bootstrap-vue-3/-/bootstrap-vue-3-0.4.10.tgz#5d5e1aca2f540566728df1f4bd98438e119ee7fd"
-  integrity sha512-dQ7CVNsTx/8EjBvy12Alen64RfKwVfVB2FSnSlhCgl///1rF86GIhMZ7mKoiqAz80FlDGOjzj1A4U5ewpzoW5w==
+bootstrap-vue-3@^0.4.11:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/bootstrap-vue-3/-/bootstrap-vue-3-0.4.11.tgz#088e1da6ef09aee0d6687d17ad92668712e22021"
+  integrity sha512-iCleKqZHqG/4l9AEaZ0aZtyjH5wXGT0JEFpTlAVrsvhbMQptkb5kRQXDh7F9mFKBVQ5+E5ykgRjvSoioIH06DA==
   dependencies:
     "@nuxt/kit" "3.0.0-rc.12"
 

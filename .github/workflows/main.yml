@@ -10,6 +10,7 @@ on:
       - "**.vue"
       - "**.json"
       - "**.yml"
+      - "yarn.lock"
   push:
     branches:
       - master
@@ -19,6 +20,7 @@ on:
       - "**.vue"
       - "**.json"
       - "**.yml"
+      - "yarn.lock"
 
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}

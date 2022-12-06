@@ -126,7 +126,6 @@ export default {
     },
 
     deleteScreen(id) {
-      console.log("id", id);
       this.isDeleting = true;
       this.$http
         .delete(`/config/infoscreens/${id}/delete/`)
@@ -147,26 +146,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#create_message {
+textarea {
   font-family: monospace;
   text-align: center;
-
-  textarea {
-    text-transform: capitalize;
-  }
+  text-transform: uppercase;
 }
 
 .table {
-  .message {
-    font-family: monospace;
-
-    textarea {
-      border: 0;
-      text-align: center;
-      text-transform: uppercase;
-    }
-  }
-
   .actions {
     .btn {
       display: block;

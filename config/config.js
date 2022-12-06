@@ -4,6 +4,7 @@ const { xml2js } = require("xml-js");
 
 const { generatePlaylist, getPlaylist, reloadPlaylist } = require("../generate-playlist.js");
 const { generateCrawler, getCrawler, saveCrawler } = require("../generate-crawler.js");
+const { initInfoScreens } = require("./info-screens");
 const { reloadCurrentConditions } = require("../current-conditions");
 
 const CONFIG_FOLDER = "./cfg";
@@ -56,6 +57,9 @@ const checkConfigFileExists = (callback) => {
 
   // load the playlist
   generatePlaylist();
+
+  // load info screens
+  initInfoScreens();
 };
 
 const loadConfigFile = (configFilePath, callback) => {

@@ -9,6 +9,13 @@ const CONFIG_FILE = `${CONFIG_FOLDER}/${CONFIG_FILE_NAME}`;
 const MAX_MESSAGE_LENGTH = 256;
 const INFO_SCREENS = [];
 
+const initInfoScreens = () => {
+  // load info screens
+
+  // create timer to cleanup (once every 30mins)
+  return setInterval(cleanupStaleInfoScreens, 30 * 60 * 1000);
+};
+
 const createInfoScreen = (message, start, end, isInfinite) => {
   // make sure the message exists and is short enough
   if (!message || message.length > MAX_MESSAGE_LENGTH) return;
@@ -64,6 +71,7 @@ const saveInfoScreens = (callback) => {
 };
 
 const cleanupStaleInfoScreens = () => {
+  console.log("[INFO_SCREENS] Cleaning up stale info screens...");
   const now = new Date();
   // runs periodically to clean up info screens that have expired
   INFO_SCREENS.filter((infoScreen) => !infoScreen.isInfinite)
@@ -76,10 +84,13 @@ const cleanupStaleInfoScreens = () => {
       // remove if its old
       if (compareAsc(now, parsedEnd) === 1) INFO_SCREENS.splice(ix, 1);
     });
+
+  // save new info screens
+  saveInfoScreens();
 };
 
 const getInfoScreens = () => {
   return INFO_SCREENS;
 };
 
-module.exports = { createInfoScreen, saveInfoScreens, cleanupStaleInfoScreens, getInfoScreens };
+module.exports = { initInfoScreens, createInfoScreen, saveInfoScreens, cleanupStaleInfoScreens, getInfoScreens };

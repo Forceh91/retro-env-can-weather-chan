@@ -125,4 +125,19 @@ describe("info-screens.js", () => {
     expect(configInfoScreens.getInfoScreens().length);
     done();
   });
+
+  test("deleteInfoScreen: doesn't delete a screen that doesn't exist", (done) => {
+    configInfoScreens.getInfoScreens().push(...fakeInfoScreens.info_screens);
+    configInfoScreens.deleteInfoScreen(5);
+    expect(configInfoScreens.getInfoScreens().length).toBe(fakeInfoScreens.info_screens.length);
+    done();
+  });
+
+  test("deleteInfoScreen: deletes an info screen correctly", (done) => {
+    configInfoScreens.getInfoScreens().push(...fakeInfoScreens.info_screens);
+    configInfoScreens.deleteInfoScreen(2);
+    expect(configInfoScreens.getInfoScreens().map((screen) => screen.id)).toStrictEqual([1, 3]);
+    expect(configInfoScreens.getInfoScreens().length).toBe(2);
+    done();
+  });
 });

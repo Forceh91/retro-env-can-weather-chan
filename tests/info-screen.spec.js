@@ -82,4 +82,19 @@ describe("info-screens.js", () => {
       done();
     });
   });
+
+  test("cleanupStaleInfoScreens: cleans up screens correctly", (done) => {
+    configInfoScreens.getInfoScreens().push({ id: 1, message: "a", start: formattedToday, end: formattedTomorrow });
+    configInfoScreens.getInfoScreens().push({
+      id: 2,
+      message: "b",
+      start: format(subDays(new Date(), 3), "yyyy-MM-dd"),
+      end: formattedYesterday,
+    });
+    configInfoScreens.getInfoScreens().push({ id: 2, message: "c", start: formattedToday, end: "", isFinite: true });
+
+    configInfoScreens.cleanupStaleInfoScreens();
+    expect(configInfoScreens.getInfoScreens().length).toBe(2);
+    done();
+  });
 });

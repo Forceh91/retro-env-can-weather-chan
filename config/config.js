@@ -4,7 +4,7 @@ const { xml2js } = require("xml-js");
 
 const { generatePlaylist, getPlaylist, reloadPlaylist } = require("../generate-playlist.js");
 const { generateCrawler, getCrawler, saveCrawler } = require("../generate-crawler.js");
-const { initInfoScreens, createInfoScreen, getInfoScreens } = require("./info-screens");
+const { initInfoScreens, createInfoScreen, getInfoScreens, deleteInfoScreen } = require("./info-screens");
 const { reloadCurrentConditions } = require("../current-conditions");
 
 const CONFIG_FOLDER = "./cfg";
@@ -262,6 +262,13 @@ const setupRoutes = (app) => {
     const { message, start, end, isInfinite } = req.body || {};
     const create = createInfoScreen(message, start, end, isInfinite);
     if (!create) res.sendStatus(500);
+    else res.send({ info_screens: getInfoScreens() });
+  });
+
+  app.delete("/config/infoscreens/:id/delete", (req, res) => {
+    const { id } = req.params || {};
+    const deleteScreen = deleteInfoScreen(id);
+    if (!deleteScreen) res.sendStatus(500);
     else res.send({ info_screens: getInfoScreens() });
   });
 

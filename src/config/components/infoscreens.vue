@@ -19,7 +19,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody v-if="mutableScreens.length">
+      <tbody v-if="sortedScreens">
         <tr v-for="screen in mutableScreens" :key="screen.id">
           <td>{{ screen.start }}</td>
           <td>{{ screen.isInfinite ? "-" : screen.end }}</td>
@@ -109,6 +109,10 @@ export default {
   computed: {
     canSave() {
       return this.message && this.start && (this.end || this.isInfinite);
+    },
+
+    sortedScreens() {
+      return this.mutableScreens.length && [...this.mutableScreens].sort((a, b) => a.start - b.start);
     },
   },
 

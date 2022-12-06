@@ -3,6 +3,7 @@ const fs = require("fs");
 
 // 8 lines at 32 chars max each
 const MAX_MESSAGE_LENGTH = 256;
+const INFO_SCREENS = [];
 
 const createInfoScreen = (message, start, end, isInfinite) => {
   // make sure the message exists and is short enough
@@ -25,6 +26,7 @@ const createInfoScreen = (message, start, end, isInfinite) => {
 
   // create the object to store
   const infoScreen = {
+    id: Date.now(),
     message,
     start,
     end,
@@ -32,6 +34,7 @@ const createInfoScreen = (message, start, end, isInfinite) => {
   };
 
   // save it
+  INFO_SCREENS.push(infoScreen);
 
   // return it
   return infoScreen;

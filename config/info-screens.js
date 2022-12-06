@@ -109,6 +109,28 @@ const cleanupStaleInfoScreens = () => {
   saveInfoScreens();
 };
 
+const deleteInfoScreen = (id) => {
+  if (!id) return false;
+
+  // all ids will be timestamps
+  id = parseInt(id);
+
+  // find its index
+  const existingScreenIx = findInfoScreenIx(id);
+  if (existingScreenIx === -1) return false;
+
+  // splice it out
+  INFO_SCREENS.splice(existingScreenIx, 1);
+
+  // save
+  saveInfoScreens();
+  return true;
+};
+
+const findInfoScreenIx = (id) => {
+  return INFO_SCREENS.findIndex((screen) => screen.id === id);
+};
+
 const getInfoScreens = () => {
   return INFO_SCREENS;
 };
@@ -118,6 +140,7 @@ module.exports = {
   createInfoScreen,
   loadInfoScreens,
   saveInfoScreens,
+  deleteInfoScreen,
   cleanupStaleInfoScreens,
   getInfoScreens,
 };

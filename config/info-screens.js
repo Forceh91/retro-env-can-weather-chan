@@ -1,6 +1,10 @@
 const { isValid, parseISO, compareAsc, startOfToday } = require("date-fns");
 const fs = require("fs");
 
+const CONFIG_FOLDER = "./cfg";
+const CONFIG_FILE_NAME = "retro-evc-config-info-screens.json";
+const CONFIG_FILE = `${CONFIG_FOLDER}/${CONFIG_FILE_NAME}`;
+
 // 8 lines at 32 chars max each
 const MAX_MESSAGE_LENGTH = 256;
 const INFO_SCREENS = [];
@@ -35,9 +39,32 @@ const createInfoScreen = (message, start, end, isInfinite) => {
 
   // save it
   INFO_SCREENS.push(infoScreen);
+  saveInfoScreens();
 
   // return it
   return infoScreen;
 };
 
-module.exports = { createInfoScreen };
+const saveInfoScreens = (callback) => {
+  const doCallback = (resp) => typeof callback === "function" && callback(resp);
+
+  const config = {
+    info_screens: INFO_SCREENS,
+  };
+
+  console.log("[INFO_SCREENS] Saving info screens to", CONFIG_FILE, "...");
+  const configAsJSONString = JSON.stringify(config);
+
+  fs.writeFile(CONFIG_FILE, configAsJSONString, "utf8", (err, data) => {
+    if (!err) {
+      doCallback(true);
+      console.log("[INFO_SCREENS] Info screens saved!");
+    } else doCallback(false);
+  });
+};
+
+const getInfoScreens = () => {
+  return INFO_SCREENS;
+};
+
+module.exports = { createInfoScreen, saveInfoScreens, getInfoScreens };

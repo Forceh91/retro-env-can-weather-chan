@@ -63,8 +63,23 @@ const saveInfoScreens = (callback) => {
   });
 };
 
+const cleanupStaleInfoScreens = () => {
+  const now = new Date();
+  // runs periodically to clean up info screens that have expired
+  INFO_SCREENS.filter((infoScreen) => !infoScreen.isInfinite)
+    .reverse()
+    .forEach((infoScreen, ix) => {
+      const parsedEnd = parseISO(infoScreen.end);
+      const isEndValid = isValid(parsedEnd);
+      if (!isEndValid) return;
+
+      // remove if its old
+      if (compareAsc(now, parsedEnd) === 1) INFO_SCREENS.splice(ix, 1);
+    });
+};
+
 const getInfoScreens = () => {
   return INFO_SCREENS;
 };
 
-module.exports = { createInfoScreen, saveInfoScreens, getInfoScreens };
+module.exports = { createInfoScreen, saveInfoScreens, cleanupStaleInfoScreens, getInfoScreens };

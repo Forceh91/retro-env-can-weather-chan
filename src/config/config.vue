@@ -36,6 +36,9 @@
         <b-tab title="Playlist">
           <playlistconfig :playlist="config.playlist" :save-state="saveState" @save="reloadPlaylist" />
         </b-tab>
+        <b-tab title="Info Screens">
+          <infoscreensconfig :screens="config.info_screens" :save-start="saveState" @save="saveInfoScreens" />
+        </b-tab>
         <b-tab title="Misc.">
           <miscconfig
             :province-high-low-tracking="config.config.provinceHighLowEnabled"
@@ -55,6 +58,7 @@ import weatherstationconfig from "./components/weatherstationconfig.vue";
 import historicaldataconfig from "./components/historicaldataconfig.vue";
 import climatenormalsconfig from "./components/climatenormalsconfig.vue";
 import miscconfig from "./components/miscconfig.vue";
+import infoscreensconfig from "./components/infoscreens.vue";
 
 export default {
   name: "config",
@@ -66,6 +70,7 @@ export default {
     historicaldataconfig,
     climatenormalsconfig,
     miscconfig,
+    infoscreensconfig,
   },
 
   data() {
@@ -245,6 +250,22 @@ export default {
 
           const { provinceHighLowEnabled } = data || {};
           this.config.config.provinceHighLowEnabled = provinceHighLowEnabled;
+          this.saveSuccess();
+        })
+        .catch(() => {
+          this.saveFailed();
+        });
+    },
+
+    saveInfoScreens(e) {
+      this.$http
+        .post("/config/infoscreens/create", e)
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          const { info_screens } = data;
+          this.config.info_screens = info_screens;
           this.saveSuccess();
         })
         .catch(() => {

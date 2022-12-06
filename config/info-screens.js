@@ -11,6 +11,7 @@ const INFO_SCREENS = [];
 
 const initInfoScreens = () => {
   // load info screens
+  loadInfoScreens();
 
   // create timer to cleanup (once every 30mins)
   return setInterval(cleanupStaleInfoScreens, 30 * 60 * 1000);
@@ -50,6 +51,25 @@ const createInfoScreen = (message, start, end, isInfinite) => {
 
   // return it
   return infoScreen;
+};
+
+const loadInfoScreens = () => {
+  const failedLoad = () => console.log("[INFO_SCREENS] Failed to load info screens from config...");
+
+  console.log("[INFO_SCREENS] Loading info screens from config...");
+  fs.readFile(CONFIG_FILE, "utf8", (err, data) => {
+    if (err || !data || !data.length) return failedLoad();
+
+    const parsedJSON = JSON.parse(data);
+    if (!parsedJSON) return;
+
+    const { info_screens } = parsedJSON;
+    if (!info_screens || !info_screens.length) return failedLoad();
+
+    INFO_SCREENS.push(...info_screens);
+
+    console.log("[INFO_SCREENS] Loaded", INFO_SCREENS.length, "info screens from config!");
+  });
 };
 
 const saveInfoScreens = (callback) => {
@@ -93,4 +113,11 @@ const getInfoScreens = () => {
   return INFO_SCREENS;
 };
 
-module.exports = { initInfoScreens, createInfoScreen, saveInfoScreens, cleanupStaleInfoScreens, getInfoScreens };
+module.exports = {
+  initInfoScreens,
+  createInfoScreen,
+  loadInfoScreens,
+  saveInfoScreens,
+  cleanupStaleInfoScreens,
+  getInfoScreens,
+};

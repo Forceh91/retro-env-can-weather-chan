@@ -6,7 +6,7 @@
       time
     </p>
 
-    <b-button v-b-modal.create variant="primary" class="mb-4">Create Info Screen</b-button>
+    <b-button id="create_info_screen_btn" v-b-modal.create variant="primary" class="mb-4">Create Info Screen</b-button>
 
     <h4>Current Info Screens</h4>
 
@@ -41,6 +41,7 @@
     </table>
 
     <b-modal
+      ref="create_modal"
       id="create"
       title="Create Info Screen"
       size="lg"
@@ -50,6 +51,7 @@
       ok-variant="success"
       @ok="saveInfoScreen"
     >
+      <div v-if="saveState.error" class="alert alert-danger">Unable to save info screen</div>
       <div>
         <b>Message</b>
         <textarea id="create_message" class="form-control" length="256" v-model="message" rows="8" />
@@ -57,7 +59,7 @@
 
       <div>
         <b>Start Date</b>
-        <input type="date" class="form-control" v-model="start" />
+        <input type="date" class="form-control" v-model="start" :min="minDateAllowed" />
       </div>
 
       <div>
@@ -73,6 +75,10 @@
 </template>
 
 <script>
+import { format } from "date-fns";
+
+const TODAY = format(new Date(), "yyyy-MM-dd");
+
 export default {
   name: "config-info-screens",
   props: {
@@ -87,9 +93,10 @@ export default {
 
   data() {
     return {
+      minDateAllowed: TODAY,
       mutableScreens: false,
       message: "",
-      start: "",
+      start: TODAY,
       end: "",
       isInfinite: false,
       isDeleting: false,
@@ -112,7 +119,7 @@ export default {
     },
 
     sortedScreens() {
-      return this.mutableScreens.length && [...this.mutableScreens].sort((a, b) => a.start - b.start);
+      return this.mutableScreens.length && [...this.mutableScreens].sort((a, b) => b.start - a.start);
     },
   },
 
@@ -126,7 +133,13 @@ export default {
     },
 
     saveInfoScreen() {
-      this.$emit("save", { message: this.message, start: this.start, end: this.end, isInfinite: this.isInfinite });
+      this.$emit("save", {
+        message: this.message,
+        start: this.start,
+        end: this.end,
+        isInfinite: this.isInfinite,
+        callback: () => {},
+      });
     },
 
     deleteScreen(id) {

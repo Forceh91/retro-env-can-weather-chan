@@ -37,7 +37,7 @@
           <playlistconfig :playlist="config.playlist" :save-state="saveState" @save="reloadPlaylist" />
         </b-tab>
         <b-tab title="Info Screens">
-          <infoscreensconfig :screens="config.info_screens" :save-start="saveState" @save="saveInfoScreens" />
+          <infoscreensconfig :screens="config.info_screens" :save-state="saveState" @save="saveInfoScreens" />
         </b-tab>
         <b-tab title="Misc.">
           <miscconfig
@@ -258,8 +258,12 @@ export default {
     },
 
     saveInfoScreens(e) {
+      const { callback } = e;
+      const data = e;
+      delete data.callback;
+
       this.$http
-        .post("/config/infoscreens/create", e)
+        .post("/config/infoscreens/create", data)
         .then((resp) => {
           const data = resp.data;
           if (!data) return;
@@ -267,6 +271,8 @@ export default {
           const { info_screens } = data;
           this.config.info_screens = info_screens;
           this.saveSuccess();
+
+          typeof callback === "function" && callback();
         })
         .catch(() => {
           this.saveFailed();

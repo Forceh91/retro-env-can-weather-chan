@@ -24,6 +24,7 @@ const fakeInfoScreens = {
 };
 
 describe("info-screens.js", () => {
+  beforeAll(() => jest.spyOn(console, "log").mockImplementation());
   beforeEach(() => configInfoScreens.getInfoScreens().splice(0));
   afterEach(() => jest.resetAllMocks());
 
@@ -102,7 +103,10 @@ describe("info-screens.js", () => {
     configInfoScreens.getInfoScreens().push(...fakeInfoScreens.info_screens);
 
     configInfoScreens.cleanupStaleInfoScreens();
-    expect(configInfoScreens.getInfoScreens().length).toBe(2);
+
+    const screens = configInfoScreens.getInfoScreens();
+    expect(screens.length).toBe(2);
+    expect(screens.map((screen) => screen.id)).toStrictEqual([1, 3]);
     done();
   });
 

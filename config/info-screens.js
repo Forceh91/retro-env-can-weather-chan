@@ -93,16 +93,17 @@ const saveInfoScreens = (callback) => {
 const cleanupStaleInfoScreens = () => {
   console.log("[INFO_SCREENS] Cleaning up stale info screens...");
   const now = new Date();
+  const ogLength = INFO_SCREENS.length - 1;
   // runs periodically to clean up info screens that have expired
-  INFO_SCREENS.filter((infoScreen) => !infoScreen.isInfinite)
-    .reverse()
-    .forEach((infoScreen, ix) => {
-      const parsedEnd = parseISO(infoScreen.end);
+  [...INFO_SCREENS].reverse().forEach((infoScreen, ix) => {
+    if (infoScreen.isInfinite) return;
+
+    const parsedEnd = parseISO(infoScreen.end + "T23:59:59.0Z");
       const isEndValid = isValid(parsedEnd);
       if (!isEndValid) return;
 
       // remove if its old
-      if (compareAsc(now, parsedEnd) === 1) INFO_SCREENS.splice(ix, 1);
+    if (compareAsc(now, parsedEnd) === 1) INFO_SCREENS.splice(ogLength - ix, 1);
     });
 
   // save new info screens

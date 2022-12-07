@@ -52,6 +52,7 @@
       @ok="saveInfoScreen"
     >
       <div v-if="saveState.error" class="alert alert-danger">Unable to save info screen</div>
+      <div v-if="saveState.success && !saveState.error" class="alert alert-success">Info screen added</div>
       <div>
         <b>Message</b>
         <textarea id="create_message" class="form-control" length="256" v-model="message" rows="8" />

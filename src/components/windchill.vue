@@ -45,11 +45,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#windchill {
-  font-size: 25px;
-  font-weight: 100;
-  line-height: 2.3rem;
-}
 #windchill_table {
   display: flex;
   flex-direction: column;

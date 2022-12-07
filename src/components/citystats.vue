@@ -166,7 +166,6 @@ export default {
 #city_stats {
   align-items: center;
   display: flex;
-  font-size: 1.3rem;
   flex-direction: column;
 }
 </style>

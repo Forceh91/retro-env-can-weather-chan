@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-view v-if="!isWeatherChannel" />
-    <div v-else id="weather_channel">
+    <div v-else id="weather_channel" :class="{ 'is-vcr': isVCRFont }">
       <div id="main_screen" :style="{ 'background-color': backgroundCol }">
         <div id="top_bar">
           <div v-if="crawlerMessages.length" id="crawler"><crawler :messages="crawlerMessages" /></div>
@@ -21,10 +21,10 @@
           <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
         </div>
         <div id="bottom_bar">
-          <div id="clock">
-            TIME <span>{{ currentTime }}</span>
+          <div>
+            TIME <span>{{ currentTime }}</span
+            >&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="currentDate"></span>
           </div>
-          <div id="date" v-html="currentDate"></div>
           <div id="banner">Environment Canada Weather</div>
         </div>
       </div>
@@ -133,6 +133,7 @@ export default {
       backgroundCol: BLUE_COL,
       backgroundColDebouncer: null,
       shouldDoReloadAnimation: false,
+      lookAndFeelConfig: null,
     };
   },
 
@@ -230,6 +231,10 @@ export default {
       return this.$route.path === "/";
     },
 
+    isVCRFont() {
+      return this.lookAndFeelConfig?.font === "vcr";
+    },
+
     // data returned from eccc
     ...mapGetters([
       "ecData",
@@ -297,6 +302,7 @@ export default {
           if (data.playlist && data.playlist.file_count) this.playlist = data.playlist.files;
           if (data.crawler && data.crawler.message_count) this.crawlerMessages = data.crawler.messages;
           if (data.showMBHighLow) this.showMBHighLowSetting = data.showMBHighLow;
+          if (data.lookAndFeel) this.lookAndFeelConfig = data.lookAndFeel;
           if (typeof callback === "function") callback();
         })
         .catch(() => {
@@ -511,7 +517,6 @@ export default {
   background: darkblue;
   color: #fff;
   height: 480px;
-  font-size: 21px;
   position: relative;
   text-transform: uppercase;
   width: 640px;
@@ -520,7 +525,7 @@ export default {
     align-items: flex-end;
     background: rgb(22, 90, 22);
     display: flex;
-    font-size: 15px;
+    font-size: 24px;
     height: 75px;
     overflow: hidden;
     padding: 10px 50px;
@@ -541,7 +546,6 @@ export default {
     display: flex;
     height: calc(100% - 175px);
     justify-content: center;
-    line-height: 1.6rem;
     padding: 10px;
     width: 100%;
   }
@@ -570,18 +574,36 @@ export default {
 }
 
 @font-face {
-  font-family: "VCRMono";
-  src: local("VCRMono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
+  font-family: "vt323";
+  font-weight: 400;
+  src: local("vt323"), url(./fonts/vt323/VT323-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "vcr mono";
+  font-weight: 400;
+  src: local("vcr mono"), url(./fonts/vcr-mono/VCR_OSD_MONO_1.001.ttf) format("truetype");
 }
 
 #weather_channel {
-  background: #000;
-  /* font-family: "Star4000", consolas; */
-  font-family: "VCRMono", consolas;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #000;
+  font-family: "vt323", consolas;
+  font-weight: 400;
+  font-size: 30px;
   height: 100vh;
+  line-height: 1;
   width: 100vw;
+
+  &.is-vcr {
+    font-family: "vcr mono", consolas;
+    font-size: 21px;
+
+    #top_bar {
+      font-size: 15px;
+    }
+  }
 }
 </style>
 

@@ -23,6 +23,7 @@ const defaultConfig = () => {
     climateNormalsStationID: 3698, // winnipeg richardson a (used for climate normals on last month summary)
     climateNormalsClimateID: 5023222, // (used for climate normals on last month summary)
     climateNormalsProvince: "MB",
+    lookAndFeel: { font: "vt323" },
   };
 };
 
@@ -80,6 +81,7 @@ const loadConfigFile = (configFilePath, callback) => {
       climateNormalsClimateID,
       climateNormalsStationID,
       climateNormalsProvince,
+      lookAndFeel,
     } = parsedJSON;
     const { province, location } = primaryLocation || {};
     if (!primaryLocation || !province || !province.length || !location || !location.length) return loadConfigDefaults();
@@ -97,6 +99,9 @@ const loadConfigFile = (configFilePath, callback) => {
     config.climateNormalsClimateID = climateNormalsClimateID || config.climateNormalsStationID;
     config.climateNormalsStationID = climateNormalsStationID || config.climateNormalsStationID;
     config.climateNormalsProvince = climateNormalsProvince || config.climateNormalsProvince;
+
+    // get the look and feel info
+    config.lookAndFeel = lookAndFeel || {};
 
     // say the config was loaded
     console.log(
@@ -174,6 +179,14 @@ const storeClimateStationIDs = (climateID, stationID, province, callback) => {
 
 const storeProvinceHighLowPrecipTracking = (enabled, callback) => {
   config.provinceHighLowEnabled = enabled;
+
+  saveConfigFile((result) => {
+    typeof callback === "function" && callback(result);
+  });
+};
+
+const storeLookAndFeelFont = (font, callback) => {
+  config.lookAndFeel.font = font;
 
   saveConfigFile((result) => {
     typeof callback === "function" && callback(result);
@@ -278,6 +291,19 @@ const setupRoutes = (app) => {
       else res.send(result);
     });
   });
+
+  app.post("/config/look-and-feel/font", (req, res) => {
+    const { font } = req.body || {};
+    if (!font) return;
+
+    storeLookAndFeelFont(font, (result) => {
+      if (!result) res.sendStatus(500);
+      else
+        res.send({
+          lookAndFeel: config.lookAndFeel,
+        });
+    });
+  });
 };
 
 const fetchAvailableWeatherStations = (callback) => {
@@ -343,6 +369,10 @@ const crawler = () => {
   return getCrawler() || [];
 };
 
+const lookAndFeel = () => {
+  return config.lookAndFeel || {};
+};
+
 const config = defaultConfig();
 
 module.exports = {
@@ -355,4 +385,5 @@ module.exports = {
   climateNormalsProvince,
   playlist,
   crawler,
+  lookAndFeel,
 };

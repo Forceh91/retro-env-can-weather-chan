@@ -42,6 +42,7 @@ function startBackend() {
       crawler: { messages: crawler, message_count: crawler.length },
       showMBHighLow: config.isProvinceHighLowEnabled(),
       infoScreens: getActivateInfoScreens(),
+      lookAndFeel: config.lookAndFeel(),
     });
   });
 

@@ -144,4 +144,19 @@ describe("info-screens.js", () => {
     expect(configInfoScreens.getInfoScreens().length).toBe(2);
     done();
   });
+
+  test("getActivateInfoScreens: returns all active info screens", (done) => {
+    configInfoScreens.getInfoScreens().push(...fakeInfoScreens.info_screens);
+    configInfoScreens.createInfoScreen("another", formattedTomorrow, "", true);
+
+    let active = configInfoScreens.getActivateInfoScreens();
+    expect(active.length).toBe(3);
+    expect(active.map((screen) => screen.id)).toStrictEqual([1, 2, 3]);
+
+    configInfoScreens.cleanupStaleInfoScreens();
+    active = configInfoScreens.getActivateInfoScreens();
+    expect(active.length).toBe(2);
+    expect(active.map((screen) => screen.id)).toStrictEqual([1, 3]);
+    done();
+  });
 });

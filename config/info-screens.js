@@ -99,12 +99,12 @@ const cleanupStaleInfoScreens = () => {
     if (infoScreen.isInfinite) return;
 
     const parsedEnd = parseISO(infoScreen.end + "T23:59:59.0Z");
-      const isEndValid = isValid(parsedEnd);
-      if (!isEndValid) return;
+    const isEndValid = isValid(parsedEnd);
+    if (!isEndValid) return;
 
-      // remove if its old
+    // remove if its old
     if (compareAsc(now, parsedEnd) === 1) INFO_SCREENS.splice(ogLength - ix, 1);
-    });
+  });
 
   // save new info screens
   saveInfoScreens();
@@ -136,6 +136,11 @@ const getInfoScreens = () => {
   return INFO_SCREENS;
 };
 
+const getActivateInfoScreens = () => {
+  const today = startOfToday();
+  return INFO_SCREENS.filter((screen) => compareAsc(today, parseISO(screen.start)) !== -1);
+};
+
 module.exports = {
   initInfoScreens,
   createInfoScreen,
@@ -144,4 +149,5 @@ module.exports = {
   deleteInfoScreen,
   cleanupStaleInfoScreens,
   getInfoScreens,
+  getActivateInfoScreens,
 };

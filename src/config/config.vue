@@ -36,6 +36,9 @@
         <b-tab title="Playlist">
           <playlistconfig :playlist="config.playlist" :save-state="saveState" @save="reloadPlaylist" />
         </b-tab>
+        <b-tab title="Info Screens">
+          <infoscreensconfig :screens="config.info_screens" :save-state="saveState" @save="saveInfoScreens" />
+        </b-tab>
         <b-tab title="Misc.">
           <miscconfig
             :province-high-low-tracking="config.config.provinceHighLowEnabled"
@@ -63,6 +66,7 @@ import historicaldataconfig from "./components/historicaldataconfig.vue";
 import climatenormalsconfig from "./components/climatenormalsconfig.vue";
 import miscconfig from "./components/miscconfig.vue";
 import lookandfeelconfig from "./components/lookandfeel.vue";
+import infoscreensconfig from "./components/infoscreens.vue";
 
 export default {
   name: "config",
@@ -75,6 +79,7 @@ export default {
     climatenormalsconfig,
     miscconfig,
     lookandfeelconfig,
+    infoscreensconfig,
   },
 
   data() {
@@ -273,6 +278,28 @@ export default {
           const { lookAndFeel } = data || {};
           this.config.config.lookAndFeel = lookAndFeel;
           this.saveSuccess();
+        })
+        .catch(() => {
+          this.saveFailed();
+        });
+    },
+
+    saveInfoScreens(e) {
+      const { callback } = e;
+      const data = e;
+      delete data.callback;
+
+      this.$http
+        .post("/config/infoscreens/create", data)
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          const { info_screens } = data;
+          this.config.info_screens = info_screens;
+          this.saveSuccess();
+
+          typeof callback === "function" && callback();
         })
         .catch(() => {
           this.saveFailed();

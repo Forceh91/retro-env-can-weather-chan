@@ -17,6 +17,7 @@ const { startAlertMonitoring } = require("./alert-monitoring");
 const { initAQHIObservation } = require("./aqhi-observation");
 const { isWinterSeason } = require("./date-utils.js");
 const config = require("./config/config");
+const { getActivateInfoScreens } = require("./config/info-screens");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -40,6 +41,7 @@ function startBackend() {
       playlist: { files: playlist, file_count: playlist.length },
       crawler: { messages: crawler, message_count: crawler.length },
       showMBHighLow: config.isProvinceHighLowEnabled(),
+      infoScreens: getActivateInfoScreens(),
       lookAndFeel: config.lookAndFeel(),
     });
   });

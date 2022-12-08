@@ -19,6 +19,7 @@
           <windchill v-if="isWindChillEffects" :windchill-season="season?.isWindchill" />
           <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
           <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
+          <infoscreen v-if="isInfoScreen" :info-screens="infoScreens" />
         </div>
         <div id="bottom_bar">
           <div>
@@ -53,12 +54,12 @@ const SCREENS = {
   RANDOM: { id: 11, length: 20 },
   SUMMARY: { id: 12, length: 20 },
   AQHI_WARNING: { id: 13, length: 20 },
+  INFO: { id: 14, length: 20 * 25 }, // enough for 25 screens at 20s each
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,
   SCREENS.FORECAST,
   SCREENS.OUTLOOK,
-  SCREENS.WINDCHILL,
   SCREENS.WARNINGS,
   SCREENS.ALMANAC,
   SCREENS.AQHI_WARNING,
@@ -67,6 +68,8 @@ const SCREEN_ROTATION = [
   SCREENS.US_SURROUNDING,
   SCREENS.CITY_STATS,
   SCREENS.RANDOM,
+  SCREENS.WINDCHILL,
+  SCREENS.INFO,
 ];
 
 const BLUE_COL = "rgb(0,0,135)";
@@ -88,6 +91,7 @@ import crawler from "./components/crawler";
 import Outlook from "./components/outlook.vue";
 import lastmonth from "./components/lastmonth.vue";
 import aqhiwarning from "./components/aqhiwarning.vue";
+import infoscreen from "./components/infoscreen.vue";
 
 export default {
   name: "App",
@@ -105,6 +109,7 @@ export default {
     Outlook,
     lastmonth,
     aqhiwarning,
+    infoscreen,
   },
   data() {
     return {
@@ -130,6 +135,7 @@ export default {
       playlist: [],
       crawlerMessages: [],
       showMBHighLowSetting: false,
+      infoScreens: [],
       backgroundCol: BLUE_COL,
       backgroundColDebouncer: null,
       shouldDoReloadAnimation: false,
@@ -219,6 +225,10 @@ export default {
       return this.currentScreenID === SCREENS.AQHI_WARNING.id;
     },
 
+    isInfoScreen() {
+      return this.currentScreenID === SCREENS.INFO.id;
+    },
+
     timeZone() {
       return this.ecData?.observed?.stationTimezone || null;
     },
@@ -302,6 +312,7 @@ export default {
           if (data.playlist && data.playlist.file_count) this.playlist = data.playlist.files;
           if (data.crawler && data.crawler.message_count) this.crawlerMessages = data.crawler.messages;
           if (data.showMBHighLow) this.showMBHighLowSetting = data.showMBHighLow;
+          if (data.infoScreens) this.infoScreens = data.infoScreens;
           if (data.lookAndFeel) this.lookAndFeelConfig = data.lookAndFeel;
           if (typeof callback === "function") callback();
         })
@@ -334,6 +345,10 @@ export default {
       EventBus.on("aqhi-not-needed", () => {
         this.handleScreenCycle(true);
       });
+
+      EventBus.on("info-screens-complete", () => {
+        this.handleScreenCycle(true);
+      });
     },
 
     destroyEventCallbacks() {
@@ -343,6 +358,7 @@ export default {
       EventBus.off("windchill-complete");
       EventBus.off("mbhighlow-complete");
       EventBus.off("aqhi-not-needed");
+      EventBus.off("info-screens-complete");
     },
 
     getWeather() {

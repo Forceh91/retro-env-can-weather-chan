@@ -4,6 +4,7 @@ const { xml2js } = require("xml-js");
 
 const { generatePlaylist, getPlaylist, reloadPlaylist } = require("../generate-playlist.js");
 const { generateCrawler, getCrawler, saveCrawler } = require("../generate-crawler.js");
+const { initInfoScreens, createInfoScreen, getInfoScreens, deleteInfoScreen } = require("./info-screens");
 const { reloadCurrentConditions } = require("../current-conditions");
 
 const CONFIG_FOLDER = "./cfg";
@@ -57,6 +58,9 @@ const checkConfigFileExists = (callback) => {
 
   // load the playlist
   generatePlaylist();
+
+  // load info screens
+  initInfoScreens();
 };
 
 const loadConfigFile = (configFilePath, callback) => {
@@ -193,7 +197,7 @@ const setupRoutes = (app) => {
   if (!app) return;
 
   app.get("/config/all", (req, res) => {
-    res.send({ config, playlist: playlist(), crawler: crawler() });
+    res.send({ config, playlist: playlist(), crawler: crawler(), info_screens: getInfoScreens() });
   });
 
   app.post("/config/crawler", (req, res) => {
@@ -265,6 +269,20 @@ const setupRoutes = (app) => {
           provinceHighLowEnabled: config.provinceHighLowEnabled,
         });
     });
+  });
+
+  app.post("/config/infoscreens/create", (req, res) => {
+    const { message, start, end, isInfinite } = req.body || {};
+    const create = createInfoScreen(message, start, end, isInfinite);
+    if (!create) res.sendStatus(500);
+    else res.send({ info_screens: getInfoScreens() });
+  });
+
+  app.delete("/config/infoscreens/:id/delete", (req, res) => {
+    const { id } = req.params || {};
+    const deleteScreen = deleteInfoScreen(id);
+    if (!deleteScreen) res.sendStatus(500);
+    else res.send({ info_screens: getInfoScreens() });
   });
 
   app.get("/config/eccc-weather-stations", (req, res) => {

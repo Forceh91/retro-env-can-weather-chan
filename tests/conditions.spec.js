@@ -84,7 +84,7 @@ test("currentCondition: is computed properly", (done) => {
   expect(vm.currentCondition).toBe("snow");
 
   vm.$store.commit("setCurrentConditions", "light rainshower");
-  expect(vm.currentCondition).toBe("light rainshwr");
+  expect(vm.currentCondition).toBe("lgt rainshwr");
 
   vm.$store.commit("setCurrentConditions", "freezing rain");
   expect(vm.currentCondition).toBe("freezing rain");

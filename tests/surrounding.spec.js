@@ -195,8 +195,8 @@ test("trimCondition: handles light/heavy rain + drizzle", (done) => {
 });
 
 test("trimCondition: handles light/heavy drizzle fog/mist", (done) => {
-  expect(vm.trimCondition("light drizzle fog/mist")).toBe("lgt drzl/fog");
-  expect(vm.trimCondition("heavy drizzle fog/mist")).toBe("hvy drzl/fog");
+  expect(vm.trimCondition("light drizzle fog/mist")).toBe("light drizzle");
+  expect(vm.trimCondition("heavy drizzle fog/mist")).toBe("heavy drizzle");
   done();
 });
 

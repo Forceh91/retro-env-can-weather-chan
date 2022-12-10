@@ -194,6 +194,12 @@ test("trimCondition: handles light/heavy rain + drizzle", (done) => {
   done();
 });
 
+test("trimCondition: handles light/heavy drizzle fog/mist", (done) => {
+  expect(vm.trimCondition("light drizzle fog/mist")).toBe("lgt drzl/fog");
+  expect(vm.trimCondition("heavy drizzle fog/mist")).toBe("hvy drzl/fog");
+  done();
+});
+
 test("padString: pads strings correctly when a length is given", (done) => {
   const stringA = vm.padString("-15.5", 5);
   expect(stringA).toBe("-15.5");

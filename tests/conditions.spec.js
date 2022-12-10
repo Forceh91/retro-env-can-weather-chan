@@ -75,16 +75,16 @@ test("observedFormatted: is computed properly", (done) => {
 });
 
 test("currentCondition: is computed properly", (done) => {
-  expect(vm.currentCondition).toBe("Rain");
+  expect(vm.currentCondition).toBe("rain");
 
   vm.$store.commit("setCurrentConditions", "Thunderstorms with heavy rain shower");
-  expect(vm.currentCondition).toBe("Thunderstorms");
+  expect(vm.currentCondition).toBe("thunderstorms");
 
   vm.$store.commit("setCurrentConditions", "snow and freezing rain");
   expect(vm.currentCondition).toBe("snow");
 
   vm.$store.commit("setCurrentConditions", "light rainshower");
-  expect(vm.currentCondition).toBe("light rainshower");
+  expect(vm.currentCondition).toBe("lgt rainshwr");
 
   vm.$store.commit("setCurrentConditions", "freezing rain");
   expect(vm.currentCondition).toBe("freezing rain");

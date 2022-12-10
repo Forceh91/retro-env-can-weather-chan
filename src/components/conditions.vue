@@ -73,7 +73,7 @@ export default {
     },
 
     currentCondition() {
-      return this.truncateConditions(this.ecConditions?.condition);
+      return this.harshTruncateConditions(this.ecConditions?.condition, 13);
     },
 
     temperature() {

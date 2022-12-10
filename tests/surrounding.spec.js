@@ -169,8 +169,8 @@ test("trimCondition: handles light/heavy rain and snow", (done) => {
 });
 
 test("trimCondition: handles light/heavy freezing rain", (done) => {
-  expect(vm.trimCondition("light freezing rain")).toBe("freezing rain");
-  expect(vm.trimCondition("heavy freezing rain")).toBe("freezing rain");
+  expect(vm.trimCondition("light freezing rain")).toBe("lgt frzg rain");
+  expect(vm.trimCondition("heavy freezing rain")).toBe("hvy frzg rain");
   done();
 });
 
@@ -179,6 +179,12 @@ test("trimCondition: handles light/heavy snow + blowing snow", (done) => {
   expect(vm.trimCondition("heavy snow and blowing snow")).toBe("snow/blw snow");
   expect(vm.trimCondition("light snow shower and blowing snow")).toBe("snow/blw snow");
   expect(vm.trimCondition("heavy snow shower and blowing snow")).toBe("snow/blw snow");
+  done();
+});
+
+test("trimCondition: handles light/heavy freezing drizzle", (done) => {
+  expect(vm.trimCondition("light freezing drizzle")).toBe("lgt frzg drzl");
+  expect(vm.trimCondition("heavy freezing drizzle")).toBe("hvy frzg drzl");
   done();
 });
 

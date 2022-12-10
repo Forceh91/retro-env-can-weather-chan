@@ -9,7 +9,7 @@ export default {
       return `${condition.slice(0, 16)}`;
     },
 
-    harshTruncateConditions(condition) {
+    harshTruncateConditions(condition, maxLength = 13) {
       // to lowercase
       condition = condition.toLowerCase();
 
@@ -36,7 +36,7 @@ export default {
       condition = condition.replace(/(light|heavy) drizzle fog\/mist/gi, "$1 drzl/fog");
 
       // handle light/heavy conditions
-      if (condition.length > 13) condition = condition.replace(/light/gi, "lgt").replace(/heavy/gi, "hvy");
+      if (condition.length > maxLength) condition = condition.replace(/light/gi, "lgt").replace(/heavy/gi, "hvy");
 
       // handle light/heavy rain/snow shower
       condition = condition.replace(/\s(rain|snow)shower/gi, " $1shwr");
@@ -44,8 +44,8 @@ export default {
       // final truncation for and/width
       condition = this.truncateConditions(condition);
 
-      // now truncate to just 13 chars
-      return `${condition.slice(0, 13)}`;
+      // now truncate to just maxLength chars
+      return `${condition.slice(0, maxLength)}`;
     },
   },
 };

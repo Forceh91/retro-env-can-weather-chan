@@ -28,6 +28,10 @@ export default {
 
       // handle light/heavy freezing drizzle
       condition = condition.replace(/(light|heavy) freezing drizzle/gi, "$1 frzg drzl");
+
+      // light/heavy rain + drizzle
+      condition = condition.replace(/(light|heavy) rain and drizzle/gi, "$1 rain/drzl");
+
       // handle light/heavy conditions
       if (condition.length > 13) condition = condition.replace(/light/gi, "lgt").replace(/heavy/gi, "hvy");
 

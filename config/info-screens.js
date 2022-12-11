@@ -1,4 +1,4 @@
-const { isValid, parseISO, compareAsc, startOfToday } = require("date-fns");
+const { isValid, parseISO, compareAsc, startOfToday, endOfDay } = require("date-fns");
 const fs = require("fs");
 
 const CONFIG_FOLDER = "./cfg";
@@ -33,7 +33,7 @@ const createInfoScreen = (message, start, end, isInfinite) => {
   const isStartInFuture = compareAsc(now, parseISO(start));
   if (isStartInFuture === 1) return;
 
-  const isEndInFuture = compareAsc(now, parseISO(end + "T23:59:59.0Z"));
+  const isEndInFuture = compareAsc(now, endOfDay(parseISO(end)));
   if (isEndInFuture === 1) return;
 
   // create the object to store
@@ -98,7 +98,7 @@ const cleanupStaleInfoScreens = () => {
   [...INFO_SCREENS].reverse().forEach((infoScreen, ix) => {
     if (infoScreen.isInfinite) return;
 
-    const parsedEnd = parseISO(infoScreen.end + "T23:59:59.0Z");
+    const parsedEnd = endOfDay(parseISO(infoScreen.end));
     const isEndValid = isValid(parsedEnd);
     if (!isEndValid) return;
 

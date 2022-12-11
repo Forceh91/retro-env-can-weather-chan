@@ -57,8 +57,9 @@ export default {
       if (!date) return "";
 
       const parsedDate = parseISO(date.time);
-      const formattedDate = format(parsedDate, "MMM'.&nbsp;' d'&nbsp;'");
-      return formattedDate.replace(/mar.&nbsp;/gi, "March").replace(/apr.&nbsp;/gi, "April");
+      let formatString = "MMM'.&nbsp;'d";
+      const formattedDate = format(parsedDate, formatString);
+      return formattedDate.replace(/mar./gi, "March").replace(/apr./gi, "April");
     },
 
     getDaysAheadFromObserved(date, numberOfDays) {

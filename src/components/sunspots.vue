@@ -38,7 +38,7 @@ export default {
     },
 
     dateString() {
-      return this.formatSunspotDate(this.ecObservedAtStation);
+      return this.padString(this.formatSunspotDate(this.ecObservedAtStation), 9);
     },
   },
 

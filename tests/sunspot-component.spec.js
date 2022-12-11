@@ -45,6 +45,7 @@ describe("sunspots.vue", () => {
 
   it("dateString: prints the month/day correctly", (done) => {
     let time = "2022-09-16T14:00:00.000Z";
+    vm.$store.commit("setObservedStationTime", time);
     expect(vm.dateString).toStrictEqual("Sep. 16&nbsp;&nbsp;");
 
     time = "2022-12-09T14:00:00.000Z";

@@ -27,9 +27,12 @@ export default {
     ...mapGetters(["ecObservedAtStation"]),
 
     availableStations() {
-      return this.sunspotForecast.filter(
-        (sunspotCity) =>
-          sunspotCity.forecastText && sunspotCity.hiTemp !== Math.min() && sunspotCity.loTemp !== Math.max()
+      return (
+        this.sunspotForecast &&
+        this.sunspotForecast.filter(
+          (sunspotCity) =>
+            sunspotCity.forecastText && sunspotCity.hiTemp !== Math.min() && sunspotCity.loTemp !== Math.max()
+        )
       );
     },
 

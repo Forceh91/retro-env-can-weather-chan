@@ -6,9 +6,9 @@ const sunspotCities = [
   { name: "Phoenix", stationCode: "PSR", x: 160, y: 56 },
   { name: "Brownsville", stationCode: "BRO", x: 80, y: 5 },
   { name: "Orlando", stationCode: "MLB", x: 28, y: 69 },
-  { name: "San Juan", stationCode: "SJU", x: 170, y: 129 },
   { name: "San Diego", stationCode: "SGX", x: 55, y: 14 },
   { name: "Key West", stationCode: "KEY", x: 61, y: 47 },
+  { name: "San Juan", stationCode: "SJU", x: 170, y: 129 },
 ];
 
 const latestSunspotForecasts = [];

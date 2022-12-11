@@ -20,6 +20,7 @@
           <citystats v-if="isCityStats" :season-precip="season?.precip" :is-winter="season?.isWinter" />
           <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
           <infoscreen v-if="isInfoScreen" :info-screens="infoScreens" />
+          <sunspots v-if="isSunspots" :sunspot-forecast="sunspotForecast" />
         </div>
         <div id="bottom_bar">
           <div>
@@ -55,6 +56,7 @@ const SCREENS = {
   SUMMARY: { id: 12, length: 20 },
   AQHI_WARNING: { id: 13, length: 20 },
   INFO: { id: 14, length: 20 * 25 }, // enough for 25 screens at 20s each
+  SUNSPOTS: { id: 15, length: 20 },
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,
@@ -66,6 +68,7 @@ const SCREEN_ROTATION = [
   SCREENS.MB_HIGH_LOW,
   SCREENS.SURROUNDING,
   SCREENS.US_SURROUNDING,
+  SCREENS.SUNSPOTS,
   SCREENS.CITY_STATS,
   SCREENS.RANDOM,
   SCREENS.WINDCHILL,
@@ -92,6 +95,7 @@ import Outlook from "./components/outlook.vue";
 import lastmonth from "./components/lastmonth.vue";
 import aqhiwarning from "./components/aqhiwarning.vue";
 import infoscreen from "./components/infoscreen.vue";
+import sunspots from "./components/sunspots.vue";
 
 export default {
   name: "App",
@@ -110,6 +114,7 @@ export default {
     lastmonth,
     aqhiwarning,
     infoscreen,
+    sunspots,
   },
   data() {
     return {
@@ -228,6 +233,10 @@ export default {
 
     isInfoScreen() {
       return this.currentScreenID === SCREENS.INFO.id;
+    },
+
+    isSunspots() {
+      return this.currentScreenID === SCREENS.SUNSPOTS.id;
     },
 
     timeZone() {
@@ -352,6 +361,10 @@ export default {
       EventBus.on("info-screens-complete", () => {
         this.handleScreenCycle(true);
       });
+
+      EventBus.on("sunspots-complete", () => {
+        this.handleScreenCycle(true);
+      });
     },
 
     destroyEventCallbacks() {
@@ -362,6 +375,7 @@ export default {
       EventBus.off("mbhighlow-complete");
       EventBus.off("aqhi-not-needed");
       EventBus.off("info-screens-complete");
+      EventBus.off("sunspots-complete");
     },
 
     getWeather() {

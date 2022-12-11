@@ -53,6 +53,17 @@ export default {
         .replace(/sep&nbsp;/gi, "sept");
     },
 
+    formatSunspotDate(date) {
+      if (!date) return "";
+
+      const parsedDate = parseISO(date.time);
+      let formatString = "MMMM d";
+      if (parsedDate.getDate() < 10) formatString = "MMMM d'&nbsp;'";
+      const formattedDate = format(parsedDate, formatString);
+      const [month, day] = formattedDate.split(" ");
+      return `${month.slice(0, 5)} ${day}`;
+    },
+
     getDaysAheadFromObserved(date, numberOfDays) {
       // we can go 6 days ahead of the observed date
       numberOfDays = numberOfDays || 6;

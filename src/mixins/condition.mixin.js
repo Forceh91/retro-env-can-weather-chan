@@ -36,17 +36,32 @@ export default {
       // light drizzle fog/mist (thanks chicago)
       condition = condition.replace(/(light|heavy) (drizzle) fog\/mist/gi, "$1 $2");
 
+      condition = this.truncateForecastConditions(condition);
+
       // handle light/heavy conditions
       if (condition.length > maxLength) condition = condition.replace(/light/gi, "lgt").replace(/heavy/gi, "hvy");
 
       // handle light/heavy rain/snow shower
       condition = condition.replace(/\s(rain|snow)shower/gi, " $1shwr");
 
-      // final truncation for and/width
+      // final truncation for and/width/then
       condition = this.truncateConditions(condition);
 
       // now truncate to just maxLength chars
       return `${condition.slice(0, maxLength)}`;
+    },
+
+    truncateForecastConditions(condition) {
+      // forecast truncation for sunspots page (12 chars max here)
+      // isolated rain showers (then...)
+      condition = condition.replace(/isolated rain showers/gi, "isld showers");
+
+      // slight chance showers
+      condition = condition.replace(/(slight\s)?chance showers/gi, "chnc showers");
+
+      // scattered rain showers
+      condition = condition.replace(/scattered rain showers/gi, "sctd showers");
+      return condition;
     },
   },
 };

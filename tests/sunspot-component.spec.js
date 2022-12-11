@@ -99,4 +99,12 @@ describe("sunspots.vue", () => {
     expect(vm.truncateForecastCondition("Cloud then Rain")).not.toContain(" then ");
     done();
   });
+
+  it("harshTruncateConditions: handles some long forecast conditions", (done) => {
+    expect(vm.harshTruncateConditions("Isolated Rain Showers then Partly Sunny")).toStrictEqual("isld showers");
+    expect(vm.harshTruncateConditions("Slight Chance Showers And Thunderstorms")).toStrictEqual("chnc showers");
+    expect(vm.harshTruncateConditions("Chance Showers And Thunderstorms")).toStrictEqual("chnc showers");
+    expect(vm.harshTruncateConditions("Scattered Rain Showers")).toStrictEqual("sctd showers");
+    done();
+  });
 });

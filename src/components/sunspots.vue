@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div><span v-html="dateString"></span><span>&nbsp;Sunspot Weather&nbsp;&nbsp;</span><span>Hi/Lo</span></div>
+    <div><span v-html="dateString"></span><span>Sunspot Weather&nbsp;&nbsp;</span><span>Hi/Lo</span></div>
     <div v-for="sunspotCity in availableStations" :key="`sunspot.${sunspotCity.stationCode}`">
       <span v-html="padCityName(sunspotCity.name)"></span>
       <span v-html="truncateForecastCondition(sunspotCity.forecastText)"></span>

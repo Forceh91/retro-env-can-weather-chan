@@ -6,6 +6,7 @@ export default {
 
       if (condition.includes("with")) condition = condition.split(" with")[0];
       if (condition.includes("and")) condition = condition.split(" and")[0];
+      if (condition.includes("then")) condition = condition.split(" then")[0];
       return `${condition.slice(0, 16)}`;
     },
 

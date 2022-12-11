@@ -124,6 +124,7 @@ export default {
         canada: null,
         usa: null,
       },
+      sunspotForecast: [],
       season: {
         precip: null,
         isWinter: false,
@@ -270,6 +271,7 @@ export default {
       setInterval(() => {
         this.getSurroundingWeather();
         this.getSurroundingUSWeather();
+        this.getSunspotForecast();
         this.getWeather();
         this.getWarnings();
         if (this.showMBHighLowSetting) this.getHighLowAroundMB();
@@ -289,6 +291,7 @@ export default {
       this.getWeather();
       this.getSurroundingWeather();
       this.getSurroundingUSWeather();
+      this.getSunspotForecast();
       this.getSeasonPrecipData();
       this.getLastMonthSummary();
       this.getWarnings();
@@ -400,6 +403,21 @@ export default {
           if (!data || !data.observations || !data.observations.length) return;
 
           this.surrounding.usa = data.observations;
+        })
+        .catch((err) => {
+          console.error(err);
+          this.surrounding.usa = null;
+        });
+    },
+
+    getSunspotForecast() {
+      this.$http
+        .get("api/weather/sunspot")
+        .then((resp) => {
+          const data = resp.data;
+          if (!data || !data.sunspots) return;
+
+          this.sunspotForecast = data.sunspots;
         })
         .catch((err) => {
           console.error(err);

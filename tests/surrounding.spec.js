@@ -200,6 +200,16 @@ test("trimCondition: handles light/heavy drizzle fog/mist", (done) => {
   done();
 });
 
+test("trimConditions: gets rid of fog/mist if theres a space before it", (done) => {
+  expect(vm.trimCondition("Light Snow Fog/Mist")).toBe("light snow");
+  expect(vm.trimCondition("Light Snow and Fog/Mist")).toBe("light snow");
+  expect(vm.trimCondition("Rain Fog/Mist")).toBe("rain");
+  expect(vm.trimCondition("Rain and Fog/Mist")).toBe("rain");
+  expect(vm.trimCondition("Drizzle Fog/Mist")).toBe("drizzle");
+  expect(vm.trimCondition("Drizzle and Fog/Mist")).toBe("drizzle");
+  done();
+});
+
 test("padString: pads strings correctly when a length is given", (done) => {
   const stringA = vm.padString("-15.5", 5);
   expect(stringA).toBe("-15.5");

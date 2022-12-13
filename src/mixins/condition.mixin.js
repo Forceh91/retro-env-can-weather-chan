@@ -34,8 +34,12 @@ export default {
       condition = condition.replace(/(light|heavy) rain and drizzle/gi, "$1 rain/drzl");
 
       // light drizzle fog/mist (thanks chicago)
-      condition = condition.replace(/(light|heavy) (drizzle) fog\/mist/gi, "$1 $2");
+      // condition = condition.replace(/(light|heavy) (drizzle) fog\/mist/gi, "$1 $2");
 
+      // remove fog/mist if prefixed with a space
+      condition = condition.replace(/(\sand)? fog\/mist/gi, "");
+
+      // some us forecasts are wild
       condition = this.truncateForecastConditions(condition);
 
       // handle light/heavy conditions

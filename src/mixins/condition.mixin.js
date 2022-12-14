@@ -61,7 +61,7 @@ export default {
       condition = condition.replace(/isolated rain showers/gi, "isld showers");
 
       // slight chance showers
-      condition = condition.replace(/(slight\s)?chance showers/gi, "chnc showers");
+      condition = condition.replace(/(slight\s)?chance(\srain)? showers/gi, "chnc showers");
 
       // scattered rain showers
       condition = condition.replace(/scattered rain showers/gi, "sctd showers");

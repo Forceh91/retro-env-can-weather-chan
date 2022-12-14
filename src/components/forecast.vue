@@ -15,7 +15,7 @@
       <template v-else>
         <div id="forecast_cont">
           <div id="title">{{ ecCity }} Forecast Cont..</div>
-          <br />
+          <br v-if="!removeLineBreaks" />
           <div class="page_forecast">
             <span class="label"
               >{{ forecast[page]?.day }}..<span>{{
@@ -23,7 +23,7 @@
               }}</span></span
             >
           </div>
-          <br />
+          <br v-if="!removeLineBreaks" />
           <div class="page_forecast">
             <span v-if="page + 1 <= forecast.length - 1" class="label"
               >{{ forecast[page + 1]?.day }}..<span>{{
@@ -66,6 +66,12 @@ export default {
 
     forecastUnavailable() {
       return !this.forecast || !this.forecast.length;
+    },
+
+    removeLineBreaks() {
+      const forecastLength =
+        this.forecast[this.page]?.textSummary?.length + this.forecast[this.page + 1]?.textSummary?.length;
+      return this.page !== 0 && forecastLength >= 240;
     },
   },
 

@@ -30,7 +30,7 @@ export default {
 
   ecShortForecast: (state) => {
     const { forecast } = state.ecData || [];
-    return forecast && forecast.slice(0, 5);
+    return forecast && forecast.slice(0, 3);
   },
 
   ecRegionalNormals: (state) => {

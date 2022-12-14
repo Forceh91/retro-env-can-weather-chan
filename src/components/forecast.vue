@@ -106,10 +106,9 @@ export default {
     },
 
     changePage() {
-      if (!this.page) this.page = ++this.page % this.forecast?.length;
-      else this.page = (this.page + 2) % this.forecast?.length;
+      this.page = ++this.page % (this.forecast?.length - 1);
 
-      if (!this.page || this.forecastUnavailable) return EventBus.emit("forecast-complete");
+      if (!this.page || this.forecastUnavailable) EventBus.emit("forecast-complete");
     },
 
     prettifyForecastDay(val) {

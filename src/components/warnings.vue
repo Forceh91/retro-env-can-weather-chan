@@ -84,9 +84,10 @@ export default {
     },
 
     truncateWarningDescription(description) {
-      let [shortDescription] = description.split(".");
+      const paragraphSplit = description.split(/.\s\s/);
 
       // get rid of some weird ### description stuff
+      let shortDescription = paragraphSplit.slice(0, 2).join(". ");
       shortDescription = (shortDescription || "").split(/\n\n###/g)[0];
 
       // remove impacted locations as its a giant list

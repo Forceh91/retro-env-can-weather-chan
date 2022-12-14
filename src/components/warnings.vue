@@ -84,12 +84,14 @@ export default {
     },
 
     truncateWarningDescription(description) {
+      let [shortDescription] = description.split(".");
+
       // get rid of some weird ### description stuff
-      description = (description || "").split(/\n\n###/g)[0];
+      shortDescription = (shortDescription || "").split(/\n\n###/g)[0];
 
       // remove impacted locations as its a giant list
-      description = description.split("Locations impacted")[0];
-      return description.trim();
+      shortDescription = shortDescription.split("Locations impacted")[0];
+      return shortDescription.trim();
     },
   },
 };

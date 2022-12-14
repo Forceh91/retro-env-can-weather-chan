@@ -57,6 +57,15 @@ const fakeEndedUrgentWarning = {
   urgency: "Past",
 };
 
+const reallyLongWarningDescription = {
+  identifier: "e",
+  references: "",
+  expires: "2022-12-15T00:00:00",
+  headline: "special weather statement",
+  description:
+    "Prolonged snow event over southeastern Saskatchewan and southern Manitoba beginning late Tuesday evening with some local areas receiving upwards of 20-30 cm by the weekend. The Colorado low has already begun to spread snow over southwestern Manitoba as of late Tuesday afternoon.  The area of snow will expand in coverage on Tuesday night with most areas seeing some accumulation by Wednesday morning.  With the above seasonable temperatures in place as the low pressure system approaches, the snow is expected to be a heavier wet snow. The worst conditions are expected to be in the communities along the international border.",
+};
+
 test("warningsUnavailable: computes correctly", (done) => {
   expect(vm.warningsUnavailable).toBe(true);
   done();
@@ -156,6 +165,13 @@ test("truncateWarningDescription: removes redundant info", (done) => {
   expect(vm.truncateWarningDescription(fakeWarning.description)).toBe(fakeWarning.description);
   expect(vm.truncateWarningDescription(fakeEndedUrgentWarning.description)).toBe(fakeEndedUrgentWarning.description);
   expect(vm.truncateWarningDescription(fakeUrgentWarning.description)).toBe("stuff will happen");
+  done();
+});
+
+test("truncateWarningDescription: splits correctly at the right point", async (done) => {
+  expect(vm.truncateWarningDescription(reallyLongWarningDescription.description)).toStrictEqual(
+    "Prolonged snow event over southeastern Saskatchewan and southern Manitoba beginning late Tuesday evening with some local areas receiving upwards of 20-30 cm by the weekend"
+  );
   done();
 });
 

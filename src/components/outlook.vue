@@ -80,12 +80,12 @@ export default {
       if (!this.forecast) return;
 
       // figure out what 3 days from now is
-      const threeDaysAway = this.getDaysAheadFromObserved(this.ecObservedAtStation, 3);
-      const threeDaysAwayName = format(threeDaysAway, "EEEE");
+      const twoDaysAway = this.getDaysAheadFromObserved(this.ecObservedAtStation, 2);
+      const twoDaysAwayName = format(twoDaysAway, "EEEE");
 
       // we need to get day 3, 4, and 5 from the forecast. however we know that the forecast includes "night" forecasts too
       // first thing is to find the index in the forecast that is for threeDaysAway
-      const startIx = this.forecast.findIndex((f) => f.day === threeDaysAwayName.toLocaleLowerCase());
+      const startIx = this.forecast.findIndex((f) => f.day === twoDaysAwayName.toLocaleLowerCase());
       if (startIx === -1) return;
 
       // now we can build up a forecast for each day

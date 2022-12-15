@@ -210,6 +210,11 @@ test("trimConditions: gets rid of fog/mist if theres a space before it", (done) 
   done();
 });
 
+test("trimConditions: handles [condition] and drizzle", (done) => {
+  expect(vm.trimCondition("Light Drizzle and Fog")).toBe("light drizzle");
+  done();
+});
+
 test("padString: pads strings correctly when a length is given", (done) => {
   const stringA = vm.padString("-15.5", 5);
   expect(stringA).toBe("-15.5");

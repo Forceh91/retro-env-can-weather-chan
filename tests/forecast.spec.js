@@ -57,12 +57,12 @@ test("generateForecastPages: sets the page to 0 and changes page after 50s if it
   done();
 });
 
-test("changePage: moves the 'page' forward by 2 if we're not on the first page", (done) => {
+test("changePage: moves the 'page' forward by 1 if we're not on the first page", (done) => {
   wrapper.setProps({ forecast: ecForecast });
   vm.$nextTick(() => {
     vm.page = 1;
     vm.changePage();
-    expect(vm.page).toBe(3);
+    expect(vm.page).toBe(2);
     done();
   });
 });
@@ -74,9 +74,9 @@ test("changePage: switches away from the forecast screen on the last page", (don
     done();
   });
 
-  wrapper.setProps({ forecast: ecForecast });
+  wrapper.setProps({ forecast: ecForecast.slice(0, 3) });
   vm.$nextTick(() => {
-    vm.page = 3;
+    vm.page = 0;
     vm.changePage();
     vm.changePage();
   });

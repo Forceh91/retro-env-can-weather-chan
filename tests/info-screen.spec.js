@@ -37,7 +37,7 @@ describe("info-screens.js", () => {
 
   test("createInfoScreen: makes sure end or isInfinite is set", (done) => {
     expect(configInfoScreens.createInfoScreen("test", formattedToday)).toBeFalsy();
-    expect(configInfoScreens.createInfoScreen("test", formattedToday, "2022-12-14")).toBeTruthy();
+    expect(configInfoScreens.createInfoScreen("test", formattedToday, formattedTomorrow)).toBeTruthy();
     expect(configInfoScreens.createInfoScreen("test", formattedToday, null, true)).toBeTruthy();
     done();
   });

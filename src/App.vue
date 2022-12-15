@@ -46,7 +46,7 @@ const SCREENS = {
   FORECAST: { id: 2, length: 160 },
   SURROUNDING: { id: 3, length: 80 },
   ALMANAC: { id: 4, length: 20 },
-  WARNINGS: { id: 5, length: 65 * 10 }, // enough for 10 warnings if things get crazy
+  WARNINGS: { id: 5, length: 30 * 10 }, // enough for 10 warnings if things get crazy
   WINDCHILL: { id: 6, length: 20 },
   MB_HIGH_LOW: { id: 7, length: 20 },
   CITY_STATS: { id: 8, length: 20 },
@@ -60,9 +60,9 @@ const SCREENS = {
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,
+  SCREENS.WARNINGS,
   SCREENS.FORECAST,
   SCREENS.OUTLOOK,
-  SCREENS.WARNINGS,
   SCREENS.ALMANAC,
   SCREENS.AQHI_WARNING,
   SCREENS.MB_HIGH_LOW,
@@ -120,7 +120,7 @@ export default {
     return {
       screenChanger: null,
       now: new Date(),
-      rotationIndex: 0,
+      rotationIndex: 1,
       currentScreen: SCREENS.FORECAST,
       province: {
         highLowAroundMB: {},

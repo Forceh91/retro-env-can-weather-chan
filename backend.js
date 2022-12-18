@@ -4,6 +4,8 @@ const path = require("path");
 const { initCurrentConditions } = require("./current-conditions");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
+const { fetchForecastForSunspotCities, latestSunspotForecasts } = require("./sunspot");
+
 const { initManitobaTracking, manitobaHighLow } = require("./manitoba.js");
 const historicalDataAPI = ({
   initHistoricalData,
@@ -57,6 +59,10 @@ function startBackend() {
   fetchWeatherForObservedUSCities();
   setInterval(fetchWeatherForObservedUSCities, 7.5 * 60 * 1000);
 
+  // sunspot city observations
+  fetchForecastForSunspotCities();
+  setInterval(fetchForecastForSunspotCities, 7.5 * 60 * 1000);
+
   // air quality readings
   initAQHIObservation(config.primaryLocation()?.name);
 
@@ -88,6 +94,10 @@ function startBackend() {
 
   app.get("/api/weather/usa", (req, res) => {
     res.send({ observations: latestUSObservations });
+  });
+
+  app.get("/api/weather/sunspot", (req, res) => {
+    res.send({ sunspots: latestSunspotForecasts });
   });
 
   app.get("/api/weather/mb_highlow", (req, res) => {

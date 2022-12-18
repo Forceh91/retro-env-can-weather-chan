@@ -71,6 +71,14 @@ function isWindchillSeason(month) {
   return month >= 11 || month <= 4;
 }
 
+function isSunSpotSeason(month) {
+  const date = new Date();
+  if (month === undefined) month = date?.getMonth() + 1;
+
+  // if the month is feb/march then its sunspot season
+  return month >= 2 && month < 4;
+}
+
 function getShorthandMonthNamesForSeason(stopAtCurrentMonth) {
   let months = ["apr", "may", "jun", "jul", "aug", "sep"];
   if (isWinterSeason()) months = ["oct", "nov", "dec", "jan", "feb"];
@@ -100,6 +108,7 @@ module.exports = {
   isDateInCurrentWinterSeason,
   isDateInCurrentSummerSeason,
   isWindchillSeason,
+  isSunSpotSeason,
   getShorthandMonthNamesForSeason,
   isStartOfMonth,
   convertECCDateStringToDateObject,

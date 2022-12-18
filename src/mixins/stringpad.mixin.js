@@ -3,7 +3,7 @@ export default {
   methods: {
     padString(val, minLength, isFront, char) {
       if (val === undefined || val === null) return "";
-      val = `${val}`;
+      val = `${val}`.replace("&nbsp;", " ");
 
       char = char || `&nbsp;`;
       const paddingToAdd = minLength - val.length;

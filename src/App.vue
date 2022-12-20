@@ -12,7 +12,7 @@
           <aqhiwarning v-if="isAQHIWarning" :aqhi="ecAirQuality" />
           <outlook v-if="isOutlook" :forecast="ecForecast" :normals="ecRegionalNormals" />
           <mbhighlow v-if="isMBHighLow" :enabled="showMBHighLowSetting" :manitoba-data="province.highLowAroundMB" />
-          <surrounding v-if="isSurrounding" :observations="surrounding.canada" />
+          <surrounding v-if="isSurrounding" :group-by-area="true" :observations="surrounding.canada" />
           <surrounding v-if="isUSSurrounding" :observations="surrounding.usa" />
           <almanac v-if="isAlmanac" :almanac="ecAlmanac" />
           <warnings v-if="isWarnings" :warnings="ecWarnings" />

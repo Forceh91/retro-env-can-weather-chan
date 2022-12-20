@@ -7,24 +7,29 @@ import Surrounding from "../src/components/surrounding";
 import { getFreshStore } from "./build";
 import ecdata from "./data/ecdata";
 
-const cityA = { name: "a", observation: { temp: 10, condition: "sunny" } };
-const cityB = { name: "b", observation: { temp: 15, condition: "mostly cloudy" } };
-const cityC = { name: "c", observation: { temp: 25, condition: "light rainshower" } };
-const cityD = { name: "d", observation: { temp: 30, condition: "sunny" } };
-const cityE = { name: "e", observation: { temp: 23, condition: "partly cloudy" } };
-const cityF = { name: "f", observation: { temp: 12, condition: "thunderstorms" } };
-const cityG = { name: "g", observation: { temp: 30, condition: "smoke" } };
-const cityH = { name: "h", observation: { temp: 5, condition: "fog" } };
-const cityI = { name: "i", observation: { temp: 17, condition: "drizzle" } };
-const cityJ = { name: "j", observation: { temp: 22, condition: "mist" } };
-const cityK = { name: "k", observation: { temp: 11, condition: "mist" } };
-const cityL = { name: "l", observation: { temp: 12, condition: "mist" } };
-const cityM = { name: "m", observation: { temp: 13, condition: "mist" } };
+const cityA = { name: "a", observation: { temp: 10, condition: "sunny" }, area: "mb/on" };
+const cityB = { name: "b", observation: { temp: 15, condition: "mostly cloudy" }, area: "mb/on" };
+const cityC = { name: "c", observation: { temp: 25, condition: "light rainshower" }, area: "mb/on" };
+const cityD = { name: "d", observation: { temp: 30, condition: "sunny" }, area: "mb/on" };
+const cityE = { name: "e", observation: { temp: 23, condition: "partly cloudy" }, area: "east" };
+const cityF = { name: "f", observation: { temp: 12, condition: "thunderstorms" }, area: "east" };
+const cityG = { name: "g", observation: { temp: 30, condition: "smoke" }, area: "east" };
+const cityH = { name: "h", observation: { temp: 5, condition: "fog" }, area: "east" };
+const cityI = { name: "i", observation: { temp: 17, condition: "drizzle" }, area: "west" };
+const cityJ = { name: "j", observation: { temp: 22, condition: "mist" }, area: "west" };
+const cityK = { name: "k", observation: { temp: 11, condition: "mist" }, area: "west" };
+const cityL = { name: "l", observation: { temp: 12, condition: "mist" }, area: "west" };
+const cityM = { name: "m", observation: { temp: 13, condition: "mist" }, area: "mb/on" };
+const cityN = { name: "m", observation: { temp: 14, condition: "heavy snow" } };
 
 enableAutoUnmount(afterEach);
 
 let wrapper, vm;
-const build = () => shallowMount(Surrounding, { global: { plugins: [getFreshStore(ecdata)] } });
+const build = () =>
+  shallowMount(Surrounding, {
+    global: { plugins: [getFreshStore(ecdata)] },
+    props: { observations: [cityB, cityA, cityC] },
+  });
 
 beforeEach(() => {
   wrapper = build();
@@ -37,6 +42,7 @@ afterEach(() => {
 });
 
 test("observationsUnavailable: correctly computes based on observations", async (done) => {
+  await wrapper.setProps({ observations: [] });
   expect(vm.observationsUnavailable).toBe(true);
 
   await wrapper.setProps({ observations: [cityB, cityA, cityC] });
@@ -65,6 +71,8 @@ test("paginatedObservations: correctly paginates observations", async (done) => 
 });
 
 test("generateObservationsScreen: correctly generates the page count", async (done) => {
+  await wrapper.setProps({ observations: [] });
+
   vm.generateObservationsScreen();
   expect(vm.pages).toBe(0);
 
@@ -276,5 +284,81 @@ test("roundTemp: handles a normal number correctly", (done) => {
 test("destroyed: removes page change interval", (done) => {
   wrapper.unmount();
   expect(clearInterval).toHaveBeenCalled();
+  done();
+});
+
+test("paginateStationsByCount: computes correctly", async (done) => {
+  await wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI],
+  });
+
+  vm.generateObservationsScreen();
+
+  expect(vm.pages).toBe(2);
+  expect(vm.page).toBe(1);
+  expect(vm.paginateStationsByCount).toStrictEqual(vm.observations.slice(0, 7));
+  done();
+});
+
+test("generateAreas: skips if not grouping by area", (done) => {
+  vm.generateAreas();
+  expect(vm.areaCodes.size).toBe(0);
+  done();
+});
+
+test("generateAreas: generates area codes correctly", async (done) => {
+  await wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
+    groupByArea: true,
+  });
+
+  vm.generateAreas();
+
+  const areas = ["mb/on", "east", "west"];
+  expect(vm.areaCodes.size).toBe(3);
+  areas.forEach((area) => expect(vm.areaCodes.has(area)).toBe(true));
+  done();
+});
+
+test("generateAreas: groups the stations by area correctly", async (done) => {
+  await wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityN, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
+    groupByArea: true,
+  });
+
+  vm.generateAreas();
+
+  const areas = ["mb/on", "east", "west"];
+  areas.forEach((area) => {
+    expect(vm.areas[area]).toBeTruthy();
+    expect(vm.areas[area].stations.length).toBeGreaterThanOrEqual(4);
+  });
+  done();
+});
+
+test("paginateStationsByArea: paginates correctly", async (done) => {
+  await wrapper.setProps({
+    observations: [cityB, cityA, cityC, cityD, cityE, cityF, cityG, cityH, cityI, cityJ, cityK, cityL, cityM],
+    groupByArea: true,
+  });
+
+  vm.generateAreas();
+  vm.generateObservationsScreen();
+
+  const areas = ["mb/on", "east", "west"];
+  expect(vm.pages).toBe(areas.length);
+  expect(vm.page).toBe(1);
+  expect(vm.paginateStationsByArea).toStrictEqual(vm.observations.filter((s) => s.area === "mb/on"));
+  done();
+});
+
+test("changePage: skips the page if less than 2 stations are present", async (done) => {
+  await wrapper.setProps({
+    observations: [cityB],
+  });
+
+  const spy = jest.spyOn(vm, "changePage");
+  vm.generateObservationsScreen();
+  expect(spy).toHaveBeenCalledTimes(2);
   done();
 });

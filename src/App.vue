@@ -536,8 +536,8 @@ export default {
     },
 
     forceReloadForNewData() {
-      // set stuff back to the very first page
-      this.rotationIndex = 0;
+      // set stuff back to the forecast page
+      this.rotationIndex = 1;
       this.currentScreen = SCREEN_ROTATION[this.rotationIndex];
       this.shouldDoReloadAnimation = true;
 

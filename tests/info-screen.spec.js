@@ -52,7 +52,7 @@ describe("info-screens.js", () => {
   test("createInfoScreen: make sure end date is set correctly", (done) => {
     expect(configInfoScreens.createInfoScreen("test", formattedToday)).toBeFalsy();
     expect(configInfoScreens.createInfoScreen("test", formattedToday, "2023-01-32", true)).toBeFalsy();
-    expect(configInfoScreens.createInfoScreen("test", formattedToday, "2023-01-30", true)).toBeTruthy();
+    expect(configInfoScreens.createInfoScreen("test", formattedToday, formattedTomorrow, true)).toBeTruthy();
     done();
   });
 

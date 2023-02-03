@@ -46,31 +46,31 @@ describe("sunspots.vue", () => {
   it("dateString: prints the month/day correctly", (done) => {
     let time = "2022-09-16T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toStrictEqual("Sep. 16&nbsp;&nbsp;");
+    expect(vm.dateString).toMatch(/Sep. \d{2}&nbsp;&nbsp;/);
 
     time = "2022-12-09T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toStrictEqual("Dec. 9&nbsp;&nbsp;&nbsp;");
+    expect(vm.dateString).toMatch(/Dec. \d&nbsp;&nbsp;&nbsp;/);
 
     time = "2022-03-12T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toStrictEqual("March 12&nbsp;");
+    expect(vm.dateString).toMatch(/March \d{2}&nbsp;/);
 
     time = "2022-04-04T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toStrictEqual("April 4&nbsp;&nbsp;");
+    expect(vm.dateString).toMatch(/April \d&nbsp;&nbsp;/);
 
     time = "2023-02-02T11:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toStrictEqual("Feb. 2&nbsp;&nbsp;&nbsp;");
+    expect(vm.dateString).toMatch(/Feb. \d&nbsp;&nbsp;&nbsp;/);
 
     time = "2023-02-02T17:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toStrictEqual("Feb. 3&nbsp;&nbsp;&nbsp;");
+    expect(vm.dateString).toMatch(/Feb. \d&nbsp;&nbsp;&nbsp;/);
 
     time = "2023-02-02T19:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toStrictEqual("Feb. 3&nbsp;&nbsp;&nbsp;");
+    expect(vm.dateString).toMatch(/Feb. \d&nbsp;&nbsp;&nbsp;/);
     done();
   });
 

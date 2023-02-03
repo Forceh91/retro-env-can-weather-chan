@@ -34,7 +34,7 @@ export default {
       condition = condition.replace(/(light|heavy) rain and drizzle/gi, "$1 rain/drzl");
 
       // remove (and) fog/mist if prefixed with a space
-      if (!condition.includes("freezing ")) condition = condition.replace(/(\sand)? fog(\/mist)?/gi, "");
+      condition = condition.replace(/(?!freezing|areas of|patchy)\s((and? fog(\/mist)?)|fog\/mist)/gi, "");
 
       // some us forecasts are wild
       condition = this.truncateForecastConditions(condition);

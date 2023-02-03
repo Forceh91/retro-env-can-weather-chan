@@ -59,6 +59,18 @@ describe("sunspots.vue", () => {
     time = "2022-04-04T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
     expect(vm.dateString).toStrictEqual("April 4&nbsp;&nbsp;");
+
+    time = "2023-02-02T11:00:00.000Z";
+    vm.$store.commit("setObservedStationTime", time);
+    expect(vm.dateString).toStrictEqual("Feb. 2&nbsp;&nbsp;&nbsp;");
+
+    time = "2023-02-02T17:00:00.000Z";
+    vm.$store.commit("setObservedStationTime", time);
+    expect(vm.dateString).toStrictEqual("Feb. 3&nbsp;&nbsp;&nbsp;");
+
+    time = "2023-02-02T19:00:00.000Z";
+    vm.$store.commit("setObservedStationTime", time);
+    expect(vm.dateString).toStrictEqual("Feb. 3&nbsp;&nbsp;&nbsp;");
     done();
   });
 
@@ -89,9 +101,9 @@ describe("sunspots.vue", () => {
   });
 
   it("padLoTemp: makes sure temps less than 10 are 0x", (done) => {
-    expect(vm.padLoTemp(10)).toBe("10");
+    expect(vm.padTemp(10)).toBe("10");
     for (let i = 0; i < 10; i++) {
-      expect(vm.padLoTemp(i)).toBe(`0${i}`);
+      expect(vm.padTemp(i)).toBe(`0${i}`);
     }
 
     done();

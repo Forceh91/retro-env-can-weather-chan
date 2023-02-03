@@ -235,6 +235,11 @@ test("trimConditions: handles 'something something fog then...'", (done) => {
   done();
 });
 
+test("trimCondition: handles scattered showers and ...", (done) => {
+  expect(vm.trimCondition("Scattered Showers And Thunderstorms")).toBe("sctd showers");
+  done();
+});
+
 test("padString: pads strings correctly when a length is given", (done) => {
   const stringA = vm.padString("-15.5", 5);
   expect(stringA).toBe("-15.5");

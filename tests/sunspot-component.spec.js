@@ -50,7 +50,7 @@ describe("sunspots.vue", () => {
 
     time = "2022-12-09T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toMatch(/Dec. \d{1,2}&nbsp;&nbsp;&nbsp;/);
+    expect(vm.dateString).toMatch(/Dec. \d&nbsp;&nbsp;&nbsp;|Dec. \d{2}&nbsp;&nbsp;/);
 
     time = "2022-03-12T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
@@ -114,12 +114,17 @@ describe("sunspots.vue", () => {
     done();
   });
 
-  it("harshTruncateConditions: handles some long forecast conditions", (done) => {
-    expect(vm.harshTruncateConditions("Isolated Rain Showers then Partly Sunny")).toStrictEqual("isld showers");
-    expect(vm.harshTruncateConditions("Slight Chance Showers And Thunderstorms")).toStrictEqual("chnc showers");
-    expect(vm.harshTruncateConditions("Chance Showers And Thunderstorms")).toStrictEqual("chnc showers");
-    expect(vm.harshTruncateConditions("Slight Chance Rain Showers")).toStrictEqual("chnc showers");
-    expect(vm.harshTruncateConditions("Scattered Rain Showers")).toStrictEqual("sctd showers");
+  it("truncateForecastCondition: handles some long forecast conditions", (done) => {
+    expect(vm.truncateForecastCondition("Isolated Rain Showers then Partly Sunny")).toStrictEqual("isld showers&nbsp;");
+    expect(vm.truncateForecastCondition("Slight Chance Showers And Thunderstorms")).toStrictEqual("chnc showers&nbsp;");
+    expect(vm.truncateForecastCondition("Chance Showers And Thunderstorms")).toStrictEqual("chnc showers&nbsp;");
+    expect(vm.truncateForecastCondition("Slight Chance Rain Showers")).toStrictEqual("chnc showers&nbsp;");
+    expect(vm.truncateForecastCondition("Scattered Rain Showers")).toStrictEqual("sctd showers&nbsp;");
+    expect(vm.truncateForecastCondition("Areas of Fog then Mostly Sunny")).toBe("areas of fog&nbsp;");
+    expect(vm.truncateForecastCondition("Patchy Fog then some")).toBe("patchy fog&nbsp;&nbsp;&nbsp;");
+    expect(vm.truncateForecastCondition("Patchy Fog")).toBe("patchy fog&nbsp;&nbsp;&nbsp;");
+    expect(vm.truncateForecastCondition("Scattered Showers And Thunderstorms")).toBe("sctd showers&nbsp;");
+    expect(vm.truncateForecastCondition("Mostly Cloudy")).toBe("mostly cldy&nbsp;&nbsp;");
     done();
   });
 });

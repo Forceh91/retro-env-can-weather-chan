@@ -63,7 +63,7 @@ export default {
     },
 
     truncateForecastCondition(forecastCondition) {
-      return this.padString(this.harshTruncateConditions(forecastCondition, 12), 13);
+      return this.padString(this.harshTruncateConditions(forecastCondition, 12, true), 13);
     },
   },
 };

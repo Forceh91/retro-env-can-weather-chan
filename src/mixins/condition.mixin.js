@@ -10,7 +10,7 @@ export default {
       return `${condition.slice(0, 16)}`;
     },
 
-    harshTruncateConditions(condition, maxLength = 13) {
+    harshTruncateConditions(condition, maxLength = 13, isForecast) {
       // to lowercase
       condition = condition.toLowerCase();
 
@@ -37,7 +37,7 @@ export default {
       condition = condition.replace(/(?!freezing|areas of|patchy)\s((and? fog(\/mist)?)|fog\/mist)/gi, "");
 
       // some us forecasts are wild
-      condition = this.truncateForecastConditions(condition);
+      if (isForecast) condition = this.truncateForecastConditions(condition);
 
       // handle light/heavy conditions
       if (condition.length > maxLength) condition = condition.replace(/light/gi, "lgt").replace(/heavy/gi, "hvy");
@@ -62,6 +62,9 @@ export default {
 
       // scattered (rain) showers
       condition = condition.replace(/scattered(\srain)?\sshowers/gi, "sctd showers");
+
+      // mostly cloudy
+      condition = condition.replace(/mostly cloudy/gi, "mostly cldy");
       return condition;
     },
   },

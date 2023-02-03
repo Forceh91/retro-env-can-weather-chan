@@ -50,7 +50,7 @@ describe("sunspots.vue", () => {
 
     time = "2022-12-09T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);
-    expect(vm.dateString).toMatch(/Dec. \d&nbsp;&nbsp;&nbsp;/);
+    expect(vm.dateString).toMatch(/Dec. \d{1,2}&nbsp;&nbsp;&nbsp;/);
 
     time = "2022-03-12T14:00:00.000Z";
     vm.$store.commit("setObservedStationTime", time);

@@ -56,7 +56,10 @@ export default {
     formatSunspotDate(date) {
       if (!date) return "";
 
-      const parsedDate = parseISO(date.time);
+      // if its after 12pm we look at the next day
+      let parsedDate = parseISO(date.time);
+      if (parsedDate.getHours() >= 12) parsedDate = addDays(parsedDate, 1);
+
       let formatString = "MMM'.&nbsp;'d";
       const formattedDate = format(parsedDate, formatString);
       return formattedDate.replace(/mar./gi, "March").replace(/apr./gi, "April");

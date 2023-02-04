@@ -4,7 +4,7 @@
     <div v-for="sunspotCity in availableStations" :key="`sunspot.${sunspotCity.stationCode}`">
       <span v-html="padCityName(sunspotCity.name)"></span>
       <span v-html="truncateForecastCondition(sunspotCity.forecastText)"></span>
-      <span>{{ sunspotCity.hiTemp }}/</span><span v-html="padLoTemp(sunspotCity.loTemp)"></span>
+      <span v-html="padTemp(sunspotCity.hiTemp)"></span>/<span v-html="padTemp(sunspotCity.loTemp)"></span>
     </div>
   </div>
 </template>
@@ -58,12 +58,12 @@ export default {
       return this.padString(cityName, 13);
     },
 
-    padLoTemp(temp) {
+    padTemp(temp) {
       return this.padString(temp, 2, true, "0");
     },
 
     truncateForecastCondition(forecastCondition) {
-      return this.padString(this.harshTruncateConditions(forecastCondition, 12), 13);
+      return this.padString(this.harshTruncateConditions(forecastCondition, 12, true), 13);
     },
   },
 };

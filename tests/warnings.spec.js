@@ -1,6 +1,6 @@
 import { shallowMount, enableAutoUnmount } from "@vue/test-utils";
 import { EventBus } from "../src/js/EventBus";
-import Warnings from "../src/components/warnings";
+import Warnings, { PAGE_CHANGE_FREQUENCY } from "../src/components/warnings";
 
 import { getFreshStore } from "./build";
 import ecdata from "./data/ecdata";
@@ -119,7 +119,7 @@ test("generateWarningsScreen: generates the correct number of pages", async (don
   done();
 });
 
-test("generateWarningsScreen: changes page after 30s", async (done) => {
+test("generateWarningsScreen: changes page after PAGE_CHANGE_FREQUENCY seconds", async (done) => {
   await wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
   vm.generateWarningsScreen();
 
@@ -127,9 +127,9 @@ test("generateWarningsScreen: changes page after 30s", async (done) => {
   const spy = jest.spyOn(vm, "changePage");
 
   vm.generateWarningsScreen();
-  jest.advanceTimersByTime(30 * 1000);
+  jest.advanceTimersByTime(PAGE_CHANGE_FREQUENCY);
   expect(spy).toHaveBeenCalled();
-  expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 30 * 1000);
+  expect(setInterval).toHaveBeenCalledWith(expect.any(Function), PAGE_CHANGE_FREQUENCY);
   done();
 });
 

@@ -12,7 +12,7 @@
 
 <script>
 const MAX_WARNINGS_PER_PAGE = 1;
-const PAGE_CHANGE_FREQUENCY = 30 * 1000;
+export const PAGE_CHANGE_FREQUENCY = 14 * 1000;
 
 import { EventBus } from "../js/EventBus";
 

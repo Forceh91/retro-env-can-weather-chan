@@ -126,6 +126,7 @@ describe("sunspots.vue", () => {
     expect(vm.truncateForecastCondition("Patchy Fog")).toBe("patchy fog&nbsp;&nbsp;&nbsp;");
     expect(vm.truncateForecastCondition("Scattered Showers And Thunderstorms")).toBe("sctd showers&nbsp;");
     expect(vm.truncateForecastCondition("Mostly Cloudy")).toBe("mostly cldy&nbsp;&nbsp;");
+    expect(vm.truncateForecastCondition("Slight Chance Light Rain")).toBe("chc lgt rain&nbsp;");
     done();
   });
 });

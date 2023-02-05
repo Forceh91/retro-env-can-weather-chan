@@ -119,6 +119,7 @@ describe("sunspots.vue", () => {
     expect(vm.truncateForecastCondition("Slight Chance Showers And Thunderstorms")).toStrictEqual("chnc showers&nbsp;");
     expect(vm.truncateForecastCondition("Chance Showers And Thunderstorms")).toStrictEqual("chnc showers&nbsp;");
     expect(vm.truncateForecastCondition("Slight Chance Rain Showers")).toStrictEqual("chnc showers&nbsp;");
+    expect(vm.truncateForecastCondition("Slight Chance Rain")).toStrictEqual("chnc rain&nbsp;&nbsp;&nbsp;&nbsp;");
     expect(vm.truncateForecastCondition("Scattered Rain Showers")).toStrictEqual("sctd showers&nbsp;");
     expect(vm.truncateForecastCondition("Areas of Fog then Mostly Sunny")).toBe("areas of fog&nbsp;");
     expect(vm.truncateForecastCondition("Patchy Fog then some")).toBe("patchy fog&nbsp;&nbsp;&nbsp;");

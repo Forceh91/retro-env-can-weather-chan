@@ -173,6 +173,9 @@ const generateWindchill = (conditions) => {
   const windVal = wind && wind.speed?.value;
   if (isNaN(windVal)) return 0;
 
+  // if the temperature is greather than 0, don't bother doing this
+  if (tempVal > 0) return 0;
+
   // the old windchill system was a number based off temp and wind speed, rather than just a random temp
   // this is calculated as below, then rounded up to the nearest 50, if its >= 1350 then windchill should be shown
   const tempAsFloat = parseFloat(tempVal);
@@ -205,4 +208,4 @@ const generateWeatherResponse = () => {
   };
 };
 
-module.exports = { initCurrentConditions, getStationLastObservedDateTime, reloadCurrentConditions };
+module.exports = { initCurrentConditions, getStationLastObservedDateTime, reloadCurrentConditions, generateWindchill };

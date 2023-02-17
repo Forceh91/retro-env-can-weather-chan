@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16]
+        node: [16]
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3

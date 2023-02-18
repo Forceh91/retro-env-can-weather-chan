@@ -5,7 +5,6 @@ node_modules
 /cfg/*.json
 /cfg/crawl.txt
 *.zip
-.release-it*
 
 
 # local env files

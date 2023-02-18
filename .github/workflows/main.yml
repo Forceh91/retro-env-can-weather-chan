@@ -81,27 +81,10 @@ jobs:
   bump-version:
     name: "Bump Version"
     runs-on: "ubuntu-latest"
-    strategy:
-      matrix:
-        node: [16.x]
     needs: unit-test
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Restore yarn dependencies
-        uses: actions/cache@v3
-        id: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - name: Generate Version
         id: semver
@@ -110,6 +93,7 @@ jobs:
           token: ${{ github.token }}
           branch: master
           noVersionBumpBehavior: silent
+          skipInvalidTags: true # because i accidentally did v16.1 at one point
 
   build:
     name: "Production Build"

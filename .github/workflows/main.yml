@@ -91,7 +91,7 @@ jobs:
         uses: ietf-tools/semver-action@v1
         with:
           token: ${{ github.token }}
-          branch: master
+          branch: ${{ github.head_ref || github.ref_name }}
           noVersionBumpBehavior: silent
           skipInvalidTags: true # because i accidentally did v16.1 at one point
 

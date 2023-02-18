@@ -1,0 +1,61 @@
+name: Create Release
+
+on: workflow_dispatch
+
+jobs:
+  install-cache:
+    name: "Generate Cache"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16]
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Cache yarn dependencies
+        uses: actions/cache@v3
+        id: cache-dependencies
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: |
+          yarn install --force --non-interactive
+
+  generate-release:
+    needs: install-cache
+    name: "Release It"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16]
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install Dependencies
+        run: |
+          yarn install --force --non-interactive
+
+      - name: Generate Release
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          yarn release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

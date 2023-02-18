@@ -124,7 +124,7 @@ jobs:
         run: |
           # BUILD_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g')
           # echo "build_version=v$BUILD_VERSION" >> $GITHUB_ENV
-          # echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           mkdir db
           mkdir music
           touch alerts/.EMPTY_DIRECTORY
@@ -134,7 +134,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.semver.outputs.next }}-${{ env.commit_hash }}
+          name: ${{ steps.semver.outputs.next || steps.semver.outputs.current }}-${{ env.commit_hash }}
           path: |
             dist
             alerts

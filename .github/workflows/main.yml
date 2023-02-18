@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16]
+        node: [16.x]
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16]
+        node: [16.x]
     needs: install-cache
     steps:
       - name: Checkout Commit
@@ -77,13 +77,47 @@ jobs:
       - name: Run test
         run: |
           yarn test
+
+  bump-version:
+    name: "Bump Version"
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        node: [16.x]
+    needs: unit-test
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Restore yarn dependencies
+        uses: actions/cache@v3
+        id: cache-dependencies
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Generate Version
+        id: semver
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          branch: master
+          noVersionBumpBehavior: silent
+
   build:
     name: "Production Build"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16]
-    needs: [unit-test]
+        node: [16.x]
+    needs: [bump-version]
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3
@@ -102,11 +136,11 @@ jobs:
       - name: Run build
         run: |
           yarn build
-      - name: Get build version
+      - name: Prepare Build
         run: |
-          BUILD_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g')
-          echo "build_version=v$BUILD_VERSION" >> $GITHUB_ENV
-          echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          # BUILD_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g')
+          # echo "build_version=v$BUILD_VERSION" >> $GITHUB_ENV
+          # echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           mkdir db
           mkdir music
           touch alerts/.EMPTY_DIRECTORY
@@ -116,7 +150,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.build_version }}-${{ env.commit_hash }}
+          name: ${{ steps.semver.outputs.next }}-${{ env.commit_hash }}
           path: |
             dist
             alerts

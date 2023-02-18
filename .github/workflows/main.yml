@@ -82,8 +82,8 @@ jobs:
     name: "Bump Version"
     runs-on: "ubuntu-latest"
     needs: unit-test
-        outputs:
-          version: ${{ steps.semver.outputs.next || steps.semver.outputs.current }}
+    outputs:
+      version: ${{ steps.semver.outputs.next || steps.semver.outputs.current }}
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3

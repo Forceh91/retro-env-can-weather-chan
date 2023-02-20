@@ -4,7 +4,7 @@
     "tagAnnotation": null
   },
   "github": {
-    "release": true,
+    "release": false,
     "releaseName": "v${version}",
     "autoGenerate": true
   }

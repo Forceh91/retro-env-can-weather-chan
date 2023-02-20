@@ -76,7 +76,10 @@
       "!src/**/stats.vue",
       "!**/node_modules/**"
     ],
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "axios": "axios/dist/node/axios.cjs"
+    }
   },
   "browserslist": [
     "> 1%",

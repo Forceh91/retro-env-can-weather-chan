@@ -3,8 +3,8 @@
     <div v-if="warningsUnavailable">Warnings/Alerts temporarily unavailable</div>
     <ul v-else id="warnings_table">
       <li v-for="(warning, ix) in paginatedWarnings" :key="ix" :class="{ flash: shouldFlashWarning(warning) }">
-        <div class="headline">&nbsp;&nbsp;&nbsp;&nbsp;{{ cleanupHeadline(warning.headline) }}</div>
-        <div class="description">&nbsp;&nbsp;&nbsp;&nbsp;{{ truncateWarningDescription(warning.description) }}</div>
+        <div class="headline">{{ cleanupHeadline(warning.headline) }}</div>
+        <div class="description">{{ truncateWarningDescription(warning.description) }}</div>
       </li>
     </ul>
   </div>
@@ -13,6 +13,22 @@
 <script>
 const MAX_WARNINGS_PER_PAGE = 1;
 export const PAGE_CHANGE_FREQUENCY = 14 * 1000;
+
+// const URGENCY_VALUES = {
+//   UNKNOWN: 0,
+//   PAST: 1,
+//   FUTURE: 2,
+//   EXPECTED: 3,
+//   IMMEDIATE: 4,
+// };
+
+const SEVERITY_VALUES = {
+  UNKNOWN: 0,
+  MINOR: 1,
+  MODERATE: 2,
+  SEVERE: 3,
+  EXTREME: 4,
+};
 
 import { EventBus } from "../js/EventBus";
 
@@ -75,7 +91,7 @@ export default {
     shouldFlashWarning(warning) {
       if (!warning) return false;
 
-      return warning.urgency === "Immediate";
+      return SEVERITY_VALUES[warning.severity.toUpperCase()] >= SEVERITY_VALUES.MODERATE;
     },
 
     cleanupHeadline(headline) {
@@ -96,6 +112,54 @@ export default {
     },
   },
 };
+
+/*
+      http://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2.html
+
+urgency.
+
+code
+	
+
+The code denoting the urgency of the subject event of the alert message (REQUIRED)
+	
+
+(1) The <urgency>, <severity>, and <certainty> elements collectively distinguish less emphatic from more emphatic messages.
+
+(2) Code Values:
+
+“Immediate” - Responsive action SHOULD be taken immediately
+
+“Expected” - Responsive action SHOULD be taken soon (within next hour)
+
+“Future” - Responsive action SHOULD be taken in the near future
+
+“Past” - Responsive action is no longer required
+
+“Unknown” - Urgency not known
+
+severity.
+
+code
+	
+
+The code denoting the severity of the subject event of the alert message (REQUIRED)
+	
+
+(1) The <urgency>, <severity>, and <certainty> elements collectively distinguish less emphatic from more emphatic messages.
+
+(2) Code Values:
+
+“Extreme” - Extraordinary threat to life or property
+
+“Severe” - Significant threat to life or property
+
+“Moderate” - Possible threat to life or property
+
+“Minor” – Minimal to no known threat to life or property
+
+“Unknown” - Severity unknown
+      */
 </script>
 
 <style lang="scss" scoped>
@@ -130,6 +194,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100% - 5px);
+  text-align: center;
   overflow: hidden;
   width: 100%;
 }

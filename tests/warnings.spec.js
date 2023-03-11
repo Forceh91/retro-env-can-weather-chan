@@ -133,15 +133,6 @@ test("generateWarningsScreen: changes page after PAGE_CHANGE_FREQUENCY seconds",
   done();
 });
 
-test("shouldFlashWarning: will flash a warning if it is urgent", (done) => {
-  expect(vm.shouldFlashWarning()).toBe(false);
-  expect(vm.shouldFlashWarning(fakeWarning)).toBe(false);
-  expect(vm.shouldFlashWarning(fakeEndedWarning)).toBe(false);
-  expect(vm.shouldFlashWarning(fakeEndedUrgentWarning)).toBe(false);
-  expect(vm.shouldFlashWarning(fakeUrgentWarning)).toBe(true);
-  done();
-});
-
 test("changePage: changes page correctly when there are multiple pages", async (done) => {
   await wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
   vm.generateWarningsScreen();
@@ -184,6 +175,15 @@ test("truncateWarningDescription: splits correctly at the right point", async (d
   expect(vm.truncateWarningDescription(anotherReallyLongWarningDescription.description)).toStrictEqual(
     "As of Wednesday afternoon, the first two rounds of snow have given widespread snowfall amounts of 10 to 15 cm across southern Manitoba, with localized higher amounts. Only light snow is expected over southeastern Manitoba on Wednesday night ahead of another band of heavier snow expected on Thursday"
   );
+  done();
+});
+
+test("shouldFlashWarning: correctly identifies whether the title should flash", (done) => {
+  expect(vm.shouldFlashWarning({ severity: "unknown" })).toBe(false);
+  expect(vm.shouldFlashWarning({ severity: "minor" })).toBe(false);
+  expect(vm.shouldFlashWarning({ severity: "moderate" })).toBe(true);
+  expect(vm.shouldFlashWarning({ severity: "severe" })).toBe(true);
+  expect(vm.shouldFlashWarning({ severity: "extreme" })).toBe(true);
   done();
 });
 

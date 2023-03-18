@@ -5,7 +5,7 @@ const { addMinutes } = require("date-fns");
 const { convertECCDateStringToDateObject, isWindchillSeason } = require("./date-utils");
 const { getAQHIObservation } = require("./aqhi-observation");
 const { getHotColdSpotsCanada } = require("./province-today-observation.js");
-const { startCurrentConditionMonitoring } = require("./current-condition-monitoring");
+const { startCurrentConditionMonitoring } = require("./current-conditions-amqp");
 const CURRENT_CONDITIONS_FETCH_INTERVAL = 5 * 60 * 1000;
 const CURRENT_CONDITIONS_EVENT_STREAM_INTERVAL = 5 * 1000;
 
@@ -36,10 +36,9 @@ const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
 
   // start the amqp monitoring for the current conditions
   const { province, location } = currentConditionsLocation;
-  startCurrentConditionMonitoring(province, location);
+  startCurrentConditionMonitoring(province, location, fetchCurrentConditions);
 
-  // even though we've started amqp for conditions, we should do our own fetch
-  // since we might have missed an update
+  // even though we've started amqp for conditions, we should do our own fetch since we might have missed an update
   fetchCurrentConditions();
 
   // setup the live event-stream for the client to keep up to date on the current conditions

@@ -1,6 +1,6 @@
 {
   "name": "retro-env-can-weather-chan",
-  "version": "1.6.15",
+  "version": "1.6.17",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -16,7 +16,7 @@
     "bootstrap": "^5.2.3",
     "bootstrap-vue-3": "^0.4.15",
     "cli-select": "^1.1.2",
-    "core-js": "^3.29.0",
+    "core-js": "^3.29.1",
     "cors": "^2.8.5",
     "date-fns": "^2.29.3",
     "ec-weather-js": "^1.2.0",
@@ -38,9 +38,9 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.20.0",
-    "jsdom": "^21.1.0",
-    "release-it": "^15.8.0",
-    "sass": "^1.58.3",
+    "jsdom": "^21.1.1",
+    "release-it": "^15.9.0",
+    "sass": "^1.59.3",
     "sass-loader": "^8.0.0",
     "vue-jest": "^5.0.0-alpha.10",
     "webpack": "^5.75.0"

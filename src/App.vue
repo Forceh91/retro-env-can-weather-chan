@@ -146,6 +146,9 @@ export default {
       backgroundColDebouncer: null,
       shouldDoReloadAnimation: false,
       lookAndFeelConfig: null,
+
+      // real-time condition updates
+      weatherEventSource: null,
     };
   },
 
@@ -281,7 +284,6 @@ export default {
         this.getSurroundingWeather();
         this.getSurroundingUSWeather();
         this.getSunspotForecast();
-        this.getWeather();
         this.getWarnings();
         if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       }, FETCH_WEATHER_INTERVAL);
@@ -379,6 +381,24 @@ export default {
     },
 
     getWeather() {
+      // make sure we don't oversubscribe
+      if (this.weatherEventSource) return;
+
+      // setup the event source
+      this.weatherEventSource = new EventSource("api/weather/live");
+      if (!this.weatherEventSource) return;
+
+      // listen for condition updates
+      this.weatherEventSource.addEventListener("condition_update", (weatherData) => {
+        const jsonData = JSON.parse(weatherData.data);
+        if (!jsonData) return;
+
+        this.$store.commit("storeECData", jsonData);
+        this.season.isWindchill = jsonData?.isWindchillSeason;
+      });
+    },
+
+    _getWeather() {
       this.$http
         .get("api/weather")
         .then((resp) => {

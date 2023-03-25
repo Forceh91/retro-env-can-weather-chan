@@ -24,6 +24,9 @@ const defaultConfig = () => {
     climateNormalsClimateID: 5023222, // (used for climate normals on last month summary)
     climateNormalsProvince: "MB",
     lookAndFeel: { font: "vt323" },
+    misc: {
+      rejectInHourConditionUpdates: false, // whether we should only update conditions once an hour
+    },
   };
 };
 
@@ -82,6 +85,7 @@ const loadConfigFile = (configFilePath, callback) => {
       climateNormalsStationID,
       climateNormalsProvince,
       lookAndFeel,
+      misc,
     } = parsedJSON;
     const { province, location } = primaryLocation || {};
     if (!primaryLocation || !province || !province.length || !location || !location.length) return loadConfigDefaults();
@@ -102,6 +106,9 @@ const loadConfigFile = (configFilePath, callback) => {
 
     // get the look and feel info
     config.lookAndFeel = lookAndFeel || {};
+
+    // get the misc info
+    config.misc = misc || {};
 
     // say the config was loaded
     console.log(
@@ -188,6 +195,13 @@ const storeProvinceHighLowPrecipTracking = (enabled, callback) => {
 const storeLookAndFeelFont = (font, callback) => {
   config.lookAndFeel.font = font;
 
+  saveConfigFile((result) => {
+    typeof callback === "function" && callback(result);
+  });
+};
+
+const storeMisc = (settings, callback) => {
+  config.misc = { ...config.misc, ...settings };
   saveConfigFile((result) => {
     typeof callback === "function" && callback(result);
   });
@@ -304,6 +318,16 @@ const setupRoutes = (app) => {
         });
     });
   });
+
+  app.post("/config/misc", (req, res) => {
+    const { rejectInHourConditionUpdates } = req.body || {};
+    if (rejectInHourConditionUpdates === null || rejectInHourConditionUpdates === undefined) return;
+
+    storeMisc(req.body, (result) => {
+      if (!result) res.sendStatus(500);
+      else res.send({ misc: config.misc });
+    });
+  });
 };
 
 const fetchAvailableWeatherStations = (callback) => {
@@ -373,6 +397,14 @@ const lookAndFeel = () => {
   return config.lookAndFeel || {};
 };
 
+const misc = () => {
+  return config.misc || {};
+};
+
+const rejectInHourConditionUpdates = () => {
+  return config.misc?.rejectInHourConditionUpdates || false;
+};
+
 const config = defaultConfig();
 
 module.exports = {
@@ -386,4 +418,6 @@ module.exports = {
   playlist,
   crawler,
   lookAndFeel,
+  rejectInHourConditionUpdates,
+  misc,
 };

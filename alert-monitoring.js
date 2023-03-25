@@ -10,7 +10,8 @@ const ALERTS_FILE = "alerts.txt";
 function startAlertMonitoring(city, app) {
   console.log("[ALERT MONITORING] Starting alert monitoring via AMQP...");
 
-  listen({ amqp_subtopic: "alerts.cap.#" })
+  const { emitter: listener } = listen({ amqp_subtopic: "alerts.cap.#" });
+  listener
     .on("error", (err) => console.warn(err.message))
     .on("message", (date, url) => {
       console.log("[ALERT MONITORING]", date, url);

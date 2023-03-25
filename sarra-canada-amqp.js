@@ -127,7 +127,7 @@ function listen(options) {
     });
   });
 
-  return emitter;
+  return { emitter, connection };
 }
 
 exports.listen = listen;

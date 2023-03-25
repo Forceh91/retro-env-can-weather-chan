@@ -5,7 +5,9 @@ const { addMinutes } = require("date-fns");
 const { convertECCDateStringToDateObject, isWindchillSeason } = require("./date-utils");
 const { getAQHIObservation } = require("./aqhi-observation");
 const { getHotColdSpotsCanada } = require("./province-today-observation.js");
+const { startCurrentConditionMonitoring } = require("./current-conditions-amqp");
 const CURRENT_CONDITIONS_FETCH_INTERVAL = 5 * 60 * 1000;
+const CURRENT_CONDITIONS_EVENT_STREAM_INTERVAL = 5 * 1000;
 
 let currentConditionsLocation = null;
 let historicalData = null;
@@ -22,6 +24,8 @@ const conditions = {
   regionalNormals: null,
   conditionID: null,
 };
+let eventStreamInterval = null;
+let amqpConnection = null;
 
 const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
   // pass in the primary location from the config and make sure its valid
@@ -31,21 +35,46 @@ const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
   currentConditionsLocation = { ...primaryLocation };
   historicalData = historicalDataAPI;
 
-  // setup a timer to fetch the conditions periodically (ECC updates this roughly once every 30mins)
-  // we will fetch data once every 5 minutes or so
-  setInterval(fetchCurrentConditions, CURRENT_CONDITIONS_FETCH_INTERVAL);
+  // start the amqp monitoring for the current conditions
+  const { province, location } = currentConditionsLocation;
+  amqpConnection = startCurrentConditionMonitoring(province, location, fetchCurrentConditions);
+
+  // even though we've started amqp for conditions, we should do our own fetch since we might have missed an update
   fetchCurrentConditions();
 
+  // setup the live event-stream for the client to keep up to date on the current conditions
   app &&
-    app.get("/api/weather", (req, res) => {
-      if (!conditions.conditionID) res.sendStatus(500);
-      else res.send(generateWeatherResponse());
+    app.get("/api/weather/live", (req, res) => {
+      // tell the client this is an event stream
+      res.writeHead(200, {
+        Connection: "keep-alive",
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+      });
+
+      // clear old event stream
+      eventStreamInterval && clearInterval(eventStreamInterval);
+
+      // write the event stream periodically
+      eventStreamInterval = setInterval(() => writeEventStream(res), CURRENT_CONDITIONS_EVENT_STREAM_INTERVAL);
+
+      // and send an event stream right away too
+      writeEventStream(res);
     });
 };
 
 const reloadCurrentConditions = (location) => {
   if (!location) return;
+
+  if (amqpConnection) amqpConnection.disconnect();
+
   currentConditionsLocation = { ...location };
+  amqpConnection = startCurrentConditionMonitoring(
+    currentConditionsLocation.province,
+    currentConditionsLocation.location,
+    fetchCurrentConditions
+  );
+
   fetchCurrentConditions();
 };
 
@@ -55,13 +84,14 @@ const getStationLastObservedDateTime = () => {
   return conditions.observed.stationTime;
 };
 
-const fetchCurrentConditions = () => {
+const fetchCurrentConditions = (url) => {
   if (!currentConditionsLocation) return;
 
   const previousConditionsID = conditions.conditionID;
 
   const { province, location } = currentConditionsLocation;
-  axios.get(`https://dd.weather.gc.ca/citypage_weather/xml/${province}/${location}_e.xml`).then((resp) => {
+  url = url || `https://dd.weather.gc.ca/citypage_weather/xml/${province}/${location}_e.xml`;
+  axios.get(url).then((resp) => {
     const weather = new Weather(resp.data);
     if (!weather) return;
 
@@ -208,4 +238,16 @@ const generateWeatherResponse = () => {
   };
 };
 
-module.exports = { initCurrentConditions, getStationLastObservedDateTime, reloadCurrentConditions, generateWindchill };
+const writeEventStream = (res) => {
+  res.write(`id: ${Date.now()}\n`);
+  res.write(`event: condition_update\n`);
+  res.write(`data: ${JSON.stringify(generateWeatherResponse())}\n\n`);
+};
+
+module.exports = {
+  initCurrentConditions,
+  fetchCurrentConditions,
+  getStationLastObservedDateTime,
+  reloadCurrentConditions,
+  generateWindchill,
+};

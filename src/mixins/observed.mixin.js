@@ -44,13 +44,10 @@ export default {
       if (!date) return "";
 
       const parsedDate = parseISO(date.time);
-      const dateString = format(parsedDate, "MMM'&nbsp;' d");
+      const dateString = format(parsedDate, "MMM d");
       if (!isLongMonths) return dateString;
 
-      return dateString
-        .replace(/jun&nbsp;/gi, "june")
-        .replace(/jul&nbsp;/gi, "july")
-        .replace(/sep&nbsp;/gi, "sept");
+      return dateString;
     },
 
     formatSunspotDate(date) {

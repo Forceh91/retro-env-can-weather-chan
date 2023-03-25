@@ -157,7 +157,7 @@ const storePrimaryLocation = (stationObj, callback) => {
   saveConfigFile((result) => {
     if (!result) typeof callback === "function" && callback(result);
     else {
-      reloadCurrentConditions(config.primaryLocation);
+      reloadCurrentConditions(config.primaryLocation, config.misc.rejectInHourConditionUpdates);
       typeof callback === "function" && callback(stationObj);
     }
   });
@@ -203,6 +203,7 @@ const storeLookAndFeelFont = (font, callback) => {
 const storeMisc = (settings, callback) => {
   config.misc = { ...config.misc, ...settings };
   saveConfigFile((result) => {
+    reloadCurrentConditions(config.primaryLocation, config.misc.rejectInHourConditionUpdates);
     typeof callback === "function" && callback(result);
   });
 };

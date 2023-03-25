@@ -66,8 +66,10 @@ const initCurrentConditions = (primaryLocation, rejectInHourConditionUpdates, ap
     });
 };
 
-const reloadCurrentConditions = (location) => {
+const reloadCurrentConditions = (location, rejectInHourConditionUpdates) => {
   if (!location) return;
+
+  configRejectInHourConditonUpdates = rejectInHourConditionUpdates;
 
   if (amqpConnection) amqpConnection.disconnect();
 

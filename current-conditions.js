@@ -25,6 +25,7 @@ const conditions = {
   conditionID: null,
 };
 let eventStreamInterval = null;
+let amqpConnection = null;
 
 const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
   // pass in the primary location from the config and make sure its valid
@@ -36,7 +37,7 @@ const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
 
   // start the amqp monitoring for the current conditions
   const { province, location } = currentConditionsLocation;
-  startCurrentConditionMonitoring(province, location, fetchCurrentConditions);
+  amqpConnection = startCurrentConditionMonitoring(province, location, fetchCurrentConditions);
 
   // even though we've started amqp for conditions, we should do our own fetch since we might have missed an update
   fetchCurrentConditions();
@@ -64,7 +65,16 @@ const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
 
 const reloadCurrentConditions = (location) => {
   if (!location) return;
+
+  if (amqpConnection) amqpConnection.disconnect();
+
   currentConditionsLocation = { ...location };
+  amqpConnection = startCurrentConditionMonitoring(
+    currentConditionsLocation.province,
+    currentConditionsLocation.location,
+    fetchCurrentConditions
+  );
+
   fetchCurrentConditions();
 };
 

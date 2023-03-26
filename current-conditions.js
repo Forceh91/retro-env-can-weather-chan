@@ -6,6 +6,7 @@ const { convertECCDateStringToDateObject, isWindchillSeason } = require("./date-
 const { getAQHIObservation } = require("./aqhi-observation");
 const { getHotColdSpotsCanada } = require("./province-today-observation.js");
 const { startCurrentConditionMonitoring } = require("./current-conditions-amqp");
+
 const CURRENT_CONDITIONS_FETCH_INTERVAL = 5 * 60 * 1000;
 const CURRENT_CONDITIONS_EVENT_STREAM_INTERVAL = 5 * 1000;
 
@@ -26,14 +27,16 @@ const conditions = {
 };
 let eventStreamInterval = null;
 let amqpConnection = null;
+let configRejectInHourConditonUpdates = false;
 
-const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
+const initCurrentConditions = (primaryLocation, rejectInHourConditionUpdates, app, historicalDataAPI) => {
   // pass in the primary location from the config and make sure its valid
   if (!primaryLocation || !primaryLocation.province || !primaryLocation.location) return;
 
   // store this for later use
   currentConditionsLocation = { ...primaryLocation };
   historicalData = historicalDataAPI;
+  configRejectInHourConditonUpdates = rejectInHourConditionUpdates;
 
   // start the amqp monitoring for the current conditions
   const { province, location } = currentConditionsLocation;
@@ -63,8 +66,10 @@ const initCurrentConditions = (primaryLocation, app, historicalDataAPI) => {
     });
 };
 
-const reloadCurrentConditions = (location) => {
+const reloadCurrentConditions = (location, rejectInHourConditionUpdates) => {
   if (!location) return;
+
+  configRejectInHourConditonUpdates = rejectInHourConditionUpdates;
 
   if (amqpConnection) amqpConnection.disconnect();
 
@@ -99,6 +104,15 @@ const fetchCurrentConditions = (url) => {
     const allWeatherData = weather.all;
     if (!allWeatherData) return;
 
+    // first step is figure out the condition id
+    const conditionID = generateConditionsUniqueID(weather.current?.dateTime[1]);
+
+    // if we got the same condition id, and we're rejecting in-hour, all we need to do is update the forecast
+    if (configRejectInHourConditonUpdates && conditionID === previousConditionsID) {
+      console.log("[CONDITIONS]", "Rejecting in-hour update for conditon ID", conditionID);
+      return (conditions.forecast = weather.weekly);
+    }
+
     // generate some objects so the FE has less work to do once it receives the data
     const observedDateObject = generateConditionsObserved(weather.current?.dateTime[1]);
     const city = generateObservedCity(allWeatherData.location);
@@ -112,11 +126,11 @@ const fetchCurrentConditions = (url) => {
     conditions.observed = observedDateObject;
     conditions.conditions = observedConditions;
     conditions.riseSet = sunRiseSet;
-    conditions.forecast = weather.weekly;
     conditions.regionalNormals = weather.all.regionalNormals;
     conditions.almanac = almanac;
     conditions.windchill = windchill;
-    conditions.conditionID = generateConditionsUniqueID(weather.current?.dateTime[1]);
+    conditions.conditionID = conditionID;
+    conditions.forecast = weather.weekly;
 
     // if the conditions ID has updated this means new info is available which means we should fetch more historical data
     if (conditions.conditionID !== previousConditionsID) historicalData && historicalData.fetchHistoricalData();

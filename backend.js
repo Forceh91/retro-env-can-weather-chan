@@ -49,7 +49,7 @@ function startBackend() {
   });
 
   // current conditions info
-  initCurrentConditions(config.primaryLocation(), app, historicalDataAPI);
+  initCurrentConditions(config.primaryLocation(), config.rejectInHourConditionUpdates(), app, historicalDataAPI);
 
   // handling api requests
   fetchWeatherForObservedCities();

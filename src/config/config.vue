@@ -41,6 +41,7 @@
         </b-tab>
         <b-tab title="Misc.">
           <miscconfig
+            :misc="config.config.misc"
             :province-high-low-tracking="config.config.provinceHighLowEnabled"
             :save-state="saveState"
             @save="saveMiscConfig"
@@ -252,13 +253,27 @@ export default {
       if (!e) return;
 
       this.$http
-        .post("/config/province-high-low-precip-tracking", e)
+        .post("/config/province-high-low-precip-tracking", { provinceHighLowTracking: e.provinceHighLowTracking })
         .then((resp) => {
           const data = resp.data;
           if (!data) return;
 
           const { provinceHighLowEnabled } = data || {};
           this.config.config.provinceHighLowEnabled = provinceHighLowEnabled;
+          this.saveSuccess();
+        })
+        .catch(() => {
+          this.saveFailed();
+        });
+
+      this.$http
+        .post("/config/misc", e.misc || {})
+        .then((resp) => {
+          const data = resp.data;
+          if (!data) return;
+
+          const { misc } = data || {};
+          this.config.config.misc = misc;
           this.saveSuccess();
         })
         .catch(() => {

@@ -6,6 +6,12 @@
   "github": {
     "release": false,
     "releaseName": "v${version}",
-    "autoGenerate": true
+    "autoGenerate": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": false
+    }
   }
 }

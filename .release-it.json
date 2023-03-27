@@ -1,11 +1,17 @@
 {
   "git": {
     "commitMessage": "chore: release v${version}",
-    "tagAnnotation": null
+    "tagAnnotation": "v${version}"
   },
   "github": {
     "release": false,
     "releaseName": "v${version}",
-    "autoGenerate": true
+    "autoGenerate": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": false
+    }
   }
 }

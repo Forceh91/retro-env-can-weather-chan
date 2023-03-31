@@ -41,6 +41,12 @@ export default {
     },
   },
 
+  mounted() {
+    this.$nextTick(() => {
+      this.cycleRadarImages();
+    });
+  },
+
   methods: {
     cycleRadarImages() {
       if (!this.radarImages || !this.radarImages.length) return;

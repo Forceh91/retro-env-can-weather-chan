@@ -21,7 +21,7 @@ function getListOfRadarImages() {
       .filter((url) => url.includes(SEASON));
 
     // now only get the last x ones
-    console.log("[RADAR]", "Fetching last", RADAR_IMAGES_TO_FETCH, " images");
+    console.log("[RADAR]", "Fetching last", RADAR_IMAGES_TO_FETCH, "images");
     fetchLatestRadarImages(cleanedRadarImageUrls.slice(-RADAR_IMAGES_TO_FETCH));
   });
 }

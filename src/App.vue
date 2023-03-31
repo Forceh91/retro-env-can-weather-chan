@@ -21,6 +21,7 @@
           <lastmonth v-if="isLastMonthSummary" :last-month="climate.lastMonth" />
           <infoscreen v-if="isInfoScreen" :info-screens="infoScreens" />
           <sunspots v-if="isSunspots" :sunspot-forecast="sunspotForecast" />
+          <Radar v-if="isRadar" />
         </div>
         <div id="bottom_bar">
           <div>
@@ -39,6 +40,7 @@
 const FETCH_CONFIG_INTERVAL = 60 * 1000 * 5;
 const FETCH_WEATHER_INTERVAL = 60 * 1000 * 1;
 const FETCH_EXTRA_DATA_INTERVAL = 60 * 1000 * 10;
+const FETCH_RADAR_DATA_INTERVAL = 60 * 1000 * 15;
 // pages with subscreens (forecast, surrounding) have a fallback timeout incase
 // the subscreens fail to complete correctly
 const SCREENS = {
@@ -57,12 +59,14 @@ const SCREENS = {
   AQHI_WARNING: { id: 13, length: 20 },
   INFO: { id: 14, length: 20 * 25 }, // enough for 25 screens at 20s each
   SUNSPOTS: { id: 15, length: 20 },
+  RADAR: { id: 16, length: 51 }, // 21 images at 1 seconds, plus 10s pause.
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,
   SCREENS.WARNINGS,
   SCREENS.FORECAST,
   SCREENS.OUTLOOK,
+  SCREENS.RADAR,
   SCREENS.ALMANAC,
   SCREENS.AQHI_WARNING,
   SCREENS.MB_HIGH_LOW,
@@ -96,6 +100,7 @@ import lastmonth from "./components/lastmonth.vue";
 import aqhiwarning from "./components/aqhiwarning.vue";
 import infoscreen from "./components/infoscreen.vue";
 import sunspots from "./components/sunspots.vue";
+import Radar from "./components/radar.vue";
 
 export default {
   name: "App",
@@ -115,6 +120,7 @@ export default {
     aqhiwarning,
     infoscreen,
     sunspots,
+    Radar,
   },
   data() {
     return {
@@ -242,6 +248,10 @@ export default {
       return this.currentScreenID === SCREENS.SUNSPOTS.id;
     },
 
+    isRadar() {
+      return this.currentScreenID === SCREENS.RADAR.id;
+    },
+
     timeZone() {
       return this.ecData?.observed?.stationTimezone || null;
     },
@@ -293,6 +303,10 @@ export default {
         this.getLastMonthSummary();
       }, FETCH_EXTRA_DATA_INTERVAL);
 
+      setInterval(() => {
+        this.getRadar();
+      }, FETCH_RADAR_DATA_INTERVAL);
+
       // reload the config every FETCH_CONFIG_INTERVAL
       setInterval(() => {
         this.initWeatherChannel();
@@ -306,6 +320,8 @@ export default {
       this.getSeasonPrecipData();
       this.getLastMonthSummary();
       this.getWarnings();
+      this.getRadarMap();
+      this.getRadar();
       if (this.showMBHighLowSetting) this.getHighLowAroundMB();
       this.handleScreenCycle();
     });
@@ -510,6 +526,23 @@ export default {
         if (!data || !data.warnings) return;
 
         this.$store.commit("storeECWarnings", data.warnings);
+      });
+    },
+
+    getRadarMap() {
+      this.$http.get("/api/radar/map").then((resp) => {
+        const { data } = resp;
+        if (!data) return;
+
+        this.$store.commit("storeRadarMap", data.map);
+      });
+    },
+
+    getRadar() {
+      this.$http.get("/api/radar").then((resp) => {
+        const { data } = resp;
+        if (!data) return;
+        this.$store.commit("storeRadarImages", (data.images || []).reverse());
       });
     },
 

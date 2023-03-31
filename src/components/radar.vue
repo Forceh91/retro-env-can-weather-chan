@@ -520,18 +520,18 @@ export default {
       if (!this.radarImages || !this.radarImages.length) return;
 
       const setRadarImage = () => {
-        if (this.visibleRadarImageIx >= this.radarImages.length) {
-          this.visibleRadarImageIx = 0;
-          setTimeout(setRadarImage, 10 * 1000);
-        } else {
-          this.visibleRadarImage = (this.radarImages[this.visibleRadarImageIx] || "").replace(/\n/gi, "<br/>");
-          this.visibleRadarImageIx++;
-          setTimeout(setRadarImage, RADAR_IMAGE_VISIBLE_DURATION);
-        }
+        // set the image and move the ix to the next one
+        this.visibleRadarImage = (this.radarImages[this.visibleRadarImageIx] || "").replace(/\n/gi, "<br/>");
+        this.visibleRadarImageIx = ++this.visibleRadarImageIx % this.radarImages.length;
+
+        // wait RADAR_IMAGE_VISIBLE_DURATION before showing next image, if we're back to the first one wait 10s
+        setTimeout(
+          setRadarImage,
+          !this.visibleRadarImageIx ? RADAR_IMAGE_VISIBLE_DURATION * 10 : RADAR_IMAGE_VISIBLE_DURATION
+        );
       };
 
       setRadarImage();
-      setTimeout(setRadarImage, RADAR_IMAGE_VISIBLE_DURATION);
     },
   },
 };

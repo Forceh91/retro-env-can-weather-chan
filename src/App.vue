@@ -543,6 +543,7 @@ export default {
         const { data } = resp;
         if (!data) return;
         this.$store.commit("storeRadarImages", (data.images || []).reverse());
+        this.$store.commit("storeRadarSeason", data.season);
       });
     },
 

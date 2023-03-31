@@ -6,4 +6,8 @@ export default {
   radarMap: (state) => {
     return state.radar.map;
   },
+
+  radarSeason: (state) => {
+    return state.radar.season;
+  },
 };

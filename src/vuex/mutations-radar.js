@@ -10,4 +10,10 @@ export default {
 
     state.radar.map = map;
   },
+
+  storeRadarSeason(state, season) {
+    if (!state.radar) return;
+
+    state.radar.season = season;
+  },
 };

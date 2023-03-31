@@ -2,7 +2,7 @@ const axios = require("axios");
 const { getRadarSeason } = require("./date-utils");
 const { parseRadarImage, getRadarImage } = require("./radar-image-parser");
 
-const RADAR_IMAGE_DIRECTORY_URL = "https://dd.weather.gc.ca/radar/DPQPE/GIF/CASGO/"; // hardcoded for woodlands (winnipeg) CASWL
+const RADAR_IMAGE_DIRECTORY_URL = "https://dd.weather.gc.ca/radar/DPQPE/GIF/CASWL/"; // hardcoded for woodlands (winnipeg) CASWL
 const RADAR_IMAGES_TO_FETCH = 21; // 21 images is last 2 hours from what i understand
 const RADAR_IMAGE_FETCH_FREQUENCY = 12 * 60 * 1000; // they seem to update these once every 12mins or so
 const SEASON = getRadarSeason();
@@ -21,6 +21,7 @@ function getListOfRadarImages() {
       .filter((url) => url.includes(SEASON));
 
     // now only get the last x ones
+    console.log("[RADAR]", "Fetching last", RADAR_IMAGES_TO_FETCH, " images");
     fetchLatestRadarImages(cleanedRadarImageUrls.slice(-RADAR_IMAGES_TO_FETCH));
   });
 }
@@ -31,10 +32,13 @@ function fetchLatestRadarImages(radarImageURLs) {
 
   // fetch and parse them
   radarImageURLs.forEach(async (url, ix) => parseRadarImage(`${RADAR_IMAGE_DIRECTORY_URL}/${url}`, ix));
+
+  console.log("[RADAR]", "Radar images fetched");
 }
 
 function initRadarImages(app) {
   setInterval(getListOfRadarImages, RADAR_IMAGE_FETCH_FREQUENCY);
+
   app.get("/api/radar", (req, res) => {
     const images = [];
     for (let i = 0; i < RADAR_IMAGES_TO_FETCH; i++) images.push(getRadarImage(i));

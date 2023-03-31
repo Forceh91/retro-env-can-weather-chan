@@ -1,10 +1,14 @@
 const getPixels = require("get-pixels");
 
+// radar images are 580px across
+const RADAR_WIDTH = 580;
+
+// we only need the first 480px of them
+const NEEDED_RADAR_WIDTH = 480;
+
 const radarImageData = [];
 async function parseRadarImage(radarImageURL, radarImageNum, callback) {
   if (!radarImageNum) radarImageData.slice(0, radarImageData.length);
-
-  console.log("[RADAR PARSER]", "Fetching radar image", radarImageNum);
 
   await getPixels(radarImageURL, function(err, pixels) {
     if (err) {
@@ -47,9 +51,6 @@ async function parseRadarImage(radarImageURL, radarImageNum, callback) {
       "102,0,153",
     ].map((rgb) => rgb + ",255");
 
-    // radar images are 580px across
-    const RADAR_WIDTH = 580;
-
     // loop through all pixels
     const PIXEL_RADAR_OUTPUT = [];
     let i = 0;
@@ -74,7 +75,6 @@ async function parseRadarImage(radarImageURL, radarImageNum, callback) {
     radarImageData[radarImageNum] = PIXEL_RADAR_OUTPUT.join("");
 
     // log stuff.
-    console.log("[RADAR PARSER]", "Stored radar image", radarImageNum);
     typeof callback === "function" && callback(radarImageNum);
   });
 }

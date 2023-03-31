@@ -79,6 +79,15 @@ function isSunSpotSeason(month) {
   return month >= 2 && month < 4;
 }
 
+function getRadarSeason(month) {
+  const date = new Date();
+  if (month === undefined) month = date?.getMonth() + 1;
+
+  // if the month is april to november, then show rain, otherwise snow
+  if (month >= 4 && month <= 11) return "Rain";
+  return "Snow";
+}
+
 function getShorthandMonthNamesForSeason(stopAtCurrentMonth) {
   let months = ["apr", "may", "jun", "jul", "aug", "sep"];
   if (isWinterSeason()) months = ["oct", "nov", "dec", "jan", "feb"];
@@ -112,4 +121,5 @@ module.exports = {
   getShorthandMonthNamesForSeason,
   isStartOfMonth,
   convertECCDateStringToDateObject,
+  getRadarSeason,
 };

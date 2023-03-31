@@ -20,6 +20,7 @@ const { initAQHIObservation } = require("./aqhi-observation");
 const { isWinterSeason } = require("./date-utils.js");
 const config = require("./config/config");
 const { getActivateInfoScreens } = require("./config/info-screens");
+const { initRadarImages } = require("./radar-images");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -73,6 +74,9 @@ function startBackend() {
   // provincial today observations
   fetchProvinceObservationData(config.primaryLocation()?.province);
   setInterval(() => fetchProvinceObservationData(config.primaryLocation()?.province), 5 * 60 * 1000);
+
+  // radar image
+  initRadarImages(app);
 
   app.get("/api/climate/season/precip", (req, res) => {
     res.send({

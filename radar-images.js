@@ -66,7 +66,7 @@ function initRadarImages(app) {
     const images = [];
     for (let i = 0; i < RADAR_IMAGES_TO_FETCH; i++) images.push(getRadarImage(i));
 
-    return res.send({ images });
+    return res.send({ images, season: getRadarSeason() });
   });
 
   getListOfRadarImages();

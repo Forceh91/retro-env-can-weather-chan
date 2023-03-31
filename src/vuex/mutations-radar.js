@@ -4,4 +4,10 @@ export default {
 
     state.radar.images = images;
   },
+
+  storeRadarMap(state, map) {
+    if (!state.radar) return;
+
+    state.radar.map = map;
+  },
 };

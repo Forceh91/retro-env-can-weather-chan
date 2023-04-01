@@ -383,6 +383,10 @@ export default {
       EventBus.on("sunspots-complete", () => {
         this.handleScreenCycle(true);
       });
+
+      EventBus.on("radar-complete", () => {
+        this.handleScreenCycle(true);
+      });
     },
 
     destroyEventCallbacks() {

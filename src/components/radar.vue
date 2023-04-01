@@ -11,9 +11,11 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { EventBus } from "../js/EventBus";
+
 const RADAR_IMAGE_VISIBLE_DURATION = 1 * 1000;
 
-import { mapGetters } from "vuex";
 export default {
   name: "ascii-radar",
 
@@ -46,7 +48,8 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.cycleRadarImages();
+      if (!this.radarMap) return EventBus.emit("radar-complete");
+      else this.cycleRadarImages();
     });
   },
 

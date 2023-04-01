@@ -59,7 +59,7 @@ const SCREENS = {
   AQHI_WARNING: { id: 13, length: 20 },
   INFO: { id: 14, length: 20 * 25 }, // enough for 25 screens at 20s each
   SUNSPOTS: { id: 15, length: 20 },
-  RADAR: { id: 16, length: 51 }, // 21 images at 1 seconds, plus 10s pause.
+  RADAR: { id: 16, length: 26 }, // 21 images plus a pause at the end
 };
 const SCREEN_ROTATION = [
   // SCREENS.CURRENT_CONDITIONS,

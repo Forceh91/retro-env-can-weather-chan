@@ -1,8 +1,11 @@
 <template>
-  <div id="ascii_radar">
-    <div id="map">
-      <span id="map_data" v-html="parsedRadarMap"></span>
-      <div id="data"><div id="data_visible_area" v-html="parsedRadarImage"></div></div>
+  <div id="radar_page">
+    <div v-if="radarSeason" id="title">{{ radarSeason }} radar<br /></div>
+    <div id="ascii_radar">
+      <div id="map">
+        <span id="map_data" v-html="parsedRadarMap"></span>
+        <div id="data"><div id="data_visible_area" v-html="parsedRadarImage"></div></div>
+      </div>
     </div>
   </div>
 </template>
@@ -28,7 +31,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["radarImages", "radarMap"]),
+    ...mapGetters(["radarImages", "radarMap", "radarSeason"]),
 
     parsedRadarMap() {
       if (!this.radarMap) return "";
@@ -70,6 +73,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#radar_page {
+  flex-direction: column;
+  display: flex;
+}
+
+#title {
+  text-align: center;
+  width: 100%;
+}
+
 #ascii_radar {
   align-items: center;
   display: flex;
@@ -78,6 +91,7 @@ export default {
   height: 100%;
   line-height: 2px;
   overflow: hidden;
+  padding-bottom: 20%;
   position: relative;
   width: 100%;
 

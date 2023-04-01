@@ -14,7 +14,7 @@ const sunspotCities = [
 const latestSunspotForecasts = [];
 
 function fetchForecastForSunspotCities() {
-  if (!isSunSpotSeason()) return;
+  if (!isSunSpotSeason()) return latestSunspotForecasts.splice(0, latestSunspotForecasts.length);
 
   const results = [
     ...sunspotCities.map((station) => ({ ...station, forecastText: null, hiTemp: Math.min(), loTemp: Math.max() })),

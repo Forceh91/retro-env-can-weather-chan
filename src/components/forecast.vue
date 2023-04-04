@@ -5,6 +5,9 @@
       <template v-if="!page">
         <conditions :show-pressure="false" />
         <div id="next_forecast" class="full-width reloadable reloadable-8">
+          <div v-if="mostRecentWarning" :class="{ flash: warningShouldFlash(mostRecentWarning) }" class="headline">
+            {{ this.mostRecentWarning.headline }}
+          </div>
           <span class="label"
             >Forecast for {{ prettifyForecastDay(forecast[0]?.day) }}..<span>{{
               truncateForecastText(forecast[0]?.textSummary, true)
@@ -44,6 +47,7 @@ const LONG_PAGE_CHANGE_FREQUENCY = 50 * 1000;
 import { mapGetters } from "vuex";
 import { EventBus } from "../js/EventBus";
 import forecastmixin from "../mixins/forecast.mixin";
+import warningsMixin from "../mixins/warnings.mixin";
 import conditions from "./conditions.vue";
 
 export default {
@@ -55,14 +59,14 @@ export default {
 
   components: { conditions },
 
-  mixins: [forecastmixin],
+  mixins: [forecastmixin, warningsMixin],
 
   data() {
     return { page: 0, pageChangeInterval: null, longPageChangeTimeout: null };
   },
 
   computed: {
-    ...mapGetters(["ecCity"]),
+    ...mapGetters(["ecCity", "ecWarnings"]),
 
     forecastUnavailable() {
       return !this.forecast || !this.forecast.length;
@@ -72,6 +76,10 @@ export default {
       const forecastLength =
         this.forecast[this.page]?.textSummary?.length + this.forecast[this.page + 1]?.textSummary?.length;
       return this.page !== 0 && forecastLength >= 240;
+    },
+
+    mostRecentWarning() {
+      return this.ecWarnings[this.ecWarnings.length - 1] || false;
     },
   },
 
@@ -136,12 +144,16 @@ export default {
 }
 
 #next_forecast {
+  align-items: center;
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 </style>
 
 <style lang="scss">
+@import "../style/warnings.scss";
+
 @keyframes reloadscreen {
   to {
     visibility: visible;

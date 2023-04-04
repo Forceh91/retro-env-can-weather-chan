@@ -43,8 +43,7 @@ function fetchCapFileAndParse(url, city, callback) {
     const identifier = alert?.identifier?._text;
     if (!identifier) return;
 
-    const references = alert?.references?._text;
-    if (!references) return;
+    const references = alert?.references?._text || "";
 
     const expires = info_en?.expires?._text;
     if (!expires) return;

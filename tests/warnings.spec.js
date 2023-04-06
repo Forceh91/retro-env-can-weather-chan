@@ -178,12 +178,12 @@ test("truncateWarningDescription: splits correctly at the right point", async (d
   done();
 });
 
-test("shouldFlashWarning: correctly identifies whether the title should flash", (done) => {
-  expect(vm.shouldFlashWarning({ severity: "unknown" })).toBe(false);
-  expect(vm.shouldFlashWarning({ severity: "minor" })).toBe(false);
-  expect(vm.shouldFlashWarning({ severity: "moderate" })).toBe(true);
-  expect(vm.shouldFlashWarning({ severity: "severe" })).toBe(true);
-  expect(vm.shouldFlashWarning({ severity: "extreme" })).toBe(true);
+test("warningShouldFlash: correctly identifies whether the title should flash", (done) => {
+  expect(vm.warningShouldFlash({ severity: "unknown" })).toBe(false);
+  expect(vm.warningShouldFlash({ severity: "minor" })).toBe(false);
+  expect(vm.warningShouldFlash({ severity: "moderate" })).toBe(true);
+  expect(vm.warningShouldFlash({ severity: "severe" })).toBe(true);
+  expect(vm.warningShouldFlash({ severity: "extreme" })).toBe(true);
   done();
 });
 

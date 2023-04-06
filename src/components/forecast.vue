@@ -79,7 +79,7 @@ export default {
     },
 
     mostRecentWarning() {
-      return this.ecWarnings[this.ecWarnings.length - 1] || false;
+      return (this.ecWarnings && this.ecWarnings[this.ecWarnings.length - 1]) || false;
     },
   },
 

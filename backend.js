@@ -52,7 +52,7 @@ async function startBackend() {
   // alternate record source
   if (config.misc().alternateRecordsSource) {
     await fetchAlternateRecordData();
-    setInterval(fetchAlternateRecordData, 6 * 60 * 1000);
+    setInterval(fetchAlternateRecordData, 6 * 60 * 60 * 1000);
   }
 
   // current conditions info

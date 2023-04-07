@@ -20,6 +20,7 @@ const { initAQHIObservation } = require("./aqhi-observation");
 const { isWinterSeason } = require("./date-utils.js");
 const config = require("./config/config");
 const { getActivateInfoScreens } = require("./config/info-screens");
+const { fetchAlternateRecordData } = require("./alternate-record-data");
 
 const corsOptions = {
   origin: "http://localhost:8080",
@@ -33,7 +34,7 @@ const port = 8600;
 // load in the config for the weather channel
 config.initWeatherChannel(app, startBackend);
 
-function startBackend() {
+async function startBackend() {
   console.log("[RECW]", `Application started, listening on http://localhost:${port}`);
 
   app.get("/api/init", (req, res) => {
@@ -47,6 +48,12 @@ function startBackend() {
       lookAndFeel: config.lookAndFeel(),
     });
   });
+
+  // alternate record source
+  if (config.misc().alternateRecordsSource) {
+    await fetchAlternateRecordData();
+    setInterval(fetchAlternateRecordData, 6 * 60 * 1000);
+  }
 
   // current conditions info
   initCurrentConditions(config.primaryLocation(), config.rejectInHourConditionUpdates(), app, historicalDataAPI);

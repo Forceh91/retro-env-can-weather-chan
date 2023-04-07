@@ -2,8 +2,10 @@
   <div id="warnings">
     <div v-if="warningsUnavailable">Warnings/Alerts temporarily unavailable</div>
     <ul v-else id="warnings_table">
-      <li v-for="(warning, ix) in paginatedWarnings" :key="ix" :class="{ flash: shouldFlashWarning(warning) }">
-        <div class="headline">{{ cleanupHeadline(warning.headline) }}</div>
+      <li v-for="(warning, ix) in paginatedWarnings" :key="ix">
+        <div :class="{ flash: warningShouldFlash(warning) }" class="headline">
+          {{ cleanupHeadline(warning.headline) }}
+        </div>
         <div class="description">{{ truncateWarningDescription(warning.description) }}</div>
       </li>
     </ul>
@@ -14,26 +16,12 @@
 const MAX_WARNINGS_PER_PAGE = 1;
 export const PAGE_CHANGE_FREQUENCY = 14 * 1000;
 
-// const URGENCY_VALUES = {
-//   UNKNOWN: 0,
-//   PAST: 1,
-//   FUTURE: 2,
-//   EXPECTED: 3,
-//   IMMEDIATE: 4,
-// };
-
-const SEVERITY_VALUES = {
-  UNKNOWN: 0,
-  MINOR: 1,
-  MODERATE: 2,
-  SEVERE: 3,
-  EXTREME: 4,
-};
-
 import { EventBus } from "../js/EventBus";
+import warningsMixin from "../mixins/warnings.mixin";
 
 export default {
   name: "Warnings",
+  mixins: [warningsMixin],
   props: {
     warnings: {
       type: Array,
@@ -88,12 +76,6 @@ export default {
       if (!this.page || this.warningsUnavailable) return EventBus.emit("warnings-complete");
     },
 
-    shouldFlashWarning(warning) {
-      if (!warning) return false;
-
-      return SEVERITY_VALUES[warning.severity.toUpperCase()] >= SEVERITY_VALUES.MODERATE;
-    },
-
     cleanupHeadline(headline) {
       headline = (headline || "").replace(" in effect", "");
       return headline;
@@ -119,10 +101,10 @@ export default {
 urgency.
 
 code
-	
+
 
 The code denoting the urgency of the subject event of the alert message (REQUIRED)
-	
+
 
 (1) The <urgency>, <severity>, and <certainty> elements collectively distinguish less emphatic from more emphatic messages.
 
@@ -141,10 +123,10 @@ The code denoting the urgency of the subject event of the alert message (REQUIRE
 severity.
 
 code
-	
+
 
 The code denoting the severity of the subject event of the alert message (REQUIRED)
-	
+
 
 (1) The <urgency>, <severity>, and <certainty> elements collectively distinguish less emphatic from more emphatic messages.
 
@@ -163,6 +145,8 @@ The code denoting the severity of the subject event of the alert message (REQUIR
 </script>
 
 <style lang="scss" scoped>
+@import "../style/warnings.scss";
+
 #warnings {
   width: calc(100% - 100px);
 }
@@ -176,10 +160,6 @@ The code denoting the severity of the subject event of the alert message (REQUIR
   li {
     &:not(:last-child) {
       margin-bottom: 20px;
-    }
-
-    &.flash .headline {
-      animation: flash 0.8s step-start 0s infinite;
     }
 
     .headline,
@@ -197,14 +177,5 @@ The code denoting the severity of the subject event of the alert message (REQUIR
   text-align: center;
   overflow: hidden;
   width: 100%;
-}
-
-/* flashing warnings from the original were 4 frames hidden, 11 frames visible */
-/* this was at 25fps (lets say 30), so that means 26.6% of the time the warning was hidden */
-/* this renders at 60fps (or should) so if we make 13% then this will close to accurate */
-@keyframes flash {
-  13% {
-    opacity: 0;
-  }
 }
 </style>

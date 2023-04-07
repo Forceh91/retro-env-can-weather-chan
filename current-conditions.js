@@ -2,10 +2,11 @@ const axios = require("axios");
 const Weather = require("ec-weather-js");
 const { addMinutes } = require("date-fns");
 
-const { convertECCDateStringToDateObject, isWindchillSeason } = require("./date-utils");
+const { convertECCDateStringToDateObject, isWindchillSeason, getDayOfYearAdjustedForLeapDay } = require("./date-utils");
 const { getAQHIObservation } = require("./aqhi-observation");
 const { getHotColdSpotsCanada } = require("./province-today-observation.js");
 const { startCurrentConditionMonitoring } = require("./current-conditions-amqp");
+const { getRecordDataForDayOfYear } = require("./alternate-record-data");
 
 const CURRENT_CONDITIONS_FETCH_INTERVAL = 5 * 60 * 1000;
 const CURRENT_CONDITIONS_EVENT_STREAM_INTERVAL = 5 * 1000;
@@ -203,7 +204,38 @@ const generateAlmanac = (almanac) => {
   // we need to fetch the historical values from the historical data at this point, we will use the current observed date
   // to fetch the historical data, rather than the current time value so that data doesn't get muddled up
   // where it was showing normal/record from observed, and and the last year from the current date/time
-  return almanac;
+
+  // if we have an alternative data source for records we can fetch it here
+  const leapYearAdjustedDayOfYear = getDayOfYearAdjustedForLeapDay();
+  const recordData = getRecordDataForDayOfYear(leapYearAdjustedDayOfYear);
+
+  // if theres no record data, just return the usual data
+  if (!recordData) return almanac;
+
+  // first entry is the extreme max
+  const temperature = almanac.temperature;
+  const [extremeMax, extremeMin] = temperature;
+
+  // check we got record data for hi, only need to check year because value could be 0
+  if (recordData.hi?.year)
+    temperature.splice(0, 1, {
+      ...extremeMax,
+      value: `${recordData.hi.value.toFixed(1)}`,
+      year: `${recordData.hi.year}`,
+      period: "Custom",
+    });
+
+  // check we got record data for lo, only need to check year because value could be 0
+  if (recordData.lo?.year)
+    temperature.splice(1, 1, {
+      ...extremeMin,
+      value: `${recordData.lo.value.toFixed(1)}`,
+      year: `${recordData.lo.year}`,
+      period: "Custom",
+    });
+
+  // otherwise return adjusted data
+  return { ...almanac, temperature };
 };
 
 const generateWindchill = (conditions) => {

@@ -109,7 +109,7 @@ const loadConfigFile = (configFilePath, callback) => {
     config.lookAndFeel = lookAndFeel || {};
 
     // get the misc info
-    config.misc = misc || {};
+    config.misc = misc || config.misc;
 
     // say the config was loaded
     console.log(

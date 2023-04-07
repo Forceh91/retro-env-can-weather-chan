@@ -124,4 +124,5 @@ module.exports = {
   getShorthandMonthNamesForSeason,
   isStartOfMonth,
   convertECCDateStringToDateObject,
+  getDayOfYearAdjustedForLeapDay,
 };

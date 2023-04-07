@@ -296,4 +296,5 @@ module.exports = {
   getStationLastObservedDateTime,
   reloadCurrentConditions,
   generateWindchill,
+  generateAlmanac,
 };

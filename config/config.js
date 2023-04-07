@@ -26,6 +26,7 @@ const defaultConfig = () => {
     lookAndFeel: { font: "vt323" },
     misc: {
       rejectInHourConditionUpdates: false, // whether we should only update conditions once an hour
+      alternateRecordsSource: "", // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json
     },
   };
 };

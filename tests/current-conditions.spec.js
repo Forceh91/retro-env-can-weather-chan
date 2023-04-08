@@ -1,4 +1,8 @@
-import { generateWindchill } from "../current-conditions";
+import { generateWindchill, generateAlmanac } from "../current-conditions";
+import { getRecordDataForDayOfYear } from "../alternate-record-data";
+jest.mock("../alternate-record-data");
+
+import ecdata from "./data/ecdata";
 
 describe("current conditions", () => {
   describe("windchill", () => {
@@ -43,6 +47,40 @@ describe("current conditions", () => {
         expect(generateWindchill({ temperature: { value: temp }, wind: { speed: { value: wind } } })).toBe(expected);
       }
 
+      done();
+    });
+  });
+
+  describe("almanac", () => {
+    test("it handles there being no alternate record data", (done) => {
+      const mockAlmanac = ecdata.almanac;
+      expect(generateAlmanac(mockAlmanac)).toStrictEqual(mockAlmanac);
+      done();
+    });
+
+    test("it handles there being alternate record data", (done) => {
+      getRecordDataForDayOfYear.mockImplementation(() => ({
+        hi: {
+          value: 22.8,
+          year: 1900,
+        },
+        lo: {
+          value: -25,
+          year: 1877,
+        },
+      }));
+
+      const mockAlmanac = ecdata.almanac;
+      const expectedAlmanac = {
+        ...mockAlmanac,
+        temperature: [
+          { class: "extremeMax", period: "Custom", unitType: "metric", units: "C", year: "1900", value: "22.8" },
+          { class: "extremeMin", period: "Custom", unitType: "metric", units: "C", year: "1877", value: "-25.0" },
+          ...mockAlmanac.temperature.slice(2),
+        ],
+      };
+
+      expect(generateAlmanac(mockAlmanac)).toStrictEqual(expectedAlmanac);
       done();
     });
   });

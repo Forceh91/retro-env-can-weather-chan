@@ -14,7 +14,7 @@ function startAlertMonitoring(city, app) {
   listener
     .on("error", (err) => console.warn(err.message))
     .on("message", (date, url) => {
-      console.log("[ALERT MONITORING]", date, url);
+      console.log("[ALERT MONITORING] Cap file", url, "received at", date);
       fetchCapFileAndParse(url, city, (alert) => {
         pushAlertToList(alert);
       });

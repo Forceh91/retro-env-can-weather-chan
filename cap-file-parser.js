@@ -5,8 +5,6 @@ function fetchCapFileAndParse(url, city, callback) {
   if (!url || !city) return;
   city = city.toLowerCase();
 
-  console.log(`[CAP PARSER] Retrieving CAP (${url}) and checking relevance...`);
-
   // url for a cap file has been given to us, so now we need to see if it's relevant to us
   axios.get(url).then((resp) => {
     const data = resp.data;
@@ -36,8 +34,7 @@ function fetchCapFileAndParse(url, city, callback) {
     });
 
     // if its not relevant stop, otherwise get the data
-    if (!isRelevant) return console.log(`[CAP PARSER] CAP (${url}) is not relevant, discarding`);
-    else console.log(`[CAP PARSER] CAP (${url}) is relevant, parsing alerts...`);
+    if (!isRelevant) return;
 
     // check we have the required information here
     const identifier = alert?.identifier?._text;

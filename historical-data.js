@@ -9,6 +9,7 @@ const {
   parseISO,
   format,
   getDaysInMonth,
+  isYesterday,
 } = require("date-fns");
 
 const {
@@ -35,6 +36,9 @@ let lastYearObservations = null;
 let seasonPrecipData = null;
 let seasonPrecipNormals = null;
 let lastMonthSummary = false;
+let yesterdayPrecip = null;
+
+const WINNIPEG_A_CS_ID = 27174;
 
 function initHistoricalData(climateStationID) {
   fetchHistoricalData(climateStationID);
@@ -133,6 +137,12 @@ function fetchHistoricalData() {
         precipData.push(parseFloat(station.totalprecipitation?._text || 0));
       else if (!isWinterSeason() && isDateInCurrentSummerSeason(date) && isThisYear)
         precipData.push(parseFloat(station.totalprecipitation?._text || 0));
+
+      // if its yesterday then store this for user by other screens IF its the default winnipeg a cs station id
+      // we do this because the airport isnt great at storing precip info
+      const isYesterdayPrecipData = isYesterday(parseISO(date));
+      if (isYesterdayPrecipData && stationIDToFetch === WINNIPEG_A_CS_ID)
+        yesterdayPrecip = station.totalprecipitation?._text || null;
     });
 
     // now store the total precip for the current season
@@ -315,6 +325,10 @@ function getLastMonthSummary() {
   return lastMonthSummary;
 }
 
+function getYesterdayPrecip() {
+  return yesterdayPrecip;
+}
+
 module.exports = {
   initHistoricalData,
   fetchHistoricalData,
@@ -322,4 +336,5 @@ module.exports = {
   getSeasonPrecipData,
   getSeasonPrecipNormalsData,
   getLastMonthSummary,
+  getYesterdayPrecip,
 };

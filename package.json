@@ -40,7 +40,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.20.0",
     "jsdom": "^21.1.2",
-    "release-it": "^15.10.1",
+    "release-it": "^15.10.2",
     "sass": "^1.62.1",
     "sass-loader": "^8.0.0",
     "vue-jest": "^5.0.0-alpha.10",

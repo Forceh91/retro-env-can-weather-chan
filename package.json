@@ -19,7 +19,7 @@
     "core-js": "^3.30.2",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
-    "ec-weather-js": "^1.2.0",
+    "ec-weather-js": "^1.2.1",
     "express": "^4.18.2",
     "mitt": "^3.0.0",
     "vue": "^3.3.2",

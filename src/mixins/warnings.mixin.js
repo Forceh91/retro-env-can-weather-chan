@@ -3,6 +3,10 @@ export default {
     warningShouldFlash(warning) {
       if (!warning) return false;
 
+      // doing this because these seem to get sent over as at least moderate. but we also want some things that are moderate to flash
+      if (["statement", "advisory"].some((warningType) => warning.headline?.toLowerCase().includes(warningType)))
+        return false;
+
       return SEVERITY_VALUES[warning.severity.toUpperCase()] >= SEVERITY_VALUES.MODERATE;
     },
   },

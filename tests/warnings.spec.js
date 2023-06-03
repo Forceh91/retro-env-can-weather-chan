@@ -184,6 +184,8 @@ test("warningShouldFlash: correctly identifies whether the title should flash", 
   expect(vm.warningShouldFlash({ severity: "moderate" })).toBe(true);
   expect(vm.warningShouldFlash({ severity: "severe" })).toBe(true);
   expect(vm.warningShouldFlash({ severity: "extreme" })).toBe(true);
+  expect(vm.warningShouldFlash({ severity: "moderate", headline: "air quality statement" })).toBe(false);
+  expect(vm.warningShouldFlash({ severity: "moderate", headline: "special weather advisory" })).toBe(false);
   done();
 });
 

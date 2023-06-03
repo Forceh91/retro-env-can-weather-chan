@@ -179,6 +179,7 @@ test("truncateWarningDescription: splits correctly at the right point", async (d
 });
 
 test("warningShouldFlash: correctly identifies whether the title should flash", (done) => {
+  expect(vm.warningShouldFlash()).toBe(false);
   expect(vm.warningShouldFlash({ severity: "unknown" })).toBe(false);
   expect(vm.warningShouldFlash({ severity: "minor" })).toBe(false);
   expect(vm.warningShouldFlash({ severity: "moderate" })).toBe(true);

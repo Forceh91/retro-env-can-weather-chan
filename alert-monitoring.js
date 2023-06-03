@@ -40,9 +40,6 @@ function pushAlertToList(alert) {
   if (ix !== -1) alertsFromCAP.splice(ix, 1, alert);
   else alertsFromCAP.push(alert);
 
-  // sort the cap files in priority order
-  sortAlertsInPriorityOrder(alertsFromCAP);
-
   console.log(
     `[ALERT MONITORING] Ingested CAP (${identifier}), expiry set for ${expires}`,
     `(total: ${alertsFromCAP.length})`
@@ -106,29 +103,33 @@ function setupWarningsAPI(app) {
   if (!app) return;
 
   app.get("/api/warnings", (req, res) => {
-    res.send({ warnings: alertsFromCAP || [] });
+    // sort the cap files in priority order
+    const sortedAlerts = sortAlertsInPriorityOrder(alertsFromCAP);
+    res.send({ warnings: sortedAlerts || [] });
   });
 }
 
 function sortAlertsInPriorityOrder(alerts) {
   if (!alerts || !alerts.length) return;
 
-  alerts.sort((a, b) => {
-    // sort by severity
-    const aSeverity = SEVERITY_VALUES[a.severity.toUpperCase()];
-    const bSeverity = SEVERITY_VALUES[b.severity.toUpperCase()];
-    if (aSeverity > bSeverity) return -1;
-    if (bSeverity > aSeverity) return 1;
+  return (
+    alerts.sort((a, b) => {
+      // sort by severity
+      const aSeverity = SEVERITY_VALUES[a.severity.toUpperCase()];
+      const bSeverity = SEVERITY_VALUES[b.severity.toUpperCase()];
+      if (aSeverity > bSeverity) return -1;
+      if (bSeverity > aSeverity) return 1;
 
-    // then by urgency
-    const aUrgency = URGENCY_VALUES[a.urgency.toUpperCase()];
-    const bUrgency = URGENCY_VALUES[b.urgency.toUpperCase()];
-    if (aUrgency > bUrgency) return -1;
-    if (bUrgency > aUrgency) return 1;
+      // then by urgency
+      const aUrgency = URGENCY_VALUES[a.urgency.toUpperCase()];
+      const bUrgency = URGENCY_VALUES[b.urgency.toUpperCase()];
+      if (aUrgency > bUrgency) return -1;
+      if (bUrgency > aUrgency) return 1;
 
-    // both the same
-    return 0;
-  }) || [];
+      // both the same
+      return 0;
+    }) || []
+  );
 }
 
 const SEVERITY_VALUES = {

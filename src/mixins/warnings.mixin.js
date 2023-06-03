@@ -9,6 +9,10 @@ export default {
 
       return SEVERITY_VALUES[warning.severity.toUpperCase()] >= SEVERITY_VALUES.MODERATE;
     },
+
+    isWarningSevereThunderstormWatch(warningHeadline) {
+      return (warningHeadline ?? "").toLowerCase() === "severe thunderstorm watch in effect";
+    },
   },
 };
 

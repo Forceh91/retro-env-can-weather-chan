@@ -75,6 +75,11 @@ const anotherReallyLongWarningDescription = {
     "As of Wednesday afternoon, the first two rounds of snow have given widespread snowfall amounts of 10 to 15 cm across southern Manitoba, with localized higher amounts.  Only light snow is expected over southeastern Manitoba on Wednesday night ahead of another band of heavier snow expected on Thursday.  Additionally, some freezing drizzle may be mixed in at times.  Over western Manitoba and eastern Saskatchewan, snowfall amounts will be in the 5 to 10 cm range tonight.",
 };
 
+const fakeSevereThunderstormWatch = {
+  ...fakeUrgentWarning,
+  headline: "Severe Thunderstorm Watch in effect",
+};
+
 test("warningsUnavailable: computes correctly", (done) => {
   expect(vm.warningsUnavailable).toBe(true);
   done();
@@ -116,6 +121,13 @@ test("generateWarningsScreen: generates the correct number of pages", async (don
   await wrapper.setProps({ warnings: [fakeWarning, fakeWarning, fakeWarning] });
   vm.generateWarningsScreen();
   expect(vm.pages).toBe(3);
+
+  await wrapper.setProps({
+    warnings: [fakeWarning, fakeWarning, fakeSevereThunderstormWatch],
+  });
+  vm.generateWarningsScreen();
+  expect(vm.pages).toBe(4);
+
   done();
 });
 
@@ -195,10 +207,17 @@ test("isSevereThunderstormWatchActive", async (done) => {
   expect(vm.isSevereThunderstormWatchActive).toBe(false);
 
   await wrapper.setProps({
-    warnings: [fakeWarning, fakeWarning, { ...fakeUrgentWarning, headline: "Severe Thunderstorm Watch" }],
+    warnings: [fakeWarning, fakeWarning, fakeSevereThunderstormWatch],
   });
   expect(vm.isSevereThunderstormWatchActive).toBe(true);
 
+  done();
+});
+
+test("isWarningSevereThunderstormWatch", (done) => {
+  expect(vm.isWarningSevereThunderstormWatch()).toBe(false);
+  expect(vm.isWarningSevereThunderstormWatch(fakeWarning.headline)).toBe(false);
+  expect(vm.isWarningSevereThunderstormWatch(fakeSevereThunderstormWatch.headline)).toBe(true);
   done();
 });
 

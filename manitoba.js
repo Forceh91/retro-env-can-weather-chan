@@ -6,11 +6,14 @@
 const fs = require("fs");
 const axios = require("axios");
 const Weather = require("ec-weather-js");
+const { getYesterdayPrecip } = require("./historical-data");
 const FOLDER_NAME = "db";
 const FILE_NAME = "manitoba.json";
 
+const WINNIPEG_STATION_CODE = "MB/s0000193";
+
 const manitobaCities = [
-  { name: "Winnipeg", stationCode: "MB/s0000193" },
+  { name: "Winnipeg", stationCode: WINNIPEG_STATION_CODE },
   { name: "Portage", stationCode: "MB/s0000626" },
   { name: "Brandon", stationCode: "MB/s0000492" },
   { name: "Dauphin", stationCode: "MB/s0000508" },
@@ -91,7 +94,13 @@ const parseStationInfo = (station, stationData) => {
   if (!yesterdayPrecip.value) yesterdayPrecip.value = "MISSING";
 
   // update it in our tracking
-  if (yesterdayPrecip) station.yesterday_precip = yesterdayPrecip;
+  if (yesterdayPrecip) {
+    station.yesterday_precip = yesterdayPrecip;
+
+    // if its winnipeg use precip from historical data (which is only set if its default)
+    if (station.stationCode === WINNIPEG_STATION_CODE)
+      station.yesterday_precip.value = getYesterdayPrecip() || yesterdayPrecip.value;
+  }
 
   // make sure we have a valid temp
   const temp = weather.current?.temperature?.value;

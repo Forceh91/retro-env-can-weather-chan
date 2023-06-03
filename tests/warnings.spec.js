@@ -190,6 +190,18 @@ test("warningShouldFlash: correctly identifies whether the title should flash", 
   done();
 });
 
+test("isSevereThunderstormWatchActive", async (done) => {
+  await wrapper.setProps({ warnings: [fakeWarning, fakeWarning] });
+  expect(vm.isSevereThunderstormWatchActive).toBe(false);
+
+  await wrapper.setProps({
+    warnings: [fakeWarning, fakeWarning, { ...fakeUrgentWarning, headline: "Severe Thunderstorm Watch" }],
+  });
+  expect(vm.isSevereThunderstormWatchActive).toBe(true);
+
+  done();
+});
+
 test("destroyed: removes page change interval", (done) => {
   wrapper.unmount();
   expect(clearInterval).toHaveBeenCalled();

@@ -39,6 +39,10 @@ export default {
       const endIndex = Math.min(startIndex + MAX_WARNINGS_PER_PAGE, this.warningsList?.length);
       return this.warningsList?.slice(startIndex, endIndex);
     },
+
+    isSevereThunderstormWatchActive() {
+      return this.warnings.some((warning) => warning.headline.toLowerCase() === "severe thunderstorm watch");
+    },
   },
 
   data() {

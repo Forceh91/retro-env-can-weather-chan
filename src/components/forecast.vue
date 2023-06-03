@@ -79,8 +79,7 @@ export default {
     },
 
     mostRecentWarning() {
-      const sortedECWarnings = this.sortWarnings(this.ecWarnings);
-      return sortedECWarnings.length && sortedECWarnings[0];
+      return this.ecWarnings[0] ?? false;
     },
   },
 

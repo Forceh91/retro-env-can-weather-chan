@@ -3,10 +3,13 @@
     <div v-if="warningsUnavailable">Warnings/Alerts temporarily unavailable</div>
     <ul v-else id="warnings_table">
       <li v-for="(warning, ix) in paginatedWarnings" :key="ix">
-        <div :class="{ flash: warningShouldFlash(warning) }" class="headline">
-          {{ cleanupHeadline(warning.headline) }}
-        </div>
-        <div class="description">{{ truncateWarningDescription(warning.description) }}</div>
+        <template v-if="!warning.isSTW">
+          <div :class="{ flash: warningShouldFlash(warning) }" class="headline">
+            {{ cleanupHeadline(warning.headline) }}
+          </div>
+          <div class="description">{{ truncateWarningDescription(warning.description) }}</div>
+        </template>
+        <Severetstormwatch v-else></Severetstormwatch>
       </li>
     </ul>
   </div>
@@ -18,10 +21,12 @@ export const PAGE_CHANGE_FREQUENCY = 14 * 1000;
 
 import { EventBus } from "../js/EventBus";
 import warningsMixin from "../mixins/warnings.mixin";
+import Severetstormwatch from "./severetstormwatch.vue";
 
 export default {
   name: "Warnings",
   mixins: [warningsMixin],
+  components: { Severetstormwatch },
   props: {
     warnings: {
       type: Array,
@@ -38,6 +43,10 @@ export default {
       const startIndex = Math.max(0, (this.page - 1) * MAX_WARNINGS_PER_PAGE);
       const endIndex = Math.min(startIndex + MAX_WARNINGS_PER_PAGE, this.warningsList?.length);
       return this.warningsList?.slice(startIndex, endIndex);
+    },
+
+    isSevereThunderstormWatchActive() {
+      return this.warnings.some((warning) => this.isWarningSevereThunderstormWatch(warning.headline));
     },
   },
 
@@ -62,6 +71,12 @@ export default {
       // if (!Array.isArray(this.warnings.event)) this.warningsList = [this.warnings.event];
       // else this.warningsList = [...this.warnings.event];
       this.warningsList = [...this.warnings];
+
+      // if we have a stw in place we should insert out info page after it
+      if (this.isSevereThunderstormWatchActive) {
+        const ix = this.warningsList.findIndex((warning) => this.isWarningSevereThunderstormWatch(warning.headline));
+        if (ix !== -1) this.warningsList.splice(ix + 1, 0, { isSTW: true });
+      }
 
       this.page = 1;
       this.pages = Math.ceil(this.warningsList?.length / MAX_WARNINGS_PER_PAGE);

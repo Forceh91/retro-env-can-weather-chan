@@ -103,8 +103,49 @@ function setupWarningsAPI(app) {
   if (!app) return;
 
   app.get("/api/warnings", (req, res) => {
-    res.send({ warnings: alertsFromCAP || [] });
+    // sort the cap files in priority order
+    const sortedAlerts = sortAlertsInPriorityOrder(alertsFromCAP);
+    res.send({ warnings: sortedAlerts || [] });
   });
 }
+
+function sortAlertsInPriorityOrder(alerts) {
+  if (!alerts || !alerts.length) return;
+
+  return (
+    alerts.sort((a, b) => {
+      // sort by severity
+      const aSeverity = SEVERITY_VALUES[a.severity.toUpperCase()];
+      const bSeverity = SEVERITY_VALUES[b.severity.toUpperCase()];
+      if (aSeverity > bSeverity) return -1;
+      if (bSeverity > aSeverity) return 1;
+
+      // then by urgency
+      const aUrgency = URGENCY_VALUES[a.urgency.toUpperCase()];
+      const bUrgency = URGENCY_VALUES[b.urgency.toUpperCase()];
+      if (aUrgency > bUrgency) return -1;
+      if (bUrgency > aUrgency) return 1;
+
+      // both the same
+      return 0;
+    }) || []
+  );
+}
+
+const SEVERITY_VALUES = {
+  UNKNOWN: 0,
+  MINOR: 1,
+  MODERATE: 2,
+  SEVERE: 3,
+  EXTREME: 4,
+};
+
+const URGENCY_VALUES = {
+  UNKNOWN: 0,
+  PAST: 1,
+  FUTURE: 2,
+  EXPECTED: 3,
+  IMMEDIATE: 4,
+};
 
 module.exports = { startAlertMonitoring };

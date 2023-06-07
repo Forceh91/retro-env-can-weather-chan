@@ -14,7 +14,7 @@ function startAlertMonitoring(latLong, app) {
   listener
     .on("error", (err) => console.warn(err.message))
     .on("message", (date, url) => {
-      console.log("[ALERT MONITORING] Cap file", url, "received at", date);
+      console.log("[ALERT MONITORING] Cap file", url, "received at", date, "checking against lat/lon of", latLong);
       fetchCapFileAndParse(url, latLong, (alert) => {
         pushAlertToList(alert);
       });

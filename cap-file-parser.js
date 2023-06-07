@@ -41,6 +41,7 @@ function fetchCapFileAndParse(url, latLong, callback, isExisting = false) {
     const identifier = alert?.identifier?._text;
     if (!identifier) return;
 
+    const sent = alert?.sent?._text || "";
     const references = alert?.references?._text || "";
 
     const expires = info_en?.expires?._text;
@@ -61,7 +62,7 @@ function fetchCapFileAndParse(url, latLong, callback, isExisting = false) {
     console.log(`[CAP PARSER] CAP ${url} has been parsed, passing along to alert monitor`);
 
     if (typeof callback === "function")
-      callback({ identifier, references, expires, headline, description, severity, urgency, url });
+      callback({ identifier, references, expires, headline, description, severity, urgency, url, sent });
   });
 }
 

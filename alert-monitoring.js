@@ -131,6 +131,10 @@ function sortAlertsInPriorityOrder(alerts) {
       if (aUrgency > bUrgency) return -1;
       if (bUrgency > aUrgency) return 1;
 
+      // then by date
+      if (a.sent > b.sent) return -1;
+      if (b.sent > a.sent) return 1;
+
       // both the same
       return 0;
     }) || []

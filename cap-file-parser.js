@@ -1,9 +1,9 @@
 const xmljs = require("xml-js");
 const axios = require("axios");
+const pointInPolygon = require("point-in-polygon");
 
-function fetchCapFileAndParse(url, city, callback) {
-  if (!url || !city) return;
-  city = city.toLowerCase();
+function fetchCapFileAndParse(url, latLong, callback, isExisting = false) {
+  if (!url || !latLong) return;
 
   // url for a cap file has been given to us, so now we need to see if it's relevant to us
   axios.get(url).then((resp) => {
@@ -22,19 +22,20 @@ function fetchCapFileAndParse(url, city, callback) {
 
     if (!Array.isArray(areas)) areas = [areas];
 
-    // loop through areas and see if our tracked city is included
-    let isRelevant = false;
-    areas.some((area) => {
-      const areaDesc = (area.areaDesc?._text || "").toLowerCase();
-      const regexString = `\\b${city}\\b`;
-      const regexMatch = new RegExp(regexString, "gmi");
-      const regexResult = areaDesc.match(regexMatch);
-      isRelevant = regexResult && regexResult[0] === city;
-      if (isRelevant) return true;
-    });
+    // loop through areas and see if our tracked city (via lat/long) is included
+    if (!isExisting) {
+      const pointToCheck = [latLong.lat, latLong.long];
+      const isRelevant = areas.some((area) => {
+        const polygon = area.polygon?._text || "";
+        const polygonAsArray = convertPolygonStringTo3DArray(polygon);
+        if (!polygonAsArray) return;
 
-    // if its not relevant stop, otherwise get the data
-    if (!isRelevant) return;
+        return pointInPolygon(pointToCheck, polygonAsArray);
+      });
+
+      // if its not relevant stop, otherwise get the data
+      if (!isRelevant) return;
+    }
 
     // check we have the required information here
     const identifier = alert?.identifier?._text;
@@ -63,5 +64,11 @@ function fetchCapFileAndParse(url, city, callback) {
       callback({ identifier, references, expires, headline, description, severity, urgency, url });
   });
 }
+
+const convertPolygonStringTo3DArray = (polygonString) => {
+  if (!polygonString) return;
+
+  return polygonString.split(" ").map((points) => points.split(",").map((point) => parseFloat(point)));
+};
 
 module.exports = { fetchCapFileAndParse };

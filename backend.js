@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const { initCurrentConditions } = require("./current-conditions");
+const { initCurrentConditions, getStationLatLong } = require("./current-conditions");
 const { fetchWeatherForObservedCities, latestObservations } = require("./observations.js");
 const { fetchWeatherForObservedUSCities, latestUSObservations } = require("./us-observations.js");
 const { fetchForecastForSunspotCities, latestSunspotForecasts } = require("./sunspot");
@@ -113,7 +113,7 @@ async function startBackend() {
   });
 
   // start the amqp alert monitoring of cap
-  startAlertMonitoring(config.primaryLocation()?.name, app);
+  startAlertMonitoring(getStationLatLong(), app);
 }
 
 app.listen(port);

@@ -50,6 +50,8 @@ import conditionmixin from "../mixins/condition.mixin";
 import observedmixin from "../mixins/observed.mixin";
 import stringpadmixin from "../mixins/stringpad.mixin";
 
+const CALM_WIND_SPEED = "CALM";
+
 export default {
   name: "Conditions",
   props: {
@@ -98,7 +100,8 @@ export default {
       //   3 KMH
       //  12 KMH
       // 100 KMH
-      if (!speed || parseFloat(speed) < 2) return this.padString("CALM", 6, true);
+      if (!speed || parseFloat(speed) < 2 || (typeof speed === "string" && speed.toUpperCase() === CALM_WIND_SPEED))
+        return this.padString(CALM_WIND_SPEED, 11);
       return `${directionString}${this.padString(`${speed} KMH`, 8, true)}`;
     },
 

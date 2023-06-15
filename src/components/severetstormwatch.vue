@@ -22,7 +22,9 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: 0 auto;
   text-align: left;
   text-transform: uppercase;
+  width: 380px;
 }
 </style>

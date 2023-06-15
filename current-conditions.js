@@ -29,6 +29,7 @@ const conditions = {
 let eventStreamInterval = null;
 let amqpConnection = null;
 let configRejectInHourConditonUpdates = false;
+let stationLatLong = { lat: 0, long: 0 };
 
 const initCurrentConditions = (primaryLocation, rejectInHourConditionUpdates, app, historicalDataAPI) => {
   // pass in the primary location from the config and make sure its valid
@@ -114,6 +115,12 @@ const fetchCurrentConditions = (url) => {
       return (conditions.forecast = weather.weekly);
     }
 
+    // store the long/lat for later use
+    const {
+      name: { lat, lon },
+    } = allWeatherData.location;
+    parseStationLatLong(lat, lon);
+
     // generate some objects so the FE has less work to do once it receives the data
     const observedDateObject = generateConditionsObserved(weather.current?.dateTime[1]);
     const city = generateObservedCity(allWeatherData.location);
@@ -136,6 +143,17 @@ const fetchCurrentConditions = (url) => {
     // if the conditions ID has updated this means new info is available which means we should fetch more historical data
     if (conditions.conditionID !== previousConditionsID) historicalData && historicalData.fetchHistoricalData();
   });
+};
+
+const parseStationLatLong = (lat, long) => {
+  // we get these in string format with compass directions so we need to convert slightly
+  // N is positive, S is negative
+  if (lat.includes("N")) stationLatLong.lat = parseFloat(lat);
+  else stationLatLong.lat = -parseFloat(lat);
+
+  // E is postive, W is negative
+  if (long.includes("E")) stationLatLong.long = parseFloat(long);
+  else stationLatLong.long = -parseFloat(long);
 };
 
 const generateConditionsObserved = (date) => {
@@ -284,6 +302,10 @@ const generateWeatherResponse = () => {
   };
 };
 
+const getStationLatLong = () => {
+  return stationLatLong;
+};
+
 const writeEventStream = (res) => {
   res.write(`id: ${Date.now()}\n`);
   res.write(`event: condition_update\n`);
@@ -297,4 +319,5 @@ module.exports = {
   reloadCurrentConditions,
   generateWindchill,
   generateAlmanac,
+  getStationLatLong,
 };

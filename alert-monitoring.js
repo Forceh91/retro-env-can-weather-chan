@@ -7,21 +7,21 @@ const alertsFromCAP = [];
 const ALERTS_FOLDER = "./alerts";
 const ALERTS_FILE = "alerts.txt";
 
-function startAlertMonitoring(city, app) {
+function startAlertMonitoring(latLong, app) {
   console.log("[ALERT MONITORING] Starting alert monitoring via AMQP...");
 
   const { emitter: listener } = listen({ amqp_subtopic: "alerts.cap.#" });
   listener
     .on("error", (err) => console.warn(err.message))
     .on("message", (date, url) => {
-      console.log("[ALERT MONITORING] Cap file", url, "received at", date);
-      fetchCapFileAndParse(url, city, (alert) => {
+      console.log("[ALERT MONITORING] Cap file", url, "received at", date, "checking against lat/lon of", latLong);
+      fetchCapFileAndParse(url, latLong, (alert) => {
         pushAlertToList(alert);
       });
     });
 
   // load anything we knew about before we rebooted the system
-  loadCurrentAlerts(city);
+  loadCurrentAlerts(latLong);
 
   // setup the endpoint to fetch warnings from
   setupWarningsAPI(app);
@@ -77,7 +77,7 @@ function saveCurrentAlerts() {
   });
 }
 
-function loadCurrentAlerts(city) {
+function loadCurrentAlerts(latLong) {
   const alertFile = `${ALERTS_FOLDER}/${ALERTS_FILE}`;
   fs.stat(alertFile, (err, stat) => {
     if (err || stat.size < 1) console.log("[ALERT MONITORING] No stored alerts");
@@ -89,9 +89,14 @@ function loadCurrentAlerts(city) {
 
           console.log(`[ALERT MONITORING] Refetching ${capFileURLArray.length} CAP files...`);
           capFileURLArray.forEach((url) => {
-            fetchCapFileAndParse(url, city, (alert) => {
-              pushAlertToList(alert);
-            });
+            fetchCapFileAndParse(
+              url,
+              latLong,
+              (alert) => {
+                pushAlertToList(alert);
+              },
+              true
+            );
           });
         }
       });
@@ -125,6 +130,10 @@ function sortAlertsInPriorityOrder(alerts) {
       const bUrgency = URGENCY_VALUES[b.urgency.toUpperCase()];
       if (aUrgency > bUrgency) return -1;
       if (bUrgency > aUrgency) return 1;
+
+      // then by date
+      if (a.sent > b.sent) return -1;
+      if (b.sent > a.sent) return 1;
 
       // both the same
       return 0;

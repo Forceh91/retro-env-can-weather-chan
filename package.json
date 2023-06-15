@@ -16,7 +16,7 @@
     "bootstrap": "^5.2.3",
     "bootstrap-vue-3": "^0.4.15",
     "cli-select": "^1.1.2",
-    "core-js": "^3.30.2",
+    "core-js": "^3.31.0",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
     "ec-weather-js": "^1.2.0",
@@ -42,7 +42,7 @@
     "eslint-plugin-vue": "^7.20.0",
     "jsdom": "^22.1.0",
     "release-it": "^15.11.0",
-    "sass": "^1.62.1",
+    "sass": "^1.63.4",
     "sass-loader": "^8.0.0",
     "vue-jest": "^5.0.0-alpha.10",
     "webpack": "^5.75.0"

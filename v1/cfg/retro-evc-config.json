@@ -1,0 +1,10 @@
+{
+  "primaryLocation": { "name": "Winnipeg", "province": "MB", "location": "s0000193" },
+  "provinceHighLowEnabled": true,
+  "historicalDataStationID": 27174,
+  "climateNormalsStationID": 3698,
+  "climateNormalsClimateID": 5023222,
+  "climateNormalsProvince": "MB",
+  "lookAndFeel": {},
+  "misc": { "rejectInHourConditionUpdates": true, "alternateRecordsSource": "http://wpgne.com/ECW/Records-ECW.JSON" }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "retro-env-can-weather-chan",
+  "version": "2.0.0-alpha",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node -r tsconfig-paths/register src/server.ts"
+  },
+  "dependencies": {
+    "amqp": "^0.2.7",
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "date-fns": "^2.30.0",
+    "ec-weather-js": "^1.2.0",
+    "express": "^4.18.2",
+    "point-in-polygon": "^1.1.0",
+    "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "@release-it/conventional-changelog": "^5.1.1",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "release-it": "^15.11.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.1.6"
+  }
+}

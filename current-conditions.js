@@ -98,51 +98,56 @@ const fetchCurrentConditions = (url) => {
 
   const { province, location } = currentConditionsLocation;
   url = url || `https://dd.weather.gc.ca/citypage_weather/xml/${province}/${location}_e.xml`;
-  axios.get(url).then((resp) => {
-    const weather = new Weather(resp.data);
-    if (!weather) return;
+  axios
+    .get(url)
+    .then((resp) => {
+      const weather = new Weather(resp.data);
+      if (!weather) return;
 
-    // all: almanac, riseset, location, yesterday
-    const allWeatherData = weather.all;
-    if (!allWeatherData) return;
+      // all: almanac, riseset, location, yesterday
+      const allWeatherData = weather.all;
+      if (!allWeatherData) return;
 
-    // first step is figure out the condition id
-    const conditionID = generateConditionsUniqueID(weather.current?.dateTime[1]);
+      // first step is figure out the condition id
+      const conditionID = generateConditionsUniqueID(weather.current?.dateTime[1]);
 
-    // if we got the same condition id, and we're rejecting in-hour, all we need to do is update the forecast
-    if (configRejectInHourConditonUpdates && conditionID === previousConditionsID) {
-      console.log("[CONDITIONS]", "Rejecting in-hour update for conditon ID", conditionID);
-      return (conditions.forecast = weather.weekly);
-    }
+      // if we got the same condition id, and we're rejecting in-hour, all we need to do is update the forecast
+      if (configRejectInHourConditonUpdates && conditionID === previousConditionsID) {
+        console.log("[CONDITIONS]", "Rejecting in-hour update for conditon ID", conditionID);
+        return (conditions.forecast = weather.weekly);
+      }
 
-    // store the long/lat for later use
-    const {
-      name: { lat, lon },
-    } = allWeatherData.location;
-    parseStationLatLong(lat, lon);
+      // store the long/lat for later use
+      const {
+        name: { lat, lon },
+      } = allWeatherData.location;
+      parseStationLatLong(lat, lon);
 
-    // generate some objects so the FE has less work to do once it receives the data
-    const observedDateObject = generateConditionsObserved(weather.current?.dateTime[1]);
-    const city = generateObservedCity(allWeatherData.location);
-    const observedConditions = generateConditions(weather.current);
-    const sunRiseSet = generateSunriseSet(allWeatherData.riseSet?.dateTime);
-    const almanac = generateAlmanac(allWeatherData.almanac);
-    const windchill = generateWindchill(observedConditions);
+      // generate some objects so the FE has less work to do once it receives the data
+      const observedDateObject = generateConditionsObserved(weather.current?.dateTime[1]);
+      const city = generateObservedCity(allWeatherData.location);
+      const observedConditions = generateConditions(weather.current);
+      const sunRiseSet = generateSunriseSet(allWeatherData.riseSet?.dateTime);
+      const almanac = generateAlmanac(allWeatherData.almanac);
+      const windchill = generateWindchill(observedConditions);
 
-    // place these into the global conditions object we have that can be used elsewhere
-    conditions.city = city;
-    conditions.observed = observedDateObject;
-    conditions.conditions = observedConditions;
-    conditions.riseSet = sunRiseSet;
-    conditions.regionalNormals = weather.all.regionalNormals;
-    conditions.almanac = almanac;
-    conditions.windchill = windchill;
-    conditions.conditionID = conditionID;
-    conditions.forecast = weather.weekly;
+      // place these into the global conditions object we have that can be used elsewhere
+      conditions.city = city;
+      conditions.observed = observedDateObject;
+      conditions.conditions = observedConditions;
+      conditions.riseSet = sunRiseSet;
+      conditions.regionalNormals = weather.all.regionalNormals;
+      conditions.almanac = almanac;
+      conditions.windchill = windchill;
+      conditions.conditionID = conditionID;
+      conditions.forecast = weather.weekly;
 
-    // if the conditions ID has updated this means new info is available which means we should fetch more historical data
-    if (conditions.conditionID !== previousConditionsID) historicalData && historicalData.fetchHistoricalData();
-  });
+      // if the conditions ID has updated this means new info is available which means we should fetch more historical data
+      if (conditions.conditionID !== previousConditionsID) historicalData && historicalData.fetchHistoricalData();
+    })
+    .catch(() => {
+      console.error("[CONDITIONS]", "Failed to fetch in-hour update from AMQP push");
+    });
 };
 
 const parseStationLatLong = (lat, long) => {

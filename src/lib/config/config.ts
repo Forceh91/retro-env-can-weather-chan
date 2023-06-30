@@ -33,6 +33,17 @@ class Config {
     this.loadConfig();
   }
 
+  get config() {
+    return {
+      primaryLocation: this.primaryLocation,
+      provinceHighLowEnabled: this.provinceHighLowEnabled,
+      historicalDataStationID: this.historicalDataStationID,
+      climateNormals: this.climateNormals,
+      lookAndFeel: this.lookAndFeel,
+      misc: this.misc,
+    };
+  }
+
   private loadConfig() {
     logger.log("Loading config file", `(${CONFIG_ABSOLUTE_PATH})`, "...");
 
@@ -76,6 +87,17 @@ class Config {
         // handle any other error
         logger.error(BAD_CONFIG_FILE_ERROR_MESSAGE);
       }
+    }
+  }
+
+  private saveConfig() {
+    logger.log("Saving config file", `(${CONFIG_ABSOLUTE_PATH})`, "...");
+
+    try {
+      fs.writeFileSync(CONFIG_ABSOLUTE_PATH, JSON.stringify(this.config));
+      logger.log("Config file saved successfully");
+    } catch (err) {
+      logger.error("Failed to save config file");
     }
   }
 }

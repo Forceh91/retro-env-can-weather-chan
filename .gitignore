@@ -3,7 +3,7 @@ node_modules
 /dist
 /music
 /cfg/*.json
-/cfg/crawl.txt
+/cfg/*.txt
 *.zip
 
 

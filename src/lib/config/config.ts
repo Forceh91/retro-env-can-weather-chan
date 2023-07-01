@@ -10,6 +10,12 @@ const CONFIG_PATH = {
 const CONFIG_ABSOLUTE_PATH = `${CONFIG_PATH.FOLDER}/${CONFIG_PATH.FILE}`;
 const BAD_CONFIG_FILE_ERROR_MESSAGE = "Unable to load config file, defaults have been loaded";
 
+const CRAWLER_PATH = {
+  FOLDER: "./cfg",
+  FILE: "crawler.txt",
+};
+const CRAWLER_ABSOLUTE_PATH = `${CRAWLER_PATH.FOLDER}/${CRAWLER_PATH.FILE}`;
+
 class Config {
   primaryLocation: PrimaryLocation = {
     province: "MB",
@@ -28,9 +34,11 @@ class Config {
     rejectInHourConditionUpdates: false, // whether we should only update conditions once an hour
     alternateRecordsSource: undefined, // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json
   };
+  crawlerMessages: string[];
 
   constructor() {
     this.loadConfig();
+    this.loadCrawlerMessages();
   }
 
   get config() {
@@ -90,11 +98,32 @@ class Config {
     }
   }
 
+  private loadCrawlerMessages() {
+    logger.log("Loading crawler messages from", CRAWLER_ABSOLUTE_PATH);
+    try {
+      const data = fs.readFileSync(CRAWLER_ABSOLUTE_PATH, "utf8");
+      this.crawlerMessages = data
+        .split("\n")
+        .map((message) => message.trim())
+        .filter((message) => message.length);
+
+      logger.log("Loaded", this.crawlerMessages.length, "crawler messages");
+    } catch (err) {
+      if (err.code === "ENOENT") {
+        // handle no file found
+        logger.error("No crawler file found");
+      } else {
+        // handle any other error
+        logger.error("Unable to load from crawler file");
+      }
+    }
+  }
+
   private saveConfig() {
     logger.log("Saving config file", `(${CONFIG_ABSOLUTE_PATH})`, "...");
 
     try {
-      fs.writeFileSync(CONFIG_ABSOLUTE_PATH, JSON.stringify(this.config));
+      fs.writeFileSync(CONFIG_ABSOLUTE_PATH, JSON.stringify(this.config), "utf8");
       logger.log("Config file saved successfully");
     } catch (err) {
       logger.error("Failed to save config file");

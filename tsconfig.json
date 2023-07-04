@@ -14,7 +14,8 @@
     "incremental": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "allowJs": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

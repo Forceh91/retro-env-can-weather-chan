@@ -4,7 +4,7 @@ import { listen } from "lib/amqp";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
 import { Connection } from "types/amqp.types";
-import { LatLong, WeatherStationTimeData } from "types";
+import { LatLong, ObservedConditions, WeatherStationTimeData, ECCCConditions } from "types";
 import { ecccDateStringToTSDate } from "lib/date";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
@@ -17,6 +17,8 @@ class CurrentConditions {
   private _apiUrl: string;
   private _conditionUUID: string;
   private _weatherStationTimeData: WeatherStationTimeData;
+  private _weatherStationCityName: string;
+  private _conditions: ObservedConditions;
 
   public stationLatLong: LatLong = { lat: 0, long: 0 };
 
@@ -77,7 +79,12 @@ class CurrentConditions {
 
         // store the observed date/time in our own format
         this.generateWeatherStationTimeData(weather.current?.dateTime[1] ?? {});
-        logger.log("observed", this._weatherStationTimeData);
+
+        // get city name info
+        this._weatherStationCityName = allWeather.location.name.value;
+
+        // get relevant conditions
+        this.parseRelevantConditions(weather.current);
       })
       .catch(() => {
         logger.error("Unable to retrieve update to conditions from ECCC API");
@@ -116,10 +123,56 @@ class CurrentConditions {
     // now we can figure out the difference between these and use it on the ui
     // timezones dont really exist in js so it'll really just end up being the local time
     // with some minutes added onto it
-    const stationOffsetFromLocal = stationOffsetFromUTC - offsetFromUTC;
+    const stationOffsetMinutesFromLocal = stationOffsetFromUTC - offsetFromUTC;
 
     // also store the actual timezone string for use on the ui
-    this._weatherStationTimeData = { stationOffsetFromLocal, timezone: date.zone };
+    this._weatherStationTimeData = { stationOffsetMinutesFromLocal, timezone: date.zone };
+  }
+
+  private parseRelevantConditions(conditions: ECCCConditions) {
+    if (!conditions) return;
+
+    // pull out the relevant info we want from eccc response
+    const {
+      condition,
+      temperature: { units: temperatureUnits, value: temperatureValue },
+      pressure: { change: pressureChange, tendency: pressureTendency, units: pressureUnits, value: pressureValue },
+      relativeHumidity: { units: humidityUnits, value: humidityValue },
+      wind: {
+        speed: { value: windSpeedValue, units: windSpeedUnits },
+        gust: { value: windGustValue, units: windGustUnits },
+        direction: windDirectionValue,
+      },
+      visibility: { value: visibilityValue, units: visibilityUnits },
+    } = conditions;
+
+    // store it to our conditions
+    this._conditions = {
+      condition,
+      temperature: { value: parseInt(temperatureValue), units: temperatureUnits },
+      pressure: {
+        change: parseInt(pressureChange),
+        tendency: pressureTendency,
+        value: parseInt(pressureValue),
+        units: pressureUnits,
+      },
+      humidity: { value: parseInt(humidityValue), units: humidityUnits },
+      visibility: { value: parseInt(visibilityValue), units: visibilityUnits },
+      wind: {
+        speed: { value: parseInt(windSpeedValue), units: windSpeedUnits },
+        gust: { value: parseInt(windGustValue), units: windGustUnits },
+        direction: windDirectionValue,
+      },
+    };
+  }
+
+  public observed() {
+    return {
+      observationID: this._conditionUUID,
+      city: this._weatherStationCityName,
+      stationTime: this._weatherStationTimeData,
+      observed: this._conditions,
+    };
   }
 }
 

@@ -45,7 +45,7 @@
     "sass": "^1.63.6",
     "sass-loader": "^8.0.0",
     "vue-jest": "^5.0.0-alpha.10",
-    "webpack": "^5.75.0"
+    "webpack": "^5.88.1"
   },
   "eslintConfig": {
     "root": true,

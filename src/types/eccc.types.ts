@@ -48,3 +48,16 @@ export type ECCCDateTime = {
   zone: string;
   UTCOffset: string;
 };
+
+export type ECCCAlmanac = {
+  temperature: ECCCAlmanacTemp[];
+};
+
+export type ECCCAlmanacTemp = {
+  class: string;
+  period?: string;
+  unitType: string;
+  units: string;
+  year?: string;
+  value: string;
+};

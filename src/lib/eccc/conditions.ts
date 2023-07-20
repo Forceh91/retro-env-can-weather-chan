@@ -12,6 +12,9 @@ import {
   ECCCSunRiseSet,
   ECCCDateTime,
   SunRiseSet,
+  ECCCAlmanac,
+  ECCCAlmanacTemp,
+  Almanac,
 } from "types";
 import { ecccDateStringToTSDate } from "lib/date";
 
@@ -28,6 +31,9 @@ class CurrentConditions {
   private _weatherStationCityName: string;
   private _conditions: ObservedConditions;
   private _sunRiseSet: SunRiseSet = { rise: null, set: null };
+  private _almanac: Almanac = {
+    temperatures: { extremeMin: null, extremeMax: null, normalMin: null, normalMax: null },
+  };
   public stationLatLong: LatLong = { lat: 0, long: 0 };
 
   constructor() {
@@ -96,6 +102,9 @@ class CurrentConditions {
 
         // get sunrise/sunset info
         this.parseSunriseSunset(allWeather.riseSet);
+
+        // get the almanac data (normal, records, etc.)
+        this.generateAlmanac(allWeather.almanac);
       })
       .catch((err) => {
         logger.error("Unable to retrieve update to conditions from ECCC API", err);
@@ -193,6 +202,33 @@ class CurrentConditions {
     if (sunset) this._sunRiseSet.set = ecccDateStringToTSDate(sunset.textSummary).toISOString();
   }
 
+  private generateAlmanac(almanac: ECCCAlmanac) {
+    // TODO: fetch records from alternate source
+
+    // get the extreme min temp
+    const retrieveAlmanacTemp = (tempClass: string, parseYear: boolean = true) => {
+      // fetch from the almanac temperatures list
+      const extremeTemp: ECCCAlmanacTemp = almanac.temperature.find(
+        (temp: ECCCAlmanacTemp) => temp.class === tempClass
+      );
+
+      // if nothing return null
+      if (!tempClass) return null;
+
+      // otherwise parse it out and return
+      const { value, year, units } = extremeTemp;
+      return { value: Number(value), year: parseYear ? parseInt(year) : undefined, unit: units };
+    };
+
+    // extreme min/max
+    this._almanac.temperatures.extremeMin = retrieveAlmanacTemp("extremeMin");
+    this._almanac.temperatures.extremeMax = retrieveAlmanacTemp("extremeMax");
+
+    // normal min/max
+    this._almanac.temperatures.normalMin = retrieveAlmanacTemp("normalMin", false);
+    this._almanac.temperatures.normalMax = retrieveAlmanacTemp("normalMax", false);
+  }
+
   public observed() {
     return {
       observationID: this._conditionUUID,
@@ -200,6 +236,7 @@ class CurrentConditions {
       stationTime: this._weatherStationTimeData,
       observed: this._conditions,
       sunRiseSetUTC: this._sunRiseSet,
+      almanac: this._almanac,
     };
   }
 }

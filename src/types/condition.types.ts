@@ -29,3 +29,18 @@ export type SunRiseSet = {
   rise: string;
   set: string;
 };
+
+export type Almanac = {
+  temperatures: {
+    extremeMin: TemperatureRecord;
+    extremeMax: TemperatureRecord;
+    normalMin: TemperatureRecord;
+    normalMax: TemperatureRecord;
+  };
+};
+
+export type TemperatureRecord = {
+  value: number;
+  unit: string;
+  year?: number;
+};

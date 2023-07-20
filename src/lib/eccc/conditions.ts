@@ -189,13 +189,13 @@ class CurrentConditions {
   private parseSunriseSunset(riseSet: ECCCSunRiseSet) {
     if (!riseSet) return;
 
-    // get the non utc sunrise time (aka the time at the station)
+    // get the utc sunrise time
     const sunrise: ECCCDateTime = riseSet.dateTime.find(
       (dateTime: ECCCDateTime) => dateTime.name === "sunrise" && dateTime.zone === "UTC"
     );
     if (sunrise) this._sunRiseSet.rise = ecccDateStringToTSDate(sunrise.textSummary).toISOString();
 
-    // get the non utc sunset time (aka the time at the station)
+    // get the utc sunset time
     const sunset: ECCCDateTime = riseSet.dateTime.find(
       (dateTime: ECCCDateTime) => dateTime.name === "sunset" && dateTime.zone === "UTC"
     );

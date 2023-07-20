@@ -160,18 +160,18 @@ class CurrentConditions {
     // store it to our conditions
     this._conditions = {
       condition,
-      temperature: { value: parseInt(temperatureValue), units: temperatureUnits },
+      temperature: { value: Number(temperatureValue), units: temperatureUnits },
       pressure: {
-        change: parseInt(pressureChange),
+        change: Number(pressureChange),
         tendency: pressureTendency ?? "",
-        value: parseInt(pressureValue),
+        value: Number(pressureValue),
         units: pressureUnits,
       },
-      humidity: { value: parseInt(humidityValue), units: humidityUnits },
-      visibility: { value: parseInt(visibilityValue), units: visibilityUnits },
+      humidity: { value: Number(humidityValue), units: humidityUnits },
+      visibility: { value: Number(visibilityValue), units: visibilityUnits },
       wind: {
-        speed: { value: parseInt(windSpeedValue), units: windSpeedUnits },
-        gust: { value: parseInt(windGustValue), units: windGustUnits },
+        speed: { value: Number(windSpeedValue), units: windSpeedUnits },
+        gust: { value: Number(windGustValue), units: windGustUnits },
         direction: windDirectionValue,
       },
     };

@@ -4,7 +4,15 @@ import { listen } from "lib/amqp";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
 import { Connection } from "types/amqp.types";
-import { LatLong, ObservedConditions, WeatherStationTimeData, ECCCConditions } from "types";
+import {
+  LatLong,
+  ObservedConditions,
+  WeatherStationTimeData,
+  ECCCConditions,
+  ECCCSunRiseSet,
+  ECCCDateTime,
+  SunRiseSet,
+} from "types";
 import { ecccDateStringToTSDate } from "lib/date";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
@@ -19,7 +27,7 @@ class CurrentConditions {
   private _weatherStationTimeData: WeatherStationTimeData;
   private _weatherStationCityName: string;
   private _conditions: ObservedConditions;
-
+  private _sunRiseSet: SunRiseSet = { rise: null, set: null };
   public stationLatLong: LatLong = { lat: 0, long: 0 };
 
   constructor() {
@@ -85,9 +93,12 @@ class CurrentConditions {
 
         // get relevant conditions
         this.parseRelevantConditions(weather.current);
+
+        // get sunrise/sunset info
+        this.parseSunriseSunset(allWeather.riseSet);
       })
-      .catch(() => {
-        logger.error("Unable to retrieve update to conditions from ECCC API");
+      .catch((err) => {
+        logger.error("Unable to retrieve update to conditions from ECCC API", err);
       });
   }
 
@@ -152,7 +163,7 @@ class CurrentConditions {
       temperature: { value: parseInt(temperatureValue), units: temperatureUnits },
       pressure: {
         change: parseInt(pressureChange),
-        tendency: pressureTendency,
+        tendency: pressureTendency ?? "",
         value: parseInt(pressureValue),
         units: pressureUnits,
       },
@@ -166,12 +177,29 @@ class CurrentConditions {
     };
   }
 
+  private parseSunriseSunset(riseSet: ECCCSunRiseSet) {
+    if (!riseSet) return;
+
+    // get the non utc sunrise time (aka the time at the station)
+    const sunrise: ECCCDateTime = riseSet.dateTime.find(
+      (dateTime: ECCCDateTime) => dateTime.name === "sunrise" && dateTime.zone === "UTC"
+    );
+    if (sunrise) this._sunRiseSet.rise = ecccDateStringToTSDate(sunrise.textSummary).toISOString();
+
+    // get the non utc sunset time (aka the time at the station)
+    const sunset: ECCCDateTime = riseSet.dateTime.find(
+      (dateTime: ECCCDateTime) => dateTime.name === "sunset" && dateTime.zone === "UTC"
+    );
+    if (sunset) this._sunRiseSet.set = ecccDateStringToTSDate(sunset.textSummary).toISOString();
+  }
+
   public observed() {
     return {
       observationID: this._conditionUUID,
       city: this._weatherStationCityName,
       stationTime: this._weatherStationTimeData,
       observed: this._conditions,
+      sunRiseSetUTC: this._sunRiseSet,
     };
   }
 }

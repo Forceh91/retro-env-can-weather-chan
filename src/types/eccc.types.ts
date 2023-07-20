@@ -30,3 +30,21 @@ export type ECCCWind = {
   gust: ECCCUnitString;
   direction: string;
 };
+
+export type ECCCSunRiseSet = {
+  disclaimer: string;
+  dateTime: ECCCDateTime[];
+};
+
+export type ECCCDateTime = {
+  year: number;
+  month: { name: string; value: string };
+  day: { name: string; value: string };
+  hour: string;
+  minute: string;
+  timeStamp: string;
+  textSummary: string;
+  name: string;
+  zone: string;
+  UTCOffset: string;
+};

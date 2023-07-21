@@ -45,3 +45,12 @@ export type TemperatureRecord = {
   unit: string;
   year?: number;
 };
+
+export type Forecast = {
+  period: string;
+  textSummary: string;
+  temperature: { value: number; class: string };
+  conditions: string;
+};
+
+export type WeekForecast = Forecast[];

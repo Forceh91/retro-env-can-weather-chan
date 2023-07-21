@@ -61,3 +61,17 @@ export type ECCCAlmanacTemp = {
   year?: string;
   value: string;
 };
+
+export type ECCCWeekForecast = ECCCForecast[];
+
+export type ECCCForecast = {
+  day: string;
+  textSummary: string;
+  temperatures: ECCCForecastTemperature;
+  abbreviatedForecast: { textSummary: string };
+};
+
+export type ECCCForecastTemperature = {
+  textSummary: string;
+  temperature: { unitType: string; units: string; class: string; value: string };
+};

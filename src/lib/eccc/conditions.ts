@@ -15,6 +15,9 @@ import {
   ECCCAlmanac,
   ECCCAlmanacTemp,
   Almanac,
+  ECCCWeekForecast,
+  ECCCForecast,
+  WeekForecast,
 } from "types";
 import { ecccDateStringToTSDate } from "lib/date";
 import { calculateWindchill } from "lib/conditions";
@@ -36,6 +39,7 @@ class CurrentConditions {
     temperatures: { extremeMin: null, extremeMax: null, normalMin: null, normalMax: null },
   };
   private _windchill: number | null;
+  private _forecast: WeekForecast;
   public stationLatLong: LatLong = { lat: 0, long: 0 };
 
   constructor() {
@@ -110,6 +114,9 @@ class CurrentConditions {
 
         // calculate the windchill
         this.generateWindchill(weather.current);
+
+        // generate the forecast
+        this.generateForecast(weather.weekly);
       })
       .catch((err) => {
         logger.error("Unable to retrieve update to conditions from ECCC API", err);
@@ -245,6 +252,26 @@ class CurrentConditions {
     this._windchill = calculateWindchill(Number(temperatureValue ?? 0), Number(windSpeedValue ?? 0));
   }
 
+  private generateForecast(weekForecast: ECCCWeekForecast) {
+    this._forecast = weekForecast.map((forecast: ECCCForecast, ix: number) => {
+      const {
+        day,
+        textSummary,
+        temperatures: {
+          temperature: { value: temperatureValue, class: temperatureClass },
+        },
+        abbreviatedForecast: { textSummary: conditions },
+      } = forecast;
+      const period = !ix ? (day?.includes("night") ? "Tonight" : "Today") : day;
+      return {
+        period,
+        textSummary,
+        temperature: { value: Number(temperatureValue), class: temperatureClass },
+        conditions,
+      };
+    });
+  }
+
   public observed() {
     return {
       observationID: this._conditionUUID,
@@ -252,6 +279,7 @@ class CurrentConditions {
       stationTime: this._weatherStationTimeData,
       observed: { ...this._conditions, windchill: this._windchill },
       almanac: { ...this._almanac, sunRiseSet: this._sunRiseSet },
+      forecast: this._forecast,
     };
   }
 }

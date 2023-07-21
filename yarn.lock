@@ -1312,9 +1312,9 @@ eastasianwidth@^0.2.0:
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
 ec-weather-js@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/ec-weather-js/-/ec-weather-js-1.2.1.tgz#6ac0634e8f9fe799ba6c7119e116516ae181a814"
-  integrity sha512-VwliWx7cEKl3pdqDVGCcVtMAs94Q8VM8ipKoyWf+sohGXzjCfV7FOsnFqqJBia+4SY/yeoGeT3cj/d01ygFo0A==
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/ec-weather-js/-/ec-weather-js-1.2.2.tgz#5d5a4991c11da9ede7e8969efc1b254870b86715"
+  integrity sha512-jUvKaAOsnw4PlY8aDoX0Vqt5+UF4N7do9hIUcKis18dpuah73xmKGSXuDqpT/DxOM3d8il2QplHRcH8aL87OLA==
   dependencies:
     xml-js "^1.6.11"
 

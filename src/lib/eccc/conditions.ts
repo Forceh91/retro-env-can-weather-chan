@@ -17,6 +17,7 @@ import {
   Almanac,
 } from "types";
 import { ecccDateStringToTSDate } from "lib/date";
+import { calculateWindchill } from "lib/conditions";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -30,10 +31,11 @@ class CurrentConditions {
   private _weatherStationTimeData: WeatherStationTimeData;
   private _weatherStationCityName: string;
   private _conditions: ObservedConditions;
-  private _sunRiseSet: SunRiseSet = { rise: null, set: null };
+  private _sunRiseSet: SunRiseSet = { rise: null, set: null, timezone: "UTC" };
   private _almanac: Almanac = {
     temperatures: { extremeMin: null, extremeMax: null, normalMin: null, normalMax: null },
   };
+  private _windchill: number | null;
   public stationLatLong: LatLong = { lat: 0, long: 0 };
 
   constructor() {
@@ -105,6 +107,9 @@ class CurrentConditions {
 
         // get the almanac data (normal, records, etc.)
         this.generateAlmanac(allWeather.almanac);
+
+        // calculate the windchill
+        this.generateWindchill(weather.current);
       })
       .catch((err) => {
         logger.error("Unable to retrieve update to conditions from ECCC API", err);
@@ -229,14 +234,24 @@ class CurrentConditions {
     this._almanac.temperatures.normalMax = retrieveAlmanacTemp("normalMax", false);
   }
 
+  private generateWindchill(conditions: ECCCConditions) {
+    const {
+      temperature: { value: temperatureValue },
+      wind: {
+        speed: { value: windSpeedValue },
+      },
+    } = conditions;
+
+    this._windchill = calculateWindchill(Number(temperatureValue ?? 0), Number(windSpeedValue ?? 0));
+  }
+
   public observed() {
     return {
       observationID: this._conditionUUID,
       city: this._weatherStationCityName,
       stationTime: this._weatherStationTimeData,
-      observed: this._conditions,
-      sunRiseSetUTC: this._sunRiseSet,
-      almanac: this._almanac,
+      observed: { ...this._conditions, windchill: this._windchill },
+      almanac: { ...this._almanac, sunRiseSet: this._sunRiseSet },
     };
   }
 }

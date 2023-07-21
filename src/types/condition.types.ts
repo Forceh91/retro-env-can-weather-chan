@@ -28,6 +28,7 @@ export type Wind = {
 export type SunRiseSet = {
   rise: string;
   set: string;
+  timezone: string;
 };
 
 export type Almanac = {

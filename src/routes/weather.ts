@@ -1,5 +1,5 @@
 import express from "express";
-import { getObserved } from "lib/eccc/routeHandler";
+import { getObserved, getForecast, getAlmanac } from "lib/eccc/routeHandler";
 
 /*
  * "/" here represents "/weather"
@@ -7,5 +7,7 @@ import { getObserved } from "lib/eccc/routeHandler";
 
 const router = express.Router();
 router.get("/observed", getObserved);
+router.get("/forecast", getForecast);
+router.get("/almanac", getAlmanac);
 
 export default router;

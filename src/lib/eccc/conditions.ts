@@ -291,6 +291,24 @@ class CurrentConditions {
       forecast: this._forecast,
     };
   }
+
+  public forecast() {
+    return {
+      observationID: this._conditionUUID,
+      city: this._weatherStationCityName,
+      stationTime: this._weatherStationTimeData,
+      forecast: this._forecast,
+    };
+  }
+
+  public almanac() {
+    return {
+      observationID: this._conditionUUID,
+      city: this._weatherStationCityName,
+      stationTime: this._weatherStationTimeData,
+      almanac: { ...this._almanac, sunRiseSet: this._sunRiseSet },
+    };
+  }
 }
 
 let currentConditions: CurrentConditions = null;

@@ -1,1 +1,1 @@
-export * from "./server.const";
+export * from "./server.consts";

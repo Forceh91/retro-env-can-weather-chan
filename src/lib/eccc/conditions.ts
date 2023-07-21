@@ -21,6 +21,11 @@ import {
 } from "types";
 import { ecccDateStringToTSDate } from "lib/date";
 import { calculateWindchill } from "lib/conditions";
+import { abbreviateForecast } from "lib/conditions/forecast";
+import {
+  FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH,
+  FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
+} from "consts/forecast.consts";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -266,6 +271,10 @@ class CurrentConditions {
       return {
         period,
         textSummary,
+        abbreviatedTextSummary: abbreviateForecast(
+          textSummary,
+          !ix ? FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH : FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH
+        ),
         temperature: { value: Number(temperatureValue), class: temperatureClass },
         conditions,
       };

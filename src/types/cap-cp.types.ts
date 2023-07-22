@@ -17,8 +17,13 @@ export type CAPObject = {
 };
 
 export type CAPArea = {
-  polygon: string;
+  polygon: number[][];
   description: string;
+};
+
+export type CAPAreaRaw = {
+  areaDesc: { _text: string };
+  polygon: { _text: string };
 };
 
 export enum CAPSeverity {

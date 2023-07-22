@@ -1,7 +1,7 @@
 import { ElementCompact, xml2js } from "xml-js";
 // import pointInPolygon from "point-in-polygon";
 import Logger from "lib/logger";
-import { CAPArea, CAPObject, CAPSeverity, CAPUrgency } from "types";
+import { CAPArea, CAPAreaRaw, CAPObject, CAPSeverity, CAPUrgency } from "types";
 import { parseISO } from "date-fns";
 
 const logger = new Logger("CAP-CP");
@@ -49,6 +49,7 @@ export class CAPCPFile {
     const [info] = alert.info;
     if (!info) return;
 
+    const areas = info.area;
     const { _text: effective } = info.effective;
     const { _text: expires } = info.expires;
     const { _text: headline } = info.headline;
@@ -56,7 +57,6 @@ export class CAPCPFile {
     const { _text: instruction } = info.instruction;
     const { _text: severity } = info.severity;
     const { _text: urgency } = info.urgency;
-    const areas = info.area;
     const { _text: event } = info.event;
     const { _text: certainty } = info.certainty;
     const { _text: audience } = info.audience;
@@ -71,13 +71,12 @@ export class CAPCPFile {
     const urgencyAsENUM: CAPUrgency = CAPUrgency[urgency.toUpperCase() as keyof typeof CAPUrgency];
 
     // convert areas to the correct type
-    const capAreas: CAPArea[] = areas.map(({ areaDesc, polygon }: { areaDesc: string; polygon: string }) => ({
-      description: areaDesc,
-      polygon,
+    this.areas = areas.map((area: CAPAreaRaw) => ({
+      description: area.areaDesc?._text,
+      polygon: this.convertPolygonStringTo3DArray(area.polygon?._text),
     }));
 
     // now we can store all this to the class
-    this.areas = capAreas;
     this.identifier = identifier;
     this.sender = sender;
     this.sent = sentDate;
@@ -94,5 +93,13 @@ export class CAPCPFile {
     this.audience = audience;
 
     logger.log("Parsed CAP file");
+  }
+
+  private convertPolygonStringTo3DArray(polygonString: string, separator: string = " ") {
+    if (!polygonString?.length) return [];
+
+    return polygonString
+      .split(separator)
+      .map((points: string) => points.split(",").map((point: string) => Number(point)));
   }
 }

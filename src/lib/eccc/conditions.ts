@@ -20,8 +20,7 @@ import {
   WeekForecast,
 } from "types";
 import { ecccDateStringToTSDate } from "lib/date";
-import { calculateWindchill } from "lib/conditions";
-import { abbreviateForecast } from "lib/conditions/forecast";
+import { calculateWindchill, abbreviateForecast } from "lib/conditions";
 import {
   FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH,
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,

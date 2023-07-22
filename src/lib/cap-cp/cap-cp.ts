@@ -1,7 +1,7 @@
 import { ElementCompact, xml2js } from "xml-js";
-// import pointInPolygon from "point-in-polygon";
+import pointInPolygon from "point-in-polygon";
 import Logger from "lib/logger";
-import { CAPArea, CAPAreaRaw, CAPObject, CAPSeverity, CAPUrgency } from "types";
+import { CAPArea, CAPAreaRaw, CAPSeverity, CAPUrgency } from "types";
 import { parseISO } from "date-fns";
 
 const logger = new Logger("CAP-CP");
@@ -71,7 +71,8 @@ export class CAPCPFile {
     const urgencyAsENUM: CAPUrgency = CAPUrgency[urgency.toUpperCase() as keyof typeof CAPUrgency];
 
     // convert areas to the correct type
-    this.areas = areas.map((area: CAPAreaRaw) => ({
+    const areasToCheck = Array.isArray(areas) ? areas : [areas];
+    this.areas = areasToCheck.map((area: CAPAreaRaw) => ({
       description: area.areaDesc?._text,
       polygon: this.convertPolygonStringTo3DArray(area.polygon?._text),
     }));
@@ -101,5 +102,11 @@ export class CAPCPFile {
     return polygonString
       .split(separator)
       .map((points: string) => points.split(",").map((point: string) => Number(point)));
+  }
+
+  public doesCAPReferencePolygon(polygon: number[]) {
+    if (!this.areas?.length) return false;
+
+    return this.areas.some((area: CAPArea) => pointInPolygon(polygon, area.polygon));
   }
 }

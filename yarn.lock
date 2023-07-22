@@ -337,6 +337,11 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
   integrity sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==
 
+"@types/point-in-polygon@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/point-in-polygon/-/point-in-polygon-1.1.1.tgz#6459c3d895fe585f2b5c46ff6715b886af4ed2eb"
+  integrity sha512-DDl4uxqbpRsBYg+youv7AbWsED4eycsPiSD+AaB+NAkFjHKHTuij55K29R8rFgqeoeazi/5syNW5J2uNnpS+Ow==
+
 "@types/qs@*":
   version "6.9.7"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.7.tgz#63bb7d067db107cc1e457c303bc25d511febf6cb"

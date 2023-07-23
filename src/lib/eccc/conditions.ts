@@ -66,7 +66,7 @@ class CurrentConditions {
       if (!url.includes(`${config.primaryLocation.location}_e.xml`)) return;
 
       this.fetchConditions();
-      logger.log("Received new conditions from AMQP");
+      logger.log("Received new conditions from AMQP at", date);
     });
 
     // store the connection so we can disconnect if needed

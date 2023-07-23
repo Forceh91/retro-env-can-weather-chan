@@ -1,3 +1,4 @@
+import { FS_NO_FILE_FOUND } from "consts";
 import fs from "fs";
 import Logger from "lib/logger";
 import { ClimateNormals, LookAndFeel, MiscConfig, PrimaryLocation } from "types";
@@ -87,7 +88,7 @@ class Config {
 
       logger.log("Loaded weather channel. Location:", `${name}, ${province}`, `(${location})`);
     } catch (err) {
-      if (err.code === "ENOENT") {
+      if (err.code === FS_NO_FILE_FOUND) {
         // handle no file found
         logger.error("No config fle found, loading defaults");
         logger.error("Configuration can be set via http://localhost:8600/#/config");

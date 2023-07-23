@@ -3,14 +3,18 @@ import Logger from "./logger";
 
 const logger = new Logger("Storage");
 
+const REQUIRED_DIRECTORIES = ["cfg", "cfg/flavours", "db"];
+
 export function validateDirectories() {
   logger.log("Validating directory structure");
 
-  const dbFolderExists: boolean = fs.existsSync("db");
-  if (!dbFolderExists) {
-    logger.warn('"db" directory doesn\'t exist and will be created');
-    fs.mkdirSync("db");
-  }
+  REQUIRED_DIRECTORIES.forEach((dir) => {
+    const requiredDirectoryExists: boolean = fs.existsSync(dir);
+    if (requiredDirectoryExists) return;
+
+    logger.warn(`"${dir}" directory doesn\'t exist and will be created`);
+    fs.mkdirSync(dir);
+  });
 
   logger.log("Validated directory structure");
 }

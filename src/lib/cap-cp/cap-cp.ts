@@ -23,7 +23,7 @@ export class CAPCPFile {
   public certainty: string;
   public audience: string;
 
-  constructor(capFileContents: string) {
+  constructor(capFileContents: string, public url: string) {
     this.parseXMLToJS(capFileContents);
   }
 

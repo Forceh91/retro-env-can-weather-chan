@@ -14,6 +14,7 @@ export enum Screens {
   INFO,
   SUNSPOTS,
   RANDOM,
+  WINDCHILL,
 }
 
 export const SCREEN_DESCRIPTIONS = {
@@ -35,9 +36,14 @@ export const SCREEN_DESCRIPTIONS = {
   [Screens.INFO]: "Custom text only info screens written by the user",
   [Screens.SUNSPOTS]: "List of forecast for warmer cities during the winter",
   [Screens.RANDOM]: "Random selection from a pre-determined list of screens",
+  [Screens.WINDCHILL]: "Explains the windchill numbers",
 };
 
 export const SCREEN_DEFAULT_DISPLAY_LENGTH = 20;
 export const SCREEN_MIN_DISPLAY_LENGTH = 10;
+export const SCREEN_ALERT_DISPLAY_LENGTH = 300;
+export const SCREEN_INFO_DISPLAY_LENGTH = 20 * 25;
+export const SCREEN_FORECAST_DISPLAY_LENGTH = 180;
+
 export const SCREEN_BACKGROUND_BLUE = "rgb(0,0,135)";
 export const SCREEN_BACKGROUND_RED = "#610b00";

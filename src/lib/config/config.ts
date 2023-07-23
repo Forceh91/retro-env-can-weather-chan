@@ -1,7 +1,8 @@
 import { FS_NO_FILE_FOUND } from "consts";
 import fs from "fs";
+import { FlavourLoader } from "lib/flavour";
 import Logger from "lib/logger";
-import { ClimateNormals, LookAndFeel, MiscConfig, PrimaryLocation } from "types";
+import { ClimateNormals, Flavour, LookAndFeel, MiscConfig, PrimaryLocation } from "types";
 
 const logger = new Logger("config");
 const CONFIG_PATH = {
@@ -30,15 +31,17 @@ class Config {
     climateID: 5023222, // (used for climate normals on last month summary)
     province: "MB",
   };
-  lookAndFeel: LookAndFeel = { font: "vt323" };
+  lookAndFeel: LookAndFeel = { font: "vt323", flavour: "test" };
   misc: MiscConfig = {
     rejectInHourConditionUpdates: false, // whether we should only update conditions once an hour
     alternateRecordsSource: undefined, // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json
   };
   crawlerMessages: string[];
+  flavour: Flavour;
 
   constructor() {
     this.loadConfig();
+    this.loadFlavour();
     this.loadCrawlerMessages();
   }
 
@@ -50,6 +53,7 @@ class Config {
       climateNormals: this.climateNormals,
       lookAndFeel: this.lookAndFeel,
       misc: this.misc,
+      flavour: this.flavour,
     };
   }
 
@@ -83,7 +87,7 @@ class Config {
       this.provinceHighLowEnabled = provinceHighLowEnabled ?? this.provinceHighLowEnabled;
       this.historicalDataStationID = historicalDataStationID ?? this.historicalDataStationID;
       this.climateNormals = climateNormals ?? this.climateNormals;
-      this.lookAndFeel = lookAndFeel ?? this.lookAndFeel;
+      this.lookAndFeel = { ...this.lookAndFeel, ...lookAndFeel };
       this.misc = misc ?? this.misc;
 
       logger.log("Loaded weather channel. Location:", `${name}, ${province}`, `(${location})`);
@@ -97,6 +101,13 @@ class Config {
         logger.error(BAD_CONFIG_FILE_ERROR_MESSAGE);
       }
     }
+  }
+
+  private loadFlavour() {
+    logger.log("Loading flavour (screen rotation)", this.lookAndFeel.flavour);
+
+    this.flavour = new FlavourLoader(this.lookAndFeel.flavour);
+    if (!this.flavour) logger.error("Unable to load flavour, please check your config");
   }
 
   private loadCrawlerMessages() {

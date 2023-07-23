@@ -1,3 +1,5 @@
+import { Flavour } from "./flavour.types";
+
 export type ConfigFields = {
   primaryLocation: PrimaryLocation;
   provinceHighLowEnabled?: boolean;
@@ -5,6 +7,7 @@ export type ConfigFields = {
   climateNormals?: ClimateNormals;
   lookAndFeel?: LookAndFeel;
   misc?: MiscConfig;
+  flavour: Flavour;
 };
 
 export type PrimaryLocation = {
@@ -21,6 +24,7 @@ export type ClimateNormals = {
 
 export type LookAndFeel = {
   font: string;
+  flavour: string;
 };
 
 export type MiscConfig = {

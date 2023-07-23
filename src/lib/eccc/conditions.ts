@@ -196,7 +196,7 @@ class CurrentConditions {
       visibility: { value: Number(visibilityValue), units: visibilityUnits },
       wind: {
         speed: { value: Number(windSpeedValue), units: windSpeedUnits },
-        gust: { value: Number(windGustValue), units: windGustUnits },
+        gust: windGustValue ? { value: Number(windGustValue), units: windGustUnits } : null,
         direction: windDirectionValue,
       },
     };

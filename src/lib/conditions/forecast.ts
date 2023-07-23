@@ -25,6 +25,10 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/showers/gi, "shwrs");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // now aim for tstorms
+  abbreviatedSummary = abbreviatedSummary.replace(/thunderstorm/gi, "tstorm");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // evening
   abbreviatedSummary = abbreviatedSummary.replace(/evening/gi, "eve");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;

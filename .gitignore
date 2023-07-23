@@ -2,8 +2,6 @@
 node_modules
 /dist
 /music
-/cfg/*.json
-/cfg/*.txt
 *.zip
 
 
@@ -30,5 +28,6 @@ pnpm-debug.log*
 coverage
 
 # REC
-alerts.txt
-/db
+db*
+cfg*
+alerts*

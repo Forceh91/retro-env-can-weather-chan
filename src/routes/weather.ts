@@ -1,5 +1,5 @@
 import express from "express";
-import { getObserved, getForecast, getAlmanac, getSeasons } from "lib/eccc/routeHandler";
+import { getObserved, getForecast, getAlmanac, getSeasons, getAlerts } from "lib/eccc/routeHandler";
 
 /*
  * "/" here represents "/weather"
@@ -10,5 +10,6 @@ router.get("/observed", getObserved);
 router.get("/forecast", getForecast);
 router.get("/almanac", getAlmanac);
 router.get("/seasons", getSeasons);
+router.get("/alerts", getAlerts);
 
 export default router;

@@ -132,6 +132,45 @@ class AlertMonitor {
     // resave the list of urls
     this.saveCAPFiles();
   }
+
+  private sortAlerts() {
+    if (!this._alerts?.length) return;
+
+    return this._alerts.sort((a, b) => {
+      // sort by severity
+      if (a.severity > b.severity) return -1;
+      if (b.severity > a.severity) return 1;
+
+      // then by urgency
+      if (a.urgency > b.urgency) return -1;
+      if (b.urgency > a.urgency) return 1;
+
+      // then by date
+      if (a.sent > b.sent) return -1;
+      if (b.sent > a.sent) return 1;
+
+      // both the same
+      return 0;
+    });
+  }
+
+  public alerts() {
+    // sort the alerts and then clean the response payload up because we dont need everything
+    const sortedAlerts = this.sortAlerts()?.map((alert) => ({
+      url: alert.url,
+      identifier: alert.identifier,
+      sent: alert.sent,
+      expires: alert.expires,
+      headline: alert.headline,
+      description: alert.description,
+      severity: alert.severity,
+      urgency: alert.urgency,
+    }));
+
+    return {
+      alerts: sortedAlerts ?? [],
+    };
+  }
 }
 
 let alertMonitor: AlertMonitor = null;

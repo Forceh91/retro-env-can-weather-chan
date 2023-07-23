@@ -84,8 +84,8 @@ export class CAPCPFile {
     this.references = references;
     this.effective = effectiveDate;
     this.expires = expiresDate;
-    this.headline = headline;
-    this.description = description;
+    this.headline = headline.trim();
+    this.description = description.trim();
     this.instruction = instruction;
     this.severity = severityAsENUM;
     this.urgency = urgencyAsENUM;

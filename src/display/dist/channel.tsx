@@ -1,12 +1,16 @@
+import { FooterBar } from "display/components/footerbar";
+import { useConfig } from "hooks/init";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
 function WeatherChannel() {
+  const { config } = useConfig();
+
   return (
     <>
       <div id="crawler_bar"></div>
       <div id="display"></div>
-      <div id="footer_bar"></div>
+      <FooterBar />
     </>
   );
 }

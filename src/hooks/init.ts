@@ -1,0 +1,30 @@
+import axios from "lib/axios";
+import { useEffect, useState } from "react";
+import { InitChannel } from "types";
+
+const FETCH_CONFIG_INTERVAL = 15 * 1000 * 1000;
+
+// tell the channel to fetch the config once every 15mins
+export function useConfig() {
+  const [config, setConfig] = useState<InitChannel>();
+
+  const fetchConfig = () => {
+    console.log("fetching config");
+    axios
+      .get("init")
+      .then((resp) => {
+        const { data } = resp;
+        if (!data) return;
+
+        setConfig(data);
+      })
+      .catch();
+  };
+
+  useEffect(() => {
+    fetchConfig();
+    setInterval(() => fetchConfig(), FETCH_CONFIG_INTERVAL);
+  }, []);
+
+  return { config };
+}

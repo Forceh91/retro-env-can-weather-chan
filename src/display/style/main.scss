@@ -19,16 +19,23 @@ html {
   background: #000;
   color: #fff;
   font-family: "consolas";
+  font-size: 30px;
   font-weight: 400;
   height: $channel_max_height;
   line-height: 1;
   overflow: hidden;
+  text-transform: uppercase;
+  white-space: pre;
   width: $channel_max_width;
 
   #crawler_bar {
+    align-items: flex-end;
     background: $crawler_bar_background_col;
+    display: flex;
     height: $crawler_bar_height;
     overflow: hidden;
+    padding: 0 10%;
+    white-space: nowrap;
     width: 100%;
   }
 
@@ -38,6 +45,7 @@ html {
     height: calc(100% - #{$crawler_bar_height} - #{$footer_bar_height});
     justify-content: center;
     overflow: hidden;
+    padding: 0 10%;
     width: 100%;
   }
 
@@ -45,6 +53,8 @@ html {
     background: $footer_bar_background_col;
     height: $footer_bar_height;
     overflow: hidden;
+    padding: 0 10%;
+    text-align: center;
     width: 100%;
   }
 }

@@ -39,7 +39,7 @@ export class FlavourLoader {
         .filter((screen: FlavourScreen) => this.isScreenConfigValid(screen))
         .map((screen: FlavourScreen) => ({
           ...screen,
-          duration: Math.max(screen.duration, SCREEN_MIN_DISPLAY_LENGTH),
+          duration: screen.duration ? Math.max(Number(screen.duration), SCREEN_MIN_DISPLAY_LENGTH) : 0,
         }));
 
       if (!this.screens?.length) throw "No valid screens on flavour";
@@ -64,7 +64,10 @@ export class FlavourLoader {
 
   private isScreenConfigValid(screen: FlavourScreen) {
     return (
-      !isNaN(screen.id) && !isNaN(screen.duration) && screen.id >= Screens.ALERTS && screen.id <= Screens.WINDCHILL
+      !isNaN(screen.id) &&
+      typeof screen.duration !== "string" &&
+      screen.id >= Screens.ALERTS &&
+      screen.id <= Screens.WINDCHILL
     );
   }
 }

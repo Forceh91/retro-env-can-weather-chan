@@ -7,6 +7,7 @@ export type WeatherStationTimeData = {
 
 export type ObservedConditions = {
   condition: string;
+  abbreviatedCondition?: string;
   temperature: ECCCUnitNumber;
   pressure: Pressure;
   humidity: ECCCUnitNumber;

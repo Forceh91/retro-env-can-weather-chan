@@ -20,7 +20,7 @@ import {
   WeekForecast,
 } from "types";
 import { ecccDateStringToTSDate } from "lib/date";
-import { calculateWindchill, abbreviateForecast } from "lib/conditions";
+import { calculateWindchill, abbreviateForecast, harshTruncateConditions } from "lib/conditions";
 import {
   FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH,
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
@@ -185,6 +185,7 @@ class CurrentConditions {
     // store it to our conditions
     this._conditions = {
       condition,
+      abbreviatedCondition: harshTruncateConditions(condition),
       temperature: { value: Number(temperatureValue), units: temperatureUnits },
       pressure: {
         change: Number(pressureChange),

@@ -1,0 +1,50 @@
+@import "./vars.scss";
+@import "./theme.scss";
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 16px;
+  overflow: hidden;
+}
+
+#weather_channel {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background: #000;
+  color: #fff;
+  font-family: "consolas";
+  font-weight: 400;
+  height: $channel_max_height;
+  line-height: 1;
+  overflow: hidden;
+  width: $channel_max_width;
+
+  #crawler_bar {
+    background: $crawler_bar_background_col;
+    height: $crawler_bar_height;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  #display {
+    background: darkblue;
+    display: flex;
+    height: calc(100% - #{$crawler_bar_height} - #{$footer_bar_height});
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  #footer_bar {
+    background: $footer_bar_background_col;
+    height: $footer_bar_height;
+    overflow: hidden;
+    width: 100%;
+  }
+}

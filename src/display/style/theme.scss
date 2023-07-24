@@ -1,0 +1,8 @@
+$content_background_col: darkblue;
+$crawler_bar_background_col: rgb(22, 90, 22);
+$footer_bar_background_col: $crawler_bar_background_col;
+
+body {
+  --crawler-bar-background-col: #{$crawler_bar_background_col};
+  --footer-bar-background-col: #{$footer_bar_background_col};
+}

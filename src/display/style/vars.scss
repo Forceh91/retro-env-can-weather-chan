@@ -1,0 +1,11 @@
+$channel_max_width: 640px;
+$channel_max_height: 480px;
+$crawler_bar_height: 75px;
+$footer_bar_height: 100px;
+
+body {
+  --channel-max-width: #{$channel_max_width};
+  --channel-max-height: #{$channel_max_height};
+  --crawler-bar-height: #{$crawler_bar_height};
+  --footer-bar-height: #{$footer_bar_height};
+}

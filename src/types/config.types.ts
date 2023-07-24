@@ -31,3 +31,9 @@ export type MiscConfig = {
   rejectInHourConditionUpdates?: boolean;
   alternateRecordsSource?: string;
 };
+
+export type InitChannel = {
+  config: { font: string; provinceHighLowEnabled: boolean };
+  crawler: string[];
+  flavour: Flavour;
+};

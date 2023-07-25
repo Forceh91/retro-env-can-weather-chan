@@ -1,10 +1,12 @@
 import { FooterBar } from "display/components/footerbar";
 import { useConfig } from "hooks/init";
+import { useWeatherEventStream } from "hooks/weather";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
 function WeatherChannel() {
   const { config } = useConfig();
+  const { currentConditions } = useWeatherEventStream();
 
   return (
     <>

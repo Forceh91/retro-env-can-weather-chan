@@ -12,7 +12,7 @@ function WeatherChannel() {
     <>
       <div id="crawler_bar"></div>
       <div id="display"></div>
-      <FooterBar />
+      <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />
     </>
   );
 }

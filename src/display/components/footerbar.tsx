@@ -1,12 +1,18 @@
-import { format } from "date-fns";
+import { addMinutes, format } from "date-fns";
 import { formatDisplayDate } from "lib/date";
 import { useEffect, useState } from "react";
 
-export function FooterBar() {
+type FooterBarProps = {
+  timeOffset: number;
+};
+
+export function FooterBar(props: FooterBarProps) {
+  const { timeOffset } = props ?? {};
+
   const [time, setTime] = useState<number>(Date.now());
   useEffect(() => {
     setInterval(() => {
-      setTime(Date.now());
+      setTime(addMinutes(Date.now(), timeOffset).getTime());
     }, 1000);
   }, []);
 

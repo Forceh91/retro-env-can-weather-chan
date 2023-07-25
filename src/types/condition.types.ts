@@ -55,3 +55,12 @@ export type Forecast = {
 };
 
 export type WeekForecast = Forecast[];
+
+export type WeatherStation = {
+  observationID: string;
+  city: string;
+  stationTime: WeatherStationTimeData;
+  observed: ObservedConditions & { windchill: number | null };
+  almanac: Almanac & { sunRiseSet: SunRiseSet };
+  forecast: WeekForecast;
+};

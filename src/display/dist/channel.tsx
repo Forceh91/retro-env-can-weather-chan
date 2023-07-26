@@ -13,7 +13,7 @@ function WeatherChannel() {
     <>
       <div id="crawler_bar"></div>
       <div id="display">
-        <ScreenRotator screens={config?.flavour?.screens} />
+        <ScreenRotator screens={config?.flavour?.screens} weatherStationResponse={currentConditions} />
       </div>
       <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />
     </>

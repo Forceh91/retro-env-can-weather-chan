@@ -20,6 +20,10 @@ export type ECCCUnitNumber = {
   value: number;
 } & ECCCUnit;
 
+export type ECCCUnitNumberString = {
+  value: number | string;
+} & ECCCUnit;
+
 export type ECCCPressure = {
   change: string;
   tendency: string;

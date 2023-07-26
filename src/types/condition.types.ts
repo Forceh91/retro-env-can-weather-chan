@@ -1,4 +1,4 @@
-import { ECCCUnitNumber } from "./eccc.types";
+import { ECCCUnitNumber, ECCCUnitNumberString } from "./eccc.types";
 
 export type WeatherStationTimeData = {
   observedDateTime: string;
@@ -22,7 +22,7 @@ export type Pressure = {
 } & ECCCUnitNumber;
 
 export type Wind = {
-  speed: ECCCUnitNumber;
+  speed: ECCCUnitNumberString;
   gust: ECCCUnitNumber;
   direction: string;
 };

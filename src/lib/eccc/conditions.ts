@@ -25,6 +25,7 @@ import {
   FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH,
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
 } from "consts/forecast.consts";
+import { CONDITIONS_WIND_SPEED_CALM } from "consts";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -200,7 +201,13 @@ class CurrentConditions {
       humidity: { value: Number(humidityValue), units: humidityUnits },
       visibility: { value: Number(visibilityValue), units: visibilityUnits },
       wind: {
-        speed: { value: Number(windSpeedValue), units: windSpeedUnits },
+        speed: {
+          value:
+            windSpeedValue.toLowerCase() !== CONDITIONS_WIND_SPEED_CALM
+              ? Number(windSpeedValue)
+              : windSpeedValue.toLowerCase(),
+          units: windSpeedUnits,
+        },
         gust: windGustValue ? { value: Number(windGustValue), units: windGustUnits } : null,
         direction: windDirectionValue,
       },
@@ -272,6 +279,7 @@ class CurrentConditions {
         abbreviatedForecast: { textSummary: conditions },
       } = forecast;
       const period = !ix ? (day?.includes("night") ? "Tonight" : "Today") : day;
+
       return {
         period,
         textSummary,

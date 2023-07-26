@@ -1,6 +1,7 @@
 import { ECCCUnitNumber } from "./eccc.types";
 
 export type WeatherStationTimeData = {
+  observedDateTime: string;
   stationOffsetMinutesFromLocal: number;
   timezone: string;
 };

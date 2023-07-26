@@ -162,7 +162,11 @@ class CurrentConditions {
     const stationOffsetMinutesFromLocal = stationOffsetFromUTC - offsetFromUTC;
 
     // also store the actual timezone string for use on the ui
-    this._weatherStationTimeData = { stationOffsetMinutesFromLocal, timezone: date.zone };
+    this._weatherStationTimeData = {
+      stationOffsetMinutesFromLocal,
+      timezone: date.zone,
+      observedDateTime: localDate.toISOString(),
+    };
   }
 
   private parseRelevantConditions(conditions: ECCCConditions) {

@@ -14,6 +14,7 @@ export type ObservedConditions = {
   humidity: ECCCUnitNumber;
   visibility: ECCCUnitNumber;
   wind: Wind;
+  windchill?: number;
 };
 
 export type Pressure = {
@@ -51,6 +52,7 @@ export type TemperatureRecord = {
 export type Forecast = {
   period: string;
   textSummary: string;
+  abbreviatedTextSummary: string;
   temperature: { value: number; class: string };
   conditions: string;
 };

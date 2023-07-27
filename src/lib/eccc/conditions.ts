@@ -41,7 +41,14 @@ class CurrentConditions {
   private _conditions: ObservedConditions;
   private _sunRiseSet: SunRiseSet = { rise: null, set: null, timezone: "UTC" };
   private _almanac: Almanac = {
-    temperatures: { extremeMin: null, extremeMax: null, normalMin: null, normalMax: null },
+    temperatures: {
+      extremeMin: null,
+      extremeMax: null,
+      normalMin: null,
+      normalMax: null,
+      lastYearMax: null,
+      lastYearMin: null,
+    },
   };
   private _windchill: number | null;
   private _forecast: WeekForecast;

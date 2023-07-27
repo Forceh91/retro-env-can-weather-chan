@@ -40,6 +40,8 @@ export type Almanac = {
     extremeMax: TemperatureRecord;
     normalMin: TemperatureRecord;
     normalMax: TemperatureRecord;
+    lastYearMin: TemperatureRecord;
+    lastYearMax: TemperatureRecord;
   };
 };
 

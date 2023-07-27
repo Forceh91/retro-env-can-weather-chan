@@ -27,6 +27,7 @@ export function Conditions(props: ConditionsProp) {
     },
     humidity: { value: humidityValue, units: humidityUnits },
     visibility: { value: visibilityValue, units: visibilityUnits },
+    pressure: { value: pressureValue, units: pressureUnits, tendency: pressureTendency },
     windchill,
     abbreviatedCondition,
   } = conditions;
@@ -102,6 +103,11 @@ export function Conditions(props: ConditionsProp) {
           </span>
         )}
       </div>
+      {showPressure && (
+        <div>
+          {"Pressure".padStart(11)} {pressureValue} {pressureUnits.padEnd(4)} {pressureTendency}
+        </div>
+      )}
     </div>
   );
 }

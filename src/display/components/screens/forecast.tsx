@@ -6,11 +6,11 @@ import { DISPLAY_MAX_CHARACTERS_PER_LINE, SCREEN_DEFAULT_DISPLAY_LENGTH } from "
 
 type ForecastScreenProps = {
   weatherStationResponse: WeatherStation;
-};
+} & AutomaticScreenProps;
 
 const MAX_FORECAST_PAGES = 3;
 
-export function ForecastScreen(props: ForecastScreenProps & AutomaticScreenProps) {
+export function ForecastScreen(props: ForecastScreenProps) {
   const { onComplete, weatherStationResponse } = props ?? {};
   const [page, setPage] = useState(1);
 

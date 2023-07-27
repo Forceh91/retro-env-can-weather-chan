@@ -31,4 +31,4 @@ coverage
 # REC
 db*
 cfg*
-alerts*
+alerts.txt

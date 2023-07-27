@@ -6,7 +6,7 @@ export function abbreviateForecast(
   maxCharacters: number = FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH
 ) {
   // start with easy wins first like: "percent chance" -> "% chance", and "km/h" -> "kmh"
-  let abbreviatedSummary = forecastSummary.replace(/\spercent chance/gi, "% chance").replace(/km\/h/gi, "kmh");
+  let abbreviatedSummary = forecastSummary.replace(/\spercent chance/gi, "% chance").replace(/\skm\/h/gi, "");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
   // and now if we find a long compass direction we can change that
@@ -29,8 +29,36 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/thunderstorm/gi, "tstorm");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // now aim for gusting
+  abbreviatedSummary = abbreviatedSummary.replace(/\sgusting to\s/gi, "g");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // evening
   abbreviatedSummary = abbreviatedSummary.replace(/evening/gi, "eve");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // afternoon
+  abbreviatedSummary = abbreviatedSummary.replace(/afternoon/gi, "aftn");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // morning
+  abbreviatedSummary = abbreviatedSummary.replace(/morning/gi, "mrng");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // occasional
+  abbreviatedSummary = abbreviatedSummary.replace(/occasional/gi, "ocnl");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // becoming
+  abbreviatedSummary = abbreviatedSummary.replace(/becoming/gi, "bcmg");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // beginning
+  abbreviatedSummary = abbreviatedSummary.replace(/beginning/gi, "bgng");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // we don't want things like "a few"
+  abbreviatedSummary = abbreviatedSummary.replace(/\sa few/gi, "");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
   // make sure we actually return

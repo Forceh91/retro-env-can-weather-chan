@@ -46,7 +46,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
         return <ForecastScreen weatherStationResponse={weatherStationResponse} onComplete={switchToNextScreen} />;
 
       case Screens.ALMANAC:
-        return <AlmanacScreen />;
+        return <AlmanacScreen weatherStationResponse={weatherStationResponse} />;
     }
 
     return <></>;

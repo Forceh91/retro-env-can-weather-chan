@@ -1,6 +1,7 @@
 @import "./vars.scss";
 @import "./theme.scss";
 @import "./conditions.scss";
+@import "./forecast.scss";
 
 * {
   box-sizing: border-box;
@@ -42,9 +43,7 @@ html {
 
   #display {
     background: darkblue;
-    display: flex;
     height: calc(100% - #{$crawler_bar_height} - #{$footer_bar_height});
-    justify-content: center;
     overflow: hidden;
     padding: 0 10%;
     width: 100%;

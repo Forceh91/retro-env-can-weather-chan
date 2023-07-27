@@ -11,7 +11,13 @@ type ConditionsProp = {
 };
 
 export function Conditions(props: ConditionsProp) {
-  const { city, conditions, stationTime, showPressure = false } = props ?? {};
+  const {
+    city,
+    conditions,
+    stationTime,
+    stationTime: { observedDateTime },
+    showPressure = false,
+  } = props ?? {};
   const {
     temperature: { value: temperatureValue, units: temperatureUnits },
     wind: {
@@ -27,7 +33,7 @@ export function Conditions(props: ConditionsProp) {
 
   const title = useMemo(
     () => stationTime && ` ${city.slice(0, 8).padEnd(11)}${formatObservedLong(stationTime, true)}`,
-    [stationTime]
+    [observedDateTime]
   );
 
   const formattedTemperature = useMemo(
@@ -36,7 +42,7 @@ export function Conditions(props: ConditionsProp) {
         ? `${Math.round(temperatureValue)} ${temperatureUnits ?? ""}`
         : "N/A"
       ).padStart(5),
-    [stationTime]
+    [observedDateTime]
   );
 
   const formattedWind = useMemo(() => {
@@ -51,7 +57,7 @@ export function Conditions(props: ConditionsProp) {
       return CONDITIONS_WIND_SPEED_CALM.padEnd(11);
 
     return `${direction}${`${speed} KMH`.padStart(8)}`;
-  }, [stationTime]);
+  }, [observedDateTime]);
 
   const formattedHumidity = useMemo(() => `${humidityValue ?? "N/A"} ${humidityUnits}`.padStart(5), [stationTime]);
 
@@ -62,7 +68,7 @@ export function Conditions(props: ConditionsProp) {
     if (visibilityValue < 1) return `${visibilityValue * 1000} M`;
 
     return `${Math.round(visibilityValue)} ${visibilityUnits}`;
-  }, [stationTime]);
+  }, [observedDateTime]);
 
   return (
     <div id="conditions">

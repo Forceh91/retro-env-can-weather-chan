@@ -9,7 +9,6 @@ export function useConfig() {
   const [config, setConfig] = useState<InitChannel>();
 
   const fetchConfig = () => {
-    console.log("fetching config");
     axios
       .get("init")
       .then((resp) => {

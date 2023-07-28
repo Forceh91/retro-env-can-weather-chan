@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { WeatherStation } from "types";
+import { CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
 import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
 import { formatStringTo8x32 } from "lib/display";
+import { cleanupAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 
 type ForecastScreenProps = {
   weatherStationResponse: WeatherStation;
+  alert?: CAPObject;
 } & AutomaticScreenProps;
 
 const MAX_FORECAST_PAGES = 3;
 
 export function ForecastScreen(props: ForecastScreenProps) {
-  const { onComplete, weatherStationResponse } = props ?? {};
+  const { onComplete, weatherStationResponse, alert } = props ?? {};
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
     // by default we're allowed 4 lines for the forecast but if there's a warning/watch showing it'll be 3
     return formatStringTo8x32(
       `Forecast for ${immediateForecast.period}..${immediateForecast.abbreviatedTextSummary}`,
-      4
+      alert ? 3 : 4
     );
   }, [weatherStationResponse?.stationTime?.observedDateTime]);
 
@@ -71,7 +73,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
   if (!weatherStationResponse) return <></>;
 
   return (
-    <>
+    <div id="forecast_screen">
       {page === 1 && (
         <>
           <Conditions
@@ -79,18 +81,23 @@ export function ForecastScreen(props: ForecastScreenProps) {
             conditions={weatherStationResponse.observed}
             stationTime={weatherStationResponse.stationTime}
           />
+          {alert && (
+            <div className={`centre-align forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
+              {cleanupAlertHeadline(alert.headline)}
+            </div>
+          )}
           <div className="forecast">{formattedImmediateForecast}</div>
         </>
       )}
       {page > 1 && (
         <div>
-          <div>{weatherStationResponse.city} forecast cont..</div>
+          <div className="centre-align">{weatherStationResponse.city} forecast cont..</div>
           <br />
           <div>{formattedPageForecast1}</div>
           <br />
           <div>{formattedPageForecast2}</div>
         </div>
       )}
-    </>
+    </div>
   );
 }

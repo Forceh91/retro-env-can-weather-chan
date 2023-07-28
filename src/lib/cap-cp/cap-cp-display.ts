@@ -9,3 +9,9 @@ export function shouldAlertFlash(alert: CAPObject) {
 
   return alert.severity >= CAPSeverity.MODERATE;
 }
+
+export function cleanupAlertHeadline(headline: string) {
+  if (!headline?.length) return "";
+
+  return headline.replace(/\sin effect/gi, "");
+}

@@ -1,5 +1,5 @@
 import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
-import { shouldAlertFlash } from "lib/cap-cp";
+import { cleanupAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 import { formatStringTo8x32 } from "lib/display";
 import { useEffect, useState } from "react";
 import { CAPObject } from "types";
@@ -34,12 +34,6 @@ export function AlertScreen(props: AlertScreenProps) {
     }, SCREEN_DEFAULT_DISPLAY_LENGTH * 1000);
   }, [page]);
 
-  const cleanupHeadline = (headline: string) => {
-    if (!headline?.length) return "";
-
-    return headline.replace(/\sin effect/gi, "");
-  };
-
   const getShortDescriptionForAlert = (description: string) => {
     if (!description?.length) return "";
 
@@ -51,7 +45,6 @@ export function AlertScreen(props: AlertScreenProps) {
 
     // remove extra stuff thats not relevant
     const [relevantDescription] = shortDescription.split(/\n+###|\s+##/gi);
-    console.log("short", shortDescription, "relevant", relevantDescription);
     return formatStringTo8x32(relevantDescription.split(/locations impacted/gi)[0], 7);
   };
 
@@ -59,11 +52,11 @@ export function AlertScreen(props: AlertScreenProps) {
   if (!alerts?.length) return <></>;
 
   return (
-    <div>
+    <div id="alert_screen" className="centre-align">
       {displayedAlert && (
         <>
           <div className={shouldAlertFlash(displayedAlert) ? "flash" : ""}>
-            {cleanupHeadline(displayedAlert.headline)}
+            {cleanupAlertHeadline(displayedAlert.headline)}
           </div>
           <div>{getShortDescriptionForAlert(displayedAlert.description)}</div>
         </>

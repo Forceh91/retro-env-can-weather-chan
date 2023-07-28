@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import { Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
-import { FlavourScreen, WeatherStation } from "types";
+import { CAPObject, FlavourScreen, WeatherStation } from "types";
 import { AlmanacScreen, ForecastScreen } from "./screens";
+import { AlertScreen } from "./screens/alerts";
 
 type ScreenRotatorProps = {
   screens: FlavourScreen[];
   weatherStationResponse: WeatherStation;
+  alerts: {
+    alerts: CAPObject[];
+    mostImportantAlert: CAPObject;
+    hasFetched: boolean;
+  };
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
-  const { screens = [], weatherStationResponse } = props ?? {};
+  const { screens = [], weatherStationResponse, alerts } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
 
@@ -47,6 +53,9 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
       case Screens.ALMANAC:
         return <AlmanacScreen weatherStationResponse={weatherStationResponse} />;
+
+      case Screens.ALERTS:
+        return <AlertScreen onComplete={switchToNextScreen} {...alerts} />;
     }
 
     return <></>;

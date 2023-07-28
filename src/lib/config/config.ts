@@ -1,4 +1,4 @@
-import { FS_NO_FILE_FOUND } from "consts";
+import { DEFAULT_WEATHER_STATION_ID, FS_NO_FILE_FOUND } from "consts";
 import fs from "fs";
 import { FlavourLoader } from "lib/flavour";
 import Logger from "lib/logger";
@@ -21,7 +21,7 @@ const CRAWLER_ABSOLUTE_PATH = `${CRAWLER_PATH.FOLDER}/${CRAWLER_PATH.FILE}`;
 class Config {
   primaryLocation: PrimaryLocation = {
     province: "MB",
-    location: "s0000193",
+    location: DEFAULT_WEATHER_STATION_ID,
     name: "Winnipeg",
   };
   provinceHighLowEnabled = true; // eventually you can choose what cities this tracks but for now this is true/false

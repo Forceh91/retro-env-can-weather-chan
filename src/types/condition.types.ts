@@ -59,12 +59,20 @@ export type Forecast = {
   conditions: string;
 };
 
+export type OutlookForecast = {
+  period: string;
+  high: number;
+  low: number;
+  condition: string;
+};
+
 export type WeekForecast = Forecast[];
 
 export type WeatherStation = {
   observationID: string;
   city: string;
   stationTime: WeatherStationTimeData;
+  stationID: string;
   observed: ObservedConditions & { windchill: number | null };
   almanac: Almanac & { sunRiseSet: SunRiseSet };
   forecast: WeekForecast;

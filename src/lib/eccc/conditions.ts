@@ -38,6 +38,7 @@ class CurrentConditions {
   private _conditionUUID: string;
   private _weatherStationTimeData: WeatherStationTimeData;
   private _weatherStationCityName: string;
+  private _weatherStationID: string;
   private _conditions: ObservedConditions;
   private _sunRiseSet: SunRiseSet = { rise: null, set: null, timezone: "UTC" };
   private _almanac: Almanac = {
@@ -55,8 +56,10 @@ class CurrentConditions {
   public stationLatLong: LatLong = { lat: 0, long: 0 };
 
   constructor() {
+    this._weatherStationID = config?.primaryLocation?.location;
+
     this.startAMQPConnection();
-    this._apiUrl = `${ECCC_BASE_API_URL}/${config.primaryLocation.province}/${config.primaryLocation.location}${ECCC_API_ENGLISH_SUFFIX}`;
+    this._apiUrl = `${ECCC_BASE_API_URL}/${config.primaryLocation.province}/${this._weatherStationID}${ECCC_API_ENGLISH_SUFFIX}`;
     this.fetchConditions();
   }
 
@@ -305,6 +308,7 @@ class CurrentConditions {
       observationID: this._conditionUUID,
       city: this._weatherStationCityName,
       stationTime: this._weatherStationTimeData,
+      stationID: this._weatherStationID,
       observed: { ...this._conditions, windchill: this._windchill },
       almanac: { ...this._almanac, sunRiseSet: this._sunRiseSet },
       forecast: this._forecast,
@@ -316,6 +320,7 @@ class CurrentConditions {
       observationID: this._conditionUUID,
       city: this._weatherStationCityName,
       stationTime: this._weatherStationTimeData,
+      stationID: this._weatherStationID,
       forecast: this._forecast,
     };
   }
@@ -325,6 +330,7 @@ class CurrentConditions {
       observationID: this._conditionUUID,
       city: this._weatherStationCityName,
       stationTime: this._weatherStationTimeData,
+      stationID: this._weatherStationID,
       almanac: { ...this._almanac, sunRiseSet: this._sunRiseSet },
     };
   }

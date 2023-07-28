@@ -9,6 +9,18 @@ export function abbreviateForecast(
   let abbreviatedSummary = forecastSummary.replace(/\spercent chance/gi, "% chance").replace(/\skm\/h/gi, "");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // turn ZERO into just the number 0
+  abbreviatedSummary = abbreviatedSummary.replace(/zero/gi, "0");
+
+  // now we want to find PLUS 1-5 and change that into +number
+  abbreviatedSummary = abbreviatedSummary.replace(/plus ([1-5])/gi, "+$1");
+
+  // now we want to find PLUS number and change that into just number
+  abbreviatedSummary = abbreviatedSummary.replace(/plus (\d+)/gi, "$1");
+
+  // now we want to find MINUS number and change that into just -number
+  abbreviatedSummary = abbreviatedSummary.replace(/minus (\d+)/gi, "-$1");
+
   // and now if we find a long compass direction we can change that
   abbreviatedSummary = abbreviatedSummary
     .replace(/northeast/gi, "NE")

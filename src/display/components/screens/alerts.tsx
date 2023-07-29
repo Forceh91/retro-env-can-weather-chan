@@ -21,13 +21,13 @@ export function AlertScreen(props: AlertScreenProps) {
 
     // no alerts so we're done with this screen
     if (!alerts?.length) onComplete();
-
-    // we know we have alerts so show the one for the current page
-    setDisplayedAlert(alerts[page - 1]);
   }, [alerts]);
 
   // page changer
   useEffect(() => {
+    // we know we have alerts so show the one for the current page
+    setDisplayedAlert(alerts[page - 1]);
+
     setTimeout(() => {
       if (page < alerts.length) setPage(page + 1);
       else onComplete();

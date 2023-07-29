@@ -15,7 +15,7 @@ export function AlmanacScreen(props: AlmanacScreenProps) {
   if (!weatherStationResponse) return <></>;
 
   const formatTemperature = (temperature: number, length: number = TEMPERATURE_STRING_LENGTH) =>
-    (temperature?.toString() ?? "N/A").padStart(length);
+    (temperature?.toFixed(1).toString() ?? "N/A").padStart(length);
 
   const lastYear = {
     hi: formatTemperature(almanac?.temperatures?.lastYearMax?.value),

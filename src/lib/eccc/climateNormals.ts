@@ -7,7 +7,7 @@ import { ECCCClimateNormalElement } from "types";
 import { ClimateNormalSeasonPrecip, ClimateNormalsForMonth } from "types/climateNormals.type";
 import { ElementCompact, xml2js } from "xml-js";
 
-const logger = new Logger("Historical_Normals");
+const logger = new Logger("Climate_Normals");
 const config = initializeConfig();
 
 class ClimateNormals {

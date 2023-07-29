@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
-import { CAPObject, FlavourScreen, WeatherStation } from "types";
-import { AlmanacScreen, ForecastScreen, AlertScreen, OutlookScreen } from "./screens";
+import { CAPObject, FlavourScreen, RegionalWeather, WeatherStation } from "types";
+import { AlmanacScreen, ForecastScreen, AlertScreen, OutlookScreen, RegionalWeatherScreen } from "./screens";
 
 type ScreenRotatorProps = {
   screens: FlavourScreen[];
@@ -12,10 +12,11 @@ type ScreenRotatorProps = {
     mostImportantAlert: CAPObject;
     hasFetched: boolean;
   };
+  regionalWeather: RegionalWeather;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
-  const { screens = [], weatherStationResponse, alerts } = props ?? {};
+  const { screens = [], weatherStationResponse, alerts, regionalWeather } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
   const [conditionsUpdated, setConditionsUpdated] = useState(false);
@@ -82,6 +83,33 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
       case Screens.ALMANAC:
         return <AlmanacScreen weatherStationResponse={weatherStationResponse} />;
+
+      case Screens.CANADA_TEMP_CONDITIONS_MB:
+        return (
+          <RegionalWeatherScreen
+            weatherStationTime={weatherStationResponse?.stationTime}
+            observations={regionalWeather?.mb}
+            onComplete={switchToNextScreen}
+          />
+        );
+
+      case Screens.CANADA_TEMP_CONDITIONS_WEST:
+        return (
+          <RegionalWeatherScreen
+            weatherStationTime={weatherStationResponse?.stationTime}
+            observations={regionalWeather?.west}
+            onComplete={switchToNextScreen}
+          />
+        );
+
+      case Screens.CANADA_TEMP_CONDITIONS_EAST:
+        return (
+          <RegionalWeatherScreen
+            weatherStationTime={weatherStationResponse?.stationTime}
+            observations={regionalWeather?.east}
+            onComplete={switchToNextScreen}
+          />
+        );
     }
 
     return <></>;

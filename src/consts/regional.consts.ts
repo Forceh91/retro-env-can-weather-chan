@@ -52,3 +52,5 @@ export const EAST_WEATHER_STATIONS: RegionalStationConfig[] = [
 ];
 
 export const MAX_WEATHER_STATIONS_TO_DISPLAY = 7;
+export const MAX_REGIONAL_STATION_NAME_LENGTH = 13;
+export const MIN_REGIONAL_STATIONS_NEEDED_TO_DISPLAY = 2;

@@ -51,6 +51,11 @@ export type TemperatureRecord = {
   year?: number;
 };
 
+export type HistoricalTemperatureAlmanac = {
+  max: TemperatureRecord;
+  min: TemperatureRecord;
+};
+
 export type Forecast = {
   period: string;
   textSummary: string;

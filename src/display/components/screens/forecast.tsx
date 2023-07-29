@@ -15,14 +15,14 @@ type ForecastScreenProps = {
 const MAX_FORECAST_PAGES = 2;
 
 export function ForecastScreen(props: ForecastScreenProps) {
-  const { onComplete, weatherStationResponse, alert } = props ?? {};
+  const { onComplete, weatherStationResponse, alert, isReload } = props ?? {};
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     setTimeout(() => {
       if (page < MAX_FORECAST_PAGES) setPage(page + 1);
       else onComplete();
-    }, SCREEN_DEFAULT_DISPLAY_LENGTH * 1000);
+    }, (page === 1 && isReload ? 50 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
   }, [page]);
 
   const getForecastsForPage = () => {
@@ -79,7 +79,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
   if (!weatherStationResponse) return <></>;
 
   return (
-    <div id="forecast_screen">
+    <div id="forecast_screen" className={isReload ? "has-reloaded" : ""}>
       {page === 1 && (
         <>
           <Conditions
@@ -88,11 +88,15 @@ export function ForecastScreen(props: ForecastScreenProps) {
             stationTime={weatherStationResponse.stationTime}
           />
           {alert && (
-            <div className={`centre-align forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
+            <div
+              className={`reload-animation step-7 centre-align forecast-alert ${
+                shouldAlertFlash(alert) ? "flash" : ""
+              }`}
+            >
               {formatAlertHeadline(alert.headline)}
             </div>
           )}
-          <div className="forecast">{formattedImmediateForecast}</div>
+          <div className="forecast reload-animation step-8">{formattedImmediateForecast}</div>
         </>
       )}
       {page > 1 && (

@@ -73,32 +73,44 @@ export function Conditions(props: ConditionsProp) {
 
   return (
     <div id="conditions">
-      <div>{title}</div>
+      <div className="reload-animation step-1">{title}</div>
       <div>
-        <span>Temp&nbsp;</span>
-        <span>{formattedTemperature}</span>
+        <span className="reload-animation step-2">
+          <span>Temp&nbsp;</span>
+          <span>{formattedTemperature}</span>
+        </span>
         <span>{"".padEnd(6)}</span>
-        <span>Wind&nbsp;</span>
-        <span>{formattedWind}</span>
+        <span className="reload-animation step-3">
+          <span>Wind&nbsp;</span>
+          <span>{formattedWind}</span>
+        </span>
       </div>
       <div>
-        <span>Hum&nbsp;&nbsp;</span>
-        <span>{formattedHumidity}</span>
+        <span className="reload-animation step-4">
+          <span>Hum&nbsp;&nbsp;</span>
+          <span>{formattedHumidity}</span>
+        </span>
         <span>{"".padEnd(6)}</span>
-        <span>{abbreviatedCondition ?? ""}</span>
+        <span className="reload-animation step-5">
+          <span>{abbreviatedCondition ?? ""}</span>
+        </span>
       </div>
       <div>
         {isShowingExtraData && (
           <>
-            <span>Vsby&nbsp;</span>
-            <span>{formattedVisibility.padStart(6)}</span>
+            <span className="reload-animation step-6">
+              <span>Vsby&nbsp;</span>
+              <span>{formattedVisibility.padStart(6)}</span>
+            </span>
             <span>{"".padEnd(5)}</span>
-            {windchill > 0 && <span>Wind Chill {windchill}</span>}
-            {/* todo: aqhi */}
+            <span className="reload-animation step-7">
+              {windchill > 0 && <span>Wind Chill {windchill}</span>}
+              {/* todo: aqhi */}
+            </span>
           </>
         )}
         {!isShowingExtraData && (
-          <span>
+          <span className="reload-animation step-6">
             {"Visibility".padStart(16)}&nbsp;&nbsp;{formattedVisibility}
           </span>
         )}

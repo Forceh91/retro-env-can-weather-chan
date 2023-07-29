@@ -26,12 +26,16 @@ import {
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
 } from "consts/forecast.consts";
 import { CONDITIONS_WIND_SPEED_CALM } from "consts";
+import { parseISO } from "date-fns";
+import { initializeHistoricalTempPrecip } from "./historicalTempPrecip";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
 
 const logger = new Logger("conditions");
 const config = initializeConfig();
+const historicalData = initializeHistoricalTempPrecip();
+
 class CurrentConditions {
   private _amqpConnection: Connection;
   private _apiUrl: string;
@@ -114,6 +118,9 @@ class CurrentConditions {
 
         // store the observed date/time in our own format
         this.generateWeatherStationTimeData(weather.current?.dateTime[1] ?? {});
+
+        // time/date done so now fetch historical data
+        historicalData.fetchLastTwoYearsOfData(parseISO(this._weatherStationTimeData.observedDateTime));
 
         // get city name info
         this._weatherStationCityName = allWeather.location.name.value;
@@ -265,6 +272,8 @@ class CurrentConditions {
     // normal min/max
     this._almanac.temperatures.normalMin = retrieveAlmanacTemp("normalMin", false);
     this._almanac.temperatures.normalMax = retrieveAlmanacTemp("normalMax", false);
+
+    // last year min/max is done at request time for observed to make sure we have that data
   }
 
   private generateWindchill(conditions: ECCCConditions) {
@@ -310,7 +319,15 @@ class CurrentConditions {
       stationTime: this._weatherStationTimeData,
       stationID: this._weatherStationID,
       observed: { ...this._conditions, windchill: this._windchill },
-      almanac: { ...this._almanac, sunRiseSet: this._sunRiseSet },
+      almanac: {
+        ...this._almanac,
+        temperatures: {
+          ...this._almanac.temperatures,
+          lastYearMin: historicalData.lastYearTemperatures().min,
+          lastYearMax: historicalData.lastYearTemperatures().max,
+        },
+        sunRiseSet: this._sunRiseSet,
+      },
       forecast: this._forecast,
     };
   }
@@ -333,6 +350,10 @@ class CurrentConditions {
       stationID: this._weatherStationID,
       almanac: { ...this._almanac, sunRiseSet: this._sunRiseSet },
     };
+  }
+
+  public observedDateTime() {
+    return parseISO(this._weatherStationTimeData.observedDateTime);
   }
 }
 

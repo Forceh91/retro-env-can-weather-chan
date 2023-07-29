@@ -111,7 +111,7 @@ class AlertMonitor {
     logger.log("Storing CAP files");
 
     const capFileURLS = this._alerts.map((cap: CAPCPFile) => cap.url);
-    fs.writeFile(capFileURLS.join("\n"), "utf8", () => {
+    fs.writeFile(ALERTS_FILE, capFileURLS.join("\n"), "utf8", () => {
       logger.log("CAP files stored");
     });
   }

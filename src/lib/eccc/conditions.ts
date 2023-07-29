@@ -28,6 +28,7 @@ import {
 import { CONDITIONS_WIND_SPEED_CALM } from "consts";
 import { parseISO } from "date-fns";
 import { initializeHistoricalTempPrecip } from "./historicalTempPrecip";
+import { initializeClimateNormals } from "./climateNormals";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -35,6 +36,7 @@ const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
 const logger = new Logger("conditions");
 const config = initializeConfig();
 const historicalData = initializeHistoricalTempPrecip();
+const climateNormals = initializeClimateNormals();
 
 class CurrentConditions {
   private _amqpConnection: Connection;
@@ -120,7 +122,9 @@ class CurrentConditions {
         this.generateWeatherStationTimeData(weather.current?.dateTime[1] ?? {});
 
         // time/date done so now fetch historical data
-        historicalData.fetchLastTwoYearsOfData(parseISO(this._weatherStationTimeData.observedDateTime));
+        const observedDateTime: Date = parseISO(this._weatherStationTimeData.observedDateTime);
+        historicalData.fetchLastTwoYearsOfData(observedDateTime);
+        climateNormals.fetchClimateNormals(observedDateTime);
 
         // get city name info
         this._weatherStationCityName = allWeather.location.name.value;

@@ -9,3 +9,8 @@ export function getDayOfYearAdjustedForLeapDay() {
   // adjust by a day of its not a leap year and we're past feb
   return dayOfYear + (!isLeapYear && month > 2 ? 1 : 0);
 }
+
+export function isStartOfMonth() {
+  const date = new Date();
+  return date.getDate() <= 5;
+}

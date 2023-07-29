@@ -79,3 +79,7 @@ export type ECCCForecastTemperature = {
   textSummary: string;
   temperature: { unitType: string; units: string; class: string; value: string };
 };
+
+export type ECCCClimateNormalElement = {
+  _attributes: { name: string; value: string; uom: string };
+};

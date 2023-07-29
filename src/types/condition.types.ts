@@ -56,6 +56,14 @@ export type HistoricalTemperatureAlmanac = {
   min: TemperatureRecord;
 };
 
+export type HistoricalPrecipData = {
+  amount: number;
+  normal: number;
+  season?: string;
+  unit: string;
+  type: string;
+};
+
 export type Forecast = {
   period: string;
   textSummary: string;

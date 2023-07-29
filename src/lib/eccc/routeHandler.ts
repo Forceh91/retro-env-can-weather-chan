@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { initializeCurrentConditions } from "./conditions";
-import { isSunSpotSeason, isWindchillSeason, isWinterSeason } from "lib/date";
+import { isSunSpotSeason, isWindchillSeason, getIsWinterSeason } from "lib/date";
 import { initializeAlertMonitor } from "./alertMonitor";
 import { CONDITIONS_EVENT_STREAM_CONDITION_UPDATE_EVENT, CONDITIONS_EVENT_STREAM_INTERVAL } from "consts";
 
@@ -23,7 +23,7 @@ export function getSeasons(req: Request, res: Response) {
   res.json({
     windchill: isWindchillSeason(),
     sunspot: isSunSpotSeason(),
-    winter: isWinterSeason(),
+    winter: getIsWinterSeason(),
   });
 }
 

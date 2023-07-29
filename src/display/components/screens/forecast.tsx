@@ -4,11 +4,12 @@ import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
 import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
 import { formatStringTo8x32 } from "lib/display";
-import { cleanupAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
+import { shouldAlertFlash } from "lib/cap-cp";
 
 type ForecastScreenProps = {
   weatherStationResponse: WeatherStation;
   alert?: CAPObject;
+  isReload?: boolean;
 } & AutomaticScreenProps;
 
 const MAX_FORECAST_PAGES = 2;

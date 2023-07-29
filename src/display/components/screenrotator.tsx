@@ -18,14 +18,30 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   const { screens = [], weatherStationResponse, alerts } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
+  const [conditionsUpdated, setConditionsUpdated] = useState(false);
 
+  let forecastScreenIx = -1;
+  let screenRotatorTimeout: NodeJS.Timeout = null;
+
+  // basic rotation of screens
   useEffect(() => {
     if (!screens?.length) return;
+
+    // store what index the forecast screen is at
+    forecastScreenIx = screens?.findIndex((screen) => screen.id === Screens.FORECAST);
 
     // displayed screen is set to -1 so we need to start displaying something
     if (displayedScreenIx === -1) setDisplayedScreenIx(0);
     else prepareSwitchToNextScreen();
   }, [displayedScreenIx, screens.length]);
+
+  // handle the conditions updating and needing to do a reload animation
+  useEffect(() => {
+    clearTimeout(screenRotatorTimeout);
+
+    setConditionsUpdated(true);
+    setDisplayedScreenIx(forecastScreenIx);
+  }, [weatherStationResponse?.observationID]);
 
   const prepareSwitchToNextScreen = (): void => {
     // get the data for the screen we want to go to
@@ -34,12 +50,13 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
     // if it's not an automatic screen (generally have 0s as duration, we need to switch after its duration time)
     if (!isAutomaticScreen(screen.id)) {
-      setTimeout(() => switchToNextScreen(), screen.duration * 1000);
-    }
+      screenRotatorTimeout = setTimeout(() => switchToNextScreen(), screen.duration * 1000);
+    } else screenRotatorTimeout = null;
   };
 
   const switchToNextScreen = () => {
     setDisplayedScreenIx((displayedScreenIx + 1) % screens.length);
+    if (conditionsUpdated) setConditionsUpdated(false);
   };
 
   const getComponentForDisplayedScreen = () => {
@@ -55,6 +72,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
           <ForecastScreen
             weatherStationResponse={weatherStationResponse}
             alert={alerts?.mostImportantAlert}
+            isReload={conditionsUpdated}
             onComplete={switchToNextScreen}
           />
         );

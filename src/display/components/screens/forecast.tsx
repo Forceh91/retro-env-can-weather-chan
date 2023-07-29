@@ -11,7 +11,7 @@ type ForecastScreenProps = {
   alert?: CAPObject;
 } & AutomaticScreenProps;
 
-const MAX_FORECAST_PAGES = 3;
+const MAX_FORECAST_PAGES = 2;
 
 export function ForecastScreen(props: ForecastScreenProps) {
   const { onComplete, weatherStationResponse, alert } = props ?? {};
@@ -83,7 +83,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
           />
           {alert && (
             <div className={`centre-align forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
-              {cleanupAlertHeadline(alert.headline)}
+              {alert.headline}
             </div>
           )}
           <div className="forecast">{formattedImmediateForecast}</div>

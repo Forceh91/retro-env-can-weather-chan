@@ -60,7 +60,7 @@ export function OutlookScreen(props: OutlookScreenProps) {
         {outlook?.length &&
           outlook.map((forecast: OutlookForecast, index) => (
             <li key={`outlook.${index}`}>
-              {forecast.period.padEnd(longestDayName, ".")}..Low {forecast.low}.&nbsp;&nbsp;High {forecast.high}
+              {forecast.period.padEnd(longestDayName, ".")}..Low {forecast.low}.&nbsp;&nbsp;High {forecast.high}.
               <br />
               {"".padStart(5)}
               {forecast.condition}.
@@ -68,7 +68,7 @@ export function OutlookScreen(props: OutlookScreenProps) {
           ))}
         <li>
           Normal Low {almanac?.temperatures?.normalMin?.value?.toFixed(0) ?? ""}. High{" "}
-          {almanac?.temperatures?.normalMax?.value.toFixed(0) ?? ""}
+          {almanac?.temperatures?.normalMax?.value.toFixed(0) ?? ""}.
         </li>
       </ol>
     </>

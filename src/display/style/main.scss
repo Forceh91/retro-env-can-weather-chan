@@ -54,7 +54,7 @@ ol {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    height: calc(100% - #{$crawler_bar_height} - #{$footer_bar_height});
+    height: $display_area_height;
     overflow: hidden;
     padding: 0 10%;
     width: 100%;

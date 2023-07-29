@@ -36,6 +36,8 @@ export function ForecastScreen(props: ForecastScreenProps) {
     }
   };
 
+  const formatAlertHeadline = (headline: string) => headline.replace(/severe thunderstorm/gi, "severe tstorm");
+
   // get all of the forecasts we'll need
   const [immediateForecast, page1Forecast1, page1Forecast2, page2Forecast1, page2Forecast2] =
     weatherStationResponse?.forecast ?? [];
@@ -83,7 +85,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
           />
           {alert && (
             <div className={`centre-align forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
-              {alert.headline}
+              {formatAlertHeadline(alert.headline)}
             </div>
           )}
           <div className="forecast">{formattedImmediateForecast}</div>

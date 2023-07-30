@@ -4,9 +4,11 @@ import { isSunSpotSeason, isWindchillSeason, getIsWinterSeason } from "lib/date"
 import { initializeAlertMonitor } from "./alertMonitor";
 import { CONDITIONS_EVENT_STREAM_CONDITION_UPDATE_EVENT, CONDITIONS_EVENT_STREAM_INTERVAL } from "consts";
 import { initializeNationalWeather } from "lib/national";
+import { initializeProvinceTracking } from "lib/provincetracking";
 
 const conditions = initializeCurrentConditions();
 const nationalWeather = initializeNationalWeather();
+const provinceTracking = initializeProvinceTracking();
 const alertMonitor = initializeAlertMonitor();
 
 export function getObserved(req: Request, res: Response) {
@@ -58,4 +60,8 @@ function writeEventStream(res: Response) {
 
 export function getNational(req: Request, res: Response) {
   res.json(nationalWeather.nationalWeather());
+}
+
+export function getProvinceTracking(req: Request, res: Response) {
+  res.json(provinceTracking.provinceTracking());
 }

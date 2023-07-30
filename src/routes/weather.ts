@@ -7,6 +7,7 @@ import {
   getAlerts,
   getLive,
   getNational,
+  getProvinceTracking,
 } from "lib/eccc/routeHandler";
 
 /*
@@ -21,5 +22,6 @@ router.get("/seasons", getSeasons);
 router.get("/alerts", getAlerts);
 router.get("/live", getLive);
 router.get("/regional", getNational);
+router.get("/province", getProvinceTracking);
 
 export default router;

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
 import { CAPObject, FlavourScreen, RegionalWeather, WeatherStation } from "types";
-import { AlmanacScreen, ForecastScreen, AlertScreen, OutlookScreen, RegionalWeatherScreen } from "./screens";
+import { AlmanacScreen, ForecastScreen, AlertScreen, OutlookScreen, NationalWeatherScreen } from "./screens";
 
 type ScreenRotatorProps = {
   screens: FlavourScreen[];
@@ -86,7 +86,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
       case Screens.CANADA_TEMP_CONDITIONS_MB:
         return (
-          <RegionalWeatherScreen
+          <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={regionalWeather?.mb}
             onComplete={switchToNextScreen}
@@ -95,7 +95,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
       case Screens.CANADA_TEMP_CONDITIONS_WEST:
         return (
-          <RegionalWeatherScreen
+          <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={regionalWeather?.west}
             onComplete={switchToNextScreen}
@@ -104,7 +104,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
       case Screens.CANADA_TEMP_CONDITIONS_EAST:
         return (
-          <RegionalWeatherScreen
+          <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={regionalWeather?.east}
             onComplete={switchToNextScreen}

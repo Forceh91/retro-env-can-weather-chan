@@ -1,6 +1,6 @@
-import { RegionalStationConfig } from "types";
+import { NationalStationConfig } from "types";
 
-export const MB_WEATHER_STATIONS: RegionalStationConfig[] = [
+export const MB_WEATHER_STATIONS: NationalStationConfig[] = [
   { name: "Portage", code: "MB/s0000626" },
   { name: "Brandon", code: "MB/s0000492" },
   { name: "Dauphin", code: "MB/s0000508" },
@@ -17,7 +17,7 @@ export const MB_WEATHER_STATIONS: RegionalStationConfig[] = [
   { name: "Gillam", code: "MB/s0000543", isBackup: true },
 ];
 
-export const WEST_WEATHER_STATIONS: RegionalStationConfig[] = [
+export const WEST_WEATHER_STATIONS: NationalStationConfig[] = [
   { name: "Vancouver", code: "BC/s0000141" },
   { name: "Victoria", code: "BC/s0000775" },
   { name: "Edmonton", code: "AB/s0000510" },
@@ -34,7 +34,7 @@ export const WEST_WEATHER_STATIONS: RegionalStationConfig[] = [
   { name: "Yorkton", code: "SK/s0000663", isBackup: true },
 ];
 
-export const EAST_WEATHER_STATIONS: RegionalStationConfig[] = [
+export const EAST_WEATHER_STATIONS: NationalStationConfig[] = [
   { name: "Toronto", code: "ON/s0000458" },
   { name: "Ottawa", code: "ON/s0000623" },
   { name: "Montreal", code: "QC/s0000635" },
@@ -51,6 +51,6 @@ export const EAST_WEATHER_STATIONS: RegionalStationConfig[] = [
   { name: "Gander", code: "NL/s0000667", isBackup: true },
 ];
 
-export const MAX_WEATHER_STATIONS_TO_DISPLAY = 7;
-export const MAX_REGIONAL_STATION_NAME_LENGTH = 13;
-export const MIN_REGIONAL_STATIONS_NEEDED_TO_DISPLAY = 2;
+export const MAX_NATIONAL_STATIONS_PER_PAGE = 7;
+export const MAX_NATIONAL_STATION_NAME_LENGTH = 13;
+export const MIN_NATIONAL_STATIONS_NEEDED_TO_DISPLAY = 2;

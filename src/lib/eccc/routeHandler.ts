@@ -3,10 +3,10 @@ import { initializeCurrentConditions } from "./conditions";
 import { isSunSpotSeason, isWindchillSeason, getIsWinterSeason } from "lib/date";
 import { initializeAlertMonitor } from "./alertMonitor";
 import { CONDITIONS_EVENT_STREAM_CONDITION_UPDATE_EVENT, CONDITIONS_EVENT_STREAM_INTERVAL } from "consts";
-import { initializeRegionalWeather } from "lib/regional";
+import { initializeNationalWeather } from "lib/national";
 
 const conditions = initializeCurrentConditions();
-const regionalWeather = initializeRegionalWeather();
+const nationalWeather = initializeNationalWeather();
 const alertMonitor = initializeAlertMonitor();
 
 export function getObserved(req: Request, res: Response) {
@@ -56,6 +56,6 @@ function writeEventStream(res: Response) {
   res.write(`data: ${JSON.stringify(conditions.observed())}\n\n`);
 }
 
-export function getRegional(req: Request, res: Response) {
-  res.json(regionalWeather.regionalWeather());
+export function getNational(req: Request, res: Response) {
+  res.json(nationalWeather.nationalWeather());
 }

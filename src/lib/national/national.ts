@@ -2,20 +2,20 @@ const Weather = require("ec-weather-js");
 
 import {
   EAST_WEATHER_STATIONS,
-  MAX_WEATHER_STATIONS_TO_DISPLAY,
+  MAX_NATIONAL_STATIONS_PER_PAGE,
   MB_WEATHER_STATIONS,
   WEST_WEATHER_STATIONS,
 } from "consts";
-import { RegionalStationConfig, RegionalStationObservation, RegionalStationObservations } from "types";
+import { NationalStationConfig, NationalStationObservation, NationalStationObservations } from "types";
 import Logger from "lib/logger";
 import axios from "axios";
 import { harshTruncateConditions } from "lib/conditions";
 
 const logger = new Logger("Regional");
-class RegionalWeather {
-  private _manitobaStations: RegionalStationObservations = [];
-  private _eastStations: RegionalStationObservations = [];
-  private _westStations: RegionalStationObservations = [];
+class NationalWeather {
+  private _manitobaStations: NationalStationObservations = [];
+  private _eastStations: NationalStationObservations = [];
+  private _westStations: NationalStationObservations = [];
 
   constructor() {
     this.periodicUpdate();
@@ -28,13 +28,13 @@ class RegionalWeather {
     this.fetchWeatherForStations(WEST_WEATHER_STATIONS, this._westStations);
   }
 
-  private isStationReporting(station: RegionalStationObservation) {
+  private isStationReporting(station: NationalStationObservation) {
     return (
       station?.condition && !station?.condition?.toLowerCase().includes("unknown") && station?.temperature !== null
     );
   }
 
-  private fetchWeatherForStations(stations: RegionalStationConfig[], observations: RegionalStationObservations) {
+  private fetchWeatherForStations(stations: NationalStationConfig[], observations: NationalStationObservations) {
     // empty out the current observations and generate new data
     observations.splice(
       0,
@@ -46,7 +46,7 @@ class RegionalWeather {
     stations.forEach((station) => this.fetchWeatherForStation(station, observations));
   }
 
-  private fetchWeatherForStation(station: RegionalStationConfig, observations: RegionalStationObservations) {
+  private fetchWeatherForStation(station: NationalStationConfig, observations: NationalStationObservations) {
     axios
       .get(`https://dd.weather.gc.ca/citypage_weather/xml/${station.code}_e.xml`)
       .then((resp) => {
@@ -72,26 +72,26 @@ class RegionalWeather {
       .catch((err) => logger.error(station.name, "failed to fetch data", err));
   }
 
-  public regionalWeather() {
+  public nationalWeather() {
     // when we return we should filter down to just reporting stations, and then limit each one
     return {
       mb: this._manitobaStations
         .filter((stationObservation) => this.isStationReporting(stationObservation))
-        .slice(0, MAX_WEATHER_STATIONS_TO_DISPLAY),
+        .slice(0, MAX_NATIONAL_STATIONS_PER_PAGE),
       east: this._eastStations
         .filter((stationObservation) => this.isStationReporting(stationObservation))
-        .slice(0, MAX_WEATHER_STATIONS_TO_DISPLAY),
+        .slice(0, MAX_NATIONAL_STATIONS_PER_PAGE),
       west: this._westStations
         .filter((stationObservation) => this.isStationReporting(stationObservation))
-        .slice(0, MAX_WEATHER_STATIONS_TO_DISPLAY),
+        .slice(0, MAX_NATIONAL_STATIONS_PER_PAGE),
     };
   }
 }
 
-let regionalWeather: RegionalWeather = null;
-export function initializeRegionalWeather(): RegionalWeather {
-  if (regionalWeather) return regionalWeather;
+let nationalWeather: NationalWeather = null;
+export function initializeNationalWeather(): NationalWeather {
+  if (nationalWeather) return nationalWeather;
 
-  regionalWeather = new RegionalWeather();
-  return regionalWeather;
+  nationalWeather = new NationalWeather();
+  return nationalWeather;
 }

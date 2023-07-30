@@ -1,15 +1,15 @@
-import { MAX_REGIONAL_STATION_NAME_LENGTH, MIN_REGIONAL_STATIONS_NEEDED_TO_DISPLAY } from "consts";
+import { MAX_NATIONAL_STATION_NAME_LENGTH, MIN_NATIONAL_STATIONS_NEEDED_TO_DISPLAY } from "consts";
 import { formatObservedLong } from "lib/date";
 import { useEffect, useMemo } from "react";
-import { RegionalStationObservations, WeatherStationTimeData } from "types";
+import { NationalStationObservations, WeatherStationTimeData } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 
-type RegionalWeatherProps = {
-  observations: RegionalStationObservations;
+type NationalWeatherProps = {
+  observations: NationalStationObservations;
   weatherStationTime: WeatherStationTimeData;
 } & AutomaticScreenProps;
 
-export function RegionalWeatherScreen(props: RegionalWeatherProps) {
+export function NationalWeatherScreen(props: NationalWeatherProps) {
   const { observations, weatherStationTime, onComplete } = props ?? {};
   const title = useMemo(
     () => formatObservedLong(weatherStationTime, true, " "),
@@ -19,7 +19,7 @@ export function RegionalWeatherScreen(props: RegionalWeatherProps) {
   useEffect(() => {
     if (
       !observations ||
-      observations?.length < MIN_REGIONAL_STATIONS_NEEDED_TO_DISPLAY ||
+      observations?.length < MIN_NATIONAL_STATIONS_NEEDED_TO_DISPLAY ||
       !weatherStationTime?.observedDateTime
     )
       onComplete();
@@ -34,11 +34,11 @@ export function RegionalWeatherScreen(props: RegionalWeatherProps) {
         {title}
       </>
       <ol>
-        {observations.map((regionalObservation) => (
-          <li key={regionalObservation.code}>
-            <span>{regionalObservation.name.padEnd(MAX_REGIONAL_STATION_NAME_LENGTH)}</span>
-            <span>{Math.round(regionalObservation.temperature).toString().padStart(4)}</span>
-            <span>&nbsp;&nbsp;{regionalObservation.abbreviatedCondition}</span>
+        {observations.map((nationalObservation) => (
+          <li key={nationalObservation.code}>
+            <span>{nationalObservation.name.padEnd(MAX_NATIONAL_STATION_NAME_LENGTH)}</span>
+            <span>{Math.round(nationalObservation.temperature).toString().padStart(4)}</span>
+            <span>&nbsp;&nbsp;{nationalObservation.abbreviatedCondition}</span>
           </li>
         ))}
       </ol>

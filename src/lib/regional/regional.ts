@@ -18,6 +18,11 @@ class RegionalWeather {
   private _westStations: RegionalStationObservations = [];
 
   constructor() {
+    this.periodicUpdate();
+    setInterval(() => this.periodicUpdate(), 5 * 60 * 1000);
+  }
+
+  private periodicUpdate() {
     this.fetchWeatherForStations(MB_WEATHER_STATIONS, this._manitobaStations);
     this.fetchWeatherForStations(EAST_WEATHER_STATIONS, this._eastStations);
     this.fetchWeatherForStations(WEST_WEATHER_STATIONS, this._westStations);

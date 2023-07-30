@@ -11,7 +11,7 @@ import Logger from "lib/logger";
 import axios from "axios";
 import { harshTruncateConditions } from "lib/conditions";
 
-const logger = new Logger("Regional");
+const logger = new Logger("National");
 class NationalWeather {
   private _manitobaStations: NationalStationObservations = [];
   private _eastStations: NationalStationObservations = [];

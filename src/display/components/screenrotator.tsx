@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
-import { CAPObject, FlavourScreen, RegionalWeather, WeatherStation } from "types";
+import { CAPObject, FlavourScreen, NationalWeather, WeatherStation } from "types";
 import { AlmanacScreen, ForecastScreen, AlertScreen, OutlookScreen, NationalWeatherScreen } from "./screens";
 
 type ScreenRotatorProps = {
@@ -12,11 +12,11 @@ type ScreenRotatorProps = {
     mostImportantAlert: CAPObject;
     hasFetched: boolean;
   };
-  regionalWeather: RegionalWeather;
+  nationalWeather: NationalWeather;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
-  const { screens = [], weatherStationResponse, alerts, regionalWeather } = props ?? {};
+  const { screens = [], weatherStationResponse, alerts, nationalWeather } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
   const [conditionsUpdated, setConditionsUpdated] = useState(false);
@@ -88,7 +88,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
         return (
           <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
-            observations={regionalWeather?.mb}
+            observations={nationalWeather?.mb}
             onComplete={switchToNextScreen}
           />
         );
@@ -97,7 +97,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
         return (
           <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
-            observations={regionalWeather?.west}
+            observations={nationalWeather?.west}
             onComplete={switchToNextScreen}
           />
         );
@@ -106,7 +106,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
         return (
           <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
-            observations={regionalWeather?.east}
+            observations={nationalWeather?.east}
             onComplete={switchToNextScreen}
           />
         );

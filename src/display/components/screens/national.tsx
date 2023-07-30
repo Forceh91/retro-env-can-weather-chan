@@ -28,7 +28,7 @@ export function NationalWeatherScreen(props: NationalWeatherProps) {
   if (!observations || !weatherStationTime?.observedDateTime) return <></>;
 
   return (
-    <div id="regional_weather">
+    <div id="national_weather">
       <>
         {"".padStart(6)}
         {title}

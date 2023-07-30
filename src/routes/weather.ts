@@ -21,7 +21,7 @@ router.get("/almanac", getAlmanac);
 router.get("/seasons", getSeasons);
 router.get("/alerts", getAlerts);
 router.get("/live", getLive);
-router.get("/regional", getNational);
+router.get("/national", getNational);
 router.get("/province", getProvinceTracking);
 
 export default router;

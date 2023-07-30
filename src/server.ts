@@ -5,6 +5,7 @@ import { initializeCurrentConditions } from "lib/eccc";
 import { initializeAlertMonitor } from "lib/eccc/alertMonitor";
 import Logger from "lib/logger";
 import { initializeNationalWeather } from "lib/national";
+import { initializeProvinceTracking } from "lib/provincetracking";
 
 const logger = new Logger("Server");
 
@@ -15,4 +16,5 @@ initializeConfig();
 initializeCurrentConditions();
 initializeAlertMonitor();
 initializeNationalWeather();
+initializeProvinceTracking();
 logger.log("Started RWC");

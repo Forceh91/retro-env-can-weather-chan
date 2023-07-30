@@ -1,8 +1,8 @@
-import { DEFAULT_WEATHER_STATION_ID, FS_NO_FILE_FOUND } from "consts";
+import { DEFAULT_WEATHER_STATION_ID, FS_NO_FILE_FOUND, PROVINCE_TRACKING_DEFAULT_STATIONS } from "consts";
 import fs from "fs";
 import { FlavourLoader } from "lib/flavour";
 import Logger from "lib/logger";
-import { ClimateNormals, Flavour, LookAndFeel, MiscConfig, PrimaryLocation } from "types";
+import { ClimateNormals, Flavour, LookAndFeel, MiscConfig, PrimaryLocation, ProvinceStation } from "types";
 
 const logger = new Logger("config");
 const CONFIG_PATH = {
@@ -38,6 +38,7 @@ class Config {
   };
   crawlerMessages: string[];
   flavour: Flavour;
+  provinceTracking: ProvinceStation[]; // what provinces to track high/low/precip for
 
   constructor() {
     this.loadConfig();
@@ -49,6 +50,7 @@ class Config {
     return {
       primaryLocation: this.primaryLocation,
       provinceHighLowEnabled: this.provinceHighLowEnabled,
+      provinceTracking: this.provinceTracking,
       historicalDataStationID: this.historicalDataStationID,
       climateNormals: this.climateNormals,
       lookAndFeel: this.lookAndFeel,
@@ -77,6 +79,7 @@ class Config {
         climateNormals,
         lookAndFeel,
         misc,
+        provinceStations,
       } = parsedConfig;
 
       // but first we make sure that we have at least the province info
@@ -89,6 +92,8 @@ class Config {
       this.climateNormals = climateNormals ?? this.climateNormals;
       this.lookAndFeel = { ...this.lookAndFeel, ...lookAndFeel };
       this.misc = misc ?? this.misc;
+      this.provinceTracking =
+        provinceHighLowEnabled && provinceStations?.length ? provinceStations : PROVINCE_TRACKING_DEFAULT_STATIONS;
 
       logger.log("Loaded weather channel. Location:", `${name}, ${province}`, `(${location})`);
     } catch (err) {

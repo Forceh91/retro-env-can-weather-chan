@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
-import { CAPObject, FlavourScreen, NationalWeather, WeatherStation } from "types";
-import { AlmanacScreen, ForecastScreen, AlertScreen, OutlookScreen, NationalWeatherScreen } from "./screens";
+import { CAPObject, FlavourScreen, NationalWeather, ProvinceStationTracking, WeatherStation } from "types";
+import {
+  AlmanacScreen,
+  ForecastScreen,
+  AlertScreen,
+  OutlookScreen,
+  NationalWeatherScreen,
+  ProvinceTrackingScreen,
+} from "./screens";
 
 type ScreenRotatorProps = {
   screens: FlavourScreen[];
@@ -13,10 +20,11 @@ type ScreenRotatorProps = {
     hasFetched: boolean;
   };
   nationalWeather: NationalWeather;
+  provinceTracking: ProvinceStationTracking[];
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
-  const { screens = [], weatherStationResponse, alerts, nationalWeather } = props ?? {};
+  const { screens = [], weatherStationResponse, alerts, nationalWeather, provinceTracking } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
   const [conditionsUpdated, setConditionsUpdated] = useState(false);
@@ -83,6 +91,15 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
       case Screens.ALMANAC:
         return <AlmanacScreen weatherStationResponse={weatherStationResponse} />;
+
+      case Screens.PROVINCE_PRECIP:
+        return (
+          <ProvinceTrackingScreen
+            weatherStationTime={weatherStationResponse?.stationTime}
+            tracking={provinceTracking}
+            onComplete={switchToNextScreen}
+          />
+        );
 
       case Screens.CANADA_TEMP_CONDITIONS_MB:
         return (

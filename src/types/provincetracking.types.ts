@@ -12,3 +12,8 @@ export type ProvinceStationTracking = {
   displayTemp: number | string;
   yesterdayPrecip: number | string | null;
 };
+
+export type ProvinceTracking = {
+  tracking: ProvinceStationTracking[];
+  isOvernight: boolean;
+};

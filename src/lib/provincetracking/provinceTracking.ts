@@ -152,7 +152,7 @@ class ProvinceTracking {
   }
 
   public provinceTracking() {
-    return { tracking: this._tracking };
+    return { tracking: this._tracking, isOvernight: this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP };
   }
 }
 

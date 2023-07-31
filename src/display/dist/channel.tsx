@@ -1,9 +1,9 @@
 import { FooterBar } from "display/components/footerbar";
 import { ScreenRotator } from "display/components/screenrotator";
-import { useAlerts, useProvinceTracking } from "hooks";
+import { useAlerts, useProvinceTracking, useSeason } from "hooks";
 import { useConfig } from "hooks/init";
 import { useNationalWeather, useWeatherEventStream } from "hooks";
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
 function WeatherChannel() {
@@ -12,6 +12,11 @@ function WeatherChannel() {
   const alertsHook = useAlerts();
   const { nationalWeather } = useNationalWeather();
   const { provinceTracking } = useProvinceTracking();
+  const { season, fetchSeason } = useSeason();
+
+  useEffect(() => {
+    fetchSeason();
+  }, [currentConditions?.observationID]);
 
   return (
     <>
@@ -23,6 +28,7 @@ function WeatherChannel() {
           alerts={alertsHook}
           nationalWeather={nationalWeather}
           provinceTracking={provinceTracking}
+          season={season}
         />
       </div>
       <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />

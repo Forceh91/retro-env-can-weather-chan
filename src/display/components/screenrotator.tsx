@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
-import { CAPObject, FlavourScreen, NationalWeather, ProvinceTracking, WeatherStation } from "types";
+import { CAPObject, FlavourScreen, NationalWeather, ProvinceTracking, Season, WeatherStation } from "types";
 import {
   AlmanacScreen,
   ForecastScreen,
@@ -9,6 +9,7 @@ import {
   OutlookScreen,
   NationalWeatherScreen,
   ProvinceTrackingScreen,
+  StatsScreen,
 } from "./screens";
 
 type ScreenRotatorProps = {
@@ -21,10 +22,11 @@ type ScreenRotatorProps = {
   };
   nationalWeather: NationalWeather;
   provinceTracking: ProvinceTracking;
+  season: Season;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
-  const { screens = [], weatherStationResponse, alerts, nationalWeather, provinceTracking } = props ?? {};
+  const { screens = [], weatherStationResponse, alerts, nationalWeather, provinceTracking, season } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
   const [conditionsUpdated, setConditionsUpdated] = useState(false);
@@ -132,6 +134,16 @@ export function ScreenRotator(props: ScreenRotatorProps) {
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={nationalWeather?.east}
             onComplete={switchToNextScreen}
+          />
+        );
+
+      case Screens.STATS:
+        return (
+          <StatsScreen
+            weatherStationTime={weatherStationResponse?.stationTime}
+            season={season}
+            sunRiseSet={weatherStationResponse?.almanac?.sunRiseSet}
+            city={weatherStationResponse?.city}
           />
         );
     }

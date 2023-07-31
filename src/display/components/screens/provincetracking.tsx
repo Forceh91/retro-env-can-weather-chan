@@ -20,7 +20,7 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
     const date = parseISO(weatherStationTime?.observedDateTime);
     if (!isValid(date)) return "";
 
-    return format(subDays(date, 1), "MMM dd").replace(/\s0/i, "");
+    return format(subDays(date, 1), "MMM dd").replace(/\s0/i, "  ");
   }, [weatherStationTime?.observedDateTime]);
 
   if (!stations?.length) return <></>;

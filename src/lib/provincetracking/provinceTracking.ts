@@ -85,6 +85,8 @@ class ProvinceTracking {
   }
 
   private resetTracking() {
+    logger.log("Switching over tracking and setting display value");
+
     this._tracking.forEach((station) => {
       // if min temp is now being displayed, reset the max and show min
       if (this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP) {

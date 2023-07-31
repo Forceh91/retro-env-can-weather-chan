@@ -2,7 +2,7 @@ import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
 import axios from "axios";
 import { ElementCompact, xml2js } from "xml-js";
-import { HistoricalPrecipData, HistoricalTemperatureAlmanac, WeatherStation } from "types";
+import { HistoricalPrecipData, HistoricalTemperatureAlmanac } from "types";
 import { isValid, isYesterday, parseISO } from "date-fns";
 import { isDateInCurrentWinterSeason, getIsWinterSeason, isDateInCurrentSummerSeason } from "lib/date";
 

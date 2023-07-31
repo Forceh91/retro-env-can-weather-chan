@@ -1,7 +1,7 @@
 import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
 import { cleanupAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 import { formatStringTo8x32 } from "lib/display";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CAPObject } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 
@@ -14,6 +14,7 @@ export function AlertScreen(props: AlertScreenProps) {
   const { onComplete, alerts, hasFetched } = props ?? {};
   const [page, setPage] = useState(1);
   const [displayedAlert, setDisplayedAlert] = useState<CAPObject>();
+  const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
     // still waiting on alerts to be fetched
@@ -28,11 +29,18 @@ export function AlertScreen(props: AlertScreenProps) {
     // we know we have alerts so show the one for the current page
     setDisplayedAlert(alerts[page - 1]);
 
-    setTimeout(() => {
+    pageChangeTimeout.current = setTimeout(() => {
       if (page < alerts.length) setPage(page + 1);
       else onComplete();
     }, SCREEN_DEFAULT_DISPLAY_LENGTH * 1000);
   }, [page]);
+
+  // used to clear the page switching timeout
+  useEffect(() => {
+    return () => {
+      pageChangeTimeout.current && clearTimeout(pageChangeTimeout.current);
+    };
+  }, []);
 
   const getShortDescriptionForAlert = (description: string) => {
     if (!description?.length) return "";

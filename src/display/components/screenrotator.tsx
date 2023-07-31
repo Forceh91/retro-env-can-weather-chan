@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
-import { CAPObject, FlavourScreen, NationalWeather, ProvinceStationTracking, WeatherStation } from "types";
+import { CAPObject, FlavourScreen, NationalWeather, ProvinceTracking, WeatherStation } from "types";
 import {
   AlmanacScreen,
   ForecastScreen,
@@ -20,7 +20,7 @@ type ScreenRotatorProps = {
     hasFetched: boolean;
   };
   nationalWeather: NationalWeather;
-  provinceTracking: ProvinceStationTracking[];
+  provinceTracking: ProvinceTracking;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
@@ -30,7 +30,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   const [conditionsUpdated, setConditionsUpdated] = useState(false);
 
   let forecastScreenIx = -1;
-  let screenRotatorTimeout: NodeJS.Timeout = null;
+  const screenRotatorTimeout = useRef<NodeJS.Timeout>(null);
 
   // basic rotation of screens
   useEffect(() => {
@@ -44,9 +44,16 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     else prepareSwitchToNextScreen();
   }, [displayedScreenIx, screens.length]);
 
+  // used to clear the screen switching timeout
+  useEffect(() => {
+    return () => {
+      screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
+    };
+  }, []);
+
   // handle the conditions updating and needing to do a reload animation
   useEffect(() => {
-    clearTimeout(screenRotatorTimeout);
+    screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
 
     setConditionsUpdated(true);
     setDisplayedScreenIx(forecastScreenIx);
@@ -59,8 +66,8 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
     // if it's not an automatic screen (generally have 0s as duration, we need to switch after its duration time)
     if (!isAutomaticScreen(screen.id)) {
-      screenRotatorTimeout = setTimeout(() => switchToNextScreen(), screen.duration * 1000);
-    } else screenRotatorTimeout = null;
+      screenRotatorTimeout.current = setTimeout(() => switchToNextScreen(), screen.duration * 1000);
+    } else screenRotatorTimeout.current = null;
   };
 
   const switchToNextScreen = () => {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
@@ -17,13 +17,21 @@ const MAX_FORECAST_PAGES = 2;
 export function ForecastScreen(props: ForecastScreenProps) {
   const { onComplete, weatherStationResponse, alert, isReload } = props ?? {};
   const [page, setPage] = useState(1);
+  const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
-    setTimeout(() => {
+    pageChangeTimeout.current = setTimeout(() => {
       if (page < MAX_FORECAST_PAGES) setPage(page + 1);
       else onComplete();
     }, (page === 1 && isReload ? 50 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
   }, [page]);
+
+  // used to clear the page switching timeout
+  useEffect(() => {
+    return () => {
+      pageChangeTimeout.current && clearTimeout(pageChangeTimeout.current);
+    };
+  }, []);
 
   const getForecastsForPage = () => {
     // todo:make this much nicer

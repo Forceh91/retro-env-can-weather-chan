@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import path from "path";
 
 import { API_PORT, CORS_OPTIONS } from "consts";
 import { initializeRouter } from "routes";

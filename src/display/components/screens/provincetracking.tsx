@@ -34,6 +34,13 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
     return `${precipNumber.toFixed(1)} MM`.padStart(7);
   };
 
+  const formatTemp = (temp: number | string) => {
+    if (typeof temp === "string") return temp;
+
+    const tempNumber = Number(temp);
+    return `${Math.round(tempNumber)}`;
+  };
+
   return (
     <div id="province_tracking_screen">
       <div>
@@ -50,7 +57,7 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
         {stations.map((station) => (
           <li key={station.station.code}>
             <span>{station.station.name.slice(0, 10).padEnd(10)}</span>
-            <span>{station.displayTemp.toString().padStart(8)}</span>
+            <span>{formatTemp(station.displayTemp).padStart(8)}</span>
             <span>{"".padEnd(7)}</span>
             <span>{precipString(station.yesterdayPrecip)}</span>
           </li>

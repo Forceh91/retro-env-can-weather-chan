@@ -6,12 +6,14 @@ import { CONDITIONS_EVENT_STREAM_CONDITION_UPDATE_EVENT, CONDITIONS_EVENT_STREAM
 import { initializeNationalWeather } from "lib/national";
 import { initializeProvinceTracking } from "lib/provincetracking";
 import { initializeCanadaProvincialHotColdSpot } from "./canadaHotColdSpot";
+import { initializeUSAWeather } from "lib/usaweather";
 
 const conditions = initializeCurrentConditions();
 const nationalWeather = initializeNationalWeather();
 const provinceTracking = initializeProvinceTracking();
 const alertMonitor = initializeAlertMonitor();
 const hotColdSpots = initializeCanadaProvincialHotColdSpot();
+const usaWeather = initializeUSAWeather();
 
 export function getObserved(req: Request, res: Response) {
   res.json(conditions.observed());
@@ -62,6 +64,10 @@ function writeEventStream(res: Response) {
 
 export function getNational(req: Request, res: Response) {
   res.json(nationalWeather.nationalWeather());
+}
+
+export function getUSA(req: Request, res: Response) {
+  res.json(usaWeather.weather());
 }
 
 export function getProvinceTracking(req: Request, res: Response) {

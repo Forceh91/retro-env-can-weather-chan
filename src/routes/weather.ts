@@ -9,6 +9,7 @@ import {
   getNational,
   getProvinceTracking,
   getHoldColdSpots,
+  getUSA,
 } from "lib/eccc/routeHandler";
 
 /*
@@ -23,6 +24,7 @@ router.get("/seasons", getSeasons);
 router.get("/alerts", getAlerts);
 router.get("/live", getLive);
 router.get("/national", getNational);
+router.get("/usa", getUSA);
 router.get("/province", getProvinceTracking);
 router.get("/hotColdSpots", getHoldColdSpots);
 

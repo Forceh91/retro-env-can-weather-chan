@@ -11,11 +11,11 @@ const logger = new Logger("Server");
 
 logger.log("Starting RWC...");
 validateDirectories();
-initializeAPI();
 initializeConfig();
 initializeCurrentConditions();
 initializeAlertMonitor();
 initializeNationalWeather();
 initializeProvinceTracking();
 initializeCanadaProvincialHotColdSpot();
+initializeAPI();
 logger.log("Started RWC");

@@ -101,6 +101,13 @@ class CanadaProvincialHotColdSpots {
       })
       .catch(() => logger.error("Unable to fetch canada/provincial hot/cold spots"));
   }
+
+  public hotColdSpots() {
+    return {
+      ...this._hotColdSpots,
+      lastUpdated: this._lastUpdated,
+    };
+  }
 }
 
 let canadaProvincialHotColdSpots: CanadaProvincialHotColdSpots = null;

@@ -8,6 +8,7 @@ import {
   getLive,
   getNational,
   getProvinceTracking,
+  getHoldColdSpots,
 } from "lib/eccc/routeHandler";
 
 /*
@@ -23,5 +24,6 @@ router.get("/alerts", getAlerts);
 router.get("/live", getLive);
 router.get("/national", getNational);
 router.get("/province", getProvinceTracking);
+router.get("/hotColdSpots", getHoldColdSpots);
 
 export default router;

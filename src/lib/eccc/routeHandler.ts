@@ -5,11 +5,13 @@ import { initializeAlertMonitor } from "./alertMonitor";
 import { CONDITIONS_EVENT_STREAM_CONDITION_UPDATE_EVENT, CONDITIONS_EVENT_STREAM_INTERVAL } from "consts";
 import { initializeNationalWeather } from "lib/national";
 import { initializeProvinceTracking } from "lib/provincetracking";
+import { initializeCanadaProvincialHotColdSpot } from "./canadaHotColdSpot";
 
 const conditions = initializeCurrentConditions();
 const nationalWeather = initializeNationalWeather();
 const provinceTracking = initializeProvinceTracking();
 const alertMonitor = initializeAlertMonitor();
+const hotColdSpots = initializeCanadaProvincialHotColdSpot();
 
 export function getObserved(req: Request, res: Response) {
   res.json(conditions.observed());
@@ -64,4 +66,8 @@ export function getNational(req: Request, res: Response) {
 
 export function getProvinceTracking(req: Request, res: Response) {
   res.json(provinceTracking.provinceTracking());
+}
+
+export function getHoldColdSpots(req: Request, res: Response) {
+  res.json(hotColdSpots.hotColdSpots());
 }

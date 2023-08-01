@@ -7,3 +7,5 @@ export * from "./flavour.types";
 export * from "./national.types";
 export * from "./provincetracking.types";
 export * from "./season.types";
+export * from "./climateNormals.types";
+export * from "./canadaHotColdSpot.types";

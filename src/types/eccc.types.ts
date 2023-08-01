@@ -83,3 +83,8 @@ export type ECCCForecastTemperature = {
 export type ECCCClimateNormalElement = {
   _attributes: { name: string; value: string; uom: string };
 };
+
+export type ECCCHotColdSpotElement = {
+  _attributes: { name: string; value: string; uom: string };
+  qualifier?: ECCCHotColdSpotElement[];
+};

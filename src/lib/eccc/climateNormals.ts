@@ -3,8 +3,7 @@ import { format, getDaysInMonth, isValid, subMonths } from "date-fns";
 import { initializeConfig } from "lib/config";
 import { getShorthandMonthNamesForSeason, isStartOfMonth } from "lib/date";
 import Logger from "lib/logger";
-import { ECCCClimateNormalElement } from "types";
-import { ClimateNormalSeasonPrecip, ClimateNormalsForMonth } from "types/climateNormals.type";
+import { ECCCClimateNormalElement, ClimateNormalSeasonPrecip, ClimateNormalsForMonth } from "types";
 import { ElementCompact, xml2js } from "xml-js";
 
 const logger = new Logger("Climate_Normals");

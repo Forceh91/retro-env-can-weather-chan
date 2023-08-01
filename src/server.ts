@@ -1,7 +1,7 @@
 import { initializeAPI } from "api";
 import { validateDirectories } from "lib";
 import { initializeConfig } from "lib/config";
-import { initializeCurrentConditions } from "lib/eccc";
+import { initializeCanadaProvincialHotColdSpot, initializeCurrentConditions } from "lib/eccc";
 import { initializeAlertMonitor } from "lib/eccc/alertMonitor";
 import Logger from "lib/logger";
 import { initializeNationalWeather } from "lib/national";
@@ -17,4 +17,5 @@ initializeCurrentConditions();
 initializeAlertMonitor();
 initializeNationalWeather();
 initializeProvinceTracking();
+initializeCanadaProvincialHotColdSpot();
 logger.log("Started RWC");

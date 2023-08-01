@@ -357,7 +357,7 @@ class CurrentConditions {
   }
 
   public observedDateTime() {
-    return parseISO(this._weatherStationTimeData.observedDateTime);
+    return this._weatherStationTimeData && parseISO(this._weatherStationTimeData.observedDateTime);
   }
 }
 

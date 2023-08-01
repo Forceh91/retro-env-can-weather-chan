@@ -105,7 +105,7 @@ class CanadaProvincialHotColdSpots {
   public hotColdSpots() {
     return {
       ...this._hotColdSpots,
-      lastUpdated: this._lastUpdated,
+      lastUpdated: this._lastUpdated?.toISOString(),
     };
   }
 }

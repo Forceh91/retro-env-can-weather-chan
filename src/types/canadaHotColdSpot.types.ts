@@ -3,3 +3,9 @@ export type HotColdSpot = {
   province: string;
   temperature: number;
 };
+
+export type HotColdSpots = {
+  hotSpot: HotColdSpot;
+  coldSpot: HotColdSpot;
+  lastUpdated: string;
+};

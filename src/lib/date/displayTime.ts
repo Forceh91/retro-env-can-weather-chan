@@ -1,4 +1,4 @@
-import { addDays, addMinutes, format, parseISO, subDays } from "date-fns";
+import { addDays, addMinutes, format, isValid, parseISO, subDays } from "date-fns";
 import { WeatherStationTimeData } from "types";
 
 export function formatDisplayDate(timestamp: number) {
@@ -57,10 +57,10 @@ export function formatObservedLong(
 }
 
 export function formatObservedMonthDate(date: WeatherStationTimeData, isLongMonths: boolean) {
-  if (!date) return "";
+  if (!date?.observedDateTime) return "";
 
   const parsedDate = adjustObservedDateTimeToStationTime(date);
-  const dateString = format(parsedDate, "MMM d");
+  const dateString = isValid(parsedDate) && format(parsedDate, "MMM d");
   if (!isLongMonths) return dateString;
 
   return dateString;

@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
-import { CAPObject, FlavourScreen, NationalWeather, ProvinceTracking, Season, WeatherStation } from "types";
+import {
+  CAPObject,
+  FlavourScreen,
+  HotColdSpots,
+  NationalWeather,
+  ProvinceTracking,
+  Season,
+  WeatherStation,
+} from "types";
 import {
   AlmanacScreen,
   ForecastScreen,
@@ -23,10 +31,19 @@ type ScreenRotatorProps = {
   nationalWeather: NationalWeather;
   provinceTracking: ProvinceTracking;
   season: Season;
+  hotColdSpots: HotColdSpots;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
-  const { screens = [], weatherStationResponse, alerts, nationalWeather, provinceTracking, season } = props ?? {};
+  const {
+    screens = [],
+    weatherStationResponse,
+    alerts,
+    nationalWeather,
+    provinceTracking,
+    season,
+    hotColdSpots,
+  } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
   const [conditionsUpdated, setConditionsUpdated] = useState(false);
@@ -144,6 +161,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
             season={season}
             sunRiseSet={weatherStationResponse?.almanac?.sunRiseSet}
             city={weatherStationResponse?.city}
+            hotColdSpots={hotColdSpots}
           />
         );
     }

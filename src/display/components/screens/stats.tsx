@@ -2,32 +2,38 @@ import { DISPLAY_MAX_CHARACTERS_PER_LINE } from "consts";
 import { format, isValid, parseISO, subMinutes } from "date-fns";
 import { formatObservedMonthDate } from "lib/date";
 import { useMemo } from "react";
-import { Season, SunRiseSet, WeatherStationTimeData } from "types";
+import { HotColdSpots, Season, SunRiseSet, WeatherStationTimeData } from "types";
 
 type StatsScreenProps = {
   city: string;
   weatherStationTime: WeatherStationTimeData;
   season: Season;
   sunRiseSet: SunRiseSet;
+  hotColdSpots: HotColdSpots;
 };
 
 const PRECIP_CHARS_USED_OUTSIDE_OF_DOTS = 16;
 const NORMAL_PRECIP_CHARS_USED_OUTSIDE_OF_DOTS = 12;
+const HOT_COLD_SPOT_CHARS_USED_OUTSIDE_OF_DOTS = 9;
 
 export function StatsScreen(props: StatsScreenProps) {
-  const {
-    city,
-    weatherStationTime,
-    season: { season, seasonPrecip },
-    sunRiseSet,
-  } = props ?? {};
+  const { city, weatherStationTime, season: seasonStats, sunRiseSet, hotColdSpots } = props ?? {};
+
+  const { season, seasonPrecip } = seasonStats ?? {};
 
   const parseDate = (isoDate: string) => parseISO(isoDate);
 
   const formattedDate = useMemo(
-    () => formatObservedMonthDate(weatherStationTime, true),
+    () => weatherStationTime?.observedDateTime && formatObservedMonthDate(weatherStationTime, true),
     [weatherStationTime?.observedDateTime]
   );
+
+  const formattedHotColdSpotDate = useMemo(() => {
+    const date = parseDate(hotColdSpots?.lastUpdated);
+    if (!isValid(date)) return "";
+
+    return format(subMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "MMM d");
+  }, [hotColdSpots?.lastUpdated]);
 
   const formattedSunrise = useMemo(() => {
     const date = parseDate(sunRiseSet?.rise);
@@ -52,7 +58,17 @@ export function StatsScreen(props: StatsScreenProps) {
   const actualPrecip = generatePrecip(seasonPrecip?.amount || 0);
   const normalPrecip = generatePrecip(seasonPrecip?.normal || 0);
 
-  if (!city || !weatherStationTime?.observedDateTime) return <></>;
+  const { hotSpot, coldSpot } = hotColdSpots ?? {};
+  const truncatedHotSpotName = hotSpot?.name.slice(0);
+  const truncatedColdSpotName = coldSpot?.name.slice(0);
+
+  const generateDotsForHotColdSpotLine = (prefix: string) =>
+    "".padEnd(DISPLAY_MAX_CHARACTERS_PER_LINE - (prefix.length + HOT_COLD_SPOT_CHARS_USED_OUTSIDE_OF_DOTS), ".");
+
+  const formatTempForHotColdSpotLine = (temperature?: number) =>
+    (!isNaN(temperature) ? Math.round(temperature) : "N/A").toString().padStart(3);
+
+  if (!city || !weatherStationTime?.observedDateTime || !season || !hotColdSpots) return <></>;
 
   return (
     <div id="stats_screen">
@@ -74,6 +90,23 @@ export function StatsScreen(props: StatsScreenProps) {
         Normal {generateDotsForPrecipLine("Normal", NORMAL_PRECIP_CHARS_USED_OUTSIDE_OF_DOTS)}
         {normalPrecip} mm
       </div>
+      {hotColdSpots && (
+        <>
+          <div>Canadian Hot/Cold Spot - {formattedHotColdSpotDate}</div>
+          {hotSpot && (
+            <div>
+              {truncatedHotSpotName}, {hotSpot.province} {generateDotsForHotColdSpotLine(truncatedHotSpotName)}
+              {formatTempForHotColdSpotLine(hotSpot.temperature)}
+            </div>
+          )}
+          {coldSpot && (
+            <div>
+              {truncatedColdSpotName}, {coldSpot.province} {generateDotsForHotColdSpotLine(truncatedColdSpotName)}
+              {formatTempForHotColdSpotLine(coldSpot.temperature)}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

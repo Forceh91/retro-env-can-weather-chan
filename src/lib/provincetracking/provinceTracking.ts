@@ -76,9 +76,9 @@ class ProvinceTracking {
         // update corresponding value
         const tempAsNumber = Number(temp);
         if (this._tempToTrack === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP) {
-          if (tempAsNumber < station.minTemp) station.minTemp = tempAsNumber;
+          if (station.minTemp === null || tempAsNumber < station.minTemp) station.minTemp = tempAsNumber;
         } else if (this._tempToTrack === PROVINCE_TRACKING_TEMP_TO_TRACK.MAX_TEMP) {
-          if (tempAsNumber > station.maxTemp) station.maxTemp = tempAsNumber;
+          if (station.maxTemp === null || tempAsNumber > station.maxTemp) station.maxTemp = tempAsNumber;
         }
       })
       .catch((err) => logger.error(name, "failed to fetch data", err));
@@ -87,20 +87,24 @@ class ProvinceTracking {
   private resetTracking() {
     logger.log("Switching over tracking and setting display value");
 
-    this._tracking.forEach((station) => {
+    this._tracking.forEach((station, ix, arr) => {
       // if min temp is now being displayed, reset the max and show min
       if (this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP) {
-        // set display value as min
-        station.displayTemp = station.minTemp !== null && station.minTemp !== Math.min() ? station.minTemp : "M";
-
-        // reset the max tracker
-        station.maxTemp = Math.max();
+        arr[ix] = {
+          ...arr[ix],
+          // set display value as min
+          displayTemp: station.minTemp !== null && station.minTemp !== Math.min() ? station.minTemp : "M",
+          // reset the max tracker
+          minTemp: Math.max(),
+        };
       } else if (this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MAX_TEMP) {
-        // set display value as max
-        station.displayTemp = station.maxTemp !== null && station.maxTemp !== Math.min() ? station.maxTemp : "M";
-
-        // reset the min tracker
-        station.minTemp = Math.min();
+        arr[ix] = {
+          ...arr[ix],
+          // set display value as min
+          displayTemp: station.maxTemp !== null && station.maxTemp !== Math.max() ? station.maxTemp : "M",
+          // reset the max tracker
+          maxTemp: Math.min(),
+        };
       }
     });
   }

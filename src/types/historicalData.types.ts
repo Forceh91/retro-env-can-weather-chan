@@ -30,6 +30,11 @@ export type LastMonthDayValue = {
   value: number;
 };
 
+export type LastMonth = {
+  actual: LastMonthSummary;
+  normal: { temperature: { min: number; max: number }; precip: { amount: number } };
+};
+
 export type LastMonthSummary = {
   averageHigh: number;
   averageLow: number;

@@ -162,7 +162,7 @@ class HistoricalTempPrecip {
       return;
     }
 
-    logger.log("Retrieving last month summary");
+    logger.log("Generating last month summary");
 
     const highTemps: LastMonthDayValue[] = [];
     const lowTemps: LastMonthDayValue[] = [];

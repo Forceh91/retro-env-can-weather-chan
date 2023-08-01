@@ -1,5 +1,5 @@
 import axios from "lib/axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Season } from "types";
 
 export function useSeason() {

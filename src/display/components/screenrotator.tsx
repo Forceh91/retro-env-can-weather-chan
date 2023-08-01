@@ -5,6 +5,7 @@ import {
   CAPObject,
   FlavourScreen,
   HotColdSpots,
+  LastMonth,
   NationalWeather,
   ProvinceTracking,
   Season,
@@ -18,6 +19,7 @@ import {
   NationalWeatherScreen,
   ProvinceTrackingScreen,
   StatsScreen,
+  LastMonthScreen,
 } from "./screens";
 
 type ScreenRotatorProps = {
@@ -32,6 +34,7 @@ type ScreenRotatorProps = {
   provinceTracking: ProvinceTracking;
   season: Season;
   hotColdSpots: HotColdSpots;
+  lastMonth: LastMonth;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
@@ -43,6 +46,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     provinceTracking,
     season,
     hotColdSpots,
+    lastMonth,
   } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
@@ -163,6 +167,11 @@ export function ScreenRotator(props: ScreenRotatorProps) {
             city={weatherStationResponse?.city}
             hotColdSpots={hotColdSpots}
           />
+        );
+
+      case Screens.LAST_MONTH_STATS:
+        return (
+          <LastMonthScreen city={weatherStationResponse?.city} lastMonth={lastMonth} onComplete={switchToNextScreen} />
         );
     }
 

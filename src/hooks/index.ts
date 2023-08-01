@@ -4,3 +4,5 @@ export * from "./alerts";
 export * from "./national";
 export * from "./provincetracking";
 export * from "./season";
+export * from "./lastMonth";
+export * from "./hotColdSpots";

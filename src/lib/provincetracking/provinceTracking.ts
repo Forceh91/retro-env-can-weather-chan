@@ -41,7 +41,7 @@ class ProvinceTracking {
     this.setTempScaleToTrack();
 
     // if the tracking temp changed from min->max or vice versa we need to reset some tracking
-    if (displayTemp !== this._displayTemp) this.resetTracking();
+    if (displayTemp !== this._displayTemp) this.resetTracking(!!displayTemp);
 
     logger.log("Updating data for stations");
 
@@ -84,7 +84,7 @@ class ProvinceTracking {
       .catch((err) => logger.error(name, "failed to fetch data", err));
   }
 
-  private resetTracking() {
+  private resetTracking(resetTemps: boolean) {
     logger.log("Switching over tracking and setting display value");
 
     this._tracking.forEach((station, ix, arr) => {
@@ -95,7 +95,7 @@ class ProvinceTracking {
           // set display value as min
           displayTemp: station.minTemp !== null && station.minTemp !== Math.min() ? station.minTemp : "M",
           // reset the max tracker
-          maxTemp: Math.max(),
+          maxTemp: resetTemps ? Math.max() : station.maxTemp,
         };
       } else if (this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MAX_TEMP) {
         arr[ix] = {
@@ -103,7 +103,7 @@ class ProvinceTracking {
           // set display value as min
           displayTemp: station.maxTemp !== null && station.maxTemp !== Math.max() ? station.maxTemp : "M",
           // reset the min tracker
-          minTemp: Math.min(),
+          minTemp: resetTemps ? Math.min() : station.minTemp,
         };
       }
     });

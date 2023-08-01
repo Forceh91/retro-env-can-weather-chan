@@ -9,3 +9,4 @@ export * from "./provincetracking.types";
 export * from "./season.types";
 export * from "./climateNormals.types";
 export * from "./canadaHotColdSpot.types";
+export * from "./historicalData.types";

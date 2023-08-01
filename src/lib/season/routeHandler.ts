@@ -20,3 +20,10 @@ export function getSeasonData(req: Request, res: Response) {
     },
   });
 }
+
+export function getLastMonthSummary(req: Request, res: Response) {
+  const lastMonthSummary = historicalData.lastMonthSummary();
+  const lastMonthNormal = climateNormals.getNormalsForLastMonth();
+
+  res.json({ actual: lastMonthSummary, normal: lastMonthNormal });
+}

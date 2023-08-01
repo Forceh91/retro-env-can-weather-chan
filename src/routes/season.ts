@@ -1,5 +1,5 @@
 import express from "express";
-import { getSeasonData } from "lib/season";
+import { getLastMonthSummary, getSeasonData } from "lib/season";
 
 /*
  * "/" here represets "/season"
@@ -7,5 +7,6 @@ import { getSeasonData } from "lib/season";
 
 const router = express.Router();
 router.get("/", getSeasonData);
+router.get("/lastMonth", getLastMonthSummary);
 
 export default router;

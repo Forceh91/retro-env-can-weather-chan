@@ -2,9 +2,15 @@ import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
 import axios from "axios";
 import { ElementCompact, xml2js } from "xml-js";
-import { HistoricalPrecipData, HistoricalTemperatureAlmanac } from "types";
-import { isValid, isYesterday, parseISO } from "date-fns";
-import { isDateInCurrentWinterSeason, getIsWinterSeason, isDateInCurrentSummerSeason } from "lib/date";
+import {
+  HistoricalDataStats,
+  HistoricalPrecipData,
+  HistoricalTemperatureAlmanac,
+  LastMonthDayValue,
+  LastMonthSummary,
+} from "types";
+import { isSameMonth, isValid, isYesterday, parseISO, subMonths } from "date-fns";
+import { isDateInCurrentWinterSeason, getIsWinterSeason, isDateInCurrentSummerSeason, isStartOfMonth } from "lib/date";
 
 const logger = new Logger("Historical_Temp_Precip");
 const config = initializeConfig();
@@ -16,6 +22,7 @@ class HistoricalTempPrecip {
   private _lastYearTemperatures: HistoricalTemperatureAlmanac = { min: null, max: null };
   private _seasonPrecipData: HistoricalPrecipData = { amount: 0, normal: 0, unit: "mm", type: "rain" };
   private _yesterdayPrecipData: HistoricalPrecipData = { amount: 0, normal: 0, unit: "mm", type: "rain" };
+  private _lastMonthSummary: LastMonthSummary = null;
 
   constructor() {
     if (!config) return;
@@ -27,7 +34,7 @@ class HistoricalTempPrecip {
   public fetchLastTwoYearsOfData(currentDate: Date = new Date()) {
     const currentYear = currentDate.getFullYear();
     const yearsToFetch = [currentYear - 1, currentYear];
-    logger.log("Preparing to fetch historical data for years", yearsToFetch.join(""));
+    logger.log("Preparing to fetch historical data for years", yearsToFetch.join());
 
     // loop through years to fetch
     const promises: Promise<any>[] = [];
@@ -98,6 +105,10 @@ class HistoricalTempPrecip {
 
     logger.log("Calculating precip data for the season/yesterday");
 
+    // store data from last month so we can process last month's data quicker
+    const lastMonthData: HistoricalDataStats = [];
+    const lastMonth = subMonths(currentDate, 1);
+
     // precip data can spread across this year and last year during the winter so we need to loop through the entire thing
     const isWinterSeason = getIsWinterSeason();
     let rainfall = 0;
@@ -112,6 +123,9 @@ class HistoricalTempPrecip {
       // date of data we're looking at, and if its from the current year
       const date = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       const isThisYear = Number(year) === currentDate.getFullYear();
+
+      // if the date is from the last month we'll store this so we can process last month's stats
+      if (isSameMonth(parseISO(date), lastMonth)) lastMonthData.push(historicalData);
 
       // normally if its summer we get rainfall, and if its winter we get snowfall
       // but eccc isn't accurate with storing snowfall anymore so we just go with rainfall
@@ -137,6 +151,60 @@ class HistoricalTempPrecip {
     this._yesterdayPrecipData.amount = yesterdayRainfall;
 
     logger.log("Calculated precip data for the season/yesterday");
+
+    // process last month's stats
+    this.processLastMonthsStats(lastMonthData);
+  }
+
+  private processLastMonthsStats(lastMonthData: HistoricalDataStats) {
+    if (!lastMonthData?.length || !isStartOfMonth()) {
+      this._lastMonthSummary = null;
+      return;
+    }
+
+    logger.log("Retrieving last month summary");
+
+    const highTemps: LastMonthDayValue[] = [];
+    const lowTemps: LastMonthDayValue[] = [];
+    const precipValues: LastMonthDayValue[] = [];
+
+    // loop through and grab all of the high/low temps and precip values
+    lastMonthData.forEach((dayOfLastMonth) => {
+      const day = Number(dayOfLastMonth._attributes.day);
+      highTemps.push({ day, value: Number(dayOfLastMonth.maxtemp._text ?? 0) });
+      lowTemps.push({ day, value: Number(dayOfLastMonth.mintemp._text ?? 0) });
+      precipValues.push({ day, value: Number(dayOfLastMonth.totalprecipitation._text ?? 0) });
+    });
+
+    // calculate the average high/low
+    const averageHigh = highTemps.reduce((acc, curr) => (acc += curr.value), 0) / highTemps.length;
+    const averageLow = lowTemps.reduce((acc, curr) => (acc += curr.value), 0) / lowTemps.length;
+
+    // calculate the total precip
+    const totalPrecip = precipValues.reduce((acc, curr) => (acc += curr.value), 0);
+
+    // figure out the warmest day
+    const [, warmestDayIx] = highTemps.reduce(
+      (acc, curr, ix) => (curr.value > acc[0] ? [curr.value, ix] : acc),
+      [Math.max(), -1]
+    );
+    const warmestDay = highTemps[warmestDayIx];
+
+    // figure out the coldest day
+    const [, coldestDayIx] = lowTemps.reduce(
+      (acc, curr, ix) => (curr.value < acc[0] ? [curr.value, ix] : acc),
+      [Math.min(), -1]
+    );
+    const coldestDay = lowTemps[coldestDayIx];
+
+    // store this for use later
+    this._lastMonthSummary = {
+      averageHigh,
+      averageLow,
+      totalPrecip,
+      warmestDay,
+      coldestDay,
+    };
   }
 
   public lastYearTemperatures() {
@@ -149,6 +217,10 @@ class HistoricalTempPrecip {
 
   public yesterdayPrecipData() {
     return this._yesterdayPrecipData;
+  }
+
+  public lastMonthSummary() {
+    return this._lastMonthSummary;
   }
 }
 

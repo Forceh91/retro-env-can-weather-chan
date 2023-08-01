@@ -95,15 +95,15 @@ class ProvinceTracking {
           // set display value as min
           displayTemp: station.minTemp !== null && station.minTemp !== Math.min() ? station.minTemp : "M",
           // reset the max tracker
-          minTemp: Math.max(),
+          maxTemp: Math.max(),
         };
       } else if (this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MAX_TEMP) {
         arr[ix] = {
           ...arr[ix],
           // set display value as min
           displayTemp: station.maxTemp !== null && station.maxTemp !== Math.max() ? station.maxTemp : "M",
-          // reset the max tracker
-          maxTemp: Math.min(),
+          // reset the min tracker
+          minTemp: Math.min(),
         };
       }
     });

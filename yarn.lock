@@ -5700,10 +5700,10 @@ easy-stack@1.0.1:
   resolved "https://registry.yarnpkg.com/easy-stack/-/easy-stack-1.0.1.tgz#8afe4264626988cabb11f3c704ccd0c835411066"
   integrity sha512-wK2sCs4feiiJeFXn3zvY0p41mdU5VUgbgs1rNsc/y5ngFUijdWd+iIN8eoyuZHKB8xN6BL4PdWmzqFmxNg6V2w==
 
-ec-weather-js@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/ec-weather-js/-/ec-weather-js-1.2.0.tgz#2d697f1598d5f51a8262e7e6fa0ed048fd65df55"
-  integrity sha512-tIttKUxFznUVnBcJ+w8G+SDKREW+zM3cVGPEse++ZFYrC82nc5ga+2F0zsw7MHrrc213lkhG6eHu/keImzAlDQ==
+ec-weather-js@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/ec-weather-js/-/ec-weather-js-1.2.2.tgz#5d5a4991c11da9ede7e8969efc1b254870b86715"
+  integrity sha512-jUvKaAOsnw4PlY8aDoX0Vqt5+UF4N7do9hIUcKis18dpuah73xmKGSXuDqpT/DxOM3d8il2QplHRcH8aL87OLA==
   dependencies:
     xml-js "^1.6.11"
 

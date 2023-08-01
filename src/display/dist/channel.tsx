@@ -4,10 +4,11 @@ import {
   useAlerts,
   useCanadaHotColdSpots,
   useLastMonth,
-  useNationalWeather,
+  useUSAWeather,
   useProvinceTracking,
   useSeason,
   useWeatherEventStream,
+  useNationalWeather,
 } from "hooks";
 import { useConfig } from "hooks/init";
 import React, { useEffect } from "react";
@@ -22,6 +23,7 @@ function WeatherChannel() {
   const { season, fetchSeason } = useSeason();
   const { hotColdSpots } = useCanadaHotColdSpots();
   const { lastMonth, fetchLastMonth } = useLastMonth();
+  const { usaWeather } = useUSAWeather();
 
   useEffect(() => {
     fetchSeason();
@@ -41,6 +43,7 @@ function WeatherChannel() {
           season={season}
           hotColdSpots={hotColdSpots}
           lastMonth={lastMonth}
+          usaWeather={usaWeather}
         />
       </div>
       <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />

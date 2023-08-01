@@ -9,6 +9,7 @@ import {
   NationalWeather,
   ProvinceTracking,
   Season,
+  USAStationObservations,
   WeatherStation,
 } from "types";
 import {
@@ -35,6 +36,7 @@ type ScreenRotatorProps = {
   season: Season;
   hotColdSpots: HotColdSpots;
   lastMonth: LastMonth;
+  usaWeather: USAStationObservations;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
@@ -47,6 +49,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     season,
     hotColdSpots,
     lastMonth,
+    usaWeather,
   } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
@@ -154,6 +157,16 @@ export function ScreenRotator(props: ScreenRotatorProps) {
           <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={nationalWeather?.east}
+            onComplete={switchToNextScreen}
+          />
+        );
+
+      case Screens.USA_TEMP_CONDITIONS:
+        // yeah i know it uses national weather screen but its literally the same display
+        return (
+          <NationalWeatherScreen
+            weatherStationTime={weatherStationResponse?.stationTime}
+            observations={usaWeather}
             onComplete={switchToNextScreen}
           />
         );

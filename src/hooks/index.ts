@@ -6,3 +6,4 @@ export * from "./provincetracking";
 export * from "./season";
 export * from "./lastMonth";
 export * from "./hotColdSpots";
+export * from "./usa";

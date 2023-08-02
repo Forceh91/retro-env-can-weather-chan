@@ -1,5 +1,3 @@
-const Weather = require("ec-weather-js");
-
 import { USA_WEATHER_STATIONS, MAX_USA_STATIONS_PER_PAGE } from "consts";
 import { USAStationConfig, USAStationObservation, USAStationObservations } from "types";
 import Logger from "lib/logger";

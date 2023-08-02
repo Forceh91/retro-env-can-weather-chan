@@ -7,6 +7,7 @@ import { initializeNationalWeather } from "lib/national";
 import { initializeProvinceTracking } from "lib/provincetracking";
 import { initializeCanadaProvincialHotColdSpot } from "./canadaHotColdSpot";
 import { initializeUSAWeather } from "lib/usaweather";
+import { initializeSunspots } from "lib/sunspots";
 
 const conditions = initializeCurrentConditions();
 const nationalWeather = initializeNationalWeather();
@@ -14,6 +15,7 @@ const provinceTracking = initializeProvinceTracking();
 const alertMonitor = initializeAlertMonitor();
 const hotColdSpots = initializeCanadaProvincialHotColdSpot();
 const usaWeather = initializeUSAWeather();
+const sunspots = initializeSunspots();
 
 export function getObserved(req: Request, res: Response) {
   res.json(conditions.observed());
@@ -68,6 +70,11 @@ export function getNational(req: Request, res: Response) {
 
 export function getUSA(req: Request, res: Response) {
   res.json(usaWeather.weather());
+}
+
+export function getSunspots(req: Request, res: Response) {
+  if (!isSunSpotSeason()) res.json([]);
+  else res.json(sunspots.sunspots());
 }
 
 export function getProvinceTracking(req: Request, res: Response) {

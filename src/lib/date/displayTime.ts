@@ -73,7 +73,7 @@ export function formatSunspotDate(date: WeatherStationTimeData) {
   let parsedDate = adjustObservedDateTimeToStationTime(date);
   if (parsedDate.getHours() >= 12) parsedDate = addDays(parsedDate, 1);
 
-  let formatString = "MMM'.&nbsp;'d";
+  let formatString = "MMM'. 'd";
   const formattedDate = format(parsedDate, formatString);
   return formattedDate.replace(/mar./gi, "March").replace(/apr./gi, "April");
 }

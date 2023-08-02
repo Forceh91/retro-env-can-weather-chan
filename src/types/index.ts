@@ -11,3 +11,5 @@ export * from "./climateNormals.types";
 export * from "./canadaHotColdSpot.types";
 export * from "./historicalData.types";
 export * from "./usa.types";
+export * from "./sunspots.types";
+export * from "./screen.types";

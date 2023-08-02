@@ -60,6 +60,9 @@ export function truncateForecastConditions(condition: string) {
   // isolated rain showers (then...)
   condition = condition.replace(/isolated rain showers/gi, "isld showers");
 
+  // isolated showers and thunderstorms
+  condition = condition.replace(/isolated showers and thunderstorms/gi, "i. shwr/strm");
+
   // slight chance (rain) showers
   condition = condition.replace(/(slight\s)?chance(\srain)? showers?/gi, "chnc showers");
 

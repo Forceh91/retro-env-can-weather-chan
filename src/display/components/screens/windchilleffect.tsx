@@ -8,7 +8,6 @@ export function WindchillEffectScreen(props: WindchillEffectScreenProps) {
   const { onComplete } = props ?? {};
 
   useEffect(() => {
-    console.log("wcs", isWindchillSeason());
     if (!isWindchillSeason()) onComplete();
   }, []);
 

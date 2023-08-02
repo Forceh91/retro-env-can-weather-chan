@@ -15,3 +15,7 @@ export function cleanupAlertHeadline(headline: string) {
 
   return headline.replace(/\sin effect/gi, "");
 }
+
+export function isWarningSevereThunderstormWatch(headline: string) {
+  return (headline ?? "").toLowerCase() === "severe thunderstorm watch in effect";
+}

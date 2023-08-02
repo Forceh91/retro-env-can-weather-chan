@@ -36,6 +36,9 @@ class HistoricalTempPrecip {
     const yearsToFetch = [currentYear - 1, currentYear];
     logger.log("Preparing to fetch historical data for years", yearsToFetch.join());
 
+    // clear out what we have in the historical data
+    this._historicalData.splice(0, this._historicalData.length);
+
     // loop through years to fetch
     const promises: Promise<any>[] = [];
     yearsToFetch.forEach((year) => {

@@ -66,7 +66,7 @@ class NationalWeather {
           ...station,
           condition: condition ?? null,
           abbreviatedCondition: condition ? harshTruncateConditions(weather.current?.condition) : null,
-          temperature: !isNaN(temperature) ? Number(temperature) : null,
+          temperature: temperature && !isNaN(temperature) ? Number(temperature) : null,
         });
       })
       .catch((err) => logger.error(station.name, "failed to fetch data", err));

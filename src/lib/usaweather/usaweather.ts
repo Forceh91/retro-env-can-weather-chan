@@ -53,7 +53,7 @@ class USAWeather {
           ...station,
           condition: condition ?? null,
           abbreviatedCondition: condition ? harshTruncateConditions(condition) : null,
-          temperature: !isNaN(temperature.value) ? Number(temperature.value) : null,
+          temperature: temperature.value && !isNaN(temperature.value) ? Number(temperature.value) : null,
         });
       })
       .catch((err) => logger.error(station.name, "failed to fetch data", err));

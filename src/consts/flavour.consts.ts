@@ -14,10 +14,6 @@ export const FLAVOUR_DEFAULT = {
   modified: "2023-07-23T15:39:40",
   screens: [
     {
-      id: Screens.ALERTS,
-      duration: SCREEN_ALERT_DISPLAY_LENGTH,
-    },
-    {
       id: Screens.FORECAST,
       duration: SCREEN_FORECAST_DISPLAY_LENGTH,
     },
@@ -62,16 +58,16 @@ export const FLAVOUR_DEFAULT = {
       duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
     },
     {
-      id: Screens.RANDOM,
-      duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
-    },
-    {
       id: Screens.WINDCHILL,
       duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
     },
     {
       id: Screens.INFO,
       duration: SCREEN_INFO_DISPLAY_LENGTH,
+    },
+    {
+      id: Screens.ALERTS,
+      duration: SCREEN_ALERT_DISPLAY_LENGTH,
     },
   ],
 };

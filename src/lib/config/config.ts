@@ -31,7 +31,7 @@ class Config {
     climateID: 5023222, // (used for climate normals on last month summary)
     province: "MB",
   };
-  lookAndFeel: LookAndFeel = { font: "vt323", flavour: "test" };
+  lookAndFeel: LookAndFeel = { font: "vt323", flavour: "default" };
   misc: MiscConfig = {
     rejectInHourConditionUpdates: false, // whether we should only update conditions once an hour
     alternateRecordsSource: undefined, // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json

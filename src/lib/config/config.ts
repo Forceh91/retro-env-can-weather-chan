@@ -17,6 +17,7 @@ const CRAWLER_PATH = {
   FILE: "crawler.txt",
 };
 const CRAWLER_ABSOLUTE_PATH = `${CRAWLER_PATH.FOLDER}/${CRAWLER_PATH.FILE}`;
+const MUSIC_DIR = "music";
 
 class Config {
   primaryLocation: PrimaryLocation = {
@@ -37,6 +38,7 @@ class Config {
     alternateRecordsSource: undefined, // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json
   };
   crawlerMessages: string[];
+  musicPlaylist: string[] = []; // what music files are available
   flavour: Flavour;
   provinceTracking: ProvinceStation[]; // what provinces to track high/low/precip for
 
@@ -44,6 +46,7 @@ class Config {
     this.loadConfig();
     this.loadFlavour();
     this.loadCrawlerMessages();
+    this.checkMusicDirectory();
   }
 
   get config() {
@@ -134,6 +137,22 @@ class Config {
         logger.error("Unable to load from crawler file");
       }
     }
+  }
+
+  private checkMusicDirectory() {
+    logger.log("Loading playlist from", MUSIC_DIR);
+
+    fs.readdir(MUSIC_DIR, (err, files) => {
+      if (err) logger.error("Failed to generate playlist");
+      else {
+        this.musicPlaylist.splice(
+          0,
+          this.musicPlaylist.length,
+          ...files.filter((f) => f.endsWith(".mp3")).map((f) => `${MUSIC_DIR}/${f}`)
+        );
+        logger.log("Generated playlist of", this.musicPlaylist.length, "files");
+      }
+    });
   }
 
   private saveConfig() {

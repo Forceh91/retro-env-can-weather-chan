@@ -12,5 +12,6 @@ export function getInitHandler(req: Request, res: Response) {
     config: { font: config.lookAndFeel.font, provinceHighLowEnabled: config.provinceHighLowEnabled },
     crawler: config.crawlerMessages,
     flavour: config.flavour,
+    music: config.musicPlaylist ?? [],
   });
 }

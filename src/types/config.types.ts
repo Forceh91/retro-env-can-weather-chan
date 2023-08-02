@@ -38,4 +38,5 @@ export type InitChannel = {
   config: { font: string; provinceHighLowEnabled: boolean };
   crawler: string[];
   flavour: Flavour;
+  music: string[];
 };

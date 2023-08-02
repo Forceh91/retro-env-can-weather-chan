@@ -3,7 +3,7 @@ import Logger from "./logger";
 
 const logger = new Logger("Storage");
 
-const REQUIRED_DIRECTORIES = ["cfg", "cfg/flavours", "db"];
+const REQUIRED_DIRECTORIES = ["cfg", "cfg/flavours", "db", "music"];
 
 export function validateDirectories() {
   logger.log("Validating directory structure");

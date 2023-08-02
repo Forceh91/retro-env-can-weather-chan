@@ -15,5 +15,9 @@ export function initializeAPI(): void {
 
   // and the static folders of dist, music, etc.
   api.use(express.static("dist"));
+  api.use(express.static("music"));
   api.get("/", (req: Request, res: Response) => res.sendFile("dist/index.html", { root: "." }));
+  api.get("/music/*", (req: Request, res: Response) => {
+    res.sendFile(`./music/${decodeURI(req.url).split("music/")[1]}`, { root: "." });
+  });
 }

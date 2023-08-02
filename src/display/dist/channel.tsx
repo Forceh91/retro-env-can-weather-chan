@@ -1,4 +1,5 @@
 import { FooterBar } from "display/components/footerbar";
+import { PlaylistComponent } from "display/components/playlist";
 import { ScreenRotator } from "display/components/screenrotator";
 import {
   useAlerts,
@@ -48,6 +49,7 @@ function WeatherChannel() {
         sunspots={sunspots}
       />
       <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />
+      <PlaylistComponent playlist={config?.music} />
     </>
   );
 }

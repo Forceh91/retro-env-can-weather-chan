@@ -23,6 +23,7 @@ import {
   StatsScreen,
   LastMonthScreen,
   SunspotScreen,
+  WindchillEffectScreen,
 } from "./screens";
 
 type ScreenRotatorProps = {
@@ -222,6 +223,9 @@ export function ScreenRotator(props: ScreenRotatorProps) {
             onComplete={switchToNextScreen}
           />
         );
+
+      case Screens.WINDCHILL:
+        return <WindchillEffectScreen onComplete={switchToNextScreen} />;
     }
 
     return <></>;

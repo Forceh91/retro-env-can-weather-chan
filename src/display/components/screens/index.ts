@@ -6,3 +6,4 @@ export * from "./national";
 export * from "./provincetracking";
 export * from "./stats";
 export * from "./lastmonth";
+export * from "./sunspots";

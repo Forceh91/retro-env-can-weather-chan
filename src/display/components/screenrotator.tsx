@@ -9,6 +9,7 @@ import {
   NationalWeather,
   ProvinceTracking,
   Season,
+  SunspotStationObservations,
   USAStationObservations,
   WeatherStation,
 } from "types";
@@ -21,6 +22,7 @@ import {
   ProvinceTrackingScreen,
   StatsScreen,
   LastMonthScreen,
+  SunspotScreen,
 } from "./screens";
 
 type ScreenRotatorProps = {
@@ -37,6 +39,7 @@ type ScreenRotatorProps = {
   hotColdSpots: HotColdSpots;
   lastMonth: LastMonth;
   usaWeather: USAStationObservations;
+  sunspots: SunspotStationObservations;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
@@ -50,6 +53,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     hotColdSpots,
     lastMonth,
     usaWeather,
+    sunspots,
   } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
@@ -185,6 +189,15 @@ export function ScreenRotator(props: ScreenRotatorProps) {
       case Screens.LAST_MONTH_STATS:
         return (
           <LastMonthScreen city={weatherStationResponse?.city} lastMonth={lastMonth} onComplete={switchToNextScreen} />
+        );
+
+      case Screens.SUNSPOTS:
+        return (
+          <SunspotScreen
+            sunspots={sunspots}
+            weatherStationTime={weatherStationResponse?.stationTime}
+            onComplete={switchToNextScreen}
+          />
         );
     }
 

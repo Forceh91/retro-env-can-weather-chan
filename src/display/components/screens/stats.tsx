@@ -1,6 +1,6 @@
 import { DISPLAY_MAX_CHARACTERS_PER_LINE } from "consts";
 import { format, isValid, parseISO, subMinutes } from "date-fns";
-import { formatObservedMonthDate } from "lib/date";
+import { formatObservedMonthDate, getIsWinterSeason } from "lib/date";
 import { useMemo } from "react";
 import { HotColdSpots, Season, SunRiseSet, WeatherStationTimeData } from "types";
 
@@ -55,7 +55,7 @@ export function StatsScreen(props: StatsScreenProps) {
   const generateDotsForPrecipLine = (dataName: string, usedChars = PRECIP_CHARS_USED_OUTSIDE_OF_DOTS) =>
     "".padEnd(DISPLAY_MAX_CHARACTERS_PER_LINE - (dataName.length + usedChars), ".");
 
-  const seasonStartMonth = season?.winter ? "October" : "April";
+  const seasonStartMonth = getIsWinterSeason() ? "October" : "April";
   const actualPrecip = generatePrecip(seasonPrecip?.amount || 0);
   const normalPrecip = generatePrecip(seasonPrecip?.normal || 0);
 

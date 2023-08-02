@@ -35,20 +35,18 @@ function WeatherChannel() {
   return (
     <>
       <div id="crawler_bar"></div>
-      <div id="display">
-        <ScreenRotator
-          screens={config?.flavour?.screens}
-          weatherStationResponse={currentConditions}
-          alerts={alertsHook}
-          nationalWeather={nationalWeather}
-          provinceTracking={provinceTracking}
-          season={season}
-          hotColdSpots={hotColdSpots}
-          lastMonth={lastMonth}
-          usaWeather={usaWeather}
-          sunspots={sunspots}
-        />
-      </div>
+      <ScreenRotator
+        screens={config?.flavour?.screens}
+        weatherStationResponse={currentConditions}
+        alerts={alertsHook}
+        nationalWeather={nationalWeather}
+        provinceTracking={provinceTracking}
+        season={season}
+        hotColdSpots={hotColdSpots}
+        lastMonth={lastMonth}
+        usaWeather={usaWeather}
+        sunspots={sunspots}
+      />
       <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />
     </>
   );

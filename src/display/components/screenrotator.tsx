@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Screens } from "consts";
+import { SCREEN_BACKGROUND_BLUE, SCREEN_BACKGROUND_RED, Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
 import {
   CAPObject,
@@ -58,9 +58,11 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
   const [conditionsUpdated, setConditionsUpdated] = useState(false);
+  const [backgroundColour, setBackgroundColour] = useState(SCREEN_BACKGROUND_BLUE);
 
   let forecastScreenIx = -1;
   const screenRotatorTimeout = useRef<NodeJS.Timeout>(null);
+  const backgroundRotatorTimeout = useRef<NodeJS.Timeout>(null);
 
   // basic rotation of screens
   useEffect(() => {
@@ -78,6 +80,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   useEffect(() => {
     return () => {
       screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
+      backgroundRotatorTimeout.current && clearTimeout(backgroundRotatorTimeout.current);
     };
   }, []);
 
@@ -87,7 +90,23 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
     setConditionsUpdated(true);
     setDisplayedScreenIx(forecastScreenIx);
+    setBackgroundColour(SCREEN_BACKGROUND_BLUE);
   }, [weatherStationResponse?.observationID]);
+
+  const switchBackgroundColour = () => {
+    // if we have a timer don't do anything
+    if (backgroundRotatorTimeout.current) return;
+
+    // create 20ms timer to switch background
+    backgroundRotatorTimeout.current = setTimeout(() => {
+      // alternate between blue/red
+      if (backgroundColour !== SCREEN_BACKGROUND_BLUE) setBackgroundColour(SCREEN_BACKGROUND_BLUE);
+      else setBackgroundColour(SCREEN_BACKGROUND_RED);
+
+      // clear the existing timer we knew about
+      backgroundRotatorTimeout.current = null;
+    }, 20);
+  };
 
   const prepareSwitchToNextScreen = (): void => {
     // get the data for the screen we want to go to
@@ -98,6 +117,10 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     if (!isAutomaticScreen(screen.id)) {
       screenRotatorTimeout.current = setTimeout(() => switchToNextScreen(), screen.duration * 1000);
     } else screenRotatorTimeout.current = null;
+
+    // 20ms after index changes, switch the background colour. should be enough time for screens that
+    // decide if they show or not to complete that action
+    if (!conditionsUpdated) switchBackgroundColour();
   };
 
   const switchToNextScreen = () => {
@@ -204,5 +227,9 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     return <></>;
   };
 
-  return getComponentForDisplayedScreen();
+  return (
+    <div id="display" style={{ backgroundColor: backgroundColour }}>
+      {getComponentForDisplayedScreen()}
+    </div>
+  );
 }

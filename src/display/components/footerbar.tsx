@@ -9,15 +9,15 @@ type FooterBarProps = {
 export function FooterBar(props: FooterBarProps) {
   const { timeOffset } = props ?? {};
 
-  const [time, setTime] = useState<number>(Date.now());
+  const [time, setTime] = useState<Date>(new Date());
   useEffect(() => {
     setInterval(() => {
-      setTime(addMinutes(Date.now(), timeOffset).getTime());
+      setTime(addMinutes(new Date(), timeOffset));
     }, 1000);
   }, []);
 
   const formattedTime = format(time, "HH:mm:ss");
-  const formattedDate = formatDisplayDate(time);
+  const formattedDate = formatDisplayDate(time.getTime());
 
   return (
     <div id="footer_bar">

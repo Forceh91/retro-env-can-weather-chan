@@ -1,0 +1,41 @@
+@font-face {
+  font-family: "ws4000";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./fonts/ws4000/ws4000.ttf");
+}
+
+@font-face {
+  font-family: "ws4000";
+  font-style: normal;
+  font-weight: 500;
+  src: url("./fonts/ws4000/ws4000.ttf");
+}
+
+@font-face {
+  font-family: "ws4000";
+  font-style: normal;
+  font-weight: 600;
+  src: url("./fonts/ws4000/ws4000.ttf");
+}
+
+@font-face {
+  font-family: "ws4000";
+  font-style: normal;
+  font-weight: 700;
+  src: url("./fonts/ws4000/ws4000.ttf");
+}
+
+@mixin ws4000_font {
+  font-family: var(--ws4000-font), monospace;
+}
+
+@mixin ws4000_body {
+  @include ws4000_font;
+
+  font-weight: 400;
+}
+
+:root {
+  --ws4000-font: "ws4000";
+}

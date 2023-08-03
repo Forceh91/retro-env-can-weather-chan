@@ -3,6 +3,7 @@
 @import "./conditions.scss";
 @import "./forecast.scss";
 @import "./alerts.scss";
+@import "./fonts/ws4000/star4000.scss";
 
 * {
   box-sizing: border-box;
@@ -36,6 +37,8 @@ ol {
   text-transform: uppercase;
   white-space: pre;
   width: $channel_max_width;
+
+  @include ws4000_body;
 
   #crawler_bar {
     align-items: flex-end;

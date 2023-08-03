@@ -10,6 +10,10 @@ type AlertScreenProps = {
   hasFetched: boolean;
 } & AutomaticScreenProps;
 
+type FakeAlertScreen = {
+  isSevereTStormExplanation?: boolean;
+} & Partial<CAPObject>;
+
 function SevereTStormExplanationScreen() {
   return (
     <div id="stw_explanation">
@@ -28,8 +32,8 @@ function SevereTStormExplanationScreen() {
 export function AlertScreen(props: AlertScreenProps) {
   const { onComplete, alerts, hasFetched } = props ?? {};
   const [page, setPage] = useState(1);
-  const [displayedAlert, setDisplayedAlert] = useState<CAPObject | any>();
-  const [displayAlerts, setDisplayAlerts] = useState<CAPObject[] | any[]>([]);
+  const [displayedAlert, setDisplayedAlert] = useState<FakeAlertScreen>();
+  const [displayAlerts, setDisplayAlerts] = useState<FakeAlertScreen[]>([]);
   const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
@@ -40,7 +44,7 @@ export function AlertScreen(props: AlertScreenProps) {
     if (!alerts?.length) onComplete();
     else {
       // see if there's a severe tstorm and add a page for it
-      const tempAlerts: CAPObject[] | any[] = [...alerts];
+      const tempAlerts: FakeAlertScreen[] = [...alerts];
       const hasSevereTStormWatch = tempAlerts.findIndex((alert) => isWarningSevereThunderstormWatch(alert.headline));
       if (hasSevereTStormWatch > -1)
         tempAlerts.splice(hasSevereTStormWatch + 1, 0, { isSevereTStormExplanation: true });
@@ -92,7 +96,7 @@ export function AlertScreen(props: AlertScreenProps) {
       {displayedAlert?.isSevereTStormExplanation && <SevereTStormExplanationScreen />}
       {displayedAlert && !displayedAlert.isSevereTStormExplanation && (
         <>
-          <div className={shouldAlertFlash(displayedAlert) ? "flash" : ""}>
+          <div className={shouldAlertFlash(displayedAlert as CAPObject) ? "flash" : ""}>
             {cleanupAlertHeadline(displayedAlert.headline)}
           </div>
           <div>{getShortDescriptionForAlert(displayedAlert.description)}</div>

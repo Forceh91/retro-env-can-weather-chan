@@ -2,7 +2,7 @@ import { isWindchillSeason } from "lib/date";
 import { useEffect } from "react";
 import { AutomaticScreenProps } from "types";
 
-type WindchillEffectScreenProps = {} & AutomaticScreenProps;
+type WindchillEffectScreenProps = AutomaticScreenProps;
 
 export function WindchillEffectScreen(props: WindchillEffectScreenProps) {
   const { onComplete } = props ?? {};

@@ -14,5 +14,9 @@ module.exports = {
       extends: ["plugin:@typescript-eslint/disable-type-checked"],
     },
   ],
-  ignorePatterns: ["v1/*", "db/*", "dist/*", "cfg/*", "images/*", "node_modules/*"],
+  ignorePatterns: ["*.js", "v1/*", "db/*", "dist/*", "cfg/*", "images/*", "node_modules/*", "*.cjs"],
+  rules: {
+    "@typescript-eslint/no-explicit-any": 0, // logger can have anything passed in so we don't care
+    "@typescript-eslint/no-var-requires": 0, // sara-canada-amqp/ec-weather-js is used so need to disable this too
+  },
 };

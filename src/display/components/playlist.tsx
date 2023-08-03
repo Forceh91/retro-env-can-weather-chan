@@ -16,8 +16,8 @@ export function PlaylistComponent(props: PlaylistProps) {
   useEffect(() => {
     if (!playlist?.length) return;
 
-    selectRandomTrackFromPlaylist();
-  }, [playlist]);
+    if (!selectedTrack?.length) selectRandomTrackFromPlaylist();
+  }, [playlist, selectedTrack]);
 
   const selectRandomTrackFromPlaylist = (): void => {
     if (!playlist?.length) return;
@@ -34,16 +34,14 @@ export function PlaylistComponent(props: PlaylistProps) {
 
   return (
     <>
-      {selectedTrack && (
-        <audio
-          id="playlist_audio"
-          ref={audioPlayer}
-          autoPlay
-          onEnded={selectRandomTrackFromPlaylist}
-          onError={selectRandomTrackFromPlaylist}
-          src={selectedTrack}
-        ></audio>
-      )}
+      <audio
+        id="playlist_audio"
+        ref={audioPlayer}
+        autoPlay
+        onEnded={selectRandomTrackFromPlaylist}
+        onError={selectRandomTrackFromPlaylist}
+        src={selectedTrack ?? ""}
+      />
     </>
   );
 }

@@ -21,6 +21,7 @@ export function PlaylistComponent(props: PlaylistProps) {
       // and then set the volume to something a bit more reasonable
       audioPlayerElement.load();
       audioPlayerElement.volume = 0.33;
+      audioPlayerElement.play();
     }
   }, [playlist, selectedTrack]);
 
@@ -41,7 +42,6 @@ export function PlaylistComponent(props: PlaylistProps) {
       <audio
         id="playlist_audio"
         ref={audioPlayer}
-        autoPlay
         onEnded={selectRandomTrackFromPlaylist}
         onError={selectRandomTrackFromPlaylist}
         src={selectedTrack ?? ""}

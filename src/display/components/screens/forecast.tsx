@@ -95,16 +95,14 @@ export function ForecastScreen(props: ForecastScreenProps) {
             conditions={weatherStationResponse.observed}
             stationTime={weatherStationResponse.stationTime}
           />
-          {alert && (
-            <div
-              className={`reload-animation step-7 centre-align forecast-alert ${
-                shouldAlertFlash(alert) ? "flash" : ""
-              }`}
-            >
-              {formatAlertHeadline(alert.headline)}
-            </div>
-          )}
-          <div className="forecast reload-animation step-8">{formattedImmediateForecast}</div>
+          <div className="forecast reload-animation step-7">
+            {alert && (
+              <div className={`centre-align forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
+                {formatAlertHeadline(alert.headline)}
+              </div>
+            )}
+            <div>{formattedImmediateForecast}</div>
+          </div>
         </>
       )}
       {page > 1 && (

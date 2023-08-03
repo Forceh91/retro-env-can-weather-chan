@@ -6,7 +6,8 @@
     "lint": "eslint .",
     "dev": "ts-node-dev -r tsconfig-paths/register src/server.ts",
     "display": "yarn parcel watch src/display/**/*.html --dist-dir dist/ --public-url ../ --no-source-maps",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "amqp": "^0.2.7",

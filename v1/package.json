@@ -47,20 +47,6 @@
     "vue-jest": "^5.0.0-alpha.10",
     "webpack": "^5.75.0"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
-  },
   "jest": {
     "moduleFileExtensions": [
       "js",

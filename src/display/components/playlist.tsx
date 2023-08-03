@@ -4,10 +4,6 @@ type PlaylistProps = {
   playlist: string[];
 };
 
-const BASE_URL = `http://${window.location.hostname}`;
-const BASE_PORT = window.location.port;
-const MUSIC_URL = `${BASE_URL}:${BASE_PORT}`;
-
 export function PlaylistComponent(props: PlaylistProps) {
   const { playlist } = props ?? {};
   const [selectedTrack, setSelectedTrack] = useState<string>();

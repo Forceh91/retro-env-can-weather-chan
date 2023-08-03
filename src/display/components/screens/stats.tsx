@@ -1,5 +1,5 @@
 import { DISPLAY_MAX_CHARACTERS_PER_LINE } from "consts";
-import { format, isValid, parseISO, subMinutes } from "date-fns";
+import { addMinutes, format, isValid, parseISO } from "date-fns";
 import { formatObservedMonthDate, getIsWinterSeason } from "lib/date";
 import { useMemo } from "react";
 import { HotColdSpots, Season, SunRiseSet, WeatherStationTimeData } from "types";
@@ -33,21 +33,21 @@ export function StatsScreen(props: StatsScreenProps) {
     const date = parseDate(hotColdSpots?.lastUpdated);
     if (!isValid(date)) return "";
 
-    return format(subMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "MMM d");
+    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "MMM d");
   }, [hotColdSpots?.lastUpdated]);
 
   const formattedSunrise = useMemo(() => {
     const date = parseDate(sunRiseSet?.rise);
     if (!isValid(date)) return "";
 
-    return format(subMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "h:mm");
+    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "h:mm");
   }, [sunRiseSet?.rise]);
 
   const formattedSunset = useMemo(() => {
     const date = parseDate(sunRiseSet?.set);
     if (!isValid(date)) return "";
 
-    return format(subMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "h:mm");
+    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "h:mm");
   }, [sunRiseSet?.set]);
 
   const generatePrecip = (amount: number) => amount.toFixed(1).toString().padStart(5);

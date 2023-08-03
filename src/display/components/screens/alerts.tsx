@@ -42,7 +42,8 @@ export function AlertScreen(props: AlertScreenProps) {
       // see if there's a severe tstorm and add a page for it
       const tempAlerts: CAPObject[] | any[] = [...alerts];
       const hasSevereTStormWatch = tempAlerts.findIndex((alert) => isWarningSevereThunderstormWatch(alert.headline));
-      if (hasSevereTStormWatch > -1) tempAlerts.splice(hasSevereTStormWatch, 0, { isSevereTStormExplanation: true });
+      if (hasSevereTStormWatch > -1)
+        tempAlerts.splice(hasSevereTStormWatch + 1, 0, { isSevereTStormExplanation: true });
 
       // set this is as the alerts to show
       setDisplayAlerts(tempAlerts);

@@ -4,10 +4,6 @@ type PlaylistProps = {
   playlist: string[];
 };
 
-const BASE_URL = `http://${window.location.hostname}`;
-const BASE_PORT = window.location.port;
-const MUSIC_URL = `${BASE_URL}:${BASE_PORT}`;
-
 export function PlaylistComponent(props: PlaylistProps) {
   const { playlist } = props ?? {};
   const [selectedTrack, setSelectedTrack] = useState<string>();
@@ -25,6 +21,7 @@ export function PlaylistComponent(props: PlaylistProps) {
       // and then set the volume to something a bit more reasonable
       audioPlayerElement.load();
       audioPlayerElement.volume = 0.33;
+      audioPlayerElement.play();
     }
   }, [playlist, selectedTrack]);
 
@@ -45,7 +42,6 @@ export function PlaylistComponent(props: PlaylistProps) {
       <audio
         id="playlist_audio"
         ref={audioPlayer}
-        autoPlay
         onEnded={selectRandomTrackFromPlaylist}
         onError={selectRandomTrackFromPlaylist}
         src={selectedTrack ?? ""}

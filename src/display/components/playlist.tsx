@@ -17,6 +17,15 @@ export function PlaylistComponent(props: PlaylistProps) {
     if (!playlist?.length) return;
 
     if (!selectedTrack?.length) selectRandomTrackFromPlaylist();
+    else {
+      const { current: audioPlayerElement }: { current: HTMLAudioElement } = audioPlayer;
+      if (!audioPlayerElement) return;
+
+      // since we have a selected track and an audio element, we can load the new source
+      // and then set the volume to something a bit more reasonable
+      audioPlayerElement.load();
+      audioPlayerElement.volume = 0.33;
+    }
   }, [playlist, selectedTrack]);
 
   const selectRandomTrackFromPlaylist = (): void => {
@@ -28,8 +37,7 @@ export function PlaylistComponent(props: PlaylistProps) {
     if (!track?.length) return selectRandomTrackFromPlaylist();
 
     // found one so set it
-    setSelectedTrack(`${MUSIC_URL}/${track}`);
-    if (audioPlayer.current) (audioPlayer.current as HTMLAudioElement).volume = 0.2;
+    setSelectedTrack(track);
   };
 
   return (

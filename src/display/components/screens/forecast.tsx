@@ -47,7 +47,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
 
   const formatAlertHeadline = (headline: string) =>
     headline
-      .replace(/severe thunderstorm/gi, "severe tstorm")
+      ?.replace(/severe thunderstorm/gi, "severe tstorm")
       .replace(/special weather statement/gi, "special weather stmnt");
 
   // get all of the forecasts we'll need

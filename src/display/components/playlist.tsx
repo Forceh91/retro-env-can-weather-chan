@@ -4,10 +4,13 @@ type PlaylistProps = {
   playlist: string[];
 };
 
+const PLAYLIST_CHECK_IS_PLAYING_TIMEOUT = 30 * 1000;
+
 export function PlaylistComponent(props: PlaylistProps) {
   const { playlist } = props ?? {};
   const [selectedTrack, setSelectedTrack] = useState<string>();
   const audioPlayer = useRef();
+  const audioPlayingChecker = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
     if (!playlist?.length) return;
@@ -20,9 +23,15 @@ export function PlaylistComponent(props: PlaylistProps) {
       // since we have a selected track and an audio element, we can load the new source
       // and then set the volume to something a bit more reasonable
       audioPlayerElement.load();
-      audioPlayerElement.volume = 0.33;
+      audioPlayerElement.volume = 0.4;
       audioPlayerElement.play();
     }
+
+    audioPlayingChecker.current = setInterval(() => checkAudioIsPlaying(), PLAYLIST_CHECK_IS_PLAYING_TIMEOUT);
+
+    return () => {
+      audioPlayingChecker.current && clearInterval(audioPlayingChecker.current);
+    };
   }, [playlist, selectedTrack]);
 
   const selectRandomTrackFromPlaylist = (): void => {
@@ -37,6 +46,14 @@ export function PlaylistComponent(props: PlaylistProps) {
     setSelectedTrack(track);
   };
 
+  const checkAudioIsPlaying = () => {
+    const { current: audioPlayerElement }: { current: HTMLAudioElement } = audioPlayer;
+
+    // if there's no selected track, or its paused, or there's no current time, select a new track
+    if (!selectedTrack?.length || audioPlayerElement?.paused || !audioPlayerElement?.currentTime)
+      selectRandomTrackFromPlaylist();
+  };
+
   return (
     <>
       <audio
@@ -45,6 +62,7 @@ export function PlaylistComponent(props: PlaylistProps) {
         onEnded={selectRandomTrackFromPlaylist}
         onError={selectRandomTrackFromPlaylist}
         src={selectedTrack ?? ""}
+        loop={false}
       />
     </>
   );

@@ -7,7 +7,11 @@ module.exports = {
   moduleDirectories: ["node_modules", "src"],
   modulePathIgnorePatterns: ["testdata"],
   // from https://stackoverflow.com/a/57916712/15076557
-  transformIgnorePatterns: ["node_modules/(?!(sarra-canada-amqp)/)", "node_modules/(?!(ec-weather-js)/)"],
+  transformIgnorePatterns: [
+    "node_modules/(?!(sarra-canada-amqp)/)",
+    "node_modules/(?!(ec-weather-js)/)",
+    "node_modules/(?!(xml-js)/)",
+  ],
   transform: {
     "^.+\\.tsx?$": ["ts-jest", { useESM: true }],
     "^.+\\.ts?$": ["ts-jest", { useESM: true }],

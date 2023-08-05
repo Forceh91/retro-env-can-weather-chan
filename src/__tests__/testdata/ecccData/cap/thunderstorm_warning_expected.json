@@ -1,0 +1,25 @@
+{
+  "identifier": "urn:oid:2.49.0.1.124.1211373515.2023",
+  "sender": "cap-pac@canada.ca",
+  "references": "cap-pac@canada.ca,urn:oid:2.49.0.1.124.3723074918.2023,2023-08-05T20:10:43-00:00 cap-pac@canada.ca,urn:oid:2.49.0.1.124.1149892027.2023,2023-08-05T20:14:33-00:00 cap-pac@canada.ca,urn:oid:2.49.0.1.124.2316707614.2023,2023-08-05T20:19:04-00:00 cap-pac@canada.ca,urn:oid:2.49.0.1.124.2348193114.2023,2023-08-05T20:34:27-00:00 cap-pac@canada.ca,urn:oid:2.49.0.1.124.2845094716.2023,2023-08-05T20:39:26-00:00 cap-pac@canada.ca,urn:oid:2.49.0.1.124.3543408946.2023,2023-08-05T21:45:12-00:00 cap-pac@canada.ca,urn:oid:2.49.0.1.124.1228018707.2023,2023-08-05T21:50:13-00:00 cap-pac@canada.ca,urn:oid:2.49.0.1.124.0657098959.2023,2023-08-05T22:37:22-00:00",
+  "effective": "2023-08-05T22:37:22-00:00",
+  "expires": "2023-08-06T01:36:22-00:00",
+  "headline": "severe thunderstorm warning in effect",
+  "description": "At 5:37 p.m. CDT (6:37 p.m. EDT), Environment Canada meteorologists are tracking a severe thunderstorm capable of producing strong wind gusts and up to nickel size hail.",
+  "instruction": "Lightning kills and injures Canadians every year. Remember, when thunder roars, go indoors!",
+  "severity": 2,
+  "urgency": 4,
+  "event": "thunderstorm",
+  "certainty": "Likely",
+  "audience": "general public",
+  "areas": [
+    [49.9131, -90.0123],
+    [49.5235, -90.0178],
+    [49.5614, -90.2392],
+    [49.8681, -91.6834],
+    [49.8683, -91.6842],
+    [51.1282, -91.0434],
+    [51.1354, -89.9953],
+    [49.9131, -90.0123]
+  ]
+}

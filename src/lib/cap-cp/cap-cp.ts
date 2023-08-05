@@ -28,72 +28,76 @@ export class CAPCPFile {
   }
 
   private parseXMLToJS(rawData: string) {
-    if (!rawData) return;
+    if (!rawData?.length) return;
 
-    logger.log("Parsing CAP file");
+    try {
+      logger.log("Parsing CAP file");
 
-    // convert it to a JS object
-    const capObject: ElementCompact = xml2js(rawData, { compact: true });
-    if (!capObject) return;
+      // convert it to a JS object
+      const capObject: ElementCompact = xml2js(rawData, { compact: true });
+      if (!capObject) return;
 
-    const alert = capObject["alert"];
-    if (!alert) return;
+      const alert = capObject["alert"];
+      if (!alert) return;
 
-    // get the headers
-    const { _text: identifier } = alert.identifier;
-    const { _text: sender } = alert.sender;
-    const { _text: sent } = alert.sent;
-    const { _text: references } = alert.references;
+      // get the headers
+      const { _text: identifier } = alert.identifier;
+      const { _text: sender } = alert.sender;
+      const { _text: sent } = alert.sent;
+      const { _text: references } = alert.references;
 
-    // get the info from the english portion (which presume is always first)
-    const [info] = alert.info;
-    if (!info) return;
+      // get the info from the english portion (which presume is always first)
+      const [info] = alert.info;
+      if (!info) return;
 
-    const areas = info.area;
-    const { _text: effective } = info.effective;
-    const { _text: expires } = info.expires;
-    const { _text: headline } = info.headline;
-    const { _text: description } = info.description;
-    const { _text: instruction } = info.instruction;
-    const { _text: severity } = info.severity;
-    const { _text: urgency } = info.urgency;
-    const { _text: event } = info.event;
-    const { _text: certainty } = info.certainty;
-    const { _text: audience } = info.audience;
+      const areas = info.area;
+      const { _text: effective } = info.effective;
+      const { _text: expires } = info.expires;
+      const { _text: headline } = info.headline;
+      const { _text: description } = info.description;
+      const { _text: instruction } = info.instruction;
+      const { _text: severity } = info.severity;
+      const { _text: urgency } = info.urgency;
+      const { _text: event } = info.event;
+      const { _text: certainty } = info.certainty;
+      const { _text: audience } = info.audience;
 
-    // convert dates to the correct type
-    const sentDate = parseISO(sent);
-    const effectiveDate = parseISO(effective);
-    const expiresDate = parseISO(expires);
+      // convert dates to the correct type
+      const sentDate = parseISO(sent);
+      const effectiveDate = parseISO(effective);
+      const expiresDate = parseISO(expires);
 
-    // convert severity/urgency to the correct type
-    const severityAsENUM: CAPSeverity = CAPSeverity[severity.toUpperCase() as keyof typeof CAPSeverity];
-    const urgencyAsENUM: CAPUrgency = CAPUrgency[urgency.toUpperCase() as keyof typeof CAPUrgency];
+      // convert severity/urgency to the correct type
+      const severityAsENUM: CAPSeverity = CAPSeverity[severity.toUpperCase() as keyof typeof CAPSeverity];
+      const urgencyAsENUM: CAPUrgency = CAPUrgency[urgency.toUpperCase() as keyof typeof CAPUrgency];
 
-    // convert areas to the correct type
-    const areasToCheck = Array.isArray(areas) ? areas : [areas];
-    this.areas = areasToCheck.map((area: CAPAreaRaw) => ({
-      description: area.areaDesc?._text,
-      polygon: this.convertPolygonStringTo3DArray(area.polygon?._text),
-    }));
+      // convert areas to the correct type
+      const areasToCheck = Array.isArray(areas) ? areas : [areas];
+      this.areas = areasToCheck.map((area: CAPAreaRaw) => ({
+        description: area.areaDesc?._text,
+        polygon: this.convertPolygonStringTo3DArray(area.polygon?._text),
+      }));
 
-    // now we can store all this to the class
-    this.identifier = identifier;
-    this.sender = sender;
-    this.sent = sentDate;
-    this.references = references;
-    this.effective = effectiveDate;
-    this.expires = expiresDate;
-    this.headline = headline?.trim();
-    this.description = description?.trim();
-    this.instruction = instruction;
-    this.severity = severityAsENUM;
-    this.urgency = urgencyAsENUM;
-    this.event = event;
-    this.certainty = certainty;
-    this.audience = audience;
+      // now we can store all this to the class
+      this.identifier = identifier;
+      this.sender = sender;
+      this.sent = sentDate;
+      this.references = references;
+      this.effective = effectiveDate;
+      this.expires = expiresDate;
+      this.headline = headline?.trim();
+      this.description = description?.trim();
+      this.instruction = instruction;
+      this.severity = severityAsENUM;
+      this.urgency = urgencyAsENUM;
+      this.event = event;
+      this.certainty = certainty;
+      this.audience = audience;
 
-    logger.log("Parsed CAP file");
+      logger.log("Parsed CAP file");
+    } catch {
+      logger.error("Unable to parse CAP file");
+    }
   }
 
   private convertPolygonStringTo3DArray(polygonString: string, separator: string = " ") {

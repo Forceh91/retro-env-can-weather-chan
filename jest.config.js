@@ -12,4 +12,12 @@ module.exports = {
     "^.+\\.tsx?$": ["ts-jest", { useESM: true }],
     "^.+\\.ts?$": ["ts-jest", { useESM: true }],
   },
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!src/lib/logger.ts",
+    "!src/routes/**",
+    "!src/**/*.d.ts",
+    "!**/src/consts/**",
+    "!**/src/types/**",
+  ],
 };

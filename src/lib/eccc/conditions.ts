@@ -26,7 +26,7 @@ import {
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
 } from "consts/forecast.consts";
 import { CONDITIONS_WIND_SPEED_CALM } from "consts";
-import { parseISO } from "date-fns";
+import { addMinutes, isValid, parseISO } from "date-fns";
 import { initializeHistoricalTempPrecip } from "./historicalTempPrecip";
 import { initializeClimateNormals } from "./climateNormals";
 
@@ -358,6 +358,14 @@ class CurrentConditions {
 
   public observedDateTime() {
     return this._weatherStationTimeData && parseISO(this._weatherStationTimeData.observedDateTime);
+  }
+
+  public observedDateTimeAtStation() {
+    if (!this._weatherStationTimeData?.observedDateTime) return new Date();
+    const stationTime = parseISO(this._weatherStationTimeData.observedDateTime);
+    return isValid(stationTime)
+      ? addMinutes(stationTime, this._weatherStationTimeData.stationOffsetMinutesFromLocal)
+      : new Date();
   }
 }
 

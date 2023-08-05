@@ -5,9 +5,13 @@ import axios from "lib/axios";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
 import { ProvinceStationTracking, ProvinceStations } from "types";
+import { initializeCurrentConditions } from "lib/eccc";
+import { adjustObservedDateTimeToStationTime } from "lib/date";
 
 const logger = new Logger("ProvinceTracking");
 const PROVINCE_TRACKING_FILE = "db/province_tracking.json";
+
+const conditions = initializeCurrentConditions();
 
 class ProvinceTracking {
   private _stations: ProvinceStations;
@@ -110,7 +114,7 @@ class ProvinceTracking {
   }
 
   private setTempScaleToTrack() {
-    const time = new Date();
+    const time = conditions?.observedDateTimeAtStation();
     const hour = time.getHours();
 
     // from 8pm to 8am we need to track the min temp
@@ -120,7 +124,7 @@ class ProvinceTracking {
   }
 
   private setTempScaleToDisplay() {
-    const time = new Date();
+    const time = conditions?.observedDateTimeAtStation();
     const hour = time.getHours();
 
     // from 8pm to 8am we need to display the max temp

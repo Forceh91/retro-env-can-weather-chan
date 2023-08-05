@@ -1,5 +1,5 @@
 const Weather = require("ec-weather-js");
-import axios from "axios";
+import axios from "lib/backendAxios";
 import { listen } from "lib/amqp";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
@@ -65,7 +65,7 @@ class CurrentConditions {
     this._weatherStationID = config?.primaryLocation?.location;
 
     this.startAMQPConnection();
-    this._apiUrl = `${ECCC_BASE_API_URL}/${config.primaryLocation.province}/${this._weatherStationID}${ECCC_API_ENGLISH_SUFFIX}`;
+    this._apiUrl = `${ECCC_BASE_API_URL}${config.primaryLocation.province}/${this._weatherStationID}${ECCC_API_ENGLISH_SUFFIX}`;
     this.fetchConditions();
   }
 
@@ -370,8 +370,8 @@ class CurrentConditions {
 }
 
 let currentConditions: CurrentConditions = null;
-export function initializeCurrentConditions(): CurrentConditions {
-  if (currentConditions) return currentConditions;
+export function initializeCurrentConditions(forceNewInstance: boolean = false): CurrentConditions {
+  if (!forceNewInstance && currentConditions) return currentConditions;
 
   currentConditions = new CurrentConditions();
   return currentConditions;

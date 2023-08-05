@@ -1,4 +1,8 @@
-import { MAX_NATIONAL_STATION_NAME_LENGTH, MIN_NATIONAL_STATIONS_NEEDED_TO_DISPLAY } from "consts";
+import {
+  MAX_CONDITION_LENGTH,
+  MAX_NATIONAL_STATION_NAME_LENGTH,
+  MIN_NATIONAL_STATIONS_NEEDED_TO_DISPLAY,
+} from "consts";
 import { formatObservedLong } from "lib/date";
 import { useEffect, useMemo } from "react";
 import { NationalStationObservations, WeatherStationTimeData } from "types";
@@ -38,7 +42,10 @@ export function NationalWeatherScreen(props: NationalWeatherProps) {
           <li key={nationalObservation.code}>
             <span>{nationalObservation.name.padEnd(MAX_NATIONAL_STATION_NAME_LENGTH)}</span>
             <span>{Math.round(nationalObservation.temperature).toString().padStart(4)}</span>
-            <span>&nbsp;&nbsp;{nationalObservation.abbreviatedCondition}</span>
+            <span>
+              {"".padStart(2)}
+              {nationalObservation.abbreviatedCondition.padEnd(MAX_CONDITION_LENGTH)}
+            </span>
           </li>
         ))}
       </ol>

@@ -1,0 +1,124 @@
+{
+  "observationID": "2023080414",
+  "city": "Toronto",
+  "stationTime": {
+    "stationOffsetMinutesFromLocal": 0,
+    "timezone": "EDT",
+    "observedDateTime": "2023-08-04T18:00:00.000Z"
+  },
+  "stationID": "s0000458",
+  "observed": {
+    "condition": "Mostly Cloudy",
+    "abbreviatedCondition": "mostly cloudy",
+    "temperature": { "value": 25.6, "units": "C" },
+    "pressure": { "change": 0.01, "tendency": "rising", "value": 101.3, "units": "kPa" },
+    "humidity": { "value": 53, "units": "%" },
+    "visibility": { "value": 24.1, "units": "km" },
+    "wind": { "speed": { "value": "calm", "units": "km/h" }, "gust": null, "direction": "NNW" },
+    "windchill": null
+  },
+  "almanac": {
+    "temperatures": {
+      "extremeMin": { "value": 7.2, "year": 1951, "unit": "C" },
+      "extremeMax": { "value": 35, "year": 1944, "unit": "C" },
+      "normalMin": { "value": 15, "unit": "C" },
+      "normalMax": { "value": 26.7, "unit": "C" },
+      "lastYearMax": { "value": 29.1, "unit": "C" },
+      "lastYearMin": { "value": 21.3, "unit": "C" }
+    },
+    "sunRiseSet": { "rise": "2023-08-04T10:10:00.000Z", "set": "2023-08-05T00:37:00.000Z", "timezone": "UTC" }
+  },
+  "forecast": [
+    {
+      "period": "Today",
+      "textSummary": "A mix of sun and cloud with 30 percent chance of showers and risk of a thunderstorm. High 27. Humidex 32. UV index 7 or high.",
+      "abbreviatedTextSummary": "A mix of sun and cloud with 30% chnc of shwrs and risk of a tstorm. High 27. Humidex 32. UV index 7 or high.",
+      "temperature": { "value": 27, "class": "high" },
+      "conditions": "Chance of showers"
+    },
+    {
+      "period": "friday night",
+      "textSummary": "Partly cloudy. Wind northwest 20 km/h becoming light late this evening. Low 16.",
+      "abbreviatedTextSummary": "Partly cloudy. Wind NW 20 bcmg light late this eve. Low 16.",
+      "temperature": { "value": 16, "class": "low" },
+      "conditions": "Partly cloudy"
+    },
+    {
+      "period": "saturday",
+      "textSummary": "Sunny. High 27. Humidex 30. UV index 8 or very high.",
+      "abbreviatedTextSummary": "Sunny. High 27. Humidex 30. UV index 8 or very high.",
+      "temperature": { "value": 27, "class": "high" },
+      "conditions": "Sunny"
+    },
+    {
+      "period": "saturday night",
+      "textSummary": "Clear. Low 15.",
+      "abbreviatedTextSummary": "Clear. Low 15.",
+      "temperature": { "value": 15, "class": "low" },
+      "conditions": "Clear"
+    },
+    {
+      "period": "sunday",
+      "textSummary": "Increasing cloudiness. High 25.",
+      "abbreviatedTextSummary": "Increasing cloudiness. High 25.",
+      "temperature": { "value": 25, "class": "high" },
+      "conditions": "Cloudy"
+    },
+    {
+      "period": "sunday night",
+      "textSummary": "Cloudy with 30 percent chance of showers. Low 21.",
+      "abbreviatedTextSummary": "Cloudy with 30% chance of showers. Low 21.",
+      "temperature": { "value": 21, "class": "low" },
+      "conditions": "Chance of showers"
+    },
+    {
+      "period": "monday",
+      "textSummary": "Showers. High 24.",
+      "abbreviatedTextSummary": "Showers. High 24.",
+      "temperature": { "value": 24, "class": "high" },
+      "conditions": "Showers"
+    },
+    {
+      "period": "monday night",
+      "textSummary": "Showers. Low 18.",
+      "abbreviatedTextSummary": "Showers. Low 18.",
+      "temperature": { "value": 18, "class": "low" },
+      "conditions": "Showers"
+    },
+    {
+      "period": "tuesday",
+      "textSummary": "A mix of sun and cloud with 60 percent chance of showers. High 26.",
+      "abbreviatedTextSummary": "A mix of sun and cloud with 60% chnc of shwrs. High 26.",
+      "temperature": { "value": 26, "class": "high" },
+      "conditions": "Chance of showers"
+    },
+    {
+      "period": "tuesday night",
+      "textSummary": "Clear. Low 15.",
+      "abbreviatedTextSummary": "Clear. Low 15.",
+      "temperature": { "value": 15, "class": "low" },
+      "conditions": "Clear"
+    },
+    {
+      "period": "wednesday",
+      "textSummary": "A mix of sun and cloud. High 27.",
+      "abbreviatedTextSummary": "A mix of sun and cloud. High 27.",
+      "temperature": { "value": 27, "class": "high" },
+      "conditions": "A mix of sun and cloud"
+    },
+    {
+      "period": "wednesday night",
+      "textSummary": "Cloudy periods. Low 18.",
+      "abbreviatedTextSummary": "Cloudy periods. Low 18.",
+      "temperature": { "value": 18, "class": "low" },
+      "conditions": "Cloudy periods"
+    },
+    {
+      "period": "thursday",
+      "textSummary": "Cloudy with 40 percent chance of showers. High 24.",
+      "abbreviatedTextSummary": "Cloudy with 40% chnc of showers. High 24.",
+      "temperature": { "value": 24, "class": "high" },
+      "conditions": "Chance of showers"
+    }
+  ]
+}

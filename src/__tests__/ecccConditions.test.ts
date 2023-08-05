@@ -2,10 +2,16 @@ import axios from "lib/backendAxios";
 import moxios from "moxios";
 import { initializeCurrentConditions } from "lib/eccc/conditions";
 import ecccConditions from "./testdata/ecccData/conditions/s0000458_e";
+import ecccConditionsWithGust from "./testdata/ecccData/conditions/s0000458_e_gusting";
+import ecccConditionsWithCalmWind from "./testdata/ecccData/conditions/s0000458_e_calm";
+import ecccConditionsWithWindchill from "./testdata/ecccData/conditions/s0000458_e_windchill";
 import { WeatherStation } from "types/condition.types";
 import { addMinutes, parseISO } from "date-fns";
 
 const expectedObserved: WeatherStation = require("./testdata/ecccData/conditions/s0000458_e.json");
+const expectedObservedWithGust: WeatherStation = require("./testdata/ecccData/conditions/s0000458_e_gusting.json");
+const expectedObservedWithCalmWind: WeatherStation = require("./testdata/ecccData/conditions/s0000458_e_calm.json");
+const expectedObservedWithWindchill: WeatherStation = require("./testdata/ecccData/conditions/s0000458_e_windchill.json");
 const baseExpectedConditionResponse = {
   observationID: expectedObserved.observationID,
   city: expectedObserved.city,
@@ -18,7 +24,7 @@ describe("CurrentConditions", () => {
   afterEach(() => moxios.uninstall(axios));
 
   it("returns the correct data when 'observed' is asked for", (done) => {
-    const conditions = initializeCurrentConditions();
+    const conditions = initializeCurrentConditions(true);
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();
@@ -97,6 +103,45 @@ describe("CurrentConditions", () => {
             expectedObserved.stationTime.stationOffsetMinutesFromLocal
           )
         );
+        done();
+      });
+    });
+  });
+
+  it("handles gusting wind from eccc", (done) => {
+    const conditions = initializeCurrentConditions(true);
+
+    moxios.wait(() => {
+      const mostRecentRequest = moxios.requests.mostRecent();
+      mostRecentRequest.respondWith({ status: 200, response: ecccConditionsWithGust }).then(() => {
+        const observed = conditions.observed();
+        expect(observed.observed).toEqual(expectedObservedWithGust.observed);
+        done();
+      });
+    });
+  });
+
+  it("handles calm wind from eccc", (done) => {
+    const conditions = initializeCurrentConditions(true);
+
+    moxios.wait(() => {
+      const mostRecentRequest = moxios.requests.mostRecent();
+      mostRecentRequest.respondWith({ status: 200, response: ecccConditionsWithCalmWind }).then(() => {
+        const observed = conditions.observed();
+        expect(observed.observed).toEqual(expectedObservedWithCalmWind.observed);
+        done();
+      });
+    });
+  });
+
+  it("handles windchill calculated from eccc conditions", (done) => {
+    const conditions = initializeCurrentConditions(true);
+
+    moxios.wait(() => {
+      const mostRecentRequest = moxios.requests.mostRecent();
+      mostRecentRequest.respondWith({ status: 200, response: ecccConditionsWithWindchill }).then(() => {
+        const observed = conditions.observed();
+        expect(observed.observed).toEqual(expectedObservedWithWindchill.observed);
         done();
       });
     });

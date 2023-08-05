@@ -21,6 +21,7 @@ const baseCAPObject = {
 
 describe("alert display helpers", () => {
   it("recognizes what alerts should flash their headline", () => {
+    expect(shouldAlertFlash(null)).toBe(false);
     expect(shouldAlertFlash(baseCAPObject)).toBe(false);
     expect(shouldAlertFlash({ ...baseCAPObject, severity: CAPSeverity.UNKNOWN })).toBe(false);
     expect(shouldAlertFlash({ ...baseCAPObject, severity: CAPSeverity.MINOR })).toBe(false);

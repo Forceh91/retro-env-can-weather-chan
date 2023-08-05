@@ -1,4 +1,4 @@
-import { abbreviateForecast } from "lib/conditions";
+import { abbreviateForecast } from "lib/conditions/forecast";
 
 describe("forecast truncation", () => {
   test("abbreviateForecast", () => {

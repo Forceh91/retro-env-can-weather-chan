@@ -1,4 +1,4 @@
-import { isSunSpotSeason, isWindchillSeason } from "lib/date";
+import { isSunSpotSeason, isWindchillSeason } from "lib/date/season";
 
 describe("seasons", () => {
   test("isWindchillSeason: calculates if its windchill season correctly or not", () => {

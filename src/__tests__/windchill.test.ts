@@ -1,4 +1,4 @@
-import { calculateWindchill } from "lib/conditions";
+import { calculateWindchill } from "lib/conditions/windchill";
 
 describe("windchill", () => {
   it("it isn't present if the temp is above 0", () => {

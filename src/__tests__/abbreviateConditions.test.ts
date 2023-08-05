@@ -1,4 +1,4 @@
-import { harshTruncateConditions } from "lib/conditions";
+import { harshTruncateConditions } from "lib/conditions/conditions";
 
 describe("condition truncation", () => {
   it("harshTruncateConditions: makes sure condition string is only 13 characters", (done) => {

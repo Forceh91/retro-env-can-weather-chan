@@ -10,14 +10,17 @@ export default class Logger {
   }
 
   log(message: string, ...optionalParams: any[]) {
-    console.log(`[${this.formattedDate()}]`, `[${this.name.toUpperCase()}]`, message, ...optionalParams);
+    process.env.NODE_ENV !== "test" &&
+      console.log(`[${this.formattedDate()}]`, `[${this.name.toUpperCase()}]`, message, ...optionalParams);
   }
 
   error(message: string, ...optionalParams: any[]) {
-    console.error(`[${this.formattedDate()}]`, `[${this.name.toUpperCase()}]`, message, ...optionalParams);
+    process.env.NODE_ENV !== "test" &&
+      console.error(`[${this.formattedDate()}]`, `[${this.name.toUpperCase()}]`, message, ...optionalParams);
   }
 
   warn(message: string, ...optionalParams: any[]) {
-    console.warn(`[${this.formattedDate()}]`, `[${this.name.toUpperCase()}]`, message, ...optionalParams);
+    process.env.NODE_ENV !== "test" &&
+      console.warn(`[${this.formattedDate()}]`, `[${this.name.toUpperCase()}]`, message, ...optionalParams);
   }
 }

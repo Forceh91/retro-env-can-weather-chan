@@ -62,6 +62,10 @@ export const FLAVOUR_DEFAULT = {
       duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
     },
     {
+      id: Screens.LAST_MONTH_STATS,
+      duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
+    },
+    {
       id: Screens.WINDCHILL,
       duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
     },

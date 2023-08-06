@@ -156,11 +156,11 @@ class HistoricalTempPrecip {
     logger.log("Calculated precip data for the season/yesterday");
 
     // process last month's stats
-    this.processLastMonthsStats(lastMonthData);
+    this.processLastMonthsStats(lastMonthData, currentDate);
   }
 
-  private processLastMonthsStats(lastMonthData: HistoricalDataStats) {
-    if (!lastMonthData?.length || !isStartOfMonth()) {
+  private processLastMonthsStats(lastMonthData: HistoricalDataStats, currentDate: Date) {
+    if (!lastMonthData?.length || !isStartOfMonth(currentDate)) {
       this._lastMonthSummary = null;
       return;
     }

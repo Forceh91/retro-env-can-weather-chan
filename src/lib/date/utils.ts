@@ -10,7 +10,6 @@ export function getDayOfYearAdjustedForLeapDay() {
   return dayOfYear + (!isLeapYear && month > 2 ? 1 : 0);
 }
 
-export function isStartOfMonth() {
-  const date = new Date();
+export function isStartOfMonth(date: Date = new Date()) {
   return date.getDate() <= 5;
 }

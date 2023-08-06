@@ -1,8 +1,8 @@
+import { ElementCompact, xml2js } from "xml-js";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
+import axios from "lib/backendAxios";
 import { ECCCHotColdSpotElement, HotColdSpot } from "types";
-import axios from "axios";
-import { ElementCompact, xml2js } from "xml-js";
 
 const logger = new Logger("Canada_Hot_Cold_Spots");
 const config = initializeConfig();
@@ -111,8 +111,8 @@ class CanadaProvincialHotColdSpots {
 }
 
 let canadaProvincialHotColdSpots: CanadaProvincialHotColdSpots = null;
-export function initializeCanadaProvincialHotColdSpot() {
-  if (canadaProvincialHotColdSpots) return canadaProvincialHotColdSpots;
+export function initializeCanadaProvincialHotColdSpot(forceNewInstance: boolean = false) {
+  if (!forceNewInstance && canadaProvincialHotColdSpots) return canadaProvincialHotColdSpots;
 
   canadaProvincialHotColdSpots = new CanadaProvincialHotColdSpots();
   return canadaProvincialHotColdSpots;

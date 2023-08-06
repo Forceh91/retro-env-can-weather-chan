@@ -122,7 +122,7 @@ class CurrentConditions {
         this.generateWeatherStationTimeData(weather.current?.dateTime[1] ?? {});
 
         // time/date done so now fetch historical data
-        const observedDateTime: Date = parseISO(this._weatherStationTimeData.observedDateTime);
+        const observedDateTime: Date = this.observedDateTimeAtStation();
         historicalData.fetchLastTwoYearsOfData(observedDateTime);
         climateNormals.fetchClimateNormals(observedDateTime);
 

@@ -18,11 +18,13 @@ module.exports = {
   },
   collectCoverageFrom: [
     "src/**/*.ts",
-    "!src/lib/logger.ts",
-    "!src/routes/**",
     "!src/**/*.d.ts",
-    "!**/src/consts/**",
-    "!**/src/types/**",
+    "!src/**/routeHandler.ts",
+    "!src/lib/logger.ts",
+    "!src/server.ts",
+    "!src/routes/**",
+    "!src/consts/**",
+    "!src/types/**",
   ],
   watchPathIgnorePatterns: ["db/*", "cfg/*"],
 };

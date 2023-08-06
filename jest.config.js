@@ -24,4 +24,5 @@ module.exports = {
     "!**/src/consts/**",
     "!**/src/types/**",
   ],
+  watchPathIgnorePatterns: ["db/*", "cfg/*"],
 };

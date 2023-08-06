@@ -1,10 +1,10 @@
-import axios from "axios";
 import fs from "fs";
 import { initializeCurrentConditions } from "./conditions";
 import { listen } from "lib/amqp";
 import { Connection } from "types/amqp.types";
 import Logger from "lib/logger";
 import { CAPCPFile } from "lib/cap-cp";
+import axios from "lib/backendAxios";
 import { FS_NO_FILE_FOUND } from "consts";
 import { compareAsc, parseISO } from "date-fns";
 
@@ -159,8 +159,8 @@ class AlertMonitor {
     const sortedAlerts = this.sortAlerts()?.map((alert) => ({
       url: alert.url,
       identifier: alert.identifier,
-      sent: alert.sent,
-      expires: alert.expires,
+      sent: alert.sent?.toISOString(),
+      expires: alert.expires?.toISOString(),
       headline: alert.headline,
       description: alert.description,
       severity: alert.severity,
@@ -174,8 +174,8 @@ class AlertMonitor {
 }
 
 let alertMonitor: AlertMonitor = null;
-export function initializeAlertMonitor(): AlertMonitor {
-  if (alertMonitor) return alertMonitor;
+export function initializeAlertMonitor(forceNewInstance: boolean = false): AlertMonitor {
+  if (!forceNewInstance && alertMonitor) return alertMonitor;
 
   alertMonitor = new AlertMonitor();
   return alertMonitor;

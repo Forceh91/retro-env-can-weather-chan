@@ -13,10 +13,10 @@ export function LastMonthScreen(props: LastMonthScreenProps) {
 
   useEffect(() => {
     // if there's no data just return
-    if (!city?.length || !lastMonth) onComplete();
+    if (!city?.length || !lastMonth?.actual || !lastMonth?.normal) onComplete();
   }, []);
 
-  if (!city?.length || !lastMonth) return <></>;
+  if (!city?.length || !lastMonth?.actual || !lastMonth?.normal) return <></>;
 
   const month = format(subMonths(new Date(), 1), "MMMM");
   const formatNumber = (value: number) => (value !== undefined ? value.toFixed(1).toString().padStart(5) : "N/A");

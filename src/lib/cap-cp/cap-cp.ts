@@ -82,7 +82,7 @@ export class CAPCPFile {
       this.identifier = identifier;
       this.sender = sender;
       this.sent = sentDate;
-      this.references = references;
+      this.references = references ?? "";
       this.effective = effectiveDate;
       this.expires = expiresDate;
       this.headline = headline?.trim();

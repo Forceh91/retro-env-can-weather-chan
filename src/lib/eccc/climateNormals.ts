@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "lib/backendAxios";
 import { format, getDaysInMonth, isValid, subMonths } from "date-fns";
 import { initializeConfig } from "lib/config";
 import { getShorthandMonthNamesForSeason, isStartOfMonth } from "lib/date";
@@ -135,15 +135,15 @@ class ClimateNormals {
     return this._normalPrecipForSeason;
   }
 
-  public getNormalsForLastMonth() {
-    if (isStartOfMonth()) return this._normalsForLastMonth;
-    return false;
+  public getNormalsForLastMonth(date: Date = new Date()) {
+    if (isStartOfMonth(date)) return this._normalsForLastMonth;
+    return null;
   }
 }
 
 let climateNormals: ClimateNormals = null;
-export function initializeClimateNormals(): ClimateNormals {
-  if (climateNormals) return climateNormals;
+export function initializeClimateNormals(forceNewInstance: boolean = false): ClimateNormals {
+  if (!forceNewInstance && climateNormals) return climateNormals;
 
   climateNormals = new ClimateNormals();
   return climateNormals;

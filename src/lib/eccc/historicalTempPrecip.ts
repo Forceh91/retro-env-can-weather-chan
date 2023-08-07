@@ -1,6 +1,6 @@
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
-import axios from "axios";
+import axios from "lib/backendAxios";
 import { ElementCompact, xml2js } from "xml-js";
 import {
   HistoricalDataStats,
@@ -229,6 +229,7 @@ class HistoricalTempPrecip {
 
 let historicalTempPrecip: HistoricalTempPrecip = null;
 export function initializeHistoricalTempPrecip(): HistoricalTempPrecip {
+  if (process.env.NODE_ENV === "test") return new HistoricalTempPrecip();
   if (historicalTempPrecip) return historicalTempPrecip;
 
   historicalTempPrecip = new HistoricalTempPrecip();

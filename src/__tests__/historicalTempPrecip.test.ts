@@ -5,6 +5,14 @@ jest.mock("lib/config/config", () => ({
   initializeConfig: () => ({ historicalDataStationID: 51459 }),
 }));
 
+jest.mock("date-fns", () => ({
+  ...jest.requireActual("date-fns"),
+  isYesterday: jest.fn((date: Date) => {
+    if (date.toISOString().includes("2023-08-06")) return true;
+    return false;
+  }),
+}));
+
 import { initializeHistoricalTempPrecip } from "lib/eccc/historicalTempPrecip";
 import * as season from "lib/date/season";
 import historicalData2022 from "./testdata/ecccData/historicaltempprecip/TO-2022-data";

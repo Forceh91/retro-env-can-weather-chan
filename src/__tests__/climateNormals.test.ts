@@ -16,7 +16,7 @@ describe("climate normals", () => {
 
   it("calculates precip correctly", (done) => {
     const normals = initializeClimateNormals(true);
-    normals.fetchClimateNormals();
+    normals.fetchClimateNormals(new Date(2023, 7, 7));
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
@@ -30,7 +30,7 @@ describe("climate normals", () => {
 
   it("calculates last month correctly", (done) => {
     const normals = initializeClimateNormals(true);
-    normals.fetchClimateNormals();
+    normals.fetchClimateNormals(new Date(2023, 7, 7));
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
@@ -44,7 +44,7 @@ describe("climate normals", () => {
 
   it("doesn't give last month normals if its not the start of the month", (done) => {
     const normals = initializeClimateNormals(true);
-    normals.fetchClimateNormals();
+    normals.fetchClimateNormals(new Date(2023, 7, 7));
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();

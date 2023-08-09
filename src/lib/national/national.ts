@@ -8,7 +8,7 @@ import {
 } from "consts";
 import { NationalStationConfig, NationalStationObservation, NationalStationObservations } from "types";
 import Logger from "lib/logger";
-import axios from "axios";
+import axios from "lib/backendAxios";
 import { harshTruncateConditions } from "lib/conditions";
 
 const logger = new Logger("National");
@@ -90,6 +90,7 @@ class NationalWeather {
 
 let nationalWeather: NationalWeather = null;
 export function initializeNationalWeather(): NationalWeather {
+  if (process.env.NODE_ENV === "test") return new NationalWeather();
   if (nationalWeather) return nationalWeather;
 
   nationalWeather = new NationalWeather();

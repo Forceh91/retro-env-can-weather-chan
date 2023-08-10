@@ -110,6 +110,9 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   };
 
   const prepareSwitchToNextScreen = (): void => {
+    // clear the timeout if a timed screen got skipped due to lack of content
+    screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
+
     // get the data for the screen we want to go to
     const screen = screens[displayedScreenIx];
     if (!screen) return prepareSwitchToNextScreen();

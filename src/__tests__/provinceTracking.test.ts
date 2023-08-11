@@ -19,8 +19,8 @@ jest.mock("lib/eccc", () => ({
 jest.mock("fs");
 
 import { initializeProvinceTracking } from "lib/provincetracking/provinceTracking";
-import fakeTorontoWeather from "./testdata/ecccData/provincetracking/fakeTorontoWeather";
-import fakeOttawaWeather from "./testdata/ecccData/provincetracking/fakeOttawaWeather";
+import fakeTorontoWeather, { fakeTorontoWeatherLowTemp } from "./testdata/ecccData/provincetracking/fakeTorontoWeather";
+import fakeOttawaWeather, { fakeOttawaWeatherLowTemp } from "./testdata/ecccData/provincetracking/fakeOttawaWeather";
 import expectedData from "./testdata/ecccData/provincetracking/expected";
 import fakeStoredData from "./testdata/ecccData/provincetracking/fakeStoredData.json";
 import fs from "fs";
@@ -72,7 +72,7 @@ describe("Provincial temp/precip tracking", () => {
     spy.mockRestore();
   });
 
-  it("udpates min/max temps correctly", (done) => {
+  it("udpates min/max temps correctly (day time)", (done) => {
     jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => JSON.stringify(fakeStoredData));
 
     const provinceTracking = initializeProvinceTracking();
@@ -90,6 +90,30 @@ describe("Provincial temp/precip tracking", () => {
 
       done();
     });
+  });
+
+  it("udpates min/max temps correctly (night time)", (done) => {
+    jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => JSON.stringify(fakeStoredData));
+
+    moxios.wait(async () => {
+      jest.useRealTimers();
+      await moxios.requests.at(0).respondWith({ status: 200, response: fakeTorontoWeatherLowTemp });
+      await moxios.requests.at(1).respondWith({ status: 200, response: fakeOttawaWeatherLowTemp });
+
+      const { tracking } = provinceTracking.provinceTracking();
+      expect(tracking[0].maxTemp).toBe(fakeStoredData[0].maxTemp);
+      expect(tracking[0].minTemp).toBe(16.4);
+
+      // ottawa gets told TOs temps so it should match
+      expect(tracking[1].maxTemp).toBe(fakeStoredData[1].maxTemp);
+      expect(tracking[1].minTemp).toBe(15.8);
+
+      done();
+    });
+
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2023, 7, 10, 22, 22));
+    const provinceTracking = initializeProvinceTracking();
   });
 
   it("correctly tracks high temp and displays temp", () => {

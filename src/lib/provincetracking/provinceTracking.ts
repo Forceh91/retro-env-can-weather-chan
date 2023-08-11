@@ -1,12 +1,11 @@
 const Weather = require("ec-weather-js");
 import fs from "fs";
 import { PROVINCE_TRACKING_TEMP_TO_TRACK } from "consts";
-import axios from "lib/axios";
+import axios from "lib/backendAxios";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
 import { ProvinceStationTracking, ProvinceStations } from "types";
 import { initializeCurrentConditions } from "lib/eccc";
-import { adjustObservedDateTimeToStationTime } from "lib/date";
 
 const logger = new Logger("ProvinceTracking");
 const PROVINCE_TRACKING_FILE = "db/province_tracking.json";
@@ -170,6 +169,7 @@ const config = initializeConfig();
 
 let provinceTracking: ProvinceTracking = null;
 export function initializeProvinceTracking(): ProvinceTracking {
+  if (process.env.NODE_ENV === "test") return new ProvinceTracking(config.provinceTracking);
   if (provinceTracking) return provinceTracking;
 
   provinceTracking = new ProvinceTracking(config.provinceTracking);

@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Grand Forks",
+    "code": "KGFK",
+    "condition": "Mostly Cloudy",
+    "abbreviatedCondition": "mostly cloudy",
+    "temperature": 22.8
+  },
+  {
+    "name": "Fargo",
+    "code": "KFAR",
+    "condition": "Mostly Clear",
+    "abbreviatedCondition": "mostly clear",
+    "temperature": 23.9
+  }
+]

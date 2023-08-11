@@ -1,7 +1,7 @@
 import { USA_WEATHER_STATIONS, MAX_USA_STATIONS_PER_PAGE } from "consts";
 import { USAStationConfig, USAStationObservation, USAStationObservations } from "types";
 import Logger from "lib/logger";
-import axios from "axios";
+import axios from "lib/backendAxios";
 import { harshTruncateConditions } from "lib/conditions";
 
 const logger = new Logger("USA");
@@ -53,7 +53,7 @@ class USAWeather {
           ...station,
           condition: condition ?? null,
           abbreviatedCondition: condition ? harshTruncateConditions(condition) : null,
-          temperature: temperature.value && !isNaN(temperature.value) ? Number(temperature.value) : null,
+          temperature: temperature?.value && !isNaN(temperature.value) ? Number(temperature.value) : null,
         });
       })
       .catch((err) => logger.error(station.name, "failed to fetch data", err));
@@ -69,6 +69,7 @@ class USAWeather {
 
 let usaWeather: USAWeather = null;
 export function initializeUSAWeather(): USAWeather {
+  if (process.env.NODE_ENV === "test") return new USAWeather();
   if (usaWeather) return usaWeather;
 
   usaWeather = new USAWeather();

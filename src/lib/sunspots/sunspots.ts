@@ -1,7 +1,7 @@
 import { SUNSPOT_CITIES } from "consts";
 import { SunspotStationConfig, SunspotStationObservation, SunspotStationObservations } from "types";
 import Logger from "lib/logger";
-import axios from "axios";
+import axios from "lib/backendAxios";
 import { harshTruncateConditions } from "lib/conditions";
 import { convertFToC } from "lib/usaweather";
 import { isSunSpotSeason } from "lib/date";
@@ -80,7 +80,7 @@ class Sunspots {
           lowTemp: loTemp,
         });
       })
-      .catch((err) => logger.error(station.name, "failed to fetch data"));
+      .catch(() => logger.error(station.name, "failed to fetch data"));
   }
 
   public sunspots() {
@@ -91,6 +91,7 @@ class Sunspots {
 
 let sunspots: Sunspots = null;
 export function initializeSunspots(): Sunspots {
+  if (process.env.NODE_ENV === "test") return new Sunspots();
   if (sunspots) return sunspots;
 
   sunspots = new Sunspots();

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Honolulu",
+    "code": "HFO",
+    "x": 150,
+    "y": 145,
+    "forecast": "Sunny",
+    "abbreviatedForecast": "sunny",
+    "highTemp": 28.88888888888889,
+    "lowTemp": 24.444444444444443
+  },
+  {
+    "name": "Phoenix",
+    "code": "PSR",
+    "x": 160,
+    "y": 56,
+    "forecast": "Sunny",
+    "abbreviatedForecast": "sunny",
+    "highTemp": 40.55555555555556,
+    "lowTemp": 29.444444444444443
+  }
+]

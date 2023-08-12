@@ -22,5 +22,5 @@ export function formatStringTo8x32(text: string, maxLines: number) {
   }
 
   // truncate the string at the last line break and do some trimming
-  return formattedText.slice(0, formattedText.lastIndexOf("\n")).trim();
+  return formattedText.slice(0, formattedText.lastIndexOf("\n", maxLines * DISPLAY_MAX_CHARACTERS_PER_LINE)).trim();
 }

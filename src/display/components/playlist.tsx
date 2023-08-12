@@ -15,6 +15,7 @@ export function PlaylistComponent(props: PlaylistProps) {
   useEffect(() => {
     if (!playlist?.length) return;
 
+    // no track selected? choose a random one
     if (!selectedTrack?.length) selectRandomTrackFromPlaylist();
     else {
       const { current: audioPlayerElement }: { current: HTMLAudioElement } = audioPlayer;
@@ -27,7 +28,9 @@ export function PlaylistComponent(props: PlaylistProps) {
       audioPlayerElement.play();
     }
 
-    audioPlayingChecker.current = setInterval(() => checkAudioIsPlaying(), PLAYLIST_CHECK_IS_PLAYING_TIMEOUT);
+    // interval to make sure the track is playing if we dont have one
+    if (!audioPlayingChecker.current)
+      audioPlayingChecker.current = setInterval(() => checkAudioIsPlaying(), PLAYLIST_CHECK_IS_PLAYING_TIMEOUT);
 
     return () => {
       audioPlayingChecker.current && clearInterval(audioPlayingChecker.current);

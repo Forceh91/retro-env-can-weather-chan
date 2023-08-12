@@ -37,7 +37,7 @@ class Config {
     rejectInHourConditionUpdates: false, // whether we should only update conditions once an hour
     alternateRecordsSource: undefined, // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json
   };
-  crawlerMessages: string[];
+  crawlerMessages: string[] = [];
   musicPlaylist: string[] = []; // what music files are available
   flavour: Flavour;
   provinceTracking: ProvinceStation[]; // what provinces to track high/low/precip for
@@ -92,9 +92,9 @@ class Config {
       this.primaryLocation = primaryLocation ?? this.primaryLocation;
       this.provinceHighLowEnabled = provinceHighLowEnabled ?? this.provinceHighLowEnabled;
       this.historicalDataStationID = historicalDataStationID ?? this.historicalDataStationID;
-      this.climateNormals = climateNormals ?? this.climateNormals;
+      this.climateNormals = { ...this.climateNormals, ...climateNormals };
       this.lookAndFeel = { ...this.lookAndFeel, ...lookAndFeel };
-      this.misc = misc ?? this.misc;
+      this.misc = { ...this.misc, ...misc };
       this.provinceTracking =
         provinceHighLowEnabled && provinceStations?.length ? provinceStations : PROVINCE_TRACKING_DEFAULT_STATIONS;
 
@@ -169,6 +169,7 @@ class Config {
 
 let config: Config = null;
 export function initializeConfig(): Config {
+  if (process.env.NODE_ENV === "test") return new Config();
   if (config) return config;
 
   config = new Config();

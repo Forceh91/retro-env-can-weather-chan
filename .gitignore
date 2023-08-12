@@ -32,3 +32,4 @@ coverage
 db*
 cfg*
 alerts.txt
+build*

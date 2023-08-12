@@ -33,6 +33,20 @@ function WeatherChannel() {
     fetchLastMonth();
   }, [currentConditions?.observationID]);
 
+  if (
+    !config &&
+    !currentConditions &&
+    !alertsHook.alerts &&
+    !nationalWeather &&
+    !provinceTracking &&
+    !season &&
+    !hotColdSpots &&
+    !lastMonth &&
+    !usaWeather &&
+    !sunspots
+  )
+    return <>Channel offline</>;
+
   return (
     <>
       <div id="crawler_bar"></div>

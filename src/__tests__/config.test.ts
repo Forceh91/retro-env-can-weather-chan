@@ -159,7 +159,7 @@ describe("Config file loading", () => {
 
   it("handles the config file not existing", () => {
     jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => {
-      throw FS_NO_FILE_FOUND;
+      throw { code: FS_NO_FILE_FOUND };
     });
 
     const config = initializeConfig();
@@ -184,7 +184,7 @@ describe("Config file loading", () => {
 
   it("handles the crawler messages file not existing", () => {
     jest.spyOn(fs, "readFileSync").mockImplementation(() => {
-      throw FS_NO_FILE_FOUND;
+      throw { code: FS_NO_FILE_FOUND };
     });
 
     const config = initializeConfig();

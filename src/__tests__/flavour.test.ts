@@ -2,7 +2,10 @@ import { FlavourLoader } from "lib/flavour/flavour";
 import testFlavour from "./testdata/flavours/test_flavour.json";
 import fs from "fs";
 import { parseISO } from "date-fns";
-import { FLAVOUR_DEFAULT, FS_NO_FILE_FOUND, SCREEN_MIN_DISPLAY_LENGTH, Screens } from "consts";
+import { FLAVOUR_DEFAULT } from "consts/flavour.consts";
+import { SCREEN_MIN_DISPLAY_LENGTH } from "consts/screens.consts";
+import { Screens } from "consts/screens.consts";
+import { FS_NO_FILE_FOUND } from "consts/storage.consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
 jest.mock("fs");
 
@@ -73,7 +76,7 @@ describe("Flavour loading", () => {
   it("handles no flavour file existing", () => {
     const spy = jest.spyOn(fs, "readFileSync");
     spy.mockImplementationOnce(() => {
-      throw FS_NO_FILE_FOUND;
+      throw { code: FS_NO_FILE_FOUND };
     });
 
     const flavour = new FlavourLoader("test_flavour");

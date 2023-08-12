@@ -13,7 +13,7 @@ export function FooterBar(props: FooterBarProps) {
 
   useEffect(() => {
     timerInterval.current = setInterval(() => {
-      setTime(addMinutes(new Date(), timeOffset));
+      setTime(new Date());
     }, 1000);
 
     return () => {
@@ -21,7 +21,7 @@ export function FooterBar(props: FooterBarProps) {
     };
   }, [timeOffset]);
 
-  const formattedTime = format(time, "HH:mm:ss");
+  const formattedTime = format(addMinutes(time, timeOffset), "HH:mm:ss");
   const formattedDate = formatDisplayDate(time.getTime());
 
   return (

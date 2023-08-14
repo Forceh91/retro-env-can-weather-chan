@@ -73,6 +73,9 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/\sa few/gi, "");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // squish up the precip amount predicitons
+  abbreviatedSummary = abbreviatedSummary.replace(/amount (\d+) - (\d+) mm/gi, "amount $1-$2mm");
+
   // make sure we actually return
   return abbreviatedSummary;
 }

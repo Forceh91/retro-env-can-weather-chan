@@ -7,7 +7,7 @@ export function formatDisplayDate(timestamp: number) {
     .replace(/thu\s/gi, "thur")
     .replace(/jun\s/gi, "june")
     .replace(/jul\s/gi, "july")
-    .replace(/sep/gi, "sept")
+    .replace(/sep\s/gi, "sept")
     .replace(/\s0/, "  ");
 }
 
@@ -56,7 +56,7 @@ export function formatObservedLong(
   return displayDateString;
 }
 
-export function formatObservedMonthDate(date: WeatherStationTimeData, isLongMonths: boolean) {
+export function formatObservedMonthDate(date: WeatherStationTimeData, isLongMonths: boolean = false) {
   if (!date?.observedDateTime) return "";
 
   const parsedDate = adjustObservedDateTimeToStationTime(date);
@@ -78,10 +78,7 @@ export function formatSunspotDate(date: WeatherStationTimeData) {
   return formattedDate.replace(/mar./gi, "March").replace(/apr./gi, "April");
 }
 
-export function getDaysAheadFromObserved(date: WeatherStationTimeData, numberOfDays: number) {
-  // we can go 6 days ahead of the observed date
-  numberOfDays = numberOfDays || 6;
-
+export function getDaysAheadFromObserved(date: WeatherStationTimeData, numberOfDays: number = 6) {
   // lets turn it into a date and then count forward
   const parsedDate = adjustObservedDateTimeToStationTime(date);
   const daysAhead = addDays(parsedDate, numberOfDays);
@@ -89,10 +86,7 @@ export function getDaysAheadFromObserved(date: WeatherStationTimeData, numberOfD
   return daysAhead;
 }
 
-export function getDaysBehindFromObserved(date: WeatherStationTimeData, numberOfDays: number) {
-  // we can go back anytime but default to 1
-  numberOfDays = numberOfDays || 1;
-
+export function getDaysBehindFromObserved(date: WeatherStationTimeData, numberOfDays: number = 1) {
   // turn it into a date and count back
   const parsedDate = adjustObservedDateTimeToStationTime(date);
   const daysBehind = subDays(parsedDate, numberOfDays);

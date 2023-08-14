@@ -8,13 +8,13 @@ import {
 } from "lib/date/season";
 
 describe("seasons", () => {
+  beforeEach(() => jest.useFakeTimers());
   afterEach(() => jest.useRealTimers());
 
   it("getIsWinterSeason: detects is winter season correctly", () => {
     expect(getIsWinterSeason(4)).toBeFalsy();
     expect(getIsWinterSeason(2)).toBeTruthy();
 
-    jest.useFakeTimers();
     jest.setSystemTime(new Date(2023, 7, 13));
     expect(getIsWinterSeason()).toBeFalsy();
 
@@ -51,7 +51,8 @@ describe("seasons", () => {
 
     const nextWinterDate = new Date(2023, 10, 22);
     jest.setSystemTime(nextWinterDate);
-    expect(isDateInCurrentWinterSeason(nextWinterDate.toISOString())).toBeFalsy();
+    expect(isDateInCurrentWinterSeason(nextWinterDate.toISOString())).toBeTruthy();
+    expect(isDateInCurrentWinterSeason(thisWinterDate.toISOString())).toBeFalsy();
 
     const notInWinterDate = new Date(2023, 5, 22);
     jest.setSystemTime(notInWinterDate);

@@ -35,6 +35,15 @@ describe("Initilization hook", () => {
     });
   });
 
+  it("handles an empty 2xx state", () => {
+    const { config } = initializeHook();
+    moxios.wait(() => {
+      const request = moxios.requests.mostRecent();
+      request.respondWith({ status: 200 });
+      expect(config).toStrictEqual(null);
+    });
+  });
+
   it("handles a 4xx error state", () => {
     const { config } = initializeHook();
     moxios.wait(() => {

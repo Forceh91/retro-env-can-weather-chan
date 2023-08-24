@@ -39,6 +39,17 @@ describe("Alerts hook", () => {
     });
   });
 
+  it("handles an empty 2xx state", () => {
+    const { alerts, mostImportantAlert, hasFetched } = initializeHook();
+    moxios.wait(() => {
+      const request = moxios.requests.mostRecent();
+      request.respondWith({ status: 200 });
+      expect(alerts).toHaveLength(0);
+      expect(hasFetched).toBeTruthy();
+      expect(mostImportantAlert).toBeNull();
+    });
+  });
+
   it("handles a 4xx error state", () => {
     const { alerts, mostImportantAlert, hasFetched } = initializeHook();
     moxios.wait(() => {

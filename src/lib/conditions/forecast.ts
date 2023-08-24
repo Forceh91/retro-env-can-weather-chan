@@ -57,6 +57,10 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/morning/gi, "mrng");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // midnight
+  abbreviatedSummary = abbreviatedSummary.replace(/midnight/gi, "12am");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // occasional
   abbreviatedSummary = abbreviatedSummary.replace(/occasional/gi, "ocnl");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
@@ -75,6 +79,11 @@ export function abbreviateForecast(
 
   // squish up the precip amount predicitons
   abbreviatedSummary = abbreviatedSummary.replace(/amount (\d+) - (\d+) mm/gi, "amount $1-$2mm");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // temperature steady
+  abbreviatedSummary = abbreviatedSummary.replace(/temperature/gi, "temp");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
   // make sure we actually return
   return abbreviatedSummary;

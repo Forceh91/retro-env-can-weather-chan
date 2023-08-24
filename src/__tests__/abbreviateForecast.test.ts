@@ -28,5 +28,7 @@ describe("forecast truncation", () => {
     expect(abbreviateForecast("amount 5 - 10 mm", forecastLengthWanted)).toStrictEqual("amount 5-10mm");
     expect(abbreviateForecast("local amount 5 - 10 mm", forecastLengthWanted)).toStrictEqual("local amount 5-10mm");
     expect(abbreviateForecast("amount 15 - 30 mm", forecastLengthWanted)).toStrictEqual("amount 15-30mm");
+    expect(abbreviateForecast("midnight", forecastLengthWanted)).toStrictEqual("12am");
+    expect(abbreviateForecast("temperature steady", forecastLengthWanted)).toStrictEqual("temp steady");
   });
 });

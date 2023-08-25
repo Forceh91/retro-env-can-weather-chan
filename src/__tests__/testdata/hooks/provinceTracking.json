@@ -1,0 +1,65 @@
+{
+  "tracking": [
+    {
+      "station": {
+        "name": "Toronto",
+        "code": "ON/s0000458"
+      },
+      "minTemp": 17.6,
+      "maxTemp": 28.4,
+      "displayTemp": 17.6,
+      "yesterdayPrecip": 9.2
+    },
+    {
+      "station": {
+        "name": "Ottawa",
+        "code": "ON/s0000623"
+      },
+      "minTemp": 20.4,
+      "maxTemp": 26.4,
+      "displayTemp": 20.4,
+      "yesterdayPrecip": 2.7
+    },
+    {
+      "station": {
+        "name": "Hamilton",
+        "code": "ON/s0000549"
+      },
+      "minTemp": 17.3,
+      "maxTemp": 26.6,
+      "displayTemp": 17.3,
+      "yesterdayPrecip": 16.7
+    },
+    {
+      "station": {
+        "name": "London",
+        "code": "ON/s0000326"
+      },
+      "minTemp": 17.2,
+      "maxTemp": 25.8,
+      "displayTemp": 17.2,
+      "yesterdayPrecip": 5.9
+    },
+    {
+      "station": {
+        "name": "Kitchener",
+        "code": "ON/s0000573"
+      },
+      "minTemp": 16.4,
+      "maxTemp": 26.5,
+      "displayTemp": 16.4,
+      "yesterdayPrecip": "MISSING"
+    },
+    {
+      "station": {
+        "name": "Windsor",
+        "code": "ON/s0000646"
+      },
+      "minTemp": 24.1,
+      "maxTemp": 27.8,
+      "displayTemp": 24.1,
+      "yesterdayPrecip": 0
+    }
+  ],
+  "isOvernight": true
+}

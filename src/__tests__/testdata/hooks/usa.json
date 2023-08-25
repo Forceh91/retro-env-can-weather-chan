@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Grand Forks",
+    "code": "KGFK",
+    "condition": "Partly Cloudy and Windy",
+    "abbreviatedCondition": "partly cloudy",
+    "temperature": 23.9
+  },
+  {
+    "name": "Fargo",
+    "code": "KFAR",
+    "condition": "Clear",
+    "abbreviatedCondition": "clear",
+    "temperature": 26.1
+  },
+  {
+    "name": "Minneapolis",
+    "code": "KMSP",
+    "condition": "Mostly Clear",
+    "abbreviatedCondition": "mostly clear",
+    "temperature": 30.6
+  },
+  {
+    "name": "Chicago",
+    "code": "KORD",
+    "condition": "Mostly Cloudy",
+    "abbreviatedCondition": "mostly cloudy",
+    "temperature": 26.7
+  },
+  {
+    "name": "Las Vegas",
+    "code": "KVGT",
+    "condition": "Clear",
+    "abbreviatedCondition": "clear",
+    "temperature": 34.4
+  },
+  {
+    "name": "Tampa",
+    "code": "KTPA",
+    "condition": "Mostly Clear",
+    "abbreviatedCondition": "mostly clear",
+    "temperature": 33.3
+  },
+  {
+    "name": "Los Angeles",
+    "code": "KCQT",
+    "condition": "Clear",
+    "abbreviatedCondition": "clear",
+    "temperature": 25
+  }
+]

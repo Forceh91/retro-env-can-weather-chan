@@ -1,0 +1,13 @@
+{
+  "hotSpot": {
+    "name": "Hay River/Merlyn Carter Airport",
+    "temperature": 26.6,
+    "province": "NT"
+  },
+  "coldSpot": {
+    "name": "Isachsen",
+    "temperature": -2.3,
+    "province": "NU"
+  },
+  "lastUpdated": "2023-08-25T18:23:55.714Z"
+}

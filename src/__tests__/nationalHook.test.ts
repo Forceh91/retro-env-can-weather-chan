@@ -14,7 +14,7 @@ describe("National weather hook", () => {
   beforeEach(() => moxios.install(axios));
   afterEach(() => moxios.uninstall(axios));
 
-  it("gives us the config state", async () => {
+  it("gives us the hook state", async () => {
     const { nationalWeather } = initializeHook();
     expect(nationalWeather).toBeUndefined();
   });

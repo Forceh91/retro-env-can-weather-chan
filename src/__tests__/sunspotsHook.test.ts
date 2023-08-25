@@ -14,7 +14,7 @@ describe("Sunspots hook", () => {
   beforeEach(() => moxios.install(axios));
   afterEach(() => moxios.uninstall(axios));
 
-  it("gives us the config state", async () => {
+  it("gives us the hook state", async () => {
     const { sunspots } = initializeHook();
     expect(sunspots).toBeUndefined();
   });

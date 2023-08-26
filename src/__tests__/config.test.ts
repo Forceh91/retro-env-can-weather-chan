@@ -220,4 +220,16 @@ describe("Config file loading", () => {
     expect(config.provinceHighLowEnabled).toBeTruthy();
     expect(config.provinceStations).toStrictEqual(newStations);
   });
+
+  it("updates the historical data station ID correctly", () => {
+    const config = initializeConfig();
+    const originalID = config.historicalDataStationID;
+
+    config.setHistoricalDataStationID(Number("abc"));
+    expect(config.historicalDataStationID).toBe(originalID);
+
+    const newID = 512;
+    config.setHistoricalDataStationID(newID);
+    expect(config.historicalDataStationID).toBe(newID);
+  });
 });

@@ -185,6 +185,12 @@ class Config {
     this.provinceHighLowEnabled = isEnabled;
     if (stations?.length) this.provinceStations = stations;
   }
+
+  public setHistoricalDataStationID(id: number) {
+    if (!this.historicalDataStationID || isNaN(id)) return;
+
+    this.historicalDataStationID = id;
+  }
 }
 
 let config: Config = null;

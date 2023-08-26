@@ -63,3 +63,18 @@ export function postProvinceTracking(req: Request, res: Response) {
     res.status(500).json({ error: e });
   }
 }
+
+export function postHistoricalDataStationID(req: Request, res: Response) {
+  const {
+    body: { historicalDataStationID },
+  } = req ?? {};
+
+  try {
+    if (isNaN(historicalDataStationID)) throw "Invalid type of `historicalDataStationID` provided";
+
+    config.setHistoricalDataStationID(historicalDataStationID);
+    res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}

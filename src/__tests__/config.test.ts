@@ -190,7 +190,9 @@ describe("Config file loading", () => {
     const config = initializeConfig();
     expect(config.crawlerMessages).toStrictEqual([]);
   });
+});
 
+describe("Config updating", () => {
   it("updates the primary location correctly", () => {
     const config = initializeConfig();
 
@@ -231,5 +233,22 @@ describe("Config file loading", () => {
     const newID = 512;
     config.setHistoricalDataStationID(newID);
     expect(config.historicalDataStationID).toBe(newID);
+  });
+
+  it("updates the climate normals correctly", () => {
+    const config = initializeConfig();
+    const climateNormals = config.climateNormals;
+
+    config.setClimateNoramls(Number("abc"), Number("abc"), "blah");
+    expect(config.climateNormals).toStrictEqual(climateNormals);
+
+    config.setClimateNoramls(23, Number("abc"), "blah");
+    expect(config.climateNormals).toStrictEqual(climateNormals);
+
+    config.setClimateNoramls(23, 45, "blah");
+    expect(config.climateNormals).toStrictEqual(climateNormals);
+
+    config.setClimateNoramls(23, 45, "on");
+    expect(config.climateNormals).toStrictEqual({ climateID: 23, stationID: 45, province: "ON" });
   });
 });

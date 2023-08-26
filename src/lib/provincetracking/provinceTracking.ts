@@ -169,9 +169,9 @@ const config = initializeConfig();
 
 let provinceTracking: ProvinceTracking = null;
 export function initializeProvinceTracking(): ProvinceTracking {
-  if (process.env.NODE_ENV === "test") return new ProvinceTracking(config.provinceTracking);
+  if (process.env.NODE_ENV === "test") return new ProvinceTracking(config.provinceStations);
   if (provinceTracking) return provinceTracking;
 
-  provinceTracking = new ProvinceTracking(config.provinceTracking);
+  provinceTracking = new ProvinceTracking(config.provinceStations);
   return provinceTracking;
 }

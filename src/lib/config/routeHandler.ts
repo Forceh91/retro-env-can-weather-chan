@@ -48,3 +48,18 @@ export function postPrimaryLocation(req: Request, res: Response) {
     res.status(500).json({ error: e });
   }
 }
+
+export function postProvinceTracking(req: Request, res: Response) {
+  const {
+    body: { isEnabled, stations },
+  } = req ?? {};
+
+  try {
+    if (!Array.isArray(stations)) throw "Invalid `stations` parameter";
+
+    config.setProvinceStations(isEnabled, stations);
+    res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}

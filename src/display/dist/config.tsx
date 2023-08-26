@@ -2,7 +2,7 @@ import { useChannelCurrentConfig } from "hooks";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ChakraProvider, Heading, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import { WeatherStationConfig } from "display/components/config";
+import { ProvinceTempPrecipConfig, WeatherStationConfig } from "display/components/config";
 
 const ConfigScreen = () => {
   const { config, fetched } = useChannelCurrentConfig();
@@ -16,11 +16,18 @@ const ConfigScreen = () => {
           <Tabs>
             <TabList>
               <Tab>Weather Station</Tab>
+              <Tab>Province Temp/Precip</Tab>
             </TabList>
 
             <TabPanels>
               <TabPanel>
                 <WeatherStationConfig weatherStation={config.primaryLocation} />
+              </TabPanel>
+              <TabPanel>
+                <ProvinceTempPrecipConfig
+                  isEnabled={config.provinceHighLowEnabled}
+                  stations={config.provinceStations}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>

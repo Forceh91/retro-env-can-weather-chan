@@ -9,3 +9,4 @@ export * from "./hotColdSpots";
 export * from "./usa";
 export * from "./sunspots";
 export * from "./config";
+export * from "./saveConfigOption";

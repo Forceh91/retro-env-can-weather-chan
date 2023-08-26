@@ -10,6 +10,7 @@ import {
   MiscConfig,
   PrimaryLocation,
   ProvinceStation,
+  ProvinceStations,
 } from "types";
 
 const logger = new Logger("config");
@@ -48,7 +49,7 @@ class Config {
   crawlerMessages: string[] = [];
   musicPlaylist: string[] = []; // what music files are available
   flavour: Flavour;
-  provinceTracking: ProvinceStation[]; // what provinces to track high/low/precip for
+  provinceStations: ProvinceStation[]; // what provinces to track high/low/precip for
 
   constructor() {
     this.loadConfig();
@@ -61,7 +62,7 @@ class Config {
     return {
       primaryLocation: this.primaryLocation,
       provinceHighLowEnabled: this.provinceHighLowEnabled,
-      provinceTracking: this.provinceTracking,
+      provinceStations: this.provinceStations,
       historicalDataStationID: this.historicalDataStationID,
       climateNormals: this.climateNormals,
       lookAndFeel: this.lookAndFeel,
@@ -103,7 +104,7 @@ class Config {
       this.climateNormals = { ...this.climateNormals, ...climateNormals };
       this.lookAndFeel = { ...this.lookAndFeel, ...lookAndFeel };
       this.misc = { ...this.misc, ...misc };
-      this.provinceTracking =
+      this.provinceStations =
         provinceHighLowEnabled && provinceStations?.length ? provinceStations : PROVINCE_TRACKING_DEFAULT_STATIONS;
 
       logger.log("Loaded weather channel. Location:", `${name}, ${province}`, `(${location})`);
@@ -178,6 +179,11 @@ class Config {
     if (!station) return;
 
     this.primaryLocation = station;
+  }
+
+  public setProvinceStations(isEnabled: boolean, stations: ProvinceStations) {
+    this.provinceHighLowEnabled = isEnabled;
+    if (stations?.length) this.provinceStations = stations;
   }
 }
 

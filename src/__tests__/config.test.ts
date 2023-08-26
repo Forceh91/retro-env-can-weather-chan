@@ -20,7 +20,7 @@ describe("Config file loading", () => {
     const config = initializeConfig();
     expect(config.primaryLocation).toStrictEqual(exampleConfig.primaryLocation);
     expect(config.provinceHighLowEnabled).toStrictEqual(exampleConfig.provinceHighLowEnabled);
-    expect(config.provinceTracking).toStrictEqual(exampleConfig.provinceStations);
+    expect(config.provinceStations).toStrictEqual(exampleConfig.provinceStations);
     expect(config.historicalDataStationID).toStrictEqual(exampleConfig.historicalDataStationID);
     expect(config.climateNormals).toStrictEqual(exampleConfig.climateNormals);
     expect(config.lookAndFeel).toStrictEqual({ font: "vt323", flavour: FLAVOUR_DEFAULT.name });
@@ -139,14 +139,14 @@ describe("Config file loading", () => {
       .mockImplementationOnce(() => JSON.stringify({ ...exampleConfig, provinceStations: undefined }));
 
     let config = initializeConfig();
-    expect(config.provinceTracking).toStrictEqual(PROVINCE_TRACKING_DEFAULT_STATIONS);
+    expect(config.provinceStations).toStrictEqual(PROVINCE_TRACKING_DEFAULT_STATIONS);
 
     jest
       .spyOn(fs, "readFileSync")
       .mockImplementationOnce(() => JSON.stringify({ ...exampleConfig, provinceStations: [] }));
 
     config = initializeConfig();
-    expect(config.provinceTracking).toStrictEqual(PROVINCE_TRACKING_DEFAULT_STATIONS);
+    expect(config.provinceStations).toStrictEqual(PROVINCE_TRACKING_DEFAULT_STATIONS);
   });
 
   it("handles the config file being corrupted", () => {
@@ -202,5 +202,22 @@ describe("Config file loading", () => {
 
     config.setPrimaryLocation(newPrimaryLocation);
     expect(config.primaryLocation).toStrictEqual(newPrimaryLocation);
+  });
+
+  it("updates the province tracking correcty", () => {
+    const config = initializeConfig();
+
+    const newStations = [PROVINCE_TRACKING_DEFAULT_STATIONS[2]];
+    config.setProvinceStations(true, newStations);
+    expect(config.provinceHighLowEnabled).toBeTruthy();
+    expect(config.provinceStations).toStrictEqual(newStations);
+
+    config.setProvinceStations(false, newStations);
+    expect(config.provinceHighLowEnabled).toBeFalsy();
+    expect(config.provinceStations).toStrictEqual(newStations);
+
+    config.setProvinceStations(true, []);
+    expect(config.provinceHighLowEnabled).toBeTruthy();
+    expect(config.provinceStations).toStrictEqual(newStations);
   });
 });

@@ -190,4 +190,17 @@ describe("Config file loading", () => {
     const config = initializeConfig();
     expect(config.crawlerMessages).toStrictEqual([]);
   });
+
+  it("updates the primary location correctly", () => {
+    const config = initializeConfig();
+
+    const newPrimaryLocation = {
+      province: "MB",
+      location: DEFAULT_WEATHER_STATION_ID,
+      name: "Winnipeg",
+    };
+
+    config.setPrimaryLocation(newPrimaryLocation);
+    expect(config.primaryLocation).toStrictEqual(newPrimaryLocation);
+  });
 });

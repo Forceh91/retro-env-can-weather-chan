@@ -1,0 +1,177 @@
+{
+  "config": {
+    "primaryLocation": {
+      "province": "ON",
+      "location": "s0000458",
+      "name": "Toronto"
+    },
+    "provinceHighLowEnabled": true,
+    "provinceTracking": [
+      {
+        "name": "Toronto",
+        "code": "ON/s0000458"
+      },
+      {
+        "name": "Ottawa",
+        "code": "ON/s0000623"
+      },
+      {
+        "name": "Hamilton",
+        "code": "ON/s0000549"
+      },
+      {
+        "name": "London",
+        "code": "ON/s0000326"
+      },
+      {
+        "name": "Kitchener",
+        "code": "ON/s0000573"
+      },
+      {
+        "name": "Windsor",
+        "code": "ON/s0000646"
+      }
+    ],
+    "historicalDataStationID": 51459,
+    "climateNormals": {
+      "stationID": 5051,
+      "climateID": 6158350,
+      "province": "ON"
+    },
+    "lookAndFeel": {
+      "font": "vt323",
+      "flavour": "test"
+    },
+    "misc": {
+      "rejectInHourConditionUpdates": true
+    },
+    "flavour": {
+      "name": "test",
+      "created": "2023-07-23T19:39:40.000Z",
+      "modified": "2023-07-23T19:39:40.000Z",
+      "screens": [
+        {
+          "id": 1,
+          "duration": 0
+        },
+        {
+          "id": 2,
+          "duration": 20
+        },
+        {
+          "id": 3,
+          "duration": 20
+        },
+        {
+          "id": 0,
+          "duration": 0
+        },
+        {
+          "id": 5,
+          "duration": 20
+        },
+        {
+          "id": 6,
+          "duration": 20
+        },
+        {
+          "id": 7,
+          "duration": 20
+        },
+        {
+          "id": 8,
+          "duration": 20
+        },
+        {
+          "id": 9,
+          "duration": 20
+        },
+        {
+          "id": 13,
+          "duration": 20
+        },
+        {
+          "id": 10,
+          "duration": 20
+        },
+        {
+          "id": 11,
+          "duration": 20
+        },
+        {
+          "id": 15,
+          "duration": 20
+        },
+        {
+          "id": 0,
+          "duration": 0
+        }
+      ]
+    }
+  },
+  "crawler": ["this is a crawler message", "matt is awesome, look at this config page", "wow"],
+  "flavour": {
+    "name": "test",
+    "created": "2023-07-23T19:39:40.000Z",
+    "modified": "2023-07-23T19:39:40.000Z",
+    "screens": [
+      {
+        "id": 1,
+        "duration": 0
+      },
+      {
+        "id": 2,
+        "duration": 20
+      },
+      {
+        "id": 3,
+        "duration": 20
+      },
+      {
+        "id": 0,
+        "duration": 0
+      },
+      {
+        "id": 5,
+        "duration": 20
+      },
+      {
+        "id": 6,
+        "duration": 20
+      },
+      {
+        "id": 7,
+        "duration": 20
+      },
+      {
+        "id": 8,
+        "duration": 20
+      },
+      {
+        "id": 9,
+        "duration": 20
+      },
+      {
+        "id": 13,
+        "duration": 20
+      },
+      {
+        "id": 10,
+        "duration": 20
+      },
+      {
+        "id": 11,
+        "duration": 20
+      },
+      {
+        "id": 15,
+        "duration": 20
+      },
+      {
+        "id": 0,
+        "duration": 0
+      }
+    ]
+  },
+  "music": ["music/donation.mp3", "music/goalachieved.mp3"]
+}

@@ -88,3 +88,9 @@ export type ECCCHotColdSpotElement = {
   _attributes: { name: string; value: string; uom: string };
   qualifier?: ECCCHotColdSpotElement[];
 };
+
+export type ECCCWeatherStation = {
+  name: string;
+  province: string;
+  location: string;
+};

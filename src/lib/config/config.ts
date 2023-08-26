@@ -2,7 +2,15 @@ import { DEFAULT_WEATHER_STATION_ID, FS_NO_FILE_FOUND, PROVINCE_TRACKING_DEFAULT
 import fs from "fs";
 import { FlavourLoader } from "lib/flavour";
 import Logger from "lib/logger";
-import { ClimateNormals, Flavour, LookAndFeel, MiscConfig, PrimaryLocation, ProvinceStation } from "types";
+import {
+  ClimateNormals,
+  ECCCWeatherStation,
+  Flavour,
+  LookAndFeel,
+  MiscConfig,
+  PrimaryLocation,
+  ProvinceStation,
+} from "types";
 
 const logger = new Logger("config");
 const CONFIG_PATH = {
@@ -164,6 +172,12 @@ class Config {
     } catch (err) {
       logger.error("Failed to save config file");
     }
+  }
+
+  public setPrimaryLocation(station: ECCCWeatherStation) {
+    if (!station) return;
+
+    this.primaryLocation = station;
   }
 }
 

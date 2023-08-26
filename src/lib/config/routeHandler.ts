@@ -78,3 +78,20 @@ export function postHistoricalDataStationID(req: Request, res: Response) {
     res.status(500).json({ error: e });
   }
 }
+
+export function postClimateNormals(req: Request, res: Response) {
+  const {
+    body: { climateID, stationID, province },
+  } = req ?? {};
+
+  try {
+    if (isNaN(climateID)) throw "Invalid type of `climateID` provided";
+    if (isNaN(stationID)) throw "Invalid type of `stationID` provided";
+    if (!province.length || typeof province !== "string") throw "Invalid type of `province` provided";
+
+    config.setClimateNoramls(climateID, stationID, province);
+    res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}

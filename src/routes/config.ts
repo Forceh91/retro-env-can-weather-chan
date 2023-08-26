@@ -5,6 +5,7 @@ import {
   postStationsHandler,
   postProvinceTracking,
   postHistoricalDataStationID,
+  postClimateNormals,
 } from "lib/config";
 
 /*
@@ -17,5 +18,6 @@ router.post("/stations", async (req: Request, res: Response) => await postStatio
 router.post("/primaryLocation", postPrimaryLocation);
 router.post("/provinceTracking", postProvinceTracking);
 router.post("/historicalDataStationID", postHistoricalDataStationID);
+router.post("/climateNormals", postClimateNormals);
 
 export default router;

@@ -187,9 +187,22 @@ class Config {
   }
 
   public setHistoricalDataStationID(id: number) {
-    if (!this.historicalDataStationID || isNaN(id)) return;
+    if (!id || isNaN(id)) return;
 
     this.historicalDataStationID = id;
+  }
+
+  public setClimateNoramls(climateID: number, stationID: number, province: string) {
+    if (!climateID || isNaN(climateID)) return;
+    if (!stationID || isNaN(stationID)) return;
+    if (!province.length || province.length > 2 || typeof province !== "string") return;
+
+    this.climateNormals = {
+      ...this.climateNormals,
+      climateID,
+      stationID,
+      province: province.toUpperCase(),
+    };
   }
 }
 

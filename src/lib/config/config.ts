@@ -228,6 +228,10 @@ class Config {
       province: province.toUpperCase(),
     };
   }
+
+  public regenerateAvailableFlavours() {
+    this.checkFlavoursDirectory();
+  }
 }
 
 let config: Config = null;

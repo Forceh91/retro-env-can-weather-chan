@@ -27,9 +27,16 @@ type FlavoursConfigProps = {
   currentFlavours: string[];
 };
 
+type SaveFlavourResponse = {
+  flavour: Flavour;
+};
+
 export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
   const toast = useToast();
-  const { saveConfigOption, isSaving, wasSuccess, wasError } = useSaveConfigOption("flavour", "");
+  const { saveConfigOption, isSaving, wasSuccess, wasError, response } = useSaveConfigOption<SaveFlavourResponse>(
+    "flavour",
+    ""
+  );
   const [mutableFlavour, setMutableFlavour] = useState<Flavour>();
   const [selectedFlavour, setSelectedFlavour] = useState<string>("");
 
@@ -42,6 +49,7 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
     e.preventDefault();
     toast.closeAll();
 
+    mutableFlavour.modified = new Date();
     await saveConfigOption({ flavour: mutableFlavour }, !!!mutableFlavour.uuid);
 
     if (wasError)
@@ -51,12 +59,15 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
         status: "error",
       });
 
-    if (wasSuccess)
+    if (wasSuccess) {
+      if (!mutableFlavour.uuid) mutableFlavour.uuid = response.flavour.uuid;
+
       return toast({
         title: "Save successful",
         description: "Your flavour was saved",
         status: "success",
       });
+    }
   };
 
   const discardChanges = () => {
@@ -169,7 +180,7 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
               <Input
                 value={mutableFlavour.name}
                 onChange={handleFlavourNameChange}
-                isDisabled={isSaving}
+                isDisabled={isSaving || !!mutableFlavour.uuid}
                 maxLength={FLAVOUR_NAME_MAX_LENGTH}
               />
             </FormControl>

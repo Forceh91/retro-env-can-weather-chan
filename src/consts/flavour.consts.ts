@@ -7,6 +7,7 @@ import {
 } from "./screens.consts";
 
 export const FLAVOUR_DIRECTORY = "cfg/flavours";
+export const FLAVOUR_NAME_MAX_LENGTH = 32;
 
 export const FLAVOUR_DEFAULT = {
   name: "default",

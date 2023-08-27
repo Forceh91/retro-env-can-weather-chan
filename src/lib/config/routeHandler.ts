@@ -8,7 +8,6 @@ export function getConfigHandler(req: Request, res: Response) {
   res.json({
     config: config.config,
     crawler: config.crawlerMessages,
-    flavour: config.flavour,
     music: config.musicPlaylist,
   });
 }

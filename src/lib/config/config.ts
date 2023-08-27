@@ -1,4 +1,9 @@
-import { DEFAULT_WEATHER_STATION_ID, FS_NO_FILE_FOUND, PROVINCE_TRACKING_DEFAULT_STATIONS } from "consts";
+import {
+  DEFAULT_WEATHER_STATION_ID,
+  FLAVOUR_DIRECTORY,
+  FS_NO_FILE_FOUND,
+  PROVINCE_TRACKING_DEFAULT_STATIONS,
+} from "consts";
 import fs from "fs";
 import { FlavourLoader } from "lib/flavour";
 import Logger from "lib/logger";
@@ -49,10 +54,12 @@ class Config {
   crawlerMessages: string[] = [];
   musicPlaylist: string[] = []; // what music files are available
   flavour: Flavour;
+  flavours: string[] = []; // what flavours are available
   provinceStations: ProvinceStation[]; // what provinces to track high/low/precip for
 
   constructor() {
     this.loadConfig();
+    this.checkFlavoursDirectory();
     this.loadFlavour();
     this.loadCrawlerMessages();
     this.checkMusicDirectory();
@@ -68,6 +75,7 @@ class Config {
       lookAndFeel: this.lookAndFeel,
       misc: this.misc,
       flavour: this.flavour,
+      flavours: this.flavours,
     };
   }
 
@@ -160,6 +168,22 @@ class Config {
           ...files.filter((f) => f.endsWith(".mp3")).map((f) => `${MUSIC_DIR}/${f}`)
         );
         logger.log("Generated playlist of", this.musicPlaylist.length, "files");
+      }
+    });
+  }
+
+  private checkFlavoursDirectory() {
+    logger.log("Checking available flavours from", FLAVOUR_DIRECTORY);
+
+    fs.readdir(FLAVOUR_DIRECTORY, (err, files) => {
+      if (err) logger.error("Failed to retrieve available flavours");
+      else {
+        this.flavours.splice(
+          0,
+          this.flavours.length,
+          ...files.filter((f) => f.endsWith(".json")).map((f) => f.replace(".json", ""))
+        );
+        logger.log("Found", this.flavours.length, "available flavours");
       }
     });
   }

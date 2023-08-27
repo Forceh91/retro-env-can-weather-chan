@@ -8,6 +8,7 @@ const logger = new Logger("Flavour_Loader");
 
 export class FlavourLoader {
   public name: string;
+  public uuid: string;
   public created: Date;
   public modified: Date;
   public screens: FlavourScreen[];
@@ -29,8 +30,9 @@ export class FlavourLoader {
       if (!parsedFlavour) throw "Bad flavour data";
 
       // get the info from the file and parse relevant stuff
-      const { name, created, modified, screens } = parsedFlavour;
+      const { name, uuid, created, modified, screens } = parsedFlavour;
       this.name = name;
+      this.uuid = uuid;
       this.created = parseISO(created);
       this.modified = parseISO(modified);
 

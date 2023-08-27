@@ -1,4 +1,4 @@
-import { Flavour } from "./flavour.types";
+import { Flavour, Flavours } from "./flavour.types";
 import { ProvinceStation } from "./provincetracking.types";
 
 export type ConfigFields = {
@@ -9,6 +9,7 @@ export type ConfigFields = {
   lookAndFeel?: LookAndFeel;
   misc?: MiscConfig;
   flavour: Flavour;
+  flavours: Flavours;
   provinceStations: ProvinceStation[];
 };
 

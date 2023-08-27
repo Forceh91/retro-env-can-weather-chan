@@ -3,3 +3,4 @@ export * from "./provinceTempPrecip";
 export * from "./weatherStationSearchModal";
 export * from "./historicalDataStationID";
 export * from "./climateNormals";
+export * from "./flavours";

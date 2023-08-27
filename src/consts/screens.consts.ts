@@ -13,9 +13,26 @@ export enum Screens {
   LAST_MONTH_STATS,
   INFO,
   SUNSPOTS,
-  RANDOM,
   WINDCHILL,
 }
+
+export const SCREEN_NAMES = {
+  [Screens.ALERTS]: "Alerts",
+  [Screens.FORECAST]: "Forecast",
+  [Screens.OUTLOOK]: "Outlook",
+  [Screens.ALMANAC]: "Almanac",
+  [Screens.AQHI_WARNING]: "AQHI Warning",
+  [Screens.PROVINCE_PRECIP]: "Province Temp/Precip",
+  [Screens.CANADA_TEMP_CONDITIONS_MB]: "Conditions in Manitoba",
+  [Screens.CANADA_TEMP_CONDITIONS_WEST]: "Conditions on the West Coast",
+  [Screens.CANADA_TEMP_CONDITIONS_EAST]: "Conditions on the East Coast",
+  [Screens.USA_TEMP_CONDITIONS]: "Conditions in the USA",
+  [Screens.STATS]: "Weather Station Stats",
+  [Screens.LAST_MONTH_STATS]: "Last month's stats",
+  [Screens.INFO]: "Info screen",
+  [Screens.SUNSPOTS]: "Sunspot forecast",
+  [Screens.WINDCHILL]: "Windchill Explanation",
+};
 
 export const SCREEN_DESCRIPTIONS = {
   [Screens.ALERTS]: "Paginated alerts/warnings/watches/etc.",
@@ -35,7 +52,7 @@ export const SCREEN_DESCRIPTIONS = {
     "Statitics about the last month with temperature, precipitation, and hotest/coldest days recorded",
   [Screens.INFO]: "Custom text only info screens written by the user",
   [Screens.SUNSPOTS]: "List of forecast for warmer cities during the winter",
-  [Screens.RANDOM]: "Random selection from a pre-determined list of screens",
+  // [Screens.RANDOM]: "Random selection from a pre-determined list of screens",
   [Screens.WINDCHILL]: "Explains the windchill numbers",
 };
 

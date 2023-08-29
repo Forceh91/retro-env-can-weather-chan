@@ -39,14 +39,29 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
     ""
   );
 
+  const [flavourNameUsed, setFlavourNameUsed] = useState(false);
   const [selectableFlavours, setSelectableFlavours] = useState(currentFlavours);
   const [mutableFlavour, setMutableFlavour] = useState<Flavour>();
   const [selectedFlavour, setSelectedFlavour] = useState<string>("");
 
-  const isFlavourSaveable = !!mutableFlavour?.name?.length && !!mutableFlavour?.screens?.length;
+  const isFlavourSaveable = !!mutableFlavour?.name?.length && !!mutableFlavour?.screens?.length && !flavourNameUsed;
 
-  const handleFlavourNameChange = (e: ChangeEvent<HTMLInputElement>) =>
+  const doesFlavourNameExist = (name: string) => {
+    const isUsed = selectableFlavours.map((flavourName) => flavourName.toLowerCase()).includes(name.toLowerCase());
+    setFlavourNameUsed(isUsed);
+    return isUsed;
+  };
+
+  const handleFlavourNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (doesFlavourNameExist(e.target.value))
+      toast({
+        title: "Flavour name already taken",
+        description: "The name you have entered already exists, please choose another one.",
+        status: "error",
+      });
+
     setMutableFlavour({ ...mutableFlavour, name: e.target.value });
+  };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

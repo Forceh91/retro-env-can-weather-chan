@@ -7,6 +7,7 @@ import {
   postHistoricalDataStationID,
   postClimateNormals,
   postMisc,
+  postLookAndFeel,
 } from "lib/config";
 
 /*
@@ -21,5 +22,6 @@ router.post("/provinceTracking", postProvinceTracking);
 router.post("/historicalDataStationID", postHistoricalDataStationID);
 router.post("/climateNormals", postClimateNormals);
 router.post("/misc", postMisc);
+router.post("/lookAndFeel", postLookAndFeel);
 
 export default router;

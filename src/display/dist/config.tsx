@@ -36,6 +36,7 @@ const ConfigScreen = () => {
                   alternateRecordsSource={config.misc.alternateRecordsSource}
                   rejectInHourConditionUpdates={config.misc.rejectInHourConditionUpdates}
                   flavour={config.lookAndFeel.flavour}
+                  flavours={config.flavours}
                 />
               </TabPanel>
               <TabPanel>

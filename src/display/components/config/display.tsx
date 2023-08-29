@@ -5,6 +5,7 @@ import {
   FormLabel,
   Heading,
   Input,
+  Select,
   Stack,
   Switch,
   Text,
@@ -12,10 +13,11 @@ import {
 } from "@chakra-ui/react";
 import { useSaveConfigOption } from "hooks";
 import { FormEvent, useState } from "react";
-import { MiscConfig } from "types";
+import { FlavourNames, LookAndFeel, MiscConfig } from "types";
 
 type DisplayConfigProps = {
   flavour: string;
+  flavours: FlavourNames;
   rejectInHourConditionUpdates: boolean;
   alternateRecordsSource: string;
 };
@@ -24,13 +26,20 @@ type MiscConfigOptionResponse = MiscConfig;
 
 const exampleRecordsJSON = `{"records": [{"hi": {"value": 4.4,"year": 1880},"lo": {"value": -43.3,"year": 1885}},...]}`;
 
-export function DisplayConfig({ flavour, rejectInHourConditionUpdates, alternateRecordsSource }: DisplayConfigProps) {
+export function DisplayConfig({
+  flavour,
+  flavours,
+  rejectInHourConditionUpdates,
+  alternateRecordsSource,
+}: DisplayConfigProps) {
   const toast = useToast();
   const [mutableRejectInHourConditionUpdates, setMutableRejectInHourConditionUpdates] =
     useState(rejectInHourConditionUpdates);
   const [mutableAlternateRecordsSource, setMutableAlternateRecordsSource] = useState(alternateRecordsSource ?? "");
+  const [mutableFlavour, setMutableFlavour] = useState(flavour ?? "");
 
   const miscSaveConfigOption = useSaveConfigOption<MiscConfigOptionResponse>("misc");
+  const lookAndFeelSaveConfigOption = useSaveConfigOption<LookAndFeel>("lookAndFeel");
 
   const onSubmitMiscSettings = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,6 +60,28 @@ export function DisplayConfig({ flavour, rejectInHourConditionUpdates, alternate
       return toast({
         title: "Save successful",
         description: "Your misc settings were saved",
+        status: "success",
+      });
+  };
+
+  const onSubmitLookAndFeelSettings = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    await lookAndFeelSaveConfigOption.saveConfigOption({
+      flavour: mutableFlavour,
+    });
+
+    if (lookAndFeelSaveConfigOption.wasError)
+      return toast({
+        title: "Unable to save look and feel settings",
+        description: "An error occured saving your look and feel settings - please try again",
+        status: "error",
+      });
+
+    if (lookAndFeelSaveConfigOption.wasSuccess)
+      return toast({
+        title: "Save successful",
+        description: "Your look and feel settings were saved",
         status: "success",
       });
   };
@@ -96,11 +127,39 @@ export function DisplayConfig({ flavour, rejectInHourConditionUpdates, alternate
                 leap years.
               </FormHelperText>
             </FormControl>
-
-            <Button type="submit" mt={4} colorScheme="teal" isLoading={miscSaveConfigOption.isSaving}>
-              Save
-            </Button>
           </Stack>
+
+          <Button type="submit" mt={4} colorScheme="teal" isLoading={miscSaveConfigOption.isSaving}>
+            Save
+          </Button>
+        </form>
+      </Stack>
+
+      <Heading size={"md"}>Look and Feel</Heading>
+
+      <Stack>
+        <form onSubmit={onSubmitLookAndFeelSettings}>
+          <FormControl>
+            <FormLabel htmlFor="selectFlavour">Flavour</FormLabel>
+            <Select
+              onChange={(e) => setMutableFlavour(e.target.value)}
+              maxWidth={"md"}
+              value={mutableFlavour}
+              id="selectFlavour"
+            >
+              <option value={""}>Default</option>
+              {flavours.map((flavourName) => (
+                <option key={flavourName} value={flavourName}>
+                  {flavourName}
+                </option>
+              ))}
+            </Select>
+            <FormHelperText>See the "Flavours" tab for more info about flavours</FormHelperText>
+          </FormControl>
+
+          <Button type="submit" mt={4} colorScheme="teal" isLoading={lookAndFeelSaveConfigOption.isSaving}>
+            Save
+          </Button>
         </form>
       </Stack>
     </Stack>

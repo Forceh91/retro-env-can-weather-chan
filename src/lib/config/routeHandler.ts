@@ -110,3 +110,19 @@ export function postMisc(req: Request, res: Response) {
     res.status(500).json({ error: e });
   }
 }
+
+export function postLookAndFeel(req: Request, res: Response) {
+  const {
+    body: { flavour },
+  } = req ?? {};
+
+  try {
+    if (typeof flavour !== "string") throw "`flavour` must be a string";
+    if (flavour && !config.flavours.includes(flavour)) throw "Provided `flavour` doesn't exist";
+
+    config.setLookAndFeelSettings(flavour);
+    res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}

@@ -237,6 +237,13 @@ class Config {
     this.misc.alternateRecordsSource = alternateRecordsSource;
     this.misc.rejectInHourConditionUpdates = rejectInHourConditionUpdates;
   }
+
+  public setLookAndFeelSettings(flavour: string) {
+    if (!flavour) delete this.lookAndFeel.flavour;
+    else this.lookAndFeel.flavour = flavour;
+
+    this.loadFlavour();
+  }
 }
 
 let config: Config = null;

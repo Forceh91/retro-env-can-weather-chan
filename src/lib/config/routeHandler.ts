@@ -94,3 +94,19 @@ export function postClimateNormals(req: Request, res: Response) {
     res.status(500).json({ error: e });
   }
 }
+
+export function postMisc(req: Request, res: Response) {
+  const {
+    body: { rejectInHourConditionUpdates, alternateRecordsSource },
+  } = req ?? {};
+
+  try {
+    if (typeof rejectInHourConditionUpdates !== "boolean") throw "`rejectInHourConditionUpdates` must be true/false";
+    if (typeof alternateRecordsSource !== "string") throw "`alternateRecordsSource` must be a string";
+
+    config.setMiscSettings(rejectInHourConditionUpdates, alternateRecordsSource);
+    res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}

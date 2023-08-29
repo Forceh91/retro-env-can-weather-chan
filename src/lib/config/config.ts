@@ -232,6 +232,11 @@ class Config {
   public regenerateAvailableFlavours() {
     this.checkFlavoursDirectory();
   }
+
+  public setMiscSettings(rejectInHourConditionUpdates: boolean, alternateRecordsSource: string) {
+    this.misc.alternateRecordsSource = alternateRecordsSource;
+    this.misc.rejectInHourConditionUpdates = rejectInHourConditionUpdates;
+  }
 }
 
 let config: Config = null;

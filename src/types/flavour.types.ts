@@ -14,3 +14,5 @@ export type FlavourScreen = {
 };
 
 export type Flavours = Flavour[];
+
+export type FlavourNames = string[];

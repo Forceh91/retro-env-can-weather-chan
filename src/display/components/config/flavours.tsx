@@ -29,6 +29,7 @@ type FlavoursConfigProps = {
 
 type SaveFlavourResponse = {
   flavour: Flavour;
+  flavours: string[];
 };
 
 export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
@@ -37,6 +38,8 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
     "flavour",
     ""
   );
+
+  const [selectableFlavours, setSelectableFlavours] = useState(currentFlavours);
   const [mutableFlavour, setMutableFlavour] = useState<Flavour>();
   const [selectedFlavour, setSelectedFlavour] = useState<string>("");
 
@@ -60,6 +63,7 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
       });
 
     if (wasSuccess) {
+      if (response.flavours) setSelectableFlavours(response.flavours);
       if (!mutableFlavour.uuid) mutableFlavour.uuid = response.flavour.uuid;
 
       return toast({
@@ -122,7 +126,16 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
   const updateScreenDuration = (e: ChangeEvent<HTMLInputElement>, screen: FlavourScreen, ix: number) => {
     // update screen in temp array
     const newScreens = [...mutableFlavour.screens];
-    newScreens.splice(ix, 1, { ...screen, duration: Math.max(SCREEN_MIN_DISPLAY_LENGTH, Number(e.target.value)) });
+    newScreens.splice(ix, 1, { ...screen, duration: Number(e.target.value) });
+
+    // store to state
+    setMutableFlavour({ ...mutableFlavour, screens: newScreens });
+  };
+
+  const onBlurScreenValidation = (screen: FlavourScreen, ix: number) => {
+    // update screen in temp array
+    const newScreens = [...mutableFlavour.screens];
+    newScreens.splice(ix, 1, { ...screen, duration: Math.max(SCREEN_MIN_DISPLAY_LENGTH, Number(screen.duration)) });
 
     // store to state
     setMutableFlavour({ ...mutableFlavour, screens: newScreens });
@@ -154,7 +167,7 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
 
       <Stack direction={"row"} spacing={4} alignItems={"center"}>
         <Select placeholder="Select a flavour to edit" onChange={editFlavour} maxWidth={"md"} value={selectedFlavour}>
-          {currentFlavours.map((flavourName) => (
+          {selectableFlavours.map((flavourName) => (
             <option key={flavourName} value={flavourName}>
               {flavourName}
             </option>
@@ -222,6 +235,8 @@ export function FlavoursConfig({ currentFlavours }: FlavoursConfigProps) {
                               value={screen.duration}
                               type="number"
                               onChange={(e) => updateScreenDuration(e, screen, ix)}
+                              onBlur={() => onBlurScreenValidation(screen, ix)}
+                              min={SCREEN_MIN_DISPLAY_LENGTH}
                             ></Input>
                           )}
                         </Td>

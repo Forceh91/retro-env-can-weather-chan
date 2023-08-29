@@ -13,7 +13,8 @@ export function putFlavourHandler(req: Request, res: Response) {
     if (!flavour?.screens?.length) throw "Flavour doesn't have any screens";
 
     saveFlavour(flavour as Flavour, true);
-    res.status(200).json({ flavour });
+    res.status(200);
+    return flavour;
   } catch (e) {
     res.status(500).json({ error: e });
   }

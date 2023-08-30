@@ -29,6 +29,7 @@ import { CONDITIONS_WIND_SPEED_CALM } from "consts";
 import { addMinutes, isValid, parseISO } from "date-fns";
 import { initializeHistoricalTempPrecip } from "./historicalTempPrecip";
 import { initializeClimateNormals } from "./climateNormals";
+import { generateConditionsUUID } from "./utils";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -108,7 +109,7 @@ class CurrentConditions {
         this.parseStationLatLong(allWeather.location.name);
 
         // generate uuid for these conditions and reject if a config option is on
-        const conditionUUID = this.generateConditionsUUID(weather.current?.dateTime[1].timeStamp ?? "");
+        const conditionUUID = generateConditionsUUID(weather.current?.dateTime[1].timeStamp ?? "");
         if (config.misc.rejectInHourConditionUpdates && conditionUUID === this._conditionUUID) {
           // update the forecast at least but reject the rest of it
           logger.log("Rejecting in-hour conditions update as", conditionUUID, "was already parsed");
@@ -158,12 +159,6 @@ class CurrentConditions {
     // E is postive, W is negative
     if (lon.includes("E")) this.stationLatLong.long = parseFloat(lon);
     else this.stationLatLong.long = -parseFloat(lon);
-  }
-
-  private generateConditionsUUID(timeStamp: string) {
-    // the timestamp on <datetime ...> object is a good unique string to use for this
-    // we'll just chop off the last 4 digits (mmss) as they can change a lot
-    return timeStamp.slice(0, timeStamp.length - 4) ?? "";
   }
 
   private generateWeatherStationTimeData(date: any) {

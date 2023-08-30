@@ -10,6 +10,10 @@ import { NationalStationConfig, NationalStationObservation, NationalStationObser
 import Logger from "lib/logger";
 import axios from "lib/backendAxios";
 import { harshTruncateConditions } from "lib/conditions";
+import { generateConditionsUUID } from "lib/eccc";
+import { initializeConfig } from "lib/config";
+
+const config = initializeConfig();
 
 const logger = new Logger("National");
 class NationalWeather {
@@ -60,13 +64,19 @@ class NationalWeather {
         const {
           condition,
           temperature: { value: temperature },
+          dateTime: [, local],
         } = weather.current;
+
+        // handle rejecting in-hour updates for these stations too
+        const conditionUUID = generateConditionsUUID(local.timeStamp);
+        if (config.misc.rejectInHourConditionUpdates && conditionUUID === observations[stationIx].conditionUUID) return;
 
         observations.splice(stationIx, 1, {
           ...station,
           condition: condition ?? null,
           abbreviatedCondition: condition ? harshTruncateConditions(weather.current?.condition) : null,
           temperature: temperature && !isNaN(temperature) ? Number(temperature) : null,
+          conditionUUID,
         });
       })
       .catch((err) => logger.error(station.name, "failed to fetch data", err));

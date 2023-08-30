@@ -8,6 +8,7 @@ import {
   postClimateNormals,
   postMisc,
   postLookAndFeel,
+  postCrawlerMessages,
 } from "lib/config";
 
 /*
@@ -23,5 +24,6 @@ router.post("/historicalDataStationID", postHistoricalDataStationID);
 router.post("/climateNormals", postClimateNormals);
 router.post("/misc", postMisc);
 router.post("/lookAndFeel", postLookAndFeel);
+router.post("/crawler", postCrawlerMessages);
 
 export default router;

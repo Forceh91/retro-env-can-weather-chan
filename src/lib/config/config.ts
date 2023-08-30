@@ -76,6 +76,7 @@ class Config {
       misc: this.misc,
       flavour: this.flavour,
       flavours: this.flavours,
+      crawler: this.crawlerMessages,
     };
   }
 
@@ -83,6 +84,7 @@ class Config {
     const config = { ...this.config };
     delete config.flavour;
     delete config.flavours;
+    delete config.crawler;
     return config;
   }
 
@@ -159,6 +161,22 @@ class Config {
       } else {
         // handle any other error
         logger.error("Unable to load from crawler file");
+      }
+    }
+  }
+
+  private saveCrawlerMessages() {
+    logger.log("Saving crawler messages to", CRAWLER_ABSOLUTE_PATH);
+    try {
+      fs.writeFileSync(CRAWLER_ABSOLUTE_PATH, this.crawlerMessages.join("\n"), "utf8");
+      logger.log("Saved", this.crawlerMessages.length, "crawler messages");
+    } catch (err) {
+      if (err.code === "ENOENT") {
+        // handle no file found
+        logger.error("No crawler file found");
+      } else {
+        // handle any other error
+        logger.error("Unable to save to crawler file");
       }
     }
   }
@@ -255,6 +273,15 @@ class Config {
     else this.lookAndFeel.flavour = flavour;
 
     this.loadFlavour();
+  }
+
+  public setCrawlerMessages(crawler: string[]) {
+    this.crawlerMessages.splice(
+      0,
+      this.crawlerMessages.length,
+      ...crawler.map((message) => message.trim()).filter((message) => message.length)
+    );
+    this.saveCrawlerMessages();
   }
 }
 

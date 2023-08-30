@@ -128,3 +128,18 @@ export function postLookAndFeel(req: Request, res: Response) {
     res.status(500).json({ error: e });
   }
 }
+
+export function postCrawlerMessages(req: Request, res: Response) {
+  const {
+    body: { crawler },
+  } = req ?? {};
+
+  try {
+    if (!Array.isArray(crawler)) throw "`crawler` must be an array of strings";
+
+    config.setCrawlerMessages(crawler);
+    res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}

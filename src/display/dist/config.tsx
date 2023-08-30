@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import { ChakraProvider, Heading, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import {
   ClimateNormalsConfig,
+  CrawlerConfig,
   DisplayConfig,
   FlavoursConfig,
   HistoricalDataStationIDConfig,
@@ -28,6 +29,7 @@ const ConfigScreen = () => {
               <Tab>Historical Data</Tab>
               <Tab>Climate Normals</Tab>
               <Tab>Flavours</Tab>
+              <Tab>Crawler</Tab>
             </TabList>
 
             <TabPanels>
@@ -58,6 +60,10 @@ const ConfigScreen = () => {
 
               <TabPanel>
                 <FlavoursConfig currentFlavours={config.flavours} />
+              </TabPanel>
+
+              <TabPanel>
+                <CrawlerConfig crawler={config.crawler} />
               </TabPanel>
             </TabPanels>
           </Tabs>

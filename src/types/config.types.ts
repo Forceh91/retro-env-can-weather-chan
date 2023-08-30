@@ -11,6 +11,7 @@ export type ConfigFields = {
   flavour: Flavour;
   flavours: FlavourNames;
   provinceStations: ProvinceStation[];
+  crawler: string[];
 };
 
 export type PrimaryLocation = {

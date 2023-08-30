@@ -1,3 +1,4 @@
+import { CrawlerMessages } from "display/components/crawler";
 import { FooterBar } from "display/components/footerbar";
 import { PlaylistComponent } from "display/components/playlist";
 import { ScreenRotator } from "display/components/screenrotator";
@@ -49,7 +50,7 @@ function WeatherChannel() {
 
   return (
     <>
-      <div id="crawler_bar"></div>
+      <CrawlerMessages crawler={config?.crawler} />
       <ScreenRotator
         screens={config?.flavour?.screens}
         weatherStationResponse={currentConditions}

@@ -79,6 +79,13 @@ class Config {
     };
   }
 
+  get configWithoutFlavour() {
+    const config = { ...this.config };
+    delete config.flavour;
+    delete config.flavours;
+    return config;
+  }
+
   private loadConfig() {
     logger.log("Loading config file", `(${CONFIG_ABSOLUTE_PATH})`, "...");
 
@@ -192,11 +199,16 @@ class Config {
     logger.log("Saving config file", `(${CONFIG_ABSOLUTE_PATH})`, "...");
 
     try {
-      fs.writeFileSync(CONFIG_ABSOLUTE_PATH, JSON.stringify(this.config), "utf8");
+      fs.writeFileSync(CONFIG_ABSOLUTE_PATH, JSON.stringify(this.configWithoutFlavour), "utf8");
       logger.log("Config file saved successfully");
     } catch (err) {
       logger.error("Failed to save config file");
     }
+  }
+
+  public updateAndSaveConfigOption(updateFunc: () => void) {
+    updateFunc();
+    this.saveConfig();
   }
 
   public setPrimaryLocation(station: ECCCWeatherStation) {
@@ -216,7 +228,7 @@ class Config {
     this.historicalDataStationID = id;
   }
 
-  public setClimateNoramls(climateID: number, stationID: number, province: string) {
+  public setClimateNormals(climateID: number, stationID: number, province: string) {
     if (!climateID || isNaN(climateID)) return;
     if (!stationID || isNaN(stationID)) return;
     if (!province.length || province.length > 2 || typeof province !== "string") return;
@@ -239,7 +251,7 @@ class Config {
   }
 
   public setLookAndFeelSettings(flavour: string) {
-    if (!flavour) delete this.lookAndFeel.flavour;
+    if (!flavour) this.lookAndFeel.flavour = "default";
     else this.lookAndFeel.flavour = flavour;
 
     this.loadFlavour();

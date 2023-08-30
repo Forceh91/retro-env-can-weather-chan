@@ -239,16 +239,58 @@ describe("Config updating", () => {
     const config = initializeConfig();
     const climateNormals = config.climateNormals;
 
-    config.setClimateNoramls(Number("abc"), Number("abc"), "blah");
+    config.setClimateNormals(Number("abc"), Number("abc"), "blah");
     expect(config.climateNormals).toStrictEqual(climateNormals);
 
-    config.setClimateNoramls(23, Number("abc"), "blah");
+    config.setClimateNormals(23, Number("abc"), "blah");
     expect(config.climateNormals).toStrictEqual(climateNormals);
 
-    config.setClimateNoramls(23, 45, "blah");
+    config.setClimateNormals(23, 45, "blah");
     expect(config.climateNormals).toStrictEqual(climateNormals);
 
-    config.setClimateNoramls(23, 45, "on");
+    config.setClimateNormals(23, 45, "on");
     expect(config.climateNormals).toStrictEqual({ climateID: 23, stationID: 45, province: "ON" });
+  });
+
+  it("updates the misc settings correctly", () => {
+    const config = initializeConfig();
+    [
+      { reject: true, url: "http://example.com" },
+      { reject: false, url: "" },
+      { reject: true, url: "" },
+      { reject: false, url: "http://exampe.com" },
+    ].forEach((update) => {
+      config.setMiscSettings(update.reject, update.url);
+      expect(config.misc).toStrictEqual({
+        rejectInHourConditionUpdates: update.reject,
+        alternateRecordsSource: update.url,
+      });
+    });
+  });
+
+  it("updates the look and feel settings correctly", () => {
+    const config = initializeConfig();
+    config.setLookAndFeelSettings("test");
+    expect(config.lookAndFeel.flavour).toStrictEqual("test");
+
+    config.setLookAndFeelSettings("");
+    expect(config.lookAndFeel.flavour).toStrictEqual("default");
+  });
+
+  it("updates and saves the config option correctly", () => {
+    const config = initializeConfig();
+    const writeFile = jest.spyOn(fs, "writeFileSync").mockImplementation();
+
+    const newLocation = {
+      province: "ON",
+      location: "s00001",
+      name: "Some ON town",
+    };
+    const fn = jest.fn(() => config.setPrimaryLocation(newLocation));
+    config.updateAndSaveConfigOption(fn);
+
+    expect(writeFile).toHaveBeenCalled();
+    expect(fn).toHaveBeenCalled();
+    expect(config.primaryLocation).toStrictEqual(newLocation);
   });
 });

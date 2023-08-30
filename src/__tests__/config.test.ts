@@ -293,4 +293,17 @@ describe("Config updating", () => {
     expect(fn).toHaveBeenCalled();
     expect(config.primaryLocation).toStrictEqual(newLocation);
   });
+
+  it("updates the crawler messages correctly", () => {
+    const config = initializeConfig();
+    const writeFile = jest.spyOn(fs, "writeFileSync").mockImplementation();
+
+    const newCrawlerMessages = ["a crawler", "and another one", "and a third one"];
+    config.setCrawlerMessages(newCrawlerMessages);
+    expect(config.crawlerMessages).toStrictEqual(newCrawlerMessages);
+
+    config.setCrawlerMessages([...newCrawlerMessages, "   ", ""]);
+    expect(config.crawlerMessages).toStrictEqual(newCrawlerMessages);
+    expect(writeFile).toHaveBeenCalled();
+  });
 });

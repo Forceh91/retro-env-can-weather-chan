@@ -19,6 +19,10 @@ class ProvinceTracking {
   private _tempToTrack: string;
 
   constructor(stations: ProvinceStations) {
+    if (!config.provinceHighLowEnabled) {
+      logger.log("Province tracking is disabled");
+      return;
+    }
     this._stations = stations ?? [];
     logger.log("Tracking", this._stations?.length || 0, "locations across the province");
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { initializeConfig } from "./config";
-import { getECCCWeatherStations } from "lib/eccc";
+import { getECCCWeatherStations } from "lib/eccc/weatherStations";
 
 const config = initializeConfig();
 

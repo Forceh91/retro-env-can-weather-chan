@@ -5,7 +5,8 @@
       "code": "MB/s0000626",
       "condition": "Mostly Cloudy",
       "abbreviatedCondition": "mostly cloudy",
-      "temperature": 20.4
+      "temperature": 20.4,
+      "conditionUUID": "2023080916"
     }
   ],
   "east": [
@@ -14,7 +15,8 @@
       "code": "ON/s0000458",
       "condition": "Partly Cloudy",
       "abbreviatedCondition": "partly cloudy",
-      "temperature": 28.4
+      "temperature": 28.4,
+      "conditionUUID": "2023080917"
     }
   ],
   "west": [
@@ -23,7 +25,8 @@
       "code": "BC/s0000141",
       "condition": "Mostly Cloudy",
       "abbreviatedCondition": "mostly cloudy",
-      "temperature": 20.2
+      "temperature": 20.2,
+      "conditionUUID": "2023080914"
     }
   ]
 }

@@ -10,7 +10,7 @@ import { NationalStationConfig, NationalStationObservation, NationalStationObser
 import Logger from "lib/logger";
 import axios from "lib/backendAxios";
 import { harshTruncateConditions } from "lib/conditions";
-import { generateConditionsUUID } from "lib/eccc";
+import { generateConditionsUUID } from "lib/eccc/utils";
 import { initializeConfig } from "lib/config";
 
 const config = initializeConfig();

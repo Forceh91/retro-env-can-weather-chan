@@ -25,6 +25,7 @@ import {
   LastMonthScreen,
   SunspotScreen,
   WindchillEffectScreen,
+  AQHIWarningScreen,
 } from "./screens";
 
 type ScreenRotatorProps = {
@@ -161,7 +162,13 @@ export function ScreenRotator(props: ScreenRotatorProps) {
         return <AlmanacScreen weatherStationResponse={weatherStationResponse} airQuality={airQuality} />;
 
       case Screens.AQHI_WARNING:
-        switchToNextScreen();
+        return (
+          <AQHIWarningScreen
+            city={weatherStationResponse?.city}
+            airQuality={airQuality}
+            onComplete={switchToNextScreen}
+          />
+        );
 
       case Screens.PROVINCE_PRECIP:
         return (

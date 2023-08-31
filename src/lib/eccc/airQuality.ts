@@ -15,7 +15,9 @@ class AirQuality {
   constructor() {
     if (!config || !config.airQualityStation) return;
 
-    this._apiURL = `http://dd.weather.gc.ca/air_quality/aqhi/pnr/observation/realtime/xml/AQ_OBS_${config.airQualityStation}_CURRENT.xml`;
+    const [area, stationCode] = config.airQualityStation.split("/");
+
+    this._apiURL = `http://dd.weather.gc.ca/air_quality/aqhi/${area}/observation/realtime/xml/AQ_OBS_${stationCode}_CURRENT.xml`;
     logger.log("Air quality will be tracked");
 
     this.fetchAirQuality();

@@ -57,7 +57,7 @@ class Config {
   flavour: Flavour;
   flavours: string[] = []; // what flavours are available
   provinceStations: ProvinceStation[]; // what provinces to track high/low/precip for
-  airQualityStation: string; // what station code to use for air quality
+  airQualityStation: string; // what area/station code to use for air quality
 
   constructor() {
     this.loadConfig();

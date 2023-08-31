@@ -3,7 +3,8 @@ import moxios from "moxios";
 
 jest.mock("lib/config/config", () => ({
   initializeConfig: () => ({
-    provinceTracking: [
+    provinceHighLowEnabled: true,
+    provinceStations: [
       { name: "Toronto", code: "ON/s0000458" },
       { name: "Ottawa", code: "ON/s0000623" },
     ],
@@ -25,10 +26,14 @@ import expectedData from "./testdata/ecccData/provincetracking/expected";
 import fakeStoredData from "./testdata/ecccData/provincetracking/fakeStoredData.json";
 import fs from "fs";
 
+const dayTimeDate = new Date(2023, 7, 10, 17, 22);
+const nightTimeDate = new Date(2023, 7, 10, 22, 22);
+
 describe("Provincial temp/precip tracking", () => {
   beforeEach(() => {
     moxios.install(axios);
   });
+
   afterEach(() => {
     jest.useRealTimers();
     moxios.uninstall(axios);
@@ -39,7 +44,7 @@ describe("Provincial temp/precip tracking", () => {
     const loadFileSpy = jest.spyOn(fs, "readFileSync");
 
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2023, 7, 10, 17, 22));
+    jest.setSystemTime(dayTimeDate);
 
     const provinceTracking = initializeProvinceTracking();
     moxios.wait(async () => {
@@ -62,7 +67,7 @@ describe("Provincial temp/precip tracking", () => {
 
   it("fetches data periodically", () => {
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2023, 7, 10, 17, 22));
+    jest.setSystemTime(dayTimeDate);
 
     initializeProvinceTracking();
     const spy = jest.spyOn(axios, "get");
@@ -75,8 +80,9 @@ describe("Provincial temp/precip tracking", () => {
   it("udpates min/max temps correctly (day time)", (done) => {
     jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => JSON.stringify(fakeStoredData));
 
-    const provinceTracking = initializeProvinceTracking();
     moxios.wait(async () => {
+      jest.useRealTimers();
+
       await moxios.requests.at(0).respondWith({ status: 200, response: fakeOttawaWeather });
       await moxios.requests.at(1).respondWith({ status: 200, response: fakeTorontoWeather });
 
@@ -90,6 +96,10 @@ describe("Provincial temp/precip tracking", () => {
 
       done();
     });
+
+    jest.useFakeTimers();
+    jest.setSystemTime(dayTimeDate);
+    const provinceTracking = initializeProvinceTracking();
   });
 
   it("udpates min/max temps correctly (night time)", (done) => {
@@ -112,13 +122,13 @@ describe("Provincial temp/precip tracking", () => {
     });
 
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2023, 7, 10, 22, 22));
+    jest.setSystemTime(nightTimeDate);
     const provinceTracking = initializeProvinceTracking();
   });
 
   it("correctly tracks high temp and displays temp", () => {
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2023, 7, 10, 17, 22));
+    jest.setSystemTime(dayTimeDate);
 
     const provinceTracking = initializeProvinceTracking();
     expect(provinceTracking.provinceTracking().isOvernight).toBe(true);
@@ -126,7 +136,7 @@ describe("Provincial temp/precip tracking", () => {
 
   it("correctly tracks min temp and displays max temp", () => {
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2023, 7, 10, 22, 22));
+    jest.setSystemTime(nightTimeDate);
 
     const provinceTracking = initializeProvinceTracking();
     expect(provinceTracking.provinceTracking().isOvernight).toBe(false);
@@ -134,13 +144,16 @@ describe("Provincial temp/precip tracking", () => {
 
   it("loads data from json correctly", () => {
     jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => JSON.stringify(fakeStoredData));
+
+    jest.useFakeTimers();
+    jest.setSystemTime(dayTimeDate);
     const provinceTracking = initializeProvinceTracking();
     expect(provinceTracking.provinceTracking().tracking).toStrictEqual(fakeStoredData);
   });
 
   it("resets and switches over display/tracking from max->min correctly", () => {
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2023, 7, 10, 17, 22));
+    jest.setSystemTime(dayTimeDate);
 
     const provinceTracking = initializeProvinceTracking();
     moxios.wait(async () => {
@@ -150,7 +163,7 @@ describe("Provincial temp/precip tracking", () => {
       await moxios.requests.at(1).respondWith({ status: 200, response: fakeOttawaWeather });
 
       jest.useFakeTimers();
-      jest.setSystemTime(new Date(2023, 7, 10, 22, 22));
+      jest.setSystemTime(nightTimeDate);
       jest.advanceTimersToNextTimer();
 
       const { tracking, isOvernight } = provinceTracking.provinceTracking();
@@ -166,7 +179,7 @@ describe("Provincial temp/precip tracking", () => {
 
   it("resets and switches over display/tracking from min->max correctly", () => {
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2023, 7, 10, 22, 22));
+    jest.setSystemTime(nightTimeDate);
 
     const provinceTracking = initializeProvinceTracking();
     moxios.wait(async () => {
@@ -176,7 +189,7 @@ describe("Provincial temp/precip tracking", () => {
       await moxios.requests.at(1).respondWith({ status: 200, response: fakeOttawaWeather });
 
       jest.useFakeTimers();
-      jest.setSystemTime(new Date(2023, 7, 10, 17, 22));
+      jest.setSystemTime(dayTimeDate);
       jest.advanceTimersToNextTimer();
 
       const { tracking, isOvernight } = provinceTracking.provinceTracking();

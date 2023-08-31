@@ -6,3 +6,4 @@ export * from "./canadaHotColdSpot";
 export * from "./routeHandler";
 export * from "./weatherStations";
 export * from "./utils";
+export * from "./airQuality";

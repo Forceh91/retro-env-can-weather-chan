@@ -1,7 +1,7 @@
 import { initializeAPI } from "api";
 import { validateDirectories } from "lib";
 import { initializeConfig } from "lib/config";
-import { initializeCanadaProvincialHotColdSpot, initializeCurrentConditions } from "lib/eccc";
+import { initializeAirQuality, initializeCanadaProvincialHotColdSpot, initializeCurrentConditions } from "lib/eccc";
 import { initializeAlertMonitor } from "lib/eccc/alertMonitor";
 import Logger from "lib/logger";
 import { initializeNationalWeather } from "lib/national";
@@ -16,6 +16,7 @@ validateDirectories();
 initializeConfig();
 initializeCurrentConditions();
 initializeAlertMonitor();
+initializeAirQuality();
 initializeNationalWeather();
 initializeProvinceTracking();
 initializeCanadaProvincialHotColdSpot();

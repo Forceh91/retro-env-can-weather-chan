@@ -8,3 +8,4 @@ export * from "./national.consts";
 export * from "./provincetracking.consts";
 export * from "./usa.consts";
 export * from "./sunspots.consts";
+export * from "./airquality.consts";

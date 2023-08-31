@@ -14,3 +14,4 @@ export * from "./usa.types";
 export * from "./sunspots.types";
 export * from "./screen.types";
 export * from "./misc.types";
+export * from "./airquality.types";

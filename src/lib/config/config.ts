@@ -1,4 +1,5 @@
 import {
+  AIR_QUALITY_DEFAULT_STATION,
   DEFAULT_WEATHER_STATION_ID,
   FLAVOUR_DIRECTORY,
   FS_NO_FILE_FOUND,
@@ -56,6 +57,7 @@ class Config {
   flavour: Flavour;
   flavours: string[] = []; // what flavours are available
   provinceStations: ProvinceStation[]; // what provinces to track high/low/precip for
+  airQualityStation: string; // what station code to use for air quality
 
   constructor() {
     this.loadConfig();
@@ -109,6 +111,7 @@ class Config {
         lookAndFeel,
         misc,
         provinceStations,
+        airQualityStation,
       } = parsedConfig;
 
       // but first we make sure that we have at least the province info
@@ -123,6 +126,7 @@ class Config {
       this.misc = { ...this.misc, ...misc };
       this.provinceStations =
         provinceHighLowEnabled && provinceStations?.length ? provinceStations : PROVINCE_TRACKING_DEFAULT_STATIONS;
+      this.airQualityStation = airQualityStation ?? AIR_QUALITY_DEFAULT_STATION;
 
       logger.log("Loaded weather channel. Location:", `${name}, ${province}`, `(${location})`);
     } catch (err) {

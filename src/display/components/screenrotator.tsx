@@ -156,6 +156,9 @@ export function ScreenRotator(props: ScreenRotatorProps) {
       case Screens.ALMANAC:
         return <AlmanacScreen weatherStationResponse={weatherStationResponse} />;
 
+      case Screens.AQHI_WARNING:
+        switchToNextScreen();
+
       case Screens.PROVINCE_PRECIP:
         return (
           <ProvinceTrackingScreen

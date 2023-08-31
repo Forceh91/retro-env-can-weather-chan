@@ -5,3 +5,8 @@ export type AQHIObservation = {
   isPM: boolean;
   value: number;
 };
+
+export type AQHIObservationResponse = {
+  textValue?: string;
+  showWarning?: boolean;
+} & AQHIObservation;

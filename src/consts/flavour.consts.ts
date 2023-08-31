@@ -1,10 +1,4 @@
-import {
-  SCREEN_ALERT_DISPLAY_LENGTH,
-  SCREEN_DEFAULT_DISPLAY_LENGTH,
-  SCREEN_FORECAST_DISPLAY_LENGTH,
-  SCREEN_INFO_DISPLAY_LENGTH,
-  Screens,
-} from "./screens.consts";
+import { SCREEN_DEFAULT_DISPLAY_LENGTH, SCREEN_FORECAST_DISPLAY_LENGTH, Screens } from "./screens.consts";
 
 export const FLAVOUR_DIRECTORY = "cfg/flavours";
 export const FLAVOUR_NAME_MAX_LENGTH = 32;
@@ -28,7 +22,7 @@ export const FLAVOUR_DEFAULT = {
     },
     {
       id: Screens.ALERTS,
-      duration: SCREEN_ALERT_DISPLAY_LENGTH,
+      duration: 0,
     },
     {
       id: Screens.AQHI_WARNING,
@@ -72,11 +66,11 @@ export const FLAVOUR_DEFAULT = {
     },
     {
       id: Screens.INFO,
-      duration: SCREEN_INFO_DISPLAY_LENGTH,
+      duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
     },
     {
       id: Screens.ALERTS,
-      duration: SCREEN_ALERT_DISPLAY_LENGTH,
+      duration: 0,
     },
   ],
 };

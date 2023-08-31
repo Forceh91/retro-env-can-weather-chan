@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CAPObject, WeatherStation } from "types";
+import { AQHIObservationResponse, CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
 import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
@@ -10,12 +10,13 @@ type ForecastScreenProps = {
   weatherStationResponse: WeatherStation;
   alert?: CAPObject;
   isReload?: boolean;
+  airQuality: AQHIObservationResponse;
 } & AutomaticScreenProps;
 
 const MAX_FORECAST_PAGES = 2;
 
 export function ForecastScreen(props: ForecastScreenProps) {
-  const { onComplete, weatherStationResponse, alert, isReload } = props ?? {};
+  const { onComplete, weatherStationResponse, alert, isReload, airQuality } = props ?? {};
   const [page, setPage] = useState(1);
   const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
 
@@ -23,7 +24,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
     pageChangeTimeout.current = setTimeout(() => {
       if (page < MAX_FORECAST_PAGES) setPage(page + 1);
       else onComplete();
-    }, (page === 1 && isReload ? 50 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
+    }, (page === 1 && isReload ? 50000 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
   }, [page]);
 
   // used to clear the page switching timeout
@@ -94,6 +95,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
             city={weatherStationResponse.city}
             conditions={weatherStationResponse.observed}
             stationTime={weatherStationResponse.stationTime}
+            airQuality={airQuality}
           />
           <div className="forecast reload-animation step-7">
             {alert && (

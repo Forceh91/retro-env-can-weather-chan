@@ -13,6 +13,7 @@ import {
   useNationalWeather,
   useSunspots,
 } from "hooks";
+import { useAirQuality } from "hooks/airQuality";
 import { useConfig } from "hooks/init";
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
@@ -28,6 +29,7 @@ function WeatherChannel() {
   const { lastMonth, fetchLastMonth } = useLastMonth();
   const { usaWeather } = useUSAWeather();
   const { sunspots } = useSunspots();
+  const { airQuality } = useAirQuality();
 
   useEffect(() => {
     fetchSeason();
@@ -62,6 +64,7 @@ function WeatherChannel() {
         lastMonth={lastMonth}
         usaWeather={usaWeather}
         sunspots={sunspots}
+        airQuality={airQuality}
       />
       <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />
       <PlaylistComponent playlist={config?.music} />

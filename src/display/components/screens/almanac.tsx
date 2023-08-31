@@ -1,14 +1,15 @@
-import { WeatherStation } from "types";
+import { AQHIObservationResponse, WeatherStation } from "types";
 import { Conditions } from "../weather";
 
 type AlmanacScreenProps = {
   weatherStationResponse: WeatherStation;
+  airQuality: AQHIObservationResponse;
 };
 
 const TEMPERATURE_STRING_LENGTH = 5;
 
 export function AlmanacScreen(props: AlmanacScreenProps) {
-  const { weatherStationResponse } = props ?? {};
+  const { weatherStationResponse, airQuality } = props ?? {};
   const { city, observed, stationTime, almanac } = weatherStationResponse ?? {};
 
   // no response from weather station so whatever
@@ -38,7 +39,7 @@ export function AlmanacScreen(props: AlmanacScreenProps) {
 
   return (
     <div>
-      <Conditions city={city} conditions={observed} stationTime={stationTime} showPressure />
+      <Conditions city={city} conditions={observed} stationTime={stationTime} showPressure airQuality={airQuality} />
 
       <div>Last Year Normal Records{"".padEnd(2)}Year</div>
       <div>

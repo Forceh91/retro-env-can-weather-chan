@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { SCREEN_BACKGROUND_BLUE, SCREEN_BACKGROUND_RED, Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
 import {
+  AQHIObservationResponse,
   CAPObject,
   FlavourScreen,
   HotColdSpots,
@@ -41,6 +42,7 @@ type ScreenRotatorProps = {
   lastMonth: LastMonth;
   usaWeather: USAStationObservations;
   sunspots: SunspotStationObservations;
+  airQuality: AQHIObservationResponse;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
@@ -55,6 +57,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     lastMonth,
     usaWeather,
     sunspots,
+    airQuality,
   } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
@@ -146,6 +149,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
             weatherStationResponse={weatherStationResponse}
             alert={alerts?.mostImportantAlert}
             isReload={conditionsUpdated}
+            airQuality={airQuality}
             onComplete={switchToNextScreen}
           />
         );
@@ -154,7 +158,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
         return <OutlookScreen weatherStationResponse={weatherStationResponse} />;
 
       case Screens.ALMANAC:
-        return <AlmanacScreen weatherStationResponse={weatherStationResponse} />;
+        return <AlmanacScreen weatherStationResponse={weatherStationResponse} airQuality={airQuality} />;
 
       case Screens.AQHI_WARNING:
         switchToNextScreen();

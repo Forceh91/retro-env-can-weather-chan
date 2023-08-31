@@ -1,13 +1,14 @@
 import { CONDITIONS_WIND_SPEED_CALM } from "consts";
 import { formatObservedLong } from "lib/date";
 import { useMemo } from "react";
-import { ObservedConditions, WeatherStationTimeData } from "types";
+import { AQHIObservationResponse, ObservedConditions, WeatherStationTimeData } from "types";
 
 type ConditionsProp = {
   city: string;
   conditions: ObservedConditions;
   stationTime: WeatherStationTimeData;
   showPressure?: boolean;
+  airQuality: AQHIObservationResponse;
 };
 
 export function Conditions(props: ConditionsProp) {
@@ -17,6 +18,7 @@ export function Conditions(props: ConditionsProp) {
     stationTime,
     stationTime: { observedDateTime },
     showPressure = false,
+    airQuality,
   } = props ?? {};
   const {
     temperature: { value: temperatureValue, units: temperatureUnits },
@@ -62,8 +64,7 @@ export function Conditions(props: ConditionsProp) {
 
   const formattedHumidity = useMemo(() => `${humidityValue ?? "N/A"} ${humidityUnits}`.padStart(5), [stationTime]);
 
-  // todo: include aqhi reading
-  const isShowingExtraData = windchill > 0;
+  const isShowingExtraData = windchill > 0 || airQuality?.value;
   const formattedVisibility = useMemo(() => {
     if (!visibilityValue) return "";
     if (visibilityValue < 1) return `${visibilityValue * 1000} M`;
@@ -105,7 +106,7 @@ export function Conditions(props: ConditionsProp) {
             <span>{"".padEnd(5)}</span>
             <span className="reload-animation step-7">
               {windchill > 0 && <span>Wind Chill {windchill}</span>}
-              {/* todo: aqhi */}
+              {airQuality?.value && <span>Air Quality {airQuality.textValue}</span>}
             </span>
           </>
         )}

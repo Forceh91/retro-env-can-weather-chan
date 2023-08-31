@@ -3,7 +3,7 @@ import axios from "lib/backendAxios";
 import { initializeAirQuality } from "lib/eccc/airQuality";
 import airQualityResponse from "./testdata/airquality/response";
 import airQualityObservation from "./testdata/airquality/expected";
-import { doesAQHINeedWarning, getTextSummaryOfAQHI } from "lib/airquality/utils";
+import { doesAQHINeedWarning, getAQHIRisk, getAQHITextSummary, getAQHIWarningMessage } from "lib/airquality/utils";
 import { AIR_QUALITY_BAD, AIR_QUALITY_FAIR, AIR_QUALITY_POOR } from "consts";
 
 jest.mock("lib/config/config", () => ({
@@ -107,10 +107,26 @@ describe("AQHI Utils", () => {
   });
 
   it("gives the correct summary for the AQHI value", () => {
-    expect(getTextSummaryOfAQHI(1)).toBe("Good");
-    expect(getTextSummaryOfAQHI(AIR_QUALITY_FAIR)).toBe("Fair");
-    expect(getTextSummaryOfAQHI(AIR_QUALITY_POOR)).toBe("Poor");
-    expect(getTextSummaryOfAQHI(AIR_QUALITY_BAD)).toBe("Poor");
-    expect(getTextSummaryOfAQHI(AIR_QUALITY_BAD + 1)).toBe("Bad");
+    expect(getAQHITextSummary(1)).toBe("Good");
+    expect(getAQHITextSummary(AIR_QUALITY_FAIR)).toBe("Fair");
+    expect(getAQHITextSummary(AIR_QUALITY_POOR)).toBe("Poor");
+    expect(getAQHITextSummary(AIR_QUALITY_BAD)).toBe("Poor");
+    expect(getAQHITextSummary(AIR_QUALITY_BAD + 1)).toBe("Bad");
+  });
+
+  it("gives the correct risk for the AQHI value", () => {
+    expect(getAQHIRisk(1)).toBe("");
+    expect(getAQHIRisk(AIR_QUALITY_FAIR)).toBe("Moderate");
+    expect(getAQHIRisk(AIR_QUALITY_POOR)).toBe("High");
+    expect(getAQHIRisk(AIR_QUALITY_BAD)).toBe("High");
+    expect(getAQHIRisk(AIR_QUALITY_BAD + 1)).toBe("V High");
+  });
+
+  it("gives the correct warning message for the AQHI value", () => {
+    expect(getAQHIWarningMessage(1)).toBe("");
+    expect(getAQHIWarningMessage(AIR_QUALITY_FAIR)).toContain("CONSIDER MODIFYING");
+    expect(getAQHIWarningMessage(AIR_QUALITY_POOR)).toContain("CONSIDER REDUCING/RESCHEDULING");
+    expect(getAQHIWarningMessage(AIR_QUALITY_BAD)).toContain("CONSIDER REDUCING/RESCHEDULING");
+    expect(getAQHIWarningMessage(AIR_QUALITY_BAD + 1)).toContain("REDUCE/RESCHEDULE");
   });
 });

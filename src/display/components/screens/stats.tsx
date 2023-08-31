@@ -60,8 +60,8 @@ export function StatsScreen(props: StatsScreenProps) {
   const normalPrecip = generatePrecip(seasonPrecip?.normal || 0);
 
   const { hotSpot, coldSpot } = hotColdSpots ?? {};
-  const truncatedHotSpotName = hotSpot?.name.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH);
-  const truncatedColdSpotName = coldSpot?.name.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH);
+  const truncatedHotSpotName = hotSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "";
+  const truncatedColdSpotName = coldSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "";
 
   const generateDotsForHotColdSpotLine = (prefix: string) =>
     "".padEnd(DISPLAY_MAX_CHARACTERS_PER_LINE - (prefix.length + HOT_COLD_SPOT_CHARS_USED_OUTSIDE_OF_DOTS), ".");

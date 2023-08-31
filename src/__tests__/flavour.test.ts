@@ -15,8 +15,7 @@ describe("Flavour loading", () => {
   });
 
   it("loads a flavour from a file correctly", () => {
-    const spy = jest.spyOn(fs, "readFileSync");
-    spy.mockReturnValueOnce(JSON.stringify(testFlavour));
+    jest.spyOn(fs, "readFileSync").mockReturnValueOnce(JSON.stringify(testFlavour));
 
     const flavour = new FlavourLoader("test_flavour");
     expect(flavour.name).toBe(testFlavour.name);

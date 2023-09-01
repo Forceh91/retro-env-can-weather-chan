@@ -173,9 +173,12 @@ class HistoricalTempPrecip {
 
     // loop through and grab all of the high/low temps and precip values
     lastMonthData.forEach((dayOfLastMonth) => {
+      const maxTemp = Number(dayOfLastMonth.maxtemp._text);
+      const minTemp = Number(dayOfLastMonth.mintemp._text);
+
       const day = Number(dayOfLastMonth._attributes.day);
-      highTemps.push({ day, value: Number(dayOfLastMonth.maxtemp._text ?? 0) });
-      lowTemps.push({ day, value: Number(dayOfLastMonth.mintemp._text ?? 0) });
+      if (!isNaN(maxTemp)) highTemps.push({ day, value: maxTemp });
+      if (!isNaN(minTemp)) lowTemps.push({ day, value: minTemp });
       precipValues.push({ day, value: Number(dayOfLastMonth.totalprecipitation._text ?? 0) });
     });
 

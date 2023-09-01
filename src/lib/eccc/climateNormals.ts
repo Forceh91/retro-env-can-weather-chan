@@ -77,7 +77,7 @@ class ClimateNormals {
 
     // first we can process the normal precip amount for the current season
     // which we'll need the shorthand month names for
-    const seasonMonths = getShorthandMonthNamesForSeason(true);
+    const seasonMonths = getShorthandMonthNamesForSeason(true, currentDate);
     const seasonalPrecipElements = precipData.filter((precipElement) => {
       const [, elementMonth] = precipElement._attributes?.name.split("avg_pcpn_");
       return seasonMonths.includes(elementMonth);

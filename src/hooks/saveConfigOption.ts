@@ -18,7 +18,6 @@ export function useSaveConfigOption<T = any>(endpoint: string, baseURL: string =
       .then((resp) => {
         if (resp.data) setResponse(resp.data);
         setWasSuccess(true);
-        console.log("success!!!");
       })
       .catch(() => setWasError(true))
       .finally(() => setIsSaving(false));

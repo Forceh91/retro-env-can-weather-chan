@@ -306,4 +306,13 @@ describe("Config updating", () => {
     expect(config.crawlerMessages).toStrictEqual(newCrawlerMessages);
     expect(writeFile).toHaveBeenCalled();
   });
+
+  it("updates the air quality station settings correctly", () => {
+    const config = initializeConfig();
+    config.setAirQualityStation("ont/abcd");
+    expect(config.airQualityStation).toStrictEqual("ont/abcd");
+
+    config.setAirQualityStation("");
+    expect(config.airQualityStation).toBeFalsy();
+  });
 });

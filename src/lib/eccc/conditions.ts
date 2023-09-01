@@ -25,11 +25,12 @@ import {
   FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH,
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
 } from "consts/forecast.consts";
-import { CONDITIONS_WIND_SPEED_CALM } from "consts";
+import { CONDITIONS_WIND_SPEED_CALM, EVENT_BUS_CONFIG_CHANGE_PRIMARY_LOCATION } from "consts";
 import { addMinutes, isValid, parseISO } from "date-fns";
 import { initializeHistoricalTempPrecip } from "./historicalTempPrecip";
 import { initializeClimateNormals } from "./climateNormals";
 import { generateConditionsUUID } from "./utils";
+import eventbus from "lib/eventbus";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -63,7 +64,13 @@ class CurrentConditions {
   public stationLatLong: LatLong = { lat: 0, long: 0 };
 
   constructor() {
+    this.initialize();
+    eventbus.addListener(EVENT_BUS_CONFIG_CHANGE_PRIMARY_LOCATION, () => this.initialize());
+  }
+
+  private initialize() {
     this._weatherStationID = config?.primaryLocation?.location;
+    this._conditionUUID = "";
 
     this.startAMQPConnection();
     this._apiUrl = `${ECCC_BASE_API_URL}${config.primaryLocation.province}/${this._weatherStationID}${ECCC_API_ENGLISH_SUFFIX}`;
@@ -81,7 +88,7 @@ class CurrentConditions {
     // handle errors and messages
     listener.on("error", logger.error).on("message", (date: string, url: string) => {
       // make sure its relevant to us
-      if (!url.includes(`${config.primaryLocation.location}_e.xml`)) return;
+      if (!url.includes(`${this._weatherStationID}_e.xml`)) return;
 
       this.fetchConditions();
       logger.log("Received new conditions from AMQP at", date);

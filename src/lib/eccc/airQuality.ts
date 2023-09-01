@@ -1,5 +1,7 @@
+import { EVENT_BUS_CONFIG_CHANGE_AIR_QUALITY_STATION } from "consts";
 import axios from "lib/backendAxios";
 import { initializeConfig } from "lib/config";
+import eventbus from "lib/eventbus";
 import Logger from "lib/logger";
 import { AQHIObservation } from "types";
 import { ElementCompact, xml2js } from "xml-js";
@@ -13,6 +15,12 @@ class AirQuality {
   private _aqhiObservation: AQHIObservation = null;
 
   constructor() {
+    this.initialize();
+    setInterval(() => this.fetchAirQuality(), AIR_QUALITY_FETCH_INTERVAL);
+    eventbus.addListener(EVENT_BUS_CONFIG_CHANGE_AIR_QUALITY_STATION, () => this.initialize());
+  }
+
+  private initialize() {
     if (!config || !config.airQualityStation) return;
 
     const [area, stationCode] = config.airQualityStation.split("/");
@@ -21,7 +29,6 @@ class AirQuality {
     logger.log("Air quality will be tracked");
 
     this.fetchAirQuality();
-    setTimeout(() => this.fetchAirQuality(), AIR_QUALITY_FETCH_INTERVAL);
   }
 
   private fetchAirQuality() {

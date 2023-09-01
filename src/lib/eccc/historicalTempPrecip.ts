@@ -11,6 +11,8 @@ import {
 } from "types";
 import { isSameMonth, isValid, isYesterday, parseISO, subMonths } from "date-fns";
 import { isDateInCurrentWinterSeason, getIsWinterSeason, isDateInCurrentSummerSeason, isStartOfMonth } from "lib/date";
+import eventbus from "lib/eventbus";
+import { EVENT_BUS_CONFIG_CHANGE_HISTORICAL_TEMP_PRECIP } from "consts";
 
 const logger = new Logger("Historical_Temp_Precip");
 const config = initializeConfig();
@@ -27,6 +29,11 @@ class HistoricalTempPrecip {
   constructor() {
     if (!config) return;
 
+    this.initialize();
+    eventbus.addListener(EVENT_BUS_CONFIG_CHANGE_HISTORICAL_TEMP_PRECIP, () => this.initialize());
+  }
+
+  private initialize() {
     logger.log("Initializing historical data for station ID:", config.historicalDataStationID);
     this._apiURL = `https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=xml&stationID=${config.historicalDataStationID}&Year=$YEAR&time=&timeframe=2`;
   }

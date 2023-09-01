@@ -5,6 +5,8 @@ import { getShorthandMonthNamesForSeason, isStartOfMonth } from "lib/date";
 import Logger from "lib/logger";
 import { ECCCClimateNormalElement, ClimateNormalSeasonPrecip, ClimateNormalsForMonth } from "types";
 import { ElementCompact, xml2js } from "xml-js";
+import eventbus from "lib/eventbus";
+import { EVENT_BUS_CONFIG_CHANGE_CLIMATE_NORMALS } from "consts";
 
 const logger = new Logger("Climate_Normals");
 const config = initializeConfig();
@@ -18,6 +20,11 @@ class ClimateNormals {
   constructor() {
     if (!config) return;
 
+    this.initialize();
+    eventbus.addListener(EVENT_BUS_CONFIG_CHANGE_CLIMATE_NORMALS, () => this.initialize());
+  }
+
+  private initialize() {
     logger.log("Initializing climate normals for station ID:", config.climateNormals.stationID);
     this._apiURL = `https://climate.weather.gc.ca/climate_normals/bulk_data_e.html?ffmt=xml&lang=e&prov=${config.climateNormals.province}&yr=1981&stnID=${config.climateNormals.stationID}&climateID=${config.climateNormals.climateID}`;
   }

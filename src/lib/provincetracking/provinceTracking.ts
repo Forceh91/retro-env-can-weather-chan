@@ -1,11 +1,12 @@
 const Weather = require("ec-weather-js");
 import fs from "fs";
-import { PROVINCE_TRACKING_TEMP_TO_TRACK } from "consts";
+import { EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING, PROVINCE_TRACKING_TEMP_TO_TRACK } from "consts";
 import axios from "lib/backendAxios";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
 import { ProvinceStationTracking, ProvinceStations } from "types";
 import { initializeCurrentConditions } from "lib/eccc";
+import eventbus from "lib/eventbus";
 
 const logger = new Logger("ProvinceTracking");
 const PROVINCE_TRACKING_FILE = "db/province_tracking.json";
@@ -18,17 +19,33 @@ class ProvinceTracking {
   private _displayTemp: string;
   private _tempToTrack: string;
 
-  constructor(stations: ProvinceStations) {
+  constructor() {
+    this.load();
+    this.initialize();
+    setInterval(() => this.periodicUpdate(), 5 * 60 * 1000);
+
+    eventbus.addListener(EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING, () => this.initialize());
+  }
+
+  private initialize() {
     if (!config.provinceHighLowEnabled) {
       logger.log("Province tracking is disabled");
       return;
     }
-    this._stations = stations ?? [];
+
+    // store what stations we're tracking
+    this._stations = config.provinceStations ?? [];
+
+    // if we're tracking stations already then filter out stations that aren't in the stations list, otherwise do an empty array
+    this._tracking = this._tracking
+      ? this._tracking.filter(
+          (trackingStation) =>
+            this._stations.findIndex((station) => trackingStation.station.code === station.code) !== -1
+        )
+      : [];
     logger.log("Tracking", this._stations?.length || 0, "locations across the province");
 
-    this.load();
     this.periodicUpdate();
-    setInterval(() => this.periodicUpdate(), 5 * 60 * 1000);
   }
 
   private periodicUpdate() {
@@ -173,9 +190,9 @@ const config = initializeConfig();
 
 let provinceTracking: ProvinceTracking = null;
 export function initializeProvinceTracking(): ProvinceTracking {
-  if (process.env.NODE_ENV === "test") return new ProvinceTracking(config.provinceStations);
+  if (process.env.NODE_ENV === "test") return new ProvinceTracking();
   if (provinceTracking) return provinceTracking;
 
-  provinceTracking = new ProvinceTracking(config.provinceStations);
+  provinceTracking = new ProvinceTracking();
   return provinceTracking;
 }

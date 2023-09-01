@@ -1,6 +1,11 @@
 import {
   AIR_QUALITY_DEFAULT_STATION,
   DEFAULT_WEATHER_STATION_ID,
+  EVENT_BUS_CONFIG_CHANGE_AIR_QUALITY_STATION,
+  EVENT_BUS_CONFIG_CHANGE_CLIMATE_NORMALS,
+  EVENT_BUS_CONFIG_CHANGE_HISTORICAL_TEMP_PRECIP,
+  EVENT_BUS_CONFIG_CHANGE_PRIMARY_LOCATION,
+  EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING,
   FLAVOUR_DIRECTORY,
   FS_NO_FILE_FOUND,
   PROVINCE_TRACKING_DEFAULT_STATIONS,
@@ -18,6 +23,7 @@ import {
   ProvinceStation,
   ProvinceStations,
 } from "types";
+import eventbus from "lib/eventbus";
 
 const logger = new Logger("config");
 const CONFIG_PATH = {
@@ -238,17 +244,22 @@ class Config {
     if (!station) return;
 
     this.primaryLocation = station;
+
+    eventbus.emit(EVENT_BUS_CONFIG_CHANGE_PRIMARY_LOCATION, true);
   }
 
   public setProvinceStations(isEnabled: boolean, stations: ProvinceStations) {
     this.provinceHighLowEnabled = isEnabled;
     if (stations?.length) this.provinceStations = stations;
+
+    eventbus.emit(EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING, true);
   }
 
   public setHistoricalDataStationID(id: number) {
     if (!id || isNaN(id)) return;
 
     this.historicalDataStationID = id;
+    eventbus.emit(EVENT_BUS_CONFIG_CHANGE_HISTORICAL_TEMP_PRECIP, true);
   }
 
   public setClimateNormals(climateID: number, stationID: number, province: string) {
@@ -262,6 +273,8 @@ class Config {
       stationID,
       province: province.toUpperCase(),
     };
+
+    eventbus.emit(EVENT_BUS_CONFIG_CHANGE_CLIMATE_NORMALS, true);
   }
 
   public regenerateAvailableFlavours() {
@@ -282,6 +295,8 @@ class Config {
 
   public setAirQualityStation(station: string) {
     this.airQualityStation = station;
+
+    eventbus.emit(EVENT_BUS_CONFIG_CHANGE_AIR_QUALITY_STATION, true);
   }
 
   public setCrawlerMessages(crawler: string[]) {

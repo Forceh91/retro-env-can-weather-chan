@@ -148,7 +148,7 @@ describe("Provincial temp/precip tracking", () => {
     jest.useFakeTimers();
     jest.setSystemTime(dayTimeDate);
     const provinceTracking = initializeProvinceTracking();
-    expect(provinceTracking.provinceTracking().tracking).toStrictEqual(fakeStoredData);
+    expect(provinceTracking.provinceTracking().tracking).toStrictEqual(fakeStoredData.slice(0, 2));
   });
 
   it("resets and switches over display/tracking from max->min correctly", () => {

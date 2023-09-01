@@ -4,7 +4,7 @@ import {
   MIN_NATIONAL_STATIONS_NEEDED_TO_DISPLAY,
 } from "consts";
 import { formatObservedLong } from "lib/date";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NationalStationObservations, WeatherStationTimeData } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 
@@ -20,6 +20,8 @@ export function NationalWeatherScreen(props: NationalWeatherProps) {
     [weatherStationTime?.observedDateTime]
   );
 
+  const [observationsOnMount, setObservationsOnMount] = useState<NationalStationObservations>();
+
   useEffect(() => {
     if (
       !observations ||
@@ -28,6 +30,11 @@ export function NationalWeatherScreen(props: NationalWeatherProps) {
     )
       onComplete();
   }, []);
+
+  // this stops the observations changing whilst the screen is being displayed
+  useEffect(() => {
+    if (!observationsOnMount?.length) setObservationsOnMount(observations);
+  }, [observationsOnMount]);
 
   if (!observations || !weatherStationTime?.observedDateTime) return <></>;
 

@@ -65,6 +65,7 @@ function WeatherChannel() {
         usaWeather={usaWeather}
         sunspots={sunspots}
         airQuality={airQuality}
+        configVersion={config?.config.configVersion}
       />
       <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />
       <PlaylistComponent playlist={config?.music} />

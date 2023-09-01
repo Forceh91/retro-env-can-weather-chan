@@ -44,6 +44,7 @@ type ScreenRotatorProps = {
   usaWeather: USAStationObservations;
   sunspots: SunspotStationObservations;
   airQuality: AQHIObservationResponse;
+  configVersion: string;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
@@ -59,10 +60,11 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     usaWeather,
     sunspots,
     airQuality,
+    configVersion,
   } = props ?? {};
 
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
-  const [conditionsUpdated, setConditionsUpdated] = useState(false);
+  const [conditionsOrConfigUpdated, setConditionsOrConfigUpdated] = useState(false);
   const [backgroundColour, setBackgroundColour] = useState(SCREEN_BACKGROUND_BLUE);
 
   let forecastScreenIx = -1;
@@ -79,7 +81,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     // displayed screen is set to -1 so we need to start displaying something
     if (displayedScreenIx === -1) setDisplayedScreenIx(0);
     else prepareSwitchToNextScreen();
-  }, [displayedScreenIx, screens.length]);
+  }, [displayedScreenIx, screens.length, configVersion]);
 
   // used to clear the screen switching timeout
   useEffect(() => {
@@ -93,10 +95,10 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   useEffect(() => {
     screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
 
-    setConditionsUpdated(true);
+    setConditionsOrConfigUpdated(true);
     setDisplayedScreenIx(forecastScreenIx);
     setBackgroundColour(SCREEN_BACKGROUND_BLUE);
-  }, [weatherStationResponse?.observationID]);
+  }, [weatherStationResponse?.observationID, configVersion]);
 
   const switchBackgroundColour = () => {
     // if we have a timer don't do anything
@@ -128,12 +130,12 @@ export function ScreenRotator(props: ScreenRotatorProps) {
 
     // 20ms after index changes, switch the background colour. should be enough time for screens that
     // decide if they show or not to complete that action
-    if (!conditionsUpdated) switchBackgroundColour();
+    if (!conditionsOrConfigUpdated) switchBackgroundColour();
   };
 
   const switchToNextScreen = () => {
     setDisplayedScreenIx((displayedScreenIx + 1) % screens.length);
-    if (conditionsUpdated) setConditionsUpdated(false);
+    if (conditionsOrConfigUpdated) setConditionsOrConfigUpdated(false);
   };
 
   const getComponentForDisplayedScreen = () => {
@@ -149,7 +151,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
           <ForecastScreen
             weatherStationResponse={weatherStationResponse}
             alert={alerts?.mostImportantAlert}
-            isReload={conditionsUpdated}
+            isReload={conditionsOrConfigUpdated}
             airQuality={airQuality}
             onComplete={switchToNextScreen}
           />

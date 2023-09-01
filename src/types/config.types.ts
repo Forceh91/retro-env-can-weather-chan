@@ -38,7 +38,7 @@ export type MiscConfig = {
 };
 
 export type InitChannel = {
-  config: { font: string; provinceHighLowEnabled: boolean };
+  config: { font: string; provinceHighLowEnabled: boolean; configVersion?: string };
   crawler: CrawlerMessages;
   flavour: Flavour;
   music: string[];

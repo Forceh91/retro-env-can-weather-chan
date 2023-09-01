@@ -1,3 +1,5 @@
+import fs from "fs";
+import uuid4 from "uuid4";
 import {
   AIR_QUALITY_DEFAULT_STATION,
   DEFAULT_WEATHER_STATION_ID,
@@ -10,7 +12,6 @@ import {
   FS_NO_FILE_FOUND,
   PROVINCE_TRACKING_DEFAULT_STATIONS,
 } from "consts";
-import fs from "fs";
 import { FlavourLoader } from "lib/flavour";
 import Logger from "lib/logger";
 import {
@@ -64,6 +65,7 @@ class Config {
   flavours: string[] = []; // what flavours are available
   provinceStations: ProvinceStation[]; // what provinces to track high/low/precip for
   airQualityStation: string; // what area/station code to use for air quality
+  configVersion: string; // config version
 
   constructor() {
     this.loadConfig();
@@ -71,6 +73,7 @@ class Config {
     this.loadFlavour();
     this.loadCrawlerMessages();
     this.checkMusicDirectory();
+    this.generateConfigVersion();
   }
 
   get config() {
@@ -235,8 +238,13 @@ class Config {
     }
   }
 
+  private generateConfigVersion() {
+    this.configVersion = uuid4();
+  }
+
   public updateAndSaveConfigOption(updateFunc: () => void) {
     updateFunc();
+    this.generateConfigVersion();
     this.saveConfig();
   }
 

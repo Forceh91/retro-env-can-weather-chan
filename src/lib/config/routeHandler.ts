@@ -14,7 +14,11 @@ export function getConfigHandler(req: Request, res: Response) {
 
 export function getInitHandler(req: Request, res: Response) {
   res.json({
-    config: { font: config.lookAndFeel.font, provinceHighLowEnabled: config.provinceHighLowEnabled },
+    config: {
+      font: config.lookAndFeel.font,
+      provinceHighLowEnabled: config.provinceHighLowEnabled,
+      configVersion: config.configVersion,
+    },
     crawler: config.crawlerMessages,
     flavour: config.flavour,
     music: config.musicPlaylist ?? [],

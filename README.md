@@ -1,3 +1,7 @@
+# v1 will no longer be supported after 2023-12-31
+
+Starting from 2024 v1 will no longer receives updates so you should make sure to update your simulator to v2. This will involve redoing you config and you may lose some data during the switch over.
+
 # Retro Environment Canada Weather Channel
 
 This project is intended to be a loose recreation of the Environment Canada Weather Channel that was commonly found in Winnipeg in the 80s-90s. This is modeled after the 1995 version. This is the most accurate version of this you will find outside of the original weather channel.

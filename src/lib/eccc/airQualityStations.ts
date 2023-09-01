@@ -27,6 +27,7 @@ export async function getECCCAirQualityStations(searchTerm: string) {
   // first we'll clean it up to useful data
   zoneList.forEach((zone: ElementCompact) => {
     const regionList: ElementCompact = zone["regionList"];
+    if (!regionList) return;
 
     // handle just one entry
     let regions = regionList["region"];

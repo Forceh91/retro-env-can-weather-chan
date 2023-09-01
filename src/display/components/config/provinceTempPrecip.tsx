@@ -29,6 +29,7 @@ export function ProvinceTempPrecipConfig({ isEnabled, stations }: ProvinceTempPr
   const [mutableIsEnabled, setMutableIsEnabled] = useState(isEnabled);
   const [mutableStations, setMutableStations] = useState<ProvinceStations>(stations ?? []);
   const isStationSearchDisabled = isSaving || mutableStations.length === PROVINCE_TRACKING_MAX_STATIONS;
+  const canSave = !mutableIsEnabled || (mutableIsEnabled && mutableStations.length > 0);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -157,7 +158,7 @@ export function ProvinceTempPrecipConfig({ isEnabled, stations }: ProvinceTempPr
             </Stack>
           )}
 
-          <Button type="submit" mt={4} colorScheme="teal" isLoading={isSaving}>
+          <Button type="submit" mt={4} colorScheme="teal" isDisabled={!canSave} isLoading={isSaving}>
             Save
           </Button>
         </form>

@@ -9,6 +9,7 @@ import {
   postMisc,
   postLookAndFeel,
   postCrawlerMessages,
+  postAirQualityStation,
 } from "lib/config";
 
 /*
@@ -24,6 +25,7 @@ router.post("/historicalDataStationID", postHistoricalDataStationID);
 router.post("/climateNormals", postClimateNormals);
 router.post("/misc", postMisc);
 router.post("/lookAndFeel", postLookAndFeel);
+router.post("/airQuality", postAirQualityStation);
 router.post("/crawler", postCrawlerMessages);
 
 export default router;

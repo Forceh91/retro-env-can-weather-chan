@@ -143,3 +143,18 @@ export function postCrawlerMessages(req: Request, res: Response) {
     res.status(500).json({ error: e });
   }
 }
+
+export function postAirQualityStation(req: Request, res: Response) {
+  const {
+    body: { station },
+  } = req ?? {};
+
+  try {
+    if (typeof station === "undefined") throw "Missing `station` parameter";
+
+    config.updateAndSaveConfigOption(() => config.setAirQualityStation(station));
+    res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}

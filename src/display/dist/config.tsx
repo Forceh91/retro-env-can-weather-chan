@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { ChakraProvider, Heading, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import {
+  AirQualityConfig,
   ClimateNormalsConfig,
   CrawlerConfig,
   DisplayConfig,
@@ -28,6 +29,7 @@ const ConfigScreen = () => {
               <Tab>Province Temp/Precip</Tab>
               <Tab>Historical Data</Tab>
               <Tab>Climate Normals</Tab>
+              <Tab>Air Quality</Tab>
               <Tab>Flavours</Tab>
               <Tab>Crawler</Tab>
             </TabList>
@@ -56,6 +58,10 @@ const ConfigScreen = () => {
 
               <TabPanel>
                 <ClimateNormalsConfig climateNormals={config.climateNormals} />
+              </TabPanel>
+
+              <TabPanel>
+                <AirQualityConfig station={config.airQualityStation} />
               </TabPanel>
 
               <TabPanel>

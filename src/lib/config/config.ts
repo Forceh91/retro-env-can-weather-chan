@@ -78,6 +78,7 @@ class Config {
       misc: this.misc,
       flavour: this.flavour,
       flavours: this.flavours,
+      airQualityStation: this.airQualityStation,
       crawler: this.crawlerMessages,
     };
   }
@@ -277,6 +278,10 @@ class Config {
     else this.lookAndFeel.flavour = flavour;
 
     this.loadFlavour();
+  }
+
+  public setAirQualityStation(station: string) {
+    this.airQualityStation = station;
   }
 
   public setCrawlerMessages(crawler: string[]) {

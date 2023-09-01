@@ -1,5 +1,5 @@
 import express from "express";
-import { getAirQuality } from "lib/airquality/routeHandler";
+import { getAirQuality, postStationsHandler } from "lib/airquality/routeHandler";
 
 /*
  * "/" here represents "/airquality"
@@ -7,5 +7,6 @@ import { getAirQuality } from "lib/airquality/routeHandler";
 
 const router = express.Router();
 router.get("/", getAirQuality);
+router.post("/stations", postStationsHandler);
 
 export default router;

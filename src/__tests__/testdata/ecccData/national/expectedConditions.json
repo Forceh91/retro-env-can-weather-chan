@@ -6,7 +6,7 @@
       "condition": "Mostly Cloudy",
       "abbreviatedCondition": "mostly cloudy",
       "temperature": 20.4,
-      "conditionUUID": "2023080916"
+      "conditionUUID": "2023080921"
     }
   ],
   "east": [
@@ -16,7 +16,7 @@
       "condition": "Partly Cloudy",
       "abbreviatedCondition": "partly cloudy",
       "temperature": 28.4,
-      "conditionUUID": "2023080917"
+      "conditionUUID": "2023080921"
     }
   ],
   "west": [
@@ -26,7 +26,7 @@
       "condition": "Mostly Cloudy",
       "abbreviatedCondition": "mostly cloudy",
       "temperature": 20.2,
-      "conditionUUID": "2023080914"
+      "conditionUUID": "2023080921"
     }
   ]
 }

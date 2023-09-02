@@ -25,5 +25,5 @@ export function useNationalWeather() {
     setInterval(() => fetchNationalWeather(), FETCH_NATIONAL_WEATHER_INTERVAL);
   }, []);
 
-  return { nationalWeather };
+  return { nationalWeather, fetchNationalWeather };
 }

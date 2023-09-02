@@ -2,8 +2,10 @@ const Weather = require("ec-weather-js");
 
 import {
   EAST_WEATHER_STATIONS,
+  EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS,
   MAX_NATIONAL_STATIONS_PER_PAGE,
   MB_WEATHER_STATIONS,
+  NATIONAL_WEATHER_FETCH_INTERVAL,
   WEST_WEATHER_STATIONS,
 } from "consts";
 import { NationalStationConfig, NationalStationObservation, NationalStationObservations } from "types";
@@ -12,6 +14,7 @@ import axios from "lib/backendAxios";
 import { harshTruncateConditions } from "lib/conditions";
 import { generateConditionsUUID } from "lib/eccc/utils";
 import { initializeConfig } from "lib/config";
+import eventbus from "lib/eventbus";
 
 const config = initializeConfig();
 
@@ -20,31 +23,54 @@ class NationalWeather {
   private _manitobaStations: NationalStationObservations = [];
   private _eastStations: NationalStationObservations = [];
   private _westStations: NationalStationObservations = [];
+  private _expectedConditionUUID: string;
 
   constructor() {
     this.periodicUpdate();
-    setInterval(() => this.periodicUpdate(), 5 * 60 * 1000);
+    setInterval(() => this.periodicUpdate(), NATIONAL_WEATHER_FETCH_INTERVAL);
+
+    eventbus.addListener(EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS, (data) => this.forceUpdate(data));
   }
 
   private periodicUpdate() {
-    this.fetchWeatherForStations(MB_WEATHER_STATIONS, this._manitobaStations);
-    this.fetchWeatherForStations(EAST_WEATHER_STATIONS, this._eastStations);
-    this.fetchWeatherForStations(WEST_WEATHER_STATIONS, this._westStations);
+    this.fetchWeatherForStations(MB_WEATHER_STATIONS, this._manitobaStations, !!this._expectedConditionUUID);
+    this.fetchWeatherForStations(EAST_WEATHER_STATIONS, this._eastStations, !!this._expectedConditionUUID);
+    this.fetchWeatherForStations(WEST_WEATHER_STATIONS, this._westStations, !!this._expectedConditionUUID);
+  }
+
+  private forceUpdate(conditionUUID: string) {
+    // update expected condition uuid from main station
+    const hadExpectedConditionUUID = !!this._expectedConditionUUID;
+    this._expectedConditionUUID = conditionUUID;
+
+    // if we didn't have an expected condition uuid, we dont need to force an update
+    if (!hadExpectedConditionUUID) return;
+
+    // otherwise we can call periodic update early since other stations probably updated
+    this.periodicUpdate();
   }
 
   private isStationReporting(station: NationalStationObservation) {
+    if (this._expectedConditionUUID && station.conditionUUID !== this._expectedConditionUUID) return;
+
     return (
       station?.condition && !station?.condition?.toLowerCase().includes("unknown") && station?.temperature !== null
     );
   }
 
-  private fetchWeatherForStations(stations: NationalStationConfig[], observations: NationalStationObservations) {
+  private fetchWeatherForStations(
+    stations: NationalStationConfig[],
+    observations: NationalStationObservations,
+    clearExistingData: boolean = false
+  ) {
     // empty out the current observations and generate new data
-    observations.splice(
-      0,
-      observations.length,
-      ...[...stations].map((stationConfig) => ({ ...stationConfig, condition: null, temperature: null }))
-    );
+    if (clearExistingData || !observations?.length) {
+      observations.splice(
+        0,
+        observations.length,
+        ...[...stations].map((stationConfig) => ({ ...stationConfig, condition: null, temperature: null }))
+      );
+    }
 
     // loop through stations and get current conditions for them
     stations.forEach((station) => this.fetchWeatherForStation(station, observations));
@@ -64,11 +90,11 @@ class NationalWeather {
         const {
           condition,
           temperature: { value: temperature },
-          dateTime: [, local],
+          dateTime: [utc],
         } = weather.current;
 
         // handle rejecting in-hour updates for these stations too
-        const conditionUUID = generateConditionsUUID(local.timeStamp);
+        const conditionUUID = generateConditionsUUID(utc.timeStamp);
         if (config.misc.rejectInHourConditionUpdates && conditionUUID === observations[stationIx].conditionUUID) return;
 
         observations.splice(stationIx, 1, {

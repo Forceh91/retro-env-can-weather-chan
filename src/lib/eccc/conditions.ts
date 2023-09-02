@@ -25,7 +25,11 @@ import {
   FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH,
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
 } from "consts/forecast.consts";
-import { CONDITIONS_WIND_SPEED_CALM, EVENT_BUS_CONFIG_CHANGE_PRIMARY_LOCATION } from "consts";
+import {
+  CONDITIONS_WIND_SPEED_CALM,
+  EVENT_BUS_CONFIG_CHANGE_PRIMARY_LOCATION,
+  EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS,
+} from "consts";
 import { addMinutes, isValid, parseISO } from "date-fns";
 import { initializeHistoricalTempPrecip } from "./historicalTempPrecip";
 import { initializeClimateNormals } from "./climateNormals";
@@ -155,6 +159,12 @@ class CurrentConditions {
 
         // check if we've got an alternate record source
         this.getTempRecordsForDay();
+
+        // tell national stations what we're expecting
+        eventbus.emit(
+          EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS,
+          generateConditionsUUID(weather.current?.dateTime[0].timeStamp)
+        );
       })
       .catch((err) => {
         logger.error("Unable to retrieve update to conditions from ECCC API", err);

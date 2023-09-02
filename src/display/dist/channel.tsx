@@ -22,7 +22,7 @@ function WeatherChannel() {
   const { config } = useConfig();
   const { currentConditions } = useWeatherEventStream();
   const alertsHook = useAlerts();
-  const { nationalWeather } = useNationalWeather();
+  const { nationalWeather, fetchNationalWeather } = useNationalWeather();
   const { provinceTracking } = useProvinceTracking();
   const { season, fetchSeason } = useSeason();
   const { hotColdSpots } = useCanadaHotColdSpots();
@@ -34,6 +34,7 @@ function WeatherChannel() {
   useEffect(() => {
     fetchSeason();
     fetchLastMonth();
+    fetchNationalWeather();
   }, [currentConditions?.observationID]);
 
   if (

@@ -32,22 +32,23 @@ class NationalWeather {
     eventbus.addListener(EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS, (data) => this.forceUpdate(data));
   }
 
-  private periodicUpdate() {
-    this.fetchWeatherForStations(MB_WEATHER_STATIONS, this._manitobaStations, !!this._expectedConditionUUID);
-    this.fetchWeatherForStations(EAST_WEATHER_STATIONS, this._eastStations, !!this._expectedConditionUUID);
-    this.fetchWeatherForStations(WEST_WEATHER_STATIONS, this._westStations, !!this._expectedConditionUUID);
+  private periodicUpdate(clearExistingData: boolean = false) {
+    this.fetchWeatherForStations(MB_WEATHER_STATIONS, this._manitobaStations, clearExistingData);
+    this.fetchWeatherForStations(EAST_WEATHER_STATIONS, this._eastStations, clearExistingData);
+    this.fetchWeatherForStations(WEST_WEATHER_STATIONS, this._westStations, clearExistingData);
   }
 
   private forceUpdate(conditionUUID: string) {
     // update expected condition uuid from main station
     const hadExpectedConditionUUID = !!this._expectedConditionUUID;
+    const shouldClear = this._expectedConditionUUID !== conditionUUID;
     this._expectedConditionUUID = conditionUUID;
 
     // if we didn't have an expected condition uuid, we dont need to force an update
     if (!hadExpectedConditionUUID) return;
 
     // otherwise we can call periodic update early since other stations probably updated
-    this.periodicUpdate();
+    this.periodicUpdate(shouldClear);
   }
 
   private isStationReporting(station: NationalStationObservation) {

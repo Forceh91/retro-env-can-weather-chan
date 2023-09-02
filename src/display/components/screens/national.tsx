@@ -10,17 +10,19 @@ import { AutomaticScreenProps } from "types/screen.types";
 
 type NationalWeatherProps = {
   observations: NationalStationObservations;
+  area: string; // unique identified since for when these screens are in a row and the component doesn't unrender
   weatherStationTime: WeatherStationTimeData;
 } & AutomaticScreenProps;
 
 export function NationalWeatherScreen(props: NationalWeatherProps) {
-  const { observations, weatherStationTime, onComplete } = props ?? {};
+  const { observations, area, weatherStationTime, onComplete } = props ?? {};
   const title = useMemo(
     () => formatObservedLong(weatherStationTime, true, " "),
     [weatherStationTime?.observedDateTime]
   );
 
   const [observationsOnMount, setObservationsOnMount] = useState<NationalStationObservations>();
+  const [areaOnMount, setAreaOnMount] = useState("");
 
   // this stops the observations changing whilst the screen is being displayed
   useEffect(() => {
@@ -31,8 +33,9 @@ export function NationalWeatherScreen(props: NationalWeatherProps) {
     )
       return onComplete();
 
-    if (!observationsOnMount?.length) setObservationsOnMount(observations);
-  }, [observations]);
+    if (area !== areaOnMount || !observationsOnMount?.length) setObservationsOnMount(observations);
+    setAreaOnMount(area);
+  }, [observations, area]);
 
   if (!observationsOnMount || !weatherStationTime?.observedDateTime) return <></>;
 

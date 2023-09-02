@@ -186,6 +186,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
           <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={nationalWeather?.mb}
+            area="MB"
             onComplete={switchToNextScreen}
           />
         );
@@ -195,6 +196,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
           <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={nationalWeather?.west}
+            area="WEST"
             onComplete={switchToNextScreen}
           />
         );
@@ -204,6 +206,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
           <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={nationalWeather?.east}
+            area="EAST"
             onComplete={switchToNextScreen}
           />
         );
@@ -214,6 +217,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
           <NationalWeatherScreen
             weatherStationTime={weatherStationResponse?.stationTime}
             observations={usaWeather}
+            area="USA"
             onComplete={switchToNextScreen}
           />
         );

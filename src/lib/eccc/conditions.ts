@@ -31,6 +31,7 @@ import { initializeHistoricalTempPrecip } from "./historicalTempPrecip";
 import { initializeClimateNormals } from "./climateNormals";
 import { generateConditionsUUID } from "./utils";
 import eventbus from "lib/eventbus";
+import { getTempRecordForDate } from "lib/temprecords";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -151,6 +152,9 @@ class CurrentConditions {
 
         // generate the forecast
         this.generateForecast(weather.weekly);
+
+        // check if we've got an alternate record source
+        this.getTempRecordsForDay();
       })
       .catch((err) => {
         logger.error("Unable to retrieve update to conditions from ECCC API", err);
@@ -316,6 +320,20 @@ class CurrentConditions {
         conditions,
       };
     });
+  }
+
+  private async getTempRecordsForDay() {
+    if (!config.misc.alternateRecordsSource?.length) return;
+
+    // get the temp record if there are any
+    const tempRecord = await getTempRecordForDate(config.misc.alternateRecordsSource, this.observedDateTimeAtStation());
+    if (!tempRecord) return;
+
+    // update hi/lo values
+    if (tempRecord.hi)
+      this._almanac.temperatures.extremeMax = { value: tempRecord.hi.value, year: tempRecord.hi.year, unit: "C" };
+    if (tempRecord.lo)
+      this._almanac.temperatures.extremeMin = { value: tempRecord.lo.value, year: tempRecord.lo.year, unit: "C" };
   }
 
   public observed() {

@@ -2,8 +2,8 @@ import { getDayOfYear, getDaysInYear } from "date-fns";
 
 export function getDayOfYearAdjustedForLeapDay(date: Date = new Date()) {
   // returns the current day of the year (1-366) and if its a leap year will offset by 1 so that Dec 31st will always be day 366
-  const isLeapYear = getDaysInYear(date.getTime()) === 366;
-  const dayOfYear = getDayOfYear(date.getTime());
+  const isLeapYear = getDaysInYear(date) === 366;
+  const dayOfYear = getDayOfYear(date);
   const month = date.getMonth() + 1;
 
   // adjust by a day of its not a leap year and we're past feb

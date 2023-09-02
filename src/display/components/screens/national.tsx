@@ -22,21 +22,19 @@ export function NationalWeatherScreen(props: NationalWeatherProps) {
 
   const [observationsOnMount, setObservationsOnMount] = useState<NationalStationObservations>();
 
+  // this stops the observations changing whilst the screen is being displayed
   useEffect(() => {
     if (
       !observations ||
-      observations?.length < MIN_NATIONAL_STATIONS_NEEDED_TO_DISPLAY ||
+      observations.length < MIN_NATIONAL_STATIONS_NEEDED_TO_DISPLAY ||
       !weatherStationTime?.observedDateTime
     )
-      onComplete();
-  }, []);
+      return onComplete();
 
-  // this stops the observations changing whilst the screen is being displayed
-  useEffect(() => {
     if (!observationsOnMount?.length) setObservationsOnMount(observations);
-  }, [observationsOnMount]);
+  }, [observations]);
 
-  if (!observations || !weatherStationTime?.observedDateTime) return <></>;
+  if (!observationsOnMount || !weatherStationTime?.observedDateTime) return <></>;
 
   return (
     <div id="national_weather">
@@ -45,7 +43,7 @@ export function NationalWeatherScreen(props: NationalWeatherProps) {
         {title}
       </>
       <ol>
-        {observations.map((nationalObservation) => (
+        {observationsOnMount.map((nationalObservation) => (
           <li key={nationalObservation.code}>
             <span>{nationalObservation.name.padEnd(MAX_NATIONAL_STATION_NAME_LENGTH)}</span>
             <span>{Math.round(nationalObservation.temperature).toString().padStart(4)}</span>

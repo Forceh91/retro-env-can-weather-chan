@@ -10,6 +10,7 @@ export type USAStationObservation = {
   temperature: number | null;
   condition: string | null;
   abbreviatedCondition?: string;
+  conditionUUID?: string;
 };
 
 export type USAStationObservations = USAStationObservation[];

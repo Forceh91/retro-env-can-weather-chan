@@ -4,13 +4,15 @@
     "code": "KGFK",
     "condition": "Mostly Cloudy",
     "abbreviatedCondition": "mostly cloudy",
-    "temperature": 22.8
+    "temperature": 22.8,
+    "conditionUUID": "2023081117"
   },
   {
     "name": "Fargo",
     "code": "KFAR",
     "condition": "Mostly Clear",
     "abbreviatedCondition": "mostly clear",
-    "temperature": 23.9
+    "temperature": 23.9,
+    "conditionUUID": "2023081118"
   }
 ]

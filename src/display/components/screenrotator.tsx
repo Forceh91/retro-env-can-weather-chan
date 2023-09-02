@@ -96,7 +96,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
 
     setConditionsOrConfigUpdated(true);
-    setDisplayedScreenIx(forecastScreenIx);
+    setDisplayedScreenIx(forecastScreenIx !== -1 ? forecastScreenIx : 0);
     setBackgroundColour(SCREEN_BACKGROUND_BLUE);
   }, [weatherStationResponse?.observationID, configVersion]);
 

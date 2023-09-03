@@ -42,12 +42,14 @@ ol {
 
   #crawler {
     align-items: flex-end;
-    justify-content: flex-end;
-    display: flex;
     background: $crawler_bar_background_col;
+    display: flex;
+    font-size: 34px;
+    justify-content: flex-end;
     height: $crawler_bar_height;
     overflow: hidden;
     padding: 0 10%;
+    padding-bottom: 10px;
     width: 100%;
 
     .marquee-container {

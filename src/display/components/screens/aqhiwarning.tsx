@@ -22,7 +22,7 @@ export function AQHIWarningScreen({ city, airQuality, onComplete }: AQHIWarningS
     if (!airQuality || !airQuality.value || !airQuality.showWarning) return onComplete();
   }, [airQuality]);
 
-  if (!airQuality) return <></>;
+  if (!airQuality?.value || !airQuality?.showWarning) return <></>;
 
   return (
     <div style={{ textAlign: "left" }}>

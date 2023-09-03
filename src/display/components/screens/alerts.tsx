@@ -85,7 +85,7 @@ export function AlertScreen(props: AlertScreenProps) {
 
     // remove extra stuff thats not relevant
     const [relevantDescription] = shortDescription.split(/\n+###|\s+##/gi);
-    return formatStringTo8x32(relevantDescription.split(/locations impacted/gi)[0], 7);
+    return formatStringTo8x32(relevantDescription.replace(/\n+/g, " ").split(/locations impacted/gi)[0], 7);
   };
 
   // display nothing if there's no alerts

@@ -37,16 +37,17 @@ export function AlmanacScreen(props: AlmanacScreenProps) {
     }`,
   };
 
+  // the extra spaces in the table below are intentional. Last year is meant to have a space before it.
   return (
     <div>
       <Conditions city={city} conditions={observed} stationTime={stationTime} showPressure airQuality={airQuality} />
 
-      <div>Last Year Normal Records{"".padEnd(2)}Year</div>
+      <div> Last Year Normal Records{"".padEnd(2)}Year</div>
       <div>
-        Hi {lastYear.hi} {normal.hi} {record.hi}
+        {"Hi".padStart(3)} {lastYear.hi} {normal.hi} {record.hi}
       </div>
       <div>
-        Lo {lastYear.lo} {normal.lo} {record.lo}
+        {"Lo".padStart(3)} {lastYear.lo} {normal.lo} {record.lo}
       </div>
     </div>
   );

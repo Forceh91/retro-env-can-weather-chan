@@ -77,6 +77,10 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/\sa few/gi, "");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // with turns into w/
+  abbreviatedSummary = abbreviatedSummary.replace(/with/gi, "w/");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // squish up the precip amount predicitons
   abbreviatedSummary = abbreviatedSummary.replace(/amount (\d+) - (\d+) mm/gi, "amount $1-$2mm");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
@@ -84,6 +88,15 @@ export function abbreviateForecast(
   // temperature steady
   abbreviatedSummary = abbreviatedSummary.replace(/temperature/gi, "temp");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // percent chance changing to percent chance (to percent chance)
+  if (abbreviatedSummary.includes("near"))
+    abbreviatedSummary = abbreviatedSummary.replace(
+      /(\d+)% chnc (.+?) changing to (\d+)% chnc .+(noon|12am)/g,
+      "$1-$3% chnc $2 until $4"
+    );
+  else
+    abbreviatedSummary = abbreviatedSummary.replace(/(\d+)% chnc (.+?) changing to (\d+)% chnc .+/g, "$1-$3% chnc $2");
 
   // make sure we actually return
   return abbreviatedSummary;

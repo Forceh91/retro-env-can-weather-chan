@@ -41,7 +41,7 @@ export function getAlerts(req: Request, res: Response) {
   res.json(alertMonitor.alerts());
 }
 
-let eventStreamInterval: NodeJS.Timer = null;
+let eventStreamInterval: NodeJS.Timeout = null;
 export function getLive(req: Request, res: Response) {
   // write the head
   res.writeHead(200, {

@@ -6,7 +6,7 @@
     "lint": "eslint .",
     "dev": "ts-node-dev -r tsconfig-paths/register src/server.ts",
     "display": "yarn parcel watch src/display/**/*.html --dist-dir dist/ --public-url ../ --no-source-maps",
-    "display:build": "yarn parcel build src/display/**/*.html --dist-dir build/dist/",
+    "display:build": "yarn parcel build src/display/**/*.html --dist-dir build/dist/ --no-optimize",
     "test": "env NODE_ENV=test jest",
     "test:coverage": "env NODE_ENV=test jest --collectCoverage=true",
     "test:watch": "env NODE_ENV=test jest --watch"

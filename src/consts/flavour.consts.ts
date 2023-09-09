@@ -64,10 +64,10 @@ export const FLAVOUR_DEFAULT = {
       id: Screens.WINDCHILL,
       duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
     },
-    {
-      id: Screens.INFO,
-      duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
-    },
+    // {
+    //   id: Screens.INFO,
+    //   duration: SCREEN_DEFAULT_DISPLAY_LENGTH,
+    // },
     {
       id: Screens.ALERTS,
       duration: 0,

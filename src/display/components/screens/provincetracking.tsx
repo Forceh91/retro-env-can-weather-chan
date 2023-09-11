@@ -35,6 +35,8 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
     const precipNumber = Number(precip);
     if (!precipNumber) return "NIL".padStart(5);
 
+    if (precipNumber < 0.2) return "TRACE";
+
     return `${precipNumber.toFixed(1)} MM`.padStart(7);
   };
 

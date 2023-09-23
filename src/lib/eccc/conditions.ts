@@ -91,13 +91,15 @@ class CurrentConditions {
     });
 
     // handle errors and messages
-    listener.on("error", logger.error).on("message", (date: string, url: string) => {
-      // make sure its relevant to us
-      if (!url.includes(`${this._weatherStationID}_e.xml`)) return;
+    listener
+      .on("error", (...error) => logger.error("AMQP error:", error))
+      .on("message", (date: string, url: string) => {
+        // make sure its relevant to us
+        if (!url.includes(`${this._weatherStationID}_e.xml`)) return;
 
-      this.fetchConditions();
-      logger.log("Received new conditions from AMQP at", date);
-    });
+        this.fetchConditions();
+        logger.log("Received new conditions from AMQP at", date);
+      });
 
     // store the connection so we can disconnect if needed
     this._amqpConnection = connection;

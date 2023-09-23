@@ -35,10 +35,12 @@ class AlertMonitor {
     });
 
     // handle errors and messages
-    listener.on("error", logger.error).on("message", (date: string, url: string) => {
-      logger.log("AMQP pushed CAP file", url, "at", date);
-      this.parseCAPFile(url);
-    });
+    listener
+      .on("error", (...error) => logger.error("AMQP error:", error))
+      .on("message", (date: string, url: string) => {
+        logger.log("AMQP pushed CAP file", url, "at", date);
+        this.parseCAPFile(url);
+      });
 
     // store the connection so we can disconnect if needed
     this._amqpConnection = connection;

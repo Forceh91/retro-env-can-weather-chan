@@ -22,7 +22,7 @@ import {
 import { ecccDateStringToTSDate } from "lib/date";
 import { calculateWindchill, abbreviateForecast, harshTruncateConditions } from "lib/conditions";
 import {
-  FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH,
+  FORECAST_THREE_ISH_LINES_WITH_PREFIX_MAX_LENGTH,
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
 } from "consts/forecast.consts";
 import {
@@ -326,7 +326,7 @@ class CurrentConditions {
         textSummary,
         abbreviatedTextSummary: abbreviateForecast(
           textSummary,
-          !ix ? FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH : FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH
+          !ix ? FORECAST_THREE_ISH_LINES_WITH_PREFIX_MAX_LENGTH : FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH
         ),
         temperature: { value: Number(temperatureValue), class: temperatureClass },
         conditions,

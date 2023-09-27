@@ -96,7 +96,10 @@ export function abbreviateForecast(
       "$1-$3% chnc $2 until $4"
     );
   else
-    abbreviatedSummary = abbreviatedSummary.replace(/(\d+)% chnc (.+?) changing to (\d+)% chnc .+/g, "$1-$3% chnc $2");
+    abbreviatedSummary = abbreviatedSummary.replace(
+      /(\d+)% chnc (.+?) changing to (\d+)% chnc (.+)/g,
+      "$1-$3% chnc $4"
+    );
 
   // make sure we actually return
   return abbreviatedSummary;

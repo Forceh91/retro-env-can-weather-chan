@@ -35,6 +35,12 @@ describe("forecast truncation", () => {
     ).toStrictEqual("30-70% chnc of shwrs");
     expect(
       abbreviateForecast(
+        "30 percent chance of showers changing to 70 percent chance of showers. clearing after noon. high 12.",
+        forecastLengthWanted
+      )
+    ).toStrictEqual("30-70% chnc of shwrs. clearing after noon. high 12.");
+    expect(
+      abbreviateForecast(
         "30 percent chance of showers changing to 70 percent chance of showers near noon",
         forecastLengthWanted
       )
@@ -51,6 +57,12 @@ describe("forecast truncation", () => {
         forecastLengthWanted
       )
     ).toStrictEqual("30-70% chnc of shwrs until noon");
+    expect(
+      abbreviateForecast(
+        "30 percent chance of showers changing to 70 percent chance of showers changing to 30 percent chance of showers near noon. clearing in the aftn. high 12.",
+        forecastLengthWanted
+      )
+    ).toStrictEqual("30-70% chnc of shwrs until noon. clearing in the aftn. high 12.");
     expect(abbreviateForecast("cloudy with 60 percent chance of showers. low 13.", forecastLengthWanted)).toStrictEqual(
       "cloudy w/ 60% chnc of shwrs. low 13."
     );

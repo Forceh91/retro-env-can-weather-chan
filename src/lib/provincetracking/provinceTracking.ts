@@ -1,17 +1,22 @@
 const Weather = require("ec-weather-js");
 import fs from "fs";
-import { EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING, PROVINCE_TRACKING_TEMP_TO_TRACK } from "consts";
+import {
+  DEFAULT_WEATHER_STATION_ID,
+  EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING,
+  PROVINCE_TRACKING_TEMP_TO_TRACK,
+} from "consts";
 import axios from "lib/backendAxios";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
 import { ProvinceStationTracking, ProvinceStations } from "types";
-import { initializeCurrentConditions } from "lib/eccc";
+import { initializeCurrentConditions, initializeHistoricalTempPrecip } from "lib/eccc";
 import eventbus from "lib/eventbus";
 
 const logger = new Logger("ProvinceTracking");
 const PROVINCE_TRACKING_FILE = "db/province_tracking.json";
 
 const conditions = initializeCurrentConditions();
+const historicalData = initializeHistoricalTempPrecip();
 
 class ProvinceTracking {
   private _stations: ProvinceStations;
@@ -88,10 +93,11 @@ class ProvinceTracking {
 
         // store the precip for yesterday
         const { yesterdayConditions } = weather.all;
-        const yesterdayPrecip = yesterdayConditions.precip?.value ?? "MISSING";
+        const yesterdayPrecip =
+          (station.station.code === DEFAULT_WEATHER_STATION_ID
+            ? historicalData.yesterdayPrecipData().amount
+            : yesterdayConditions.precip?.value) ?? "MISSING";
         station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
-
-        // TODO: if this station code is the default station, use historical data
 
         // get the temperature reading
         const temp = weather.current?.temperature?.value;

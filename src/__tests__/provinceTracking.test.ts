@@ -1,5 +1,5 @@
-import axios from "lib/backendAxios";
 import moxios from "moxios";
+import axios from "lib/backendAxios";
 
 jest.mock("lib/config/config", () => ({
   initializeConfig: () => ({
@@ -15,9 +15,15 @@ jest.mock("lib/eccc", () => ({
   initializeCurrentConditions: () => ({
     observedDateTimeAtStation: jest.fn(() => new Date()),
   }),
+  initializeHistoricalTempPrecip: () => ({
+    yesterdayPrecipData: jest.fn(() => ({ amount: 23.5 })),
+  }),
 }));
 
 jest.mock("fs");
+jest.mock("consts/server.consts", () => ({
+  DEFAULT_WEATHER_STATION_ID: "ON/s0000458",
+}));
 
 import { initializeProvinceTracking } from "lib/provincetracking/provinceTracking";
 import fakeTorontoWeather, { fakeTorontoWeatherLowTemp } from "./testdata/ecccData/provincetracking/fakeTorontoWeather";

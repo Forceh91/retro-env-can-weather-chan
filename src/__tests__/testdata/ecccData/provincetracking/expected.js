@@ -5,7 +5,7 @@ export default {
       minTemp: Math.min(),
       maxTemp: 26.4,
       displayTemp: "M",
-      yesterdayPrecip: 0,
+      yesterdayPrecip: 23.5,
     },
     {
       station: { name: "Ottawa", code: "ON/s0000623" },

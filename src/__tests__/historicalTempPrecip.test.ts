@@ -19,9 +19,14 @@ import historicalData2022 from "./testdata/ecccData/historicaltempprecip/TO-2022
 import historicalData2023 from "./testdata/ecccData/historicaltempprecip/TO-2023-data";
 import expectedTO2022 from "./testdata/ecccData/historicaltempprecip/TO-2022-expected.json";
 
+const SUMMER_2023_DATE = new Date(2023, 7, 7);
+
 describe("historical temp/precip", () => {
   beforeEach(() => moxios.install(axios));
-  afterEach(() => moxios.uninstall(axios));
+  afterEach(() => {
+    moxios.uninstall(axios);
+    jest.useRealTimers();
+  });
 
   it("retrieves last year temps correctly", (done) => {
     const historicalData = initializeHistoricalTempPrecip();
@@ -39,37 +44,39 @@ describe("historical temp/precip", () => {
   });
 
   it("retrieves season precip data correctly (summer)", (done) => {
-    const historicalData = initializeHistoricalTempPrecip();
-    historicalData.fetchLastTwoYearsOfData(new Date(2023, 7, 7));
+    moxios.wait(async () => {
+      jest.advanceTimersByTimeAsync(500);
+      await moxios.requests.at(0).respondWith({ status: 200, response: historicalData2022 });
+      await moxios.requests.at(1).respondWith({ status: 200, response: historicalData2023 });
 
-    moxios.wait(() => {
-      moxios.requests.at(0).respondWith({ status: 200, response: historicalData2022 });
-      const request = moxios.requests.mostRecent();
-      request?.respondWith({ status: 200, response: historicalData2023 }).then(() => {
-        const response = historicalData.seasonPrecipData();
-        expect(response).toStrictEqual(expectedTO2022.precipitation.summer);
-        done();
-      });
+      expect(historicalData.seasonPrecipData()).toStrictEqual(expectedTO2022.precipitation.summer);
+      done();
     });
+
+    jest.useFakeTimers();
+    jest.setSystemTime(SUMMER_2023_DATE);
+
+    const historicalData = initializeHistoricalTempPrecip();
+    historicalData.fetchLastTwoYearsOfData(SUMMER_2023_DATE);
   });
 
   it("retrieves season precip data correctly (winter)", (done) => {
-    const spy = jest.spyOn(season, "getIsWinterSeason");
-    spy.mockReturnValue(true);
+    jest.spyOn(season, "getIsWinterSeason").mockReturnValueOnce(true);
+
+    moxios.wait(async () => {
+      jest.advanceTimersByTimeAsync(500);
+      await moxios.requests.at(0).respondWith({ status: 200, response: historicalData2022 });
+      await moxios.requests.at(1).respondWith({ status: 200, response: historicalData2023 });
+
+      expect(historicalData.seasonPrecipData()).toStrictEqual(expectedTO2022.precipitation.winter);
+      done();
+    });
+
+    jest.useFakeTimers();
+    jest.setSystemTime(SUMMER_2023_DATE);
 
     const historicalData = initializeHistoricalTempPrecip();
-    historicalData.fetchLastTwoYearsOfData(new Date(2023, 7, 7));
-
-    moxios.wait(() => {
-      moxios.requests.at(0).respondWith({ status: 200, response: historicalData2022 });
-      const request = moxios.requests.mostRecent();
-      request?.respondWith({ status: 200, response: historicalData2023 }).then(() => {
-        const response = historicalData.seasonPrecipData();
-        expect(response).toStrictEqual(expectedTO2022.precipitation.winter);
-        spy.mockRestore();
-        done();
-      });
-    });
+    historicalData.fetchLastTwoYearsOfData(SUMMER_2023_DATE);
   });
 
   it("retrieves yesterday precip data correctly", (done) => {

@@ -1,5 +1,10 @@
-import axios from "lib/backendAxios";
 import moxios from "moxios";
+import axios from "lib/backendAxios";
+import { mockTorontoConfig, mockAMQP } from "./configMocks";
+
+mockTorontoConfig();
+mockAMQP();
+
 import { initializeCurrentConditions } from "lib/eccc/conditions";
 import ecccConditions from "./testdata/ecccData/conditions/s0000458_e";
 import ecccConditionsWithGust from "./testdata/ecccData/conditions/s0000458_e_gusting";
@@ -24,7 +29,7 @@ describe("CurrentConditions", () => {
   afterEach(() => moxios.uninstall(axios));
 
   it("returns the correct data when 'observed' is asked for", (done) => {
-    const conditions = initializeCurrentConditions(true);
+    const conditions = initializeCurrentConditions();
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();
@@ -43,7 +48,7 @@ describe("CurrentConditions", () => {
   });
 
   it("returns the correct data when 'forecast' is asked for", (done) => {
-    const conditions = initializeCurrentConditions(true);
+    const conditions = initializeCurrentConditions();
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();
@@ -59,7 +64,7 @@ describe("CurrentConditions", () => {
   });
 
   it("returns the correct data when 'almanac' is asked for", (done) => {
-    const conditions = initializeCurrentConditions(true);
+    const conditions = initializeCurrentConditions();
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();
@@ -78,7 +83,7 @@ describe("CurrentConditions", () => {
   });
 
   it("returns the correct date when asking for the observed date time", (done) => {
-    const conditions = initializeCurrentConditions(true);
+    const conditions = initializeCurrentConditions();
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();
@@ -91,7 +96,7 @@ describe("CurrentConditions", () => {
   });
 
   it("returns the correct date when asking for the observed date time at station", (done) => {
-    const conditions = initializeCurrentConditions(true);
+    const conditions = initializeCurrentConditions();
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();
@@ -109,7 +114,7 @@ describe("CurrentConditions", () => {
   });
 
   it("handles gusting wind from eccc", (done) => {
-    const conditions = initializeCurrentConditions(true);
+    const conditions = initializeCurrentConditions();
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();
@@ -122,7 +127,7 @@ describe("CurrentConditions", () => {
   });
 
   it("handles calm wind from eccc", (done) => {
-    const conditions = initializeCurrentConditions(true);
+    const conditions = initializeCurrentConditions();
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();
@@ -135,7 +140,7 @@ describe("CurrentConditions", () => {
   });
 
   it("handles windchill calculated from eccc conditions", (done) => {
-    const conditions = initializeCurrentConditions(true);
+    const conditions = initializeCurrentConditions();
 
     moxios.wait(() => {
       const mostRecentRequest = moxios.requests.mostRecent();

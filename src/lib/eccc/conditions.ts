@@ -402,8 +402,9 @@ class CurrentConditions {
 }
 
 let currentConditions: CurrentConditions = null;
-export function initializeCurrentConditions(forceNewInstance: boolean = false): CurrentConditions {
-  if (!forceNewInstance && currentConditions) return currentConditions;
+export function initializeCurrentConditions(): CurrentConditions {
+  if (process.env.NODE_ENV === "test") return new CurrentConditions();
+  if (currentConditions) return currentConditions;
 
   currentConditions = new CurrentConditions();
   return currentConditions;

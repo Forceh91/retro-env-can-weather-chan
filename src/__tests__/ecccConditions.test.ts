@@ -1,6 +1,6 @@
 import moxios from "moxios";
 import axios from "lib/backendAxios";
-import { mockTorontoConfig, mockAMQP } from "./configMocks";
+import { mockTorontoConfig, mockAMQP } from "../lib/configMocks";
 
 mockTorontoConfig();
 mockAMQP();

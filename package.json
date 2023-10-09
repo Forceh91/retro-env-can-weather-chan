@@ -7,7 +7,7 @@
     "dev": "ts-node-dev -r tsconfig-paths/register src/server.ts",
     "start": "tsx src/server.ts",
     "display": "yarn parcel watch src/display/**/*.html --dist-dir dist/ --public-url ../ --no-source-maps",
-    "test": "env NODE_ENV=test jest",
+    "test": "env NODE_ENV=test jest --forceExit",
     "test:coverage": "env NODE_ENV=test jest --collectCoverage=true",
     "test:watch": "env NODE_ENV=test jest --watch",
     "build:display": "yarn parcel build src/display/**/*.html --dist-dir dist/ --no-optimize"

@@ -98,6 +98,9 @@ class NationalWeather {
         const conditionUUID = generateConditionsUUID(utc.timeStamp);
         if (config.misc.rejectInHourConditionUpdates && conditionUUID === observations[stationIx].conditionUUID) return;
 
+        // also reject if this station has updated to a new hour but the main station hasn't
+        if (this._expectedConditionUUID && conditionUUID !== this._expectedConditionUUID) return;
+
         observations.splice(stationIx, 1, {
           ...station,
           condition: condition ?? null,

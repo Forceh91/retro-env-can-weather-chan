@@ -29,6 +29,10 @@ export function abbreviateForecast(
     .replace(/northwest/gi, "NW");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // developing doesn't need to be there (fog patches developing overnight)
+  abbreviatedSummary = abbreviatedSummary.replace(/developing\s/gi, "");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // keep attacking it, aim for chance now
   abbreviatedSummary = abbreviatedSummary.replace(/chance/gi, "chnc");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;

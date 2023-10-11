@@ -66,5 +66,11 @@ describe("forecast truncation", () => {
     expect(abbreviateForecast("cloudy with 60 percent chance of showers. low 13.", forecastLengthWanted)).toStrictEqual(
       "cloudy w/ 60% chnc of shwrs. low 13."
     );
+    expect(abbreviateForecast("fog patches developing overnight", forecastLengthWanted)).toStrictEqual(
+      "fog patches overnight"
+    );
+    expect(abbreviateForecast("fog patches developing after 12am", forecastLengthWanted)).toStrictEqual(
+      "fog patches after 12am"
+    );
   });
 });

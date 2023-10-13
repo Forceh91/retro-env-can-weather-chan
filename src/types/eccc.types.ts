@@ -41,7 +41,7 @@ export type ECCCSunRiseSet = {
 };
 
 export type ECCCDateTime = {
-  year: number;
+  year: string;
   month: { name: string; value: string };
   day: { name: string; value: string };
   hour: string;

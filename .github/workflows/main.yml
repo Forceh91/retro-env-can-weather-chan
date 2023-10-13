@@ -55,31 +55,31 @@ jobs:
         run: |
           yarn install --force --non-interactive
 
-  # unit-test:
-  #   name: "Unit Testing"
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       node: [16.x]
-  #   needs: install-cache
-  #   steps:
-  #     - name: Checkout Commit
-  #       uses: actions/checkout@v3
-  #     - name: Use Node.js ${{ matrix.node }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ${{ matrix.node }}
-  #     - name: Restore yarn dependencies
-  #       uses: actions/cache@v3
-  #       id: cache-dependencies
-  #       with:
-  #         path: node_modules
-  #         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-yarn-
-  #     - name: Run test
-  #       run: |
-  #         yarn test
+  unit-test:
+    name: "Unit Testing"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16.x]
+    needs: install-cache
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Restore yarn dependencies
+        uses: actions/cache@v3
+        id: cache-dependencies
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Run test
+        run: |
+          yarn test
 
   build:
     name: "Production Build"
@@ -87,7 +87,7 @@ jobs:
     strategy:
       matrix:
         node: [16.x]
-    # needs: unit-test
+    needs: unit-test
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3
@@ -124,9 +124,8 @@ jobs:
             src/types
             src/*.ts
             dist
+            tsconfig.json
             package.json
             yarn.lock
             README.md
-            *.js
-            *.ts
           retention-days: 1

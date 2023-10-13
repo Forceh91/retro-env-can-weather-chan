@@ -12,7 +12,7 @@ import ecccConditionsWithCalmWind from "./testdata/ecccData/conditions/s0000458_
 import ecccConditionsWithWindchill from "./testdata/ecccData/conditions/s0000458_e_windchill";
 import { WeatherStation } from "types/condition.types";
 import { addMinutes, parseISO } from "date-fns";
-import { setupMockDate, MockDateSetup, calculateOffsetToEDT, EDT_OFFSET_MINS_FROM_UTC } from "lib/tests/timezone";
+import { setupMockDate, MockDateSetup, EDT_OFFSET_MINS_FROM_UTC } from "lib/tests/timezone";
 
 const expectedObserved: WeatherStation = require("./testdata/ecccData/conditions/s0000458_e.json");
 const expectedObservedWithGust: WeatherStation = require("./testdata/ecccData/conditions/s0000458_e_gusting.json");
@@ -31,8 +31,7 @@ describe("CurrentConditions", () => {
   beforeEach(() => {
     moxios.install(axios);
     mockDate = setupMockDate();
-    const offset = calculateOffsetToEDT(EDT_OFFSET_MINS_FROM_UTC);
-    if (offset) mockDate.set({ offset, isoDate: "2023-08-04T18:03:00.000Z" });
+    mockDate.set({ offset: EDT_OFFSET_MINS_FROM_UTC });
   });
 
   afterEach(() => {

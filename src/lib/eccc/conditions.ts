@@ -53,7 +53,7 @@ class CurrentConditions {
   private _weatherStationCityName: string;
   private _weatherStationID: string;
   private _conditions: ObservedConditions;
-  private _sunRiseSet: SunRiseSet = { rise: null, set: null, timezone: "UTC" };
+  private _sunRiseSet: SunRiseSet = { rise: null, set: null, timezone: "local" };
   private _almanac: Almanac = {
     temperatures: {
       extremeMin: null,
@@ -258,13 +258,13 @@ class CurrentConditions {
 
     // get the utc sunrise time
     const sunrise: ECCCDateTime = riseSet.dateTime.find(
-      (dateTime: ECCCDateTime) => dateTime.name === "sunrise" && dateTime.zone === "UTC"
+      (dateTime: ECCCDateTime) => dateTime.name === "sunrise" && dateTime.zone !== "UTC"
     );
     if (sunrise) this._sunRiseSet.rise = ecccDateStringToTSDate(sunrise.textSummary).toISOString();
 
     // get the utc sunset time
     const sunset: ECCCDateTime = riseSet.dateTime.find(
-      (dateTime: ECCCDateTime) => dateTime.name === "sunset" && dateTime.zone === "UTC"
+      (dateTime: ECCCDateTime) => dateTime.name === "sunset" && dateTime.zone !== "UTC"
     );
     if (sunset) this._sunRiseSet.set = ecccDateStringToTSDate(sunset.textSummary).toISOString();
   }

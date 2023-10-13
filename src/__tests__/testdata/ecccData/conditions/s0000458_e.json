@@ -26,7 +26,7 @@
       "lastYearMax": { "value": 29.1, "unit": "C" },
       "lastYearMin": { "value": 21.3, "unit": "C" }
     },
-    "sunRiseSet": { "rise": "2023-08-04T10:10:00.000Z", "set": "2023-08-05T00:37:00.000Z", "timezone": "UTC" }
+    "sunRiseSet": { "rise": "2023-08-04T10:10:00.000Z", "set": "2023-08-05T00:37:00.000Z", "timezone": "local" }
   },
   "forecast": [
     {

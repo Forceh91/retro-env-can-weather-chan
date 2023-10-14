@@ -10,7 +10,8 @@
     "test": "env NODE_ENV=test jest --forceExit",
     "test:coverage": "env NODE_ENV=test jest --collectCoverage=true",
     "test:watch": "env NODE_ENV=test jest --watch",
-    "build:display": "yarn parcel build src/display/**/*.html --dist-dir dist/ --no-optimize"
+    "build:display": "yarn parcel build src/display/**/*.html --dist-dir dist/ --no-optimize",
+    "release": "release-it --ci"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.1",

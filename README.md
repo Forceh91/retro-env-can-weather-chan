@@ -9,13 +9,13 @@ This project includes all of the features from the original weather channel such
 - Weather alerts/warnings/watches issued by ECCC (based off weather station lat/long)
 - Current conditions and forecast
 - 5 day outlook
-- Temperature records for last year, normal, and records
+- Temperature records for last year, normal, and all-time
 - Air Quality Health Index readings and warnings
 - Province temperature and precipitation tracking
 - Conditions across Canada (MB, West, East)
 - Conditions across the US
 - Sunspot forecats
-- Stats for day (sunrise/set, Canada hot/cold spots) and total precipitation for the current season
+- Stats for the current day (sunrise/set, Canada hot/cold spots) and total precipitation for the current season
 - Stats for last month
 - Windchill (in the old watts per square metre format)
 - Flavours
@@ -44,7 +44,7 @@ yarn install
 
 ### End-users
 
-If you have download the project from the releases page then you all you need to do is run the following command in your terminal window.
+If you have download the project from the releases page then all you need to do is run the following command in your terminal window.
 
 ```
 yarn start

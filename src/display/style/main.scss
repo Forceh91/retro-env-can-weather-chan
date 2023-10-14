@@ -52,10 +52,10 @@ ol {
     padding-bottom: 10px;
     width: 100%;
 
-    .marquee-container {
+    .rfm-marquee-container {
       overflow: hidden;
 
-      .child {
+      .rfm-child {
         margin-right: $channel_max_width;
       }
     }

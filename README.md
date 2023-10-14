@@ -107,7 +107,7 @@ By default the simulator will run on port 8600, however if you find it is alread
 
 By default no configuration is required and the simulator will automatically point to Winnipeg as the main weather channel. However if you want to change the main station or go more in-depth and fully utilize the simulator you should navigate to the [configuration screen](http://localhost:8600/config).
 
-This will allow you to setup extra features such as custom screen rotation (flavours), Air Quality readings, rejecting in-hour condition updates, alternative temperature record source, crawler messages and more.
+This will allow you to setup extra features such as custom screen rotation (flavours), Air Quality readings, rejecting in-hour condition updates, alternative temperature record source, crawler messages, and more.
 
 ### Setting up a playlist
 

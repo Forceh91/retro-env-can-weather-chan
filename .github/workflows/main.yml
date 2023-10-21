@@ -80,7 +80,7 @@ jobs:
     strategy:
       matrix:
         node: [16.x, 18.x, 20.x, 21.x]
-        fail-fast: false
+      fail-fast: false
     needs: unit-test
     steps:
       - name: Checkout Commit

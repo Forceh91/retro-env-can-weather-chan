@@ -109,9 +109,13 @@ By default no configuration is required and the simulator will automatically poi
 
 This will allow you to setup extra features such as custom screen rotation (flavours), Air Quality readings, rejecting in-hour condition updates, alternative temperature record source, crawler messages, and more.
 
+### Automatic reload
+
+When your config is saved the updated changes should reflect on the display no more than 5 minutes later (including playlist changes).
+
 ### Setting up a playlist
 
-When the simulator runs for the first time you will notice that a `music` directory is created for you. If you wish to update your playlist you need to stop the simulator, add your mp3 files to the `music` directory, and then start the simulator again.
+When the simulator runs for the first time you will notice that a `music` directory is created for you. If you wish to update your playlist simply add/remove files to the `music` directory add then scroll to "Playlist" in the "Display" tab on the [configuration screen](http://localhost:8600/config). Once there you will see a "Regenerate playlist" button. Depending on the size of your playlist this may take a few seconds.
 
 ## Viewing the channel
 

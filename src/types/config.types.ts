@@ -13,6 +13,7 @@ export type ConfigFields = {
   provinceStations: ProvinceStation[];
   airQualityStation: string;
   crawler: string[];
+  music: string[];
 };
 
 export type PrimaryLocation = {

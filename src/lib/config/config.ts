@@ -89,6 +89,7 @@ class Config {
       flavours: this.flavours,
       airQualityStation: this.airQualityStation,
       crawler: this.crawlerMessages,
+      music: this.musicPlaylist ?? [],
     };
   }
 
@@ -314,6 +315,10 @@ class Config {
       ...crawler.map((message) => message.trim()).filter((message) => message.length)
     );
     this.saveCrawlerMessages();
+  }
+
+  public regeneratePlaylist() {
+    this.checkMusicDirectory();
   }
 }
 

@@ -10,6 +10,7 @@ import {
   postLookAndFeel,
   postCrawlerMessages,
   postAirQualityStation,
+  postPlaylist,
 } from "lib/config";
 
 /*
@@ -27,5 +28,6 @@ router.post("/misc", postMisc);
 router.post("/lookAndFeel", postLookAndFeel);
 router.post("/airQuality", postAirQualityStation);
 router.post("/crawler", postCrawlerMessages);
+router.post("/playlist", postPlaylist);
 
 export default router;

@@ -12,7 +12,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useSaveConfigOption } from "hooks";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { FlavourNames, LookAndFeel, MiscConfig } from "types";
 
 type DisplayConfigProps = {
@@ -20,6 +20,7 @@ type DisplayConfigProps = {
   flavours: FlavourNames;
   rejectInHourConditionUpdates: boolean;
   alternateRecordsSource: string;
+  playlist: string[];
 };
 
 type MiscConfigOptionResponse = MiscConfig;
@@ -31,15 +32,18 @@ export function DisplayConfig({
   flavours,
   rejectInHourConditionUpdates,
   alternateRecordsSource,
+  playlist,
 }: DisplayConfigProps) {
   const toast = useToast();
   const [mutableRejectInHourConditionUpdates, setMutableRejectInHourConditionUpdates] =
     useState(rejectInHourConditionUpdates);
   const [mutableAlternateRecordsSource, setMutableAlternateRecordsSource] = useState(alternateRecordsSource ?? "");
   const [mutableFlavour, setMutableFlavour] = useState(flavour ?? "");
+  const [mutablePlaylist, setMutablePlaylist] = useState(playlist);
 
   const miscSaveConfigOption = useSaveConfigOption<MiscConfigOptionResponse>("misc");
   const lookAndFeelSaveConfigOption = useSaveConfigOption<LookAndFeel>("lookAndFeel");
+  const regeneratePlaylist = useSaveConfigOption<string[]>("playlist");
 
   const onSubmitMiscSettings = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -84,6 +88,29 @@ export function DisplayConfig({
         description: "Your look and feel settings were saved",
         status: "success",
       });
+  };
+
+  useEffect(() => {
+    if (regeneratePlaylist.wasError)
+      toast({
+        title: "Unable to regenerate playlist",
+        description: "An error occured regenerating your playlist - please try again",
+        status: "error",
+      });
+
+    if (regeneratePlaylist.wasSuccess) {
+      setMutablePlaylist(regeneratePlaylist.response);
+
+      toast({
+        title: "Playlist regenerated successful",
+        description: "Your playlist was regenerated",
+        status: "success",
+      });
+    }
+  }, [regeneratePlaylist.response, regeneratePlaylist.wasError, regeneratePlaylist.wasSuccess]);
+
+  const onSubmitRegeneratePlaylist = () => {
+    regeneratePlaylist.saveConfigOption({});
   };
 
   return (
@@ -161,6 +188,24 @@ export function DisplayConfig({
             Save
           </Button>
         </form>
+      </Stack>
+
+      <Heading size={"md"}>Playlist</Heading>
+
+      <Stack>
+        <Text>
+          You currently have <b>{mutablePlaylist.length} tracks</b> in rotation
+        </Text>
+
+        <Button
+          type="button"
+          mt={4}
+          colorScheme="teal"
+          isLoading={regeneratePlaylist.isSaving}
+          onClick={onSubmitRegeneratePlaylist}
+        >
+          Regenerate Playlist
+        </Button>
       </Stack>
     </Stack>
   );

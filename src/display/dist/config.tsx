@@ -41,6 +41,7 @@ const ConfigScreen = () => {
                   rejectInHourConditionUpdates={config.misc.rejectInHourConditionUpdates}
                   flavour={config.lookAndFeel.flavour}
                   flavours={config.flavours}
+                  playlist={config.music}
                 />
               </TabPanel>
               <TabPanel>

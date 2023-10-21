@@ -8,7 +8,7 @@ export function getConfigHandler(req: Request, res: Response) {
   res.json({
     config: config.config,
     crawler: config.crawlerMessages,
-    music: config.musicPlaylist,
+    music: config.musicPlaylist ?? [],
   });
 }
 
@@ -158,6 +158,15 @@ export function postAirQualityStation(req: Request, res: Response) {
 
     config.updateAndSaveConfigOption(() => config.setAirQualityStation(station));
     res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}
+
+export function postPlaylist(req: Request, res: Response) {
+  try {
+    config.regeneratePlaylist();
+    res.send(config.musicPlaylist);
   } catch (e) {
     res.status(500).json({ error: e });
   }

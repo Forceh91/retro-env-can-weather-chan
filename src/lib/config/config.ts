@@ -199,17 +199,30 @@ class Config {
   private checkMusicDirectory() {
     logger.log("Loading playlist from", MUSIC_DIR);
 
-    fs.readdir(MUSIC_DIR, (err, files) => {
-      if (err) logger.error("Failed to generate playlist");
-      else {
-        this.musicPlaylist.splice(
-          0,
-          this.musicPlaylist.length,
-          ...files.filter((f) => f.endsWith(".mp3")).map((f) => `${MUSIC_DIR}/${f}`)
-        );
-        logger.log("Generated playlist of", this.musicPlaylist.length, "files");
-      }
-    });
+    fs.readdir(MUSIC_DIR, (err, files) => this.handleMusicDirectoryResponse(err, files));
+  }
+
+  private async checkMusicDirectoryBlocking() {
+    logger.log("Loading playlist from", MUSIC_DIR);
+
+    try {
+      const files = await fs.readdirSync(MUSIC_DIR);
+      this.handleMusicDirectoryResponse(undefined, files);
+    } catch (e) {
+      logger.error("Failed to generate playlist");
+    }
+  }
+
+  private handleMusicDirectoryResponse(err: NodeJS.ErrnoException, files: string[]) {
+    if (err) logger.error("Failed to generate playlist");
+    else {
+      this.musicPlaylist.splice(
+        0,
+        this.musicPlaylist.length,
+        ...files.filter((f) => f.endsWith(".mp3")).map((f) => `${MUSIC_DIR}/${f}`)
+      );
+      logger.log("Generated playlist of", this.musicPlaylist.length, "files");
+    }
   }
 
   private checkFlavoursDirectory() {
@@ -317,8 +330,8 @@ class Config {
     this.saveCrawlerMessages();
   }
 
-  public regeneratePlaylist() {
-    this.checkMusicDirectory();
+  public async regeneratePlaylist() {
+    await this.checkMusicDirectoryBlocking();
   }
 }
 

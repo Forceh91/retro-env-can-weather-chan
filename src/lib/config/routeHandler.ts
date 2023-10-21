@@ -163,9 +163,9 @@ export function postAirQualityStation(req: Request, res: Response) {
   }
 }
 
-export function postPlaylist(req: Request, res: Response) {
+export async function postPlaylist(req: Request, res: Response) {
   try {
-    config.regeneratePlaylist();
+    await config.regeneratePlaylist();
     res.send(config.musicPlaylist);
   } catch (e) {
     res.status(500).json({ error: e });

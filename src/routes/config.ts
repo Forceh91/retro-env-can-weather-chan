@@ -28,6 +28,6 @@ router.post("/misc", postMisc);
 router.post("/lookAndFeel", postLookAndFeel);
 router.post("/airQuality", postAirQualityStation);
 router.post("/crawler", postCrawlerMessages);
-router.post("/playlist", postPlaylist);
+router.post("/playlist", async (req: Request, res: Response) => await postPlaylist(req, res));
 
 export default router;

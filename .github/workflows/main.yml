@@ -26,11 +26,10 @@ concurrency:
   group: ${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
-strategy:
-  matrix:
-    node: [16.x, 18.x, 21.x]
-
 jobs:
+  strategy:
+    matrix:
+      node: [16.x, 18.x, 21.x]
   install-cache:
     name: "Generate Cache"
     runs-on: ubuntu-latest

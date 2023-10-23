@@ -23,6 +23,7 @@ class ProvinceTracking {
   private _tracking: ProvinceStationTracking[];
   private _displayTemp: string;
   private _tempToTrack: string;
+  private _yesterdayPrecipDate: Date;
 
   constructor() {
     this.load();
@@ -91,13 +92,21 @@ class ProvinceTracking {
         const weather = new Weather(data);
         if (!weather) throw "Unable to parse weather data";
 
-        // store the precip for yesterday
-        const { yesterdayConditions } = weather.all;
-        const yesterdayPrecip =
-          (station.station.code === DEFAULT_WEATHER_STATION_ID
-            ? historicalData.yesterdayPrecipData().amount
-            : yesterdayConditions.precip?.value) ?? "MISSING";
-        station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
+        // store the precip for yesterday if there's no data or its after 2am
+        // 2am seems to be when the api returns yesterday's data
+        if (station.yesterdayPrecip === null || this.shouldUpdatePrecipData()) {
+          const { yesterdayConditions } = weather.all;
+
+          // if winnipeg then use historical data, otherwise we can use the data from the conditions api
+          const yesterdayPrecip =
+            (station.station.code === DEFAULT_WEATHER_STATION_ID
+              ? historicalData.yesterdayPrecipData().amount
+              : yesterdayConditions.precip?.value) ?? "MISSING";
+          station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
+
+          // store what date this data is from
+          this._yesterdayPrecipDate = conditions.observedDateTimeAtStation();
+        }
 
         // get the temperature reading
         const temp = weather.current?.temperature?.value;
@@ -159,6 +168,14 @@ class ProvinceTracking {
     else this._displayTemp = PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP;
   }
 
+  private shouldUpdatePrecipData() {
+    const time = conditions?.observedDateTimeAtStation();
+    const hour = time.getHours();
+
+    // if it's after 2am we can update precip data, if not leave it as is
+    return hour >= 2;
+  }
+
   private load() {
     logger.log("Loading province tracking from", PROVINCE_TRACKING_FILE);
     try {
@@ -188,7 +205,11 @@ class ProvinceTracking {
   }
 
   public provinceTracking() {
-    return { tracking: this._tracking, isOvernight: this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP };
+    return {
+      tracking: this._tracking,
+      isOvernight: this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP,
+      yesterdayPrecipDate: (this._yesterdayPrecipDate || conditions.observedDateTimeAtStation()).toISOString(),
+    };
   }
 }
 

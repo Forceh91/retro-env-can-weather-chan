@@ -11,7 +11,7 @@ type ProvinceTrackingProps = {
 
 export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
   const { tracking, weatherStationTime, onComplete } = props ?? {};
-  const { tracking: stations = null, isOvernight = true } = tracking ?? {};
+  const { tracking: stations = null, isOvernight = true, yesterdayPrecipDate } = tracking ?? {};
 
   useEffect(() => {
     if (!stations?.length) onComplete();
@@ -19,13 +19,16 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
 
   const stationTime = useMemo(() => {
     if (!weatherStationTime?.observedDateTime) return null;
-    return adjustObservedDateTimeToStationTime(weatherStationTime);
-  }, [weatherStationTime?.observedDateTime]);
+    return adjustObservedDateTimeToStationTime({
+      ...weatherStationTime,
+      observedDateTime: yesterdayPrecipDate ?? weatherStationTime.observedDateTime,
+    });
+  }, [yesterdayPrecipDate, weatherStationTime?.observedDateTime]);
 
   const dateString = useMemo(() => {
     if (!stationTime || !isValid(stationTime)) return "";
     return format(subDays(stationTime, 1), "MMM dd").replace(/\s0/i, "  ");
-  }, [weatherStationTime?.observedDateTime]);
+  }, [yesterdayPrecipDate, weatherStationTime?.observedDateTime]);
 
   if (!stations?.length) return <></>;
 

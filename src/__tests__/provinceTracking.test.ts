@@ -26,7 +26,10 @@ jest.mock("consts/server.consts", () => ({
 }));
 
 import { initializeProvinceTracking } from "lib/provincetracking/provinceTracking";
-import fakeTorontoWeather, { fakeTorontoWeatherLowTemp } from "./testdata/ecccData/provincetracking/fakeTorontoWeather";
+import fakeTorontoWeather, {
+  fakeTorontoWeatherLowTemp,
+  fakeTorontoWeatherYesterdayPrecip,
+} from "./testdata/ecccData/provincetracking/fakeTorontoWeather";
 import fakeOttawaWeather, { fakeOttawaWeatherLowTemp } from "./testdata/ecccData/provincetracking/fakeOttawaWeather";
 import expectedData from "./testdata/ecccData/provincetracking/expected";
 import fakeStoredData from "./testdata/ecccData/provincetracking/fakeStoredData.json";
@@ -207,5 +210,58 @@ describe("Provincial temp/precip tracking", () => {
       expect(tracking[1].displayTemp).toBe("M");
       expect(tracking[1].maxTemp).toBe(Math.max());
     });
+  });
+
+  it("updates yesterday precip data correctly (no data present)", (done) => {
+    jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => "");
+
+    moxios.wait(async () => {
+      await moxios.requests.at(0).respondWith({ status: 200, response: fakeOttawaWeather });
+
+      const { tracking } = provinceTracking.provinceTracking();
+      expect(tracking[0].yesterdayPrecip).toStrictEqual(expectedData.tracking[0].yesterdayPrecip);
+
+      done();
+    });
+
+    jest.useFakeTimers({ doNotFake: ["setTimeout"] });
+    jest.setSystemTime(dayTimeDate);
+    const provinceTracking = initializeProvinceTracking();
+  });
+
+  it("updates yesterday precip data correctly (after 2am)", (done) => {
+    jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => JSON.stringify(fakeStoredData));
+
+    moxios.wait(async () => {
+      await moxios.requests.at(0).respondWith({ status: 200, response: fakeOttawaWeather });
+
+      const { tracking } = provinceTracking.provinceTracking();
+      expect(tracking[0].yesterdayPrecip).toStrictEqual(expectedData.tracking[0].yesterdayPrecip);
+      expect(provinceTracking.provinceTracking().yesterdayPrecipDate).toStrictEqual(precipDate.toISOString());
+
+      done();
+    });
+
+    const precipDate = new Date(2023, 9, 23, 3);
+    jest.useFakeTimers({ doNotFake: ["setTimeout"] });
+    jest.setSystemTime(precipDate);
+    const provinceTracking = initializeProvinceTracking();
+  });
+
+  it("doesn't update yesterday precip data before 2am", (done) => {
+    jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => JSON.stringify(fakeStoredData));
+
+    moxios.wait(async () => {
+      await moxios.requests.at(0).respondWith({ status: 200, response: fakeTorontoWeatherYesterdayPrecip });
+
+      const { tracking } = provinceTracking.provinceTracking();
+      expect(tracking[0].yesterdayPrecip).toStrictEqual(fakeStoredData[0].yesterdayPrecip);
+
+      done();
+    });
+
+    jest.useFakeTimers({ doNotFake: ["setTimeout"] });
+    jest.setSystemTime(new Date(2023, 9, 23, 1));
+    const provinceTracking = initializeProvinceTracking();
   });
 });

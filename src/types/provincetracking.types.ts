@@ -16,4 +16,5 @@ export type ProvinceStationTracking = {
 export type ProvinceTracking = {
   tracking: ProvinceStationTracking[];
   isOvernight: boolean;
+  yesterdayPrecipDate: string;
 };

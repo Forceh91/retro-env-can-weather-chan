@@ -237,7 +237,7 @@ describe("Provincial temp/precip tracking", () => {
 
       const { tracking } = provinceTracking.provinceTracking();
       expect(tracking[0].yesterdayPrecip).toStrictEqual(expectedData.tracking[0].yesterdayPrecip);
-      expect(provinceTracking.provinceTracking().yesterdayPrecipDate).toStrictEqual(precipDate.toISOString());
+      expect(provinceTracking.provinceTracking().yesterdayPrecipDate).toStrictEqual("Oct 22");
 
       done();
     });
@@ -256,7 +256,7 @@ describe("Provincial temp/precip tracking", () => {
 
       const { tracking } = provinceTracking.provinceTracking();
       expect(tracking[0].yesterdayPrecip).toStrictEqual(fakeStoredData[0].yesterdayPrecip);
-
+      expect(provinceTracking.provinceTracking().yesterdayPrecipDate).toBeFalsy();
       done();
     });
 

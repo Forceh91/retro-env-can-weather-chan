@@ -11,6 +11,7 @@ import Logger from "lib/logger";
 import { ProvinceStationTracking, ProvinceStations } from "types";
 import { initializeCurrentConditions, initializeHistoricalTempPrecip } from "lib/eccc";
 import eventbus from "lib/eventbus";
+import { format, subDays } from "date-fns";
 
 const logger = new Logger("ProvinceTracking");
 const PROVINCE_TRACKING_FILE = "db/province_tracking.json";
@@ -23,7 +24,7 @@ class ProvinceTracking {
   private _tracking: ProvinceStationTracking[];
   private _displayTemp: string;
   private _tempToTrack: string;
-  private _yesterdayPrecipDate: Date;
+  private _yesterdayPrecipDate: string = "";
 
   constructor() {
     this.load();
@@ -105,7 +106,10 @@ class ProvinceTracking {
           station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
 
           // store what date this data is from
-          this._yesterdayPrecipDate = conditions.observedDateTimeAtStation();
+          this._yesterdayPrecipDate = format(subDays(conditions.observedDateTimeAtStation(), 1), "MMM dd").replace(
+            /\s0/i,
+            "  "
+          );
         }
 
         // get the temperature reading
@@ -208,7 +212,7 @@ class ProvinceTracking {
     return {
       tracking: this._tracking,
       isOvernight: this._displayTemp === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP,
-      yesterdayPrecipDate: (this._yesterdayPrecipDate || conditions.observedDateTimeAtStation()).toISOString(),
+      yesterdayPrecipDate: this._yesterdayPrecipDate,
     };
   }
 }

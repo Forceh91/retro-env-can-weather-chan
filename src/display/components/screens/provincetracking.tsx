@@ -1,4 +1,3 @@
-import { format, isValid, subDays } from "date-fns";
 import { adjustObservedDateTimeToStationTime } from "lib/date";
 import { useEffect, useMemo } from "react";
 import { ProvinceTracking, WeatherStationTimeData } from "types";
@@ -19,15 +18,7 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
 
   const stationTime = useMemo(() => {
     if (!weatherStationTime?.observedDateTime) return null;
-    return adjustObservedDateTimeToStationTime({
-      ...weatherStationTime,
-      observedDateTime: yesterdayPrecipDate ?? weatherStationTime.observedDateTime,
-    });
-  }, [yesterdayPrecipDate, weatherStationTime?.observedDateTime]);
-
-  const dateString = useMemo(() => {
-    if (!stationTime || !isValid(stationTime)) return "";
-    return format(subDays(stationTime, 1), "MMM dd").replace(/\s0/i, "  ");
+    return adjustObservedDateTimeToStationTime(weatherStationTime);
   }, [yesterdayPrecipDate, weatherStationTime?.observedDateTime]);
 
   if (!stations?.length) return <></>;
@@ -60,7 +51,7 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
       <div>
         {(isOvernight ? "Low:" : stationTime?.getHours() < 20 ? "Yesterday:" : "Today:").padStart(19)}
         {"".padStart(4)}
-        for {dateString}
+        for {yesterdayPrecipDate}
       </div>
       <ol>
         {stations.map((station) => (

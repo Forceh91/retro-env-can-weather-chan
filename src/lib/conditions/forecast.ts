@@ -89,6 +89,10 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/amount (\d+) - (\d+) mm/gi, "amount $1-$2mm");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // squish up the snowfall amount predicitons
+  abbreviatedSummary = abbreviatedSummary.replace(/amount (\d+) - (\d+) cm/gi, "amount $1-$2cm");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // temperature steady
   abbreviatedSummary = abbreviatedSummary.replace(/temperature/gi, "temp");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;

@@ -25,12 +25,24 @@ describe("forecast truncation", () => {
     expect(abbreviateForecast("wind southwest 20 km/h gusting to 40 km/h", forecastLengthWanted)).toStrictEqual(
       "wind SW 20g40"
     );
+
+    // rain amounts
     expect(abbreviateForecast("amount 5 - 10 mm", forecastLengthWanted)).toStrictEqual("amount 5-10mm");
     expect(abbreviateForecast("local amount 5 - 10 mm", forecastLengthWanted)).toStrictEqual("local amount 5-10mm");
     expect(abbreviateForecast("amount 15 - 30 mm", forecastLengthWanted)).toStrictEqual("amount 15-30mm");
+    // snow amounts
     expect(abbreviateForecast("amount 5 - 10 cm", forecastLengthWanted)).toStrictEqual("amount 5-10cm");
     expect(abbreviateForecast("local amount 5 - 10 cm", forecastLengthWanted)).toStrictEqual("local amount 5-10cm");
     expect(abbreviateForecast("amount 15 - 30 cm", forecastLengthWanted)).toStrictEqual("amount 15-30cm");
+    // rain amounts #2
+    expect(abbreviateForecast("amount 5 to 10 mm", forecastLengthWanted)).toStrictEqual("amount 5-10mm");
+    expect(abbreviateForecast("local amount 5 to 10 mm", forecastLengthWanted)).toStrictEqual("local amount 5-10mm");
+    expect(abbreviateForecast("amount 15 to 30 mm", forecastLengthWanted)).toStrictEqual("amount 15-30mm");
+    // snow amounts #2
+    expect(abbreviateForecast("amount 5 to 10 cm", forecastLengthWanted)).toStrictEqual("amount 5-10cm");
+    expect(abbreviateForecast("local amount 5 to 10 cm", forecastLengthWanted)).toStrictEqual("local amount 5-10cm");
+    expect(abbreviateForecast("amount 15 to 30 cm", forecastLengthWanted)).toStrictEqual("amount 15-30cm");
+
     expect(abbreviateForecast("midnight", forecastLengthWanted)).toStrictEqual("12am");
     expect(abbreviateForecast("temperature steady", forecastLengthWanted)).toStrictEqual("temp steady");
     expect(

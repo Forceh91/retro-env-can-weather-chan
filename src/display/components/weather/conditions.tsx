@@ -23,7 +23,7 @@ export function Conditions(props: ConditionsProp) {
   const {
     temperature: { value: temperatureValue, units: temperatureUnits },
     wind: {
-      speed: { value: windSpeedValue, units: windSpeedUnits },
+      speed: { value: windSpeedValue },
       gust: windGust,
       direction: windDirection,
     },
@@ -106,7 +106,7 @@ export function Conditions(props: ConditionsProp) {
             <span>{"".padEnd(5)}</span>
             <span className="reload-animation step-7">
               {windchill > 0 && <span>Wind Chill {windchill}</span>}
-              {airQuality?.value && <span>Air Quality {airQuality.textValue}</span>}
+              {!windchill && airQuality?.value && <span>Air Quality {airQuality.textValue}</span>}
             </span>
           </>
         )}

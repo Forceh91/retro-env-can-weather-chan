@@ -87,5 +87,8 @@ describe("forecast truncation", () => {
     expect(abbreviateForecast("fog patches developing after 12am", forecastLengthWanted)).toStrictEqual(
       "fog patches after 12am"
     );
+    expect(abbreviateForecast("partly cloudy", forecastLengthWanted)).toStrictEqual("ptly cldy");
+    expect(abbreviateForecast("mix of sun and cloud", forecastLengthWanted)).toStrictEqual("mix sun/cld");
+    expect(abbreviateForecast("a mix of sun and cloud", forecastLengthWanted)).toStrictEqual("mix sun/cld");
   });
 });

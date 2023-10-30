@@ -45,6 +45,14 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/thunderstorm/gi, "tstorm");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // partly cloudy
+  abbreviatedSummary = abbreviatedSummary.replace(/partly cloudy/gi, "ptly cldy");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // (a) mix of sun and cloud
+  abbreviatedSummary = abbreviatedSummary.replace(/(a\s)?mix of sun and cloud/gi, "mix sun/cld");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // now aim for gusting
   abbreviatedSummary = abbreviatedSummary.replace(/\sgusting to\s/gi, "g");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;

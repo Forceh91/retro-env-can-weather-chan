@@ -39,7 +39,7 @@ export function OutlookScreen(props: OutlookScreenProps) {
         period: forecastDay?.period,
         high: forecastDay?.temperature?.value,
         low: forecastNight?.temperature?.value,
-        condition: forecastDay?.conditions,
+        condition: (forecastDay?.conditions?.split("or")[0] ?? "").trim(),
       });
     }
 

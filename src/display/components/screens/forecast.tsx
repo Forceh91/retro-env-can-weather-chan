@@ -25,7 +25,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
     pageChangeTimeout.current = setTimeout(() => {
       if (page < MAX_FORECAST_PAGES) setPage(page + 1);
       else onComplete();
-    }, (page === 1 && isReload ? 5 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
+    }, (page === 1 && isReload ? 50 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
   }, [page]);
 
   useEffect(() => {

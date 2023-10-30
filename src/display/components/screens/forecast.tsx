@@ -21,11 +21,23 @@ export function ForecastScreen(props: ForecastScreenProps) {
   const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
+    // handle page change as normal
     pageChangeTimeout.current = setTimeout(() => {
       if (page < MAX_FORECAST_PAGES) setPage(page + 1);
       else onComplete();
-    }, (page === 1 && isReload ? 50 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
+    }, (page === 1 && isReload ? 5 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
   }, [page]);
+
+  useEffect(() => {
+    // if we're past the first page of forecast
+    if (page === 1) return;
+
+    // when a reload occurs, then clear the timeout for page change
+    pageChangeTimeout.current && clearTimeout(pageChangeTimeout.current);
+
+    // and send the user back to the first page
+    setPage(1);
+  }, [weatherStationResponse?.observationID]);
 
   // used to clear the page switching timeout
   useEffect(() => {

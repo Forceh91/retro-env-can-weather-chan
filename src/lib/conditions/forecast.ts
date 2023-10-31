@@ -57,6 +57,10 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/blowing snow/gi, "blwg snow");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // flurries
+  abbreviatedSummary = abbreviatedSummary.replace(/flurries/gi, "flrys");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // now aim for gusting
   abbreviatedSummary = abbreviatedSummary.replace(/\sgusting to\s/gi, "g");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;

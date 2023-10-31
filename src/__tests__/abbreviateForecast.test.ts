@@ -16,12 +16,8 @@ describe("forecast truncation", () => {
     expect(abbreviateForecast("low zero", forecastLengthWanted)).toStrictEqual("low 0");
     expect(abbreviateForecast("wind northeast 20 km/h", forecastLengthWanted)).toStrictEqual("wind NE 20");
     expect(abbreviateForecast("40 percent chance of showers", forecastLengthWanted)).toStrictEqual("40% chnc of shwrs");
-    expect(abbreviateForecast("100 percent chance of flurries", forecastLengthWanted)).toStrictEqual(
-      "100% chnc of flurries"
-    );
-    expect(abbreviateForecast("5 percent chance of flurries", forecastLengthWanted)).toStrictEqual(
-      "5% chnc of flurries"
-    );
+    expect(abbreviateForecast("100 percent chance of flrys", forecastLengthWanted)).toStrictEqual("100% chnc of flrys");
+    expect(abbreviateForecast("5 percent chance of flurries", forecastLengthWanted)).toStrictEqual("5% chnc of flrys");
     expect(abbreviateForecast("wind southwest 20 km/h gusting to 40 km/h", forecastLengthWanted)).toStrictEqual(
       "wind SW 20g40"
     );

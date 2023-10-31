@@ -53,6 +53,10 @@ export function abbreviateForecast(
   abbreviatedSummary = abbreviatedSummary.replace(/(a\s)?mix of sun and cloud/gi, "mix sun/cld");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // blowing snow
+  abbreviatedSummary = abbreviatedSummary.replace(/blowing snow/gi, "blwg snow");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // now aim for gusting
   abbreviatedSummary = abbreviatedSummary.replace(/\sgusting to\s/gi, "g");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
@@ -83,6 +87,14 @@ export function abbreviateForecast(
 
   // beginning
   abbreviatedSummary = abbreviatedSummary.replace(/beginning/gi, "bgng");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // increasing
+  abbreviatedSummary = abbreviatedSummary.replace(/increasing/gi, "incr");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // diminishing
+  abbreviatedSummary = abbreviatedSummary.replace(/diminishing/gi, "dmnshg");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
   // we don't want things like "a few"

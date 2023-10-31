@@ -90,5 +90,14 @@ describe("forecast truncation", () => {
     expect(abbreviateForecast("partly cloudy", forecastLengthWanted)).toStrictEqual("ptly cldy");
     expect(abbreviateForecast("mix of sun and cloud", forecastLengthWanted)).toStrictEqual("mix sun/cld");
     expect(abbreviateForecast("a mix of sun and cloud", forecastLengthWanted)).toStrictEqual("mix sun/cld");
+    expect(abbreviateForecast("blowing snow in outlying areas", forecastLengthWanted)).toStrictEqual(
+      "blwg snow in outlying areas"
+    );
+    expect(abbreviateForecast("wind north 20 kmh increasing to 50 gusting to 70", forecastLengthWanted)).toStrictEqual(
+      "wind north 20 kmh incr to 50g70"
+    );
+    expect(abbreviateForecast("then diminishing to 30 gusting to 50", forecastLengthWanted)).toStrictEqual(
+      "then dmnshg to 30g50"
+    );
   });
 });

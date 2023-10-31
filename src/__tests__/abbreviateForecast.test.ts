@@ -4,7 +4,12 @@ describe("Forecast Truncation", () => {
   const forecastLengthWanted = 5;
 
   test("Time", () => {
+    expect(abbreviateForecast("morning", forecastLengthWanted)).toStrictEqual("mrng");
+    expect(abbreviateForecast("afternoon", forecastLengthWanted)).toStrictEqual("aftn");
+    expect(abbreviateForecast("evening", forecastLengthWanted)).toStrictEqual("eve");
     expect(abbreviateForecast("midnight", forecastLengthWanted)).toStrictEqual("12am");
+    expect(abbreviateForecast("beginning", forecastLengthWanted)).toStrictEqual("bgng");
+    expect(abbreviateForecast("occasional", forecastLengthWanted)).toStrictEqual("ocnl");
   });
 
   test("Temperatures", () => {
@@ -30,7 +35,7 @@ describe("Forecast Truncation", () => {
 
   test("Wind speed increasing/decreasing", () => {
     expect(abbreviateForecast("wind north 20 kmh increasing to 50 gusting to 70", forecastLengthWanted)).toStrictEqual(
-      "wind N 20 kmh incr to 50g70"
+      "wind N 20 incr to 50g70"
     );
     expect(abbreviateForecast("then diminishing to 30 gusting to 50", forecastLengthWanted)).toStrictEqual(
       "then dmnshg to 30g50"
@@ -112,9 +117,7 @@ describe("Forecast Truncation", () => {
   });
 
   test("Wintery weather", () => {
-    expect(abbreviateForecast("blowing snow in outlying areas", forecastLengthWanted)).toStrictEqual(
-      "blwg snow in outlying areas"
-    );
+    expect(abbreviateForecast("blowing snow in outlying areas", forecastLengthWanted)).toStrictEqual("blwg snow");
     expect(abbreviateForecast("100 percent chance of flurries", forecastLengthWanted)).toStrictEqual(
       "100% chnc of flrys"
     );

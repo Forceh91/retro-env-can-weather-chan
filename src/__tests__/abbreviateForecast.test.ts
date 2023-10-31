@@ -30,7 +30,7 @@ describe("Forecast Truncation", () => {
 
   test("Wind speed increasing/decreasing", () => {
     expect(abbreviateForecast("wind north 20 kmh increasing to 50 gusting to 70", forecastLengthWanted)).toStrictEqual(
-      "wind north 20 kmh incr to 50g70"
+      "wind N 20 kmh incr to 50g70"
     );
     expect(abbreviateForecast("then diminishing to 30 gusting to 50", forecastLengthWanted)).toStrictEqual(
       "then dmnshg to 30g50"
@@ -119,5 +119,18 @@ describe("Forecast Truncation", () => {
       "100% chnc of flrys"
     );
     expect(abbreviateForecast("5 percent chance of flurries", forecastLengthWanted)).toStrictEqual("5% chnc of flrys");
+  });
+
+  test("Compass directions", () => {
+    expect(abbreviateForecast("wind north", forecastLengthWanted)).toStrictEqual("wind N");
+    expect(abbreviateForecast("wind east", forecastLengthWanted)).toStrictEqual("wind E");
+    expect(abbreviateForecast("wind south", forecastLengthWanted)).toStrictEqual("wind S");
+    expect(abbreviateForecast("wind west", forecastLengthWanted)).toStrictEqual("wind W");
+  });
+
+  test("Misc", () => {
+    expect(abbreviateForecast("local blowing snow in outlying areas this evening", forecastLengthWanted)).toStrictEqual(
+      "local blwg snow this eve"
+    );
   });
 });

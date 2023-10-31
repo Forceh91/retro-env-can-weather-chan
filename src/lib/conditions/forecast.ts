@@ -29,6 +29,10 @@ export function abbreviateForecast(
     .replace(/northwest/gi, "NW");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
+  // in outlying areas
+  abbreviatedSummary = abbreviatedSummary.replace(/in outlying areas\s/gi, "");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
   // developing doesn't need to be there (fog patches developing overnight)
   abbreviatedSummary = abbreviatedSummary.replace(/developing\s/gi, "");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
@@ -99,6 +103,14 @@ export function abbreviateForecast(
 
   // diminishing
   abbreviatedSummary = abbreviatedSummary.replace(/diminishing/gi, "dmnshg");
+  if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
+
+  // still no space so the short compass directions
+  abbreviatedSummary = abbreviatedSummary
+    .replace(/north/gi, "N")
+    .replace(/east/gi, "E")
+    .replace(/south/gi, "S")
+    .replace(/west/gi, "W");
   if (abbreviatedSummary.length <= maxCharacters) return abbreviatedSummary;
 
   // we don't want things like "a few"

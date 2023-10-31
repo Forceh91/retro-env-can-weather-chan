@@ -83,7 +83,8 @@ const abbreviateTimeOfDay = (forecast: string) =>
     .replace(/evening/gi, "eve")
     .replace(/midnight/gi, "12am")
     .replace(/beginning/gi, "bgng")
-    .replace(/occasional/gi, "ocnl");
+    .replace(/occasional/gi, "ocnl")
+    .replace(/early this eve/gi, "early eve");
 
 const removeGarbageWords = (forecast: string) =>
   forecast.replace(/\sin outlying areas/gi, "").replace(/developing\s/gi, "");
@@ -94,7 +95,8 @@ const removeJoiningWords = (forecast: string) =>
     .replace(/increasing/gi, "incr")
     .replace(/diminishing/gi, "dmnshg")
     .replace(/\sa few/gi, "")
-    .replace(/with/gi, "w/");
+    .replace(/with/gi, "w/")
+    .replace(/([a-z])\sor\s/gi, "$1/");
 
 const abbreviateLongCompassDirections = (forecast: string) =>
   forecast

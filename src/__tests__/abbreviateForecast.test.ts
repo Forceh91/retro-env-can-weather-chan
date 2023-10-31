@@ -10,6 +10,7 @@ describe("Forecast Truncation", () => {
     expect(abbreviateForecast("midnight", forecastLengthWanted)).toStrictEqual("12am");
     expect(abbreviateForecast("beginning", forecastLengthWanted)).toStrictEqual("bgng");
     expect(abbreviateForecast("occasional", forecastLengthWanted)).toStrictEqual("ocnl");
+    expect(abbreviateForecast("early this evening", forecastLengthWanted)).toStrictEqual("early eve");
   });
 
   test("Temperatures", () => {
@@ -114,6 +115,12 @@ describe("Forecast Truncation", () => {
     expect(abbreviateForecast("partly cloudy", forecastLengthWanted)).toStrictEqual("ptly cldy");
     expect(abbreviateForecast("mix of sun and cloud", forecastLengthWanted)).toStrictEqual("mix sun/cld");
     expect(abbreviateForecast("a mix of sun and cloud", forecastLengthWanted)).toStrictEqual("mix sun/cld");
+    expect(abbreviateForecast("30% chance of showers or tstorms", forecastLengthWanted)).toStrictEqual(
+      "30% chnc of shwrs/tstorms"
+    );
+    expect(abbreviateForecast("rain or flurries overnight", forecastLengthWanted)).toStrictEqual(
+      "rain/flrys overnight"
+    );
   });
 
   test("Wintery weather", () => {

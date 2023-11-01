@@ -86,8 +86,13 @@ describe("Flavour loading", () => {
 
 describe("Flavour utils", () => {
   it("detectes auto-duration screens correctly", () => {
-    const autoDurationScreens = [Screens.ALERTS, Screens.FORECAST, Screens.WINDCHILL];
-    const manualDurationScreens = [Screens.ALMANAC, Screens.CANADA_TEMP_CONDITIONS_EAST, Screens.LAST_MONTH_STATS];
+    const autoDurationScreens = [Screens.ALERTS, Screens.FORECAST];
+    const manualDurationScreens = [
+      Screens.ALMANAC,
+      Screens.CANADA_TEMP_CONDITIONS_EAST,
+      Screens.LAST_MONTH_STATS,
+      Screens.WINDCHILL,
+    ];
 
     autoDurationScreens.forEach((autoScreen) => expect(isAutomaticScreen(autoScreen)).toBeTruthy());
     manualDurationScreens.forEach((manualScreen) => expect(isAutomaticScreen(manualScreen)).toBeFalsy());

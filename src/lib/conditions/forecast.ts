@@ -9,7 +9,6 @@ export function abbreviateForecast(
 
   // abbreviate measurement units
   shortForecast = abbreviateUnits(shortForecast);
-  if (shortForecast.length <= maxCharacters) return shortForecast;
 
   // abbreviate temps
   shortForecast = abbreviateTemps(shortForecast);

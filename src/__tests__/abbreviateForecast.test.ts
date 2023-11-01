@@ -141,4 +141,39 @@ describe("Forecast Truncation", () => {
       "local blwg snow this eve"
     );
   });
+
+  test("Real forecasts with issues", () => {
+    expect(
+      abbreviateForecast(
+        "Partly cloudy. 30 percent chance of rain showers or flurries changing to 30 percent chance of flurries near midnight. Wind west 20 km/h becoming light early this evening. Low minus 2. Wind chill minus 4 overnight.",
+        forecastLengthWanted
+      )
+    ).toStrictEqual(
+      "ptly cldy. 30% chnc of rain shwrs/flrys until 12am. wind W 20 bcmg light early eve. low -2. wind chill -4 ovrngt."
+    );
+    expect(
+      abbreviateForecast(
+        "Partly cloudy. 30 percent chance of rain showers or flurries changing to 70 percent chance of flurries near midnight. Wind west 20 km/h becoming light early this evening. Low minus 2. Wind chill minus 4 overnight.",
+        forecastLengthWanted
+      )
+    ).toStrictEqual(
+      "ptly cldy. 30-70% chnc of rain shwrs/flrys until 12am. wind W 20 bcmg light early eve. low -2. wind chill -4 ovrngt."
+    );
+    expect(
+      abbreviateForecast(
+        "Partly cloudy. 70 percent chance of rain showers or flurries changing to 30 percent chance of flurries near midnight. Wind west 20 km/h becoming light early this evening. Low minus 2. Wind chill minus 4 overnight.",
+        forecastLengthWanted
+      )
+    ).toStrictEqual(
+      "ptly cldy. 30-70% chnc of rain shwrs/flrys until 12am. wind W 20 bcmg light early eve. low -2. wind chill -4 ovrngt."
+    );
+    expect(
+      abbreviateForecast(
+        "A mix of sun and cloud. 30 percent chance of flurries in the afternoon. Wind becoming west 20 km/h in the afternoon. High minus 1. Wind chill minus 14 in the morning and minus 5 in the afternoon. UV index 3 or moderate.",
+        forecastLengthWanted
+      )
+    ).toStrictEqual(
+      "mix sun/cld. 30% chnc of flrys in the aftn. wind bcmg W 20 in the aftn. high -1. wind chill -14 in the mrng and -5 in the aftn. uv index 3 or moderate."
+    );
+  });
 });

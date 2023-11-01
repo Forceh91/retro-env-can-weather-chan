@@ -112,14 +112,33 @@ const abbreviatePrecipitationPredictions = (forecast: string) =>
   forecast.replace(/amount (\d+) (-|to) (\d+) (cm|mm)/gi, "amount $1-$3$4");
 
 const abbreviateChanceOfPrecipitation = (forecast: string) => {
-  const initialAbbreviation = forecast.replace(/chance/gi, "chnc");
+  if (!forecast.includes("chance")) return forecast;
+
+  // precip is interesting. lets do abbreviations first
+  let abbreviation = forecast.replace(/chance/gi, "chnc");
   if (forecast.includes("near"))
-    return initialAbbreviation.replace(
+    abbreviation = abbreviation.replace(
       /(\d+)% chnc (.+?) changing to (\d+)% chnc .+(noon|midnigh)/gi,
       "$1-$3% chnc $2 until $4"
     );
+  else abbreviation = abbreviation.replace(/(\d+)% chnc (.+?) changing to (\d+)% chnc (.+)/gi, "$1-$3% chnc $4");
 
-  return initialAbbreviation.replace(/(\d+)% chnc (.+?) changing to (\d+)% chnc (.+)/gi, "$1-$3% chnc $4");
+  // if there's no range for the chance, return now
+  const chanceRangeRegex = /(\d+)-(\d+)%/g;
+  if (!new RegExp(chanceRangeRegex).test(abbreviation)) return abbreviation;
+
+  // then make sure the percentages are min-max%, or that its just one % if both numbers are the same
+  const matches = [...abbreviation.matchAll(chanceRangeRegex)];
+  const [, min, max] = matches[0];
+
+  const minNumber = Number(min);
+  const maxNumber = Number(max);
+
+  // if its the same just show one number%
+  if (minNumber === maxNumber) return abbreviation.replace(chanceRangeRegex, `${minNumber}%`);
+
+  // otherwise make sure min/max are right way round
+  return abbreviation.replace(chanceRangeRegex, `${Math.min(minNumber, maxNumber)}-${Math.max(minNumber, maxNumber)}%`);
 };
 
 const abbreviateShortCompassDirections = (forecast: string) =>

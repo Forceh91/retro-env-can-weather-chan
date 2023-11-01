@@ -81,7 +81,6 @@ const abbreviateTimeOfDay = (forecast: string) =>
     .replace(/morning/gi, "mrng")
     .replace(/afternoon/gi, "aftn")
     .replace(/evening/gi, "eve")
-    .replace(/overnight/gi, "ovrngt")
     .replace(/midnight/gi, "12am")
     .replace(/beginning/gi, "bgng")
     .replace(/occasional/gi, "ocnl")
@@ -112,29 +111,14 @@ const abbreviatePrecipitationPredictions = (forecast: string) =>
   forecast.replace(/amount (\d+) (-|to) (\d+) (cm|mm)/gi, "amount $1-$3$4");
 
 const abbreviateChanceOfPrecipitation = (forecast: string) => {
-  if (!forecast.includes("chance")) return forecast;
-
-  // precip is interesting. lets do abbreviations first
-  let abbreviation = forecast.replace(/chance/gi, "chnc");
+  const initialAbbreviation = forecast.replace(/chance/gi, "chnc");
   if (forecast.includes("near"))
-    abbreviation = abbreviation.replace(
+    return initialAbbreviation.replace(
       /(\d+)% chnc (.+?) changing to (\d+)% chnc .+(noon|midnigh)/gi,
       "$1-$3% chnc $2 until $4"
     );
-  else abbreviation = abbreviation.replace(/(\d+)% chnc (.+?) changing to (\d+)% chnc (.+)/gi, "$1-$3% chnc $4");
 
-  // if there's no range for the chance, return now
-  if (!abbreviation.includes("-")) return abbreviation;
-
-  // then make sure the percentages are min-max%, or that its just one % if both numbers are the same
-  const [min, max, ...rest] = abbreviation.split(/-|%/g);
-  if (!max) return abbreviation;
-
-  // now return after some edits
-  const minNumber = Number(min);
-  const maxNumber = Number(max);
-  if (minNumber === maxNumber) return `${minNumber}% ${rest.join(" ").trim()}`;
-  else return `${Math.min(minNumber, maxNumber)}-${Math.max(minNumber, maxNumber)}% ${rest.join(" ").trim()}`;
+  return initialAbbreviation.replace(/(\d+)% chnc (.+?) changing to (\d+)% chnc (.+)/gi, "$1-$3% chnc $4");
 };
 
 const abbreviateShortCompassDirections = (forecast: string) =>

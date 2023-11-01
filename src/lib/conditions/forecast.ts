@@ -81,6 +81,7 @@ const abbreviateTimeOfDay = (forecast: string) =>
     .replace(/morning/gi, "mrng")
     .replace(/afternoon/gi, "aftn")
     .replace(/evening/gi, "eve")
+    .replace(/overnight/gi, "ovrngt")
     .replace(/midnight/gi, "12am")
     .replace(/beginning/gi, "bgng")
     .replace(/occasional/gi, "ocnl")

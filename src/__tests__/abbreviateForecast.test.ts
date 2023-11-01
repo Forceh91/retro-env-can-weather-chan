@@ -104,7 +104,7 @@ describe("Forecast Truncation", () => {
 
   test("Condition developing", () => {
     expect(abbreviateForecast("fog patches developing overnight", forecastLengthWanted)).toStrictEqual(
-      "fog patches overnight"
+      "fog patches ovrngt"
     );
     expect(abbreviateForecast("fog patches developing after 12am", forecastLengthWanted)).toStrictEqual(
       "fog patches after 12am"
@@ -118,9 +118,7 @@ describe("Forecast Truncation", () => {
     expect(abbreviateForecast("30% chance of showers or tstorms", forecastLengthWanted)).toStrictEqual(
       "30% chnc of shwrs/tstorms"
     );
-    expect(abbreviateForecast("rain or flurries overnight", forecastLengthWanted)).toStrictEqual(
-      "rain/flrys overnight"
-    );
+    expect(abbreviateForecast("rain or flurries overnight", forecastLengthWanted)).toStrictEqual("rain/flrys ovrngt");
   });
 
   test("Wintery weather", () => {

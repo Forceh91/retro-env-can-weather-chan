@@ -84,7 +84,9 @@ const abbreviateTimeOfDay = (forecast: string) =>
     .replace(/midnight/gi, "12am")
     .replace(/beginning/gi, "bgng")
     .replace(/occasional/gi, "ocnl")
-    .replace(/early this eve/gi, "early eve");
+    .replace(/early this eve/gi, "early eve")
+    .replace(/early in the/gi, "early")
+    .replace(/late in the/gi, "late");
 
 const removeGarbageWords = (forecast: string) =>
   forecast.replace(/\sin outlying areas/gi, "").replace(/developing\s/gi, "");
@@ -92,7 +94,7 @@ const removeGarbageWords = (forecast: string) =>
 const removeJoiningWords = (forecast: string) =>
   forecast
     .replace(/becoming/gi, "bcmg")
-    .replace(/increasing/gi, "incr")
+    .replace(/(\s)?increasing/gi, "incr")
     .replace(/diminishing/gi, "dmnshg")
     .replace(/\sa few/gi, "")
     .replace(/with/gi, "w/")
@@ -153,4 +155,4 @@ const abbreviateConditions = (forecast: string) =>
 const abbreviateWinterConditions = (forecast: string) =>
   forecast.replace(/blowing snow/gi, "blwg snow").replace(/flurries/gi, "flrys");
 
-const finalAbbreviationAttempt = (forecast: string) => forecast.replace(/kmh\s/gi, "");
+const finalAbbreviationAttempt = (forecast: string) => forecast.replace(/kmh/gi, "");

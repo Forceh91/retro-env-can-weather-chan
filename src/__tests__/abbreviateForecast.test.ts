@@ -11,6 +11,24 @@ describe("Forecast Truncation", () => {
     expect(abbreviateForecast("beginning", forecastLengthWanted)).toStrictEqual("bgng");
     expect(abbreviateForecast("occasional", forecastLengthWanted)).toStrictEqual("ocnl");
     expect(abbreviateForecast("early this evening", forecastLengthWanted)).toStrictEqual("early eve");
+    expect(abbreviateForecast("wind becoming 20kmh early in the morning", forecastLengthWanted)).toStrictEqual(
+      "wind bcmg 20 early mrng"
+    );
+    expect(abbreviateForecast("wind becoming 30kmh early in the afternoon", forecastLengthWanted)).toStrictEqual(
+      "wind bcmg 30 early aftn"
+    );
+    expect(abbreviateForecast("wind becoming 40kmh early in the evening", forecastLengthWanted)).toStrictEqual(
+      "wind bcmg 40 early eve"
+    );
+    expect(abbreviateForecast("rain showers late in the morning", forecastLengthWanted)).toStrictEqual(
+      "rain shwrs late mrng"
+    );
+    expect(abbreviateForecast("rain showers late in the afternoon", forecastLengthWanted)).toStrictEqual(
+      "rain shwrs late aftn"
+    );
+    expect(abbreviateForecast("rain showers late in the evening", forecastLengthWanted)).toStrictEqual(
+      "rain shwrs late eve"
+    );
   });
 
   test("Temperatures", () => {

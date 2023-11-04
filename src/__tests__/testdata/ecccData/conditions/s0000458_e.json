@@ -32,7 +32,7 @@
     {
       "period": "Today",
       "textSummary": "A mix of sun and cloud with 30 percent chance of showers and risk of a thunderstorm. High 27. Humidex 32. UV index 7 or high.",
-      "abbreviatedTextSummary": "mix sun/cld w/ 30% chnc of shwrs and risk of a tstorm. high 27. humidex 32. uv index 7 or high.",
+      "abbreviatedTextSummary": "mix sun/cld w/ 30% chnc of shwrs & risk of a tstorm. high 27. humidex 32. uv index 7 or high.",
       "temperature": { "value": 27, "class": "high" },
       "conditions": "Chance of showers"
     },

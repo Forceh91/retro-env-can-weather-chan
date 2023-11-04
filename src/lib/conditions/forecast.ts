@@ -158,6 +158,6 @@ const abbreviateWinterConditions = (forecast: string) =>
     .replace(/blowing snow/gi, "blwg snow")
     .replace(/flurries/gi, "flrys")
     .replace(/freezing drizzle/gi, "frzg drzl")
-    .replace(/freezing rain/gi, "frzg");
+    .replace(/freezing rain/gi, "frzg rain");
 
 const finalAbbreviationAttempt = (forecast: string) => forecast.replace(/kmh/gi, "");

@@ -23,7 +23,7 @@ export function LastMonthScreen(props: LastMonthScreenProps) {
   const formatTemp = (value: number) =>
     value !== undefined ? ((value > 0 ? "+" : "") + value.toFixed(1).toString()).padStart(5) : "N/A";
   const formatDayWithSuffix = (value: number) => {
-    const date = new Date();
+    const date = subMonths(new Date(), 1);
     date.setDate(value);
     if (!isValid(date)) return value ?? "N/A";
 

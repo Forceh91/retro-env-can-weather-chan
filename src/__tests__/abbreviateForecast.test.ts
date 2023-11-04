@@ -191,7 +191,16 @@ describe("Forecast Truncation", () => {
         forecastLengthWanted
       )
     ).toStrictEqual(
-      "mix sun/cld. 30% chnc of flrys in the aftn. wind bcmg W 20 in the aftn. high -1. wind chill -14 in the mrng and -5 in the aftn. uv index 3 or moderate."
+      "mix sun/cld. 30% chnc of flrys in the aftn. wind bcmg W 20 in the aftn. high -1. wind chill -14 in the mrng & -5 in the aftn. uv index 3 or moderate."
+    );
+
+    expect(
+      abbreviateForecast(
+        "Cloudy. 30 percent chance of light snow early this afternoon with risk of freezing drizzle. Wind up to 15 km/h. High plus 1. Wind chill minus 5 this morning. UV index 1 or low.",
+        forecastLengthWanted
+      )
+    ).toStrictEqual(
+      "cloudy. 30% chnc of light snow early aftn w/ risk of frzg drzl. wind up to 15. high +1. wind chill -5 this mrng. uv index 1 or low."
     );
   });
 });

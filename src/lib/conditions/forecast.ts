@@ -84,7 +84,7 @@ const abbreviateTimeOfDay = (forecast: string) =>
     .replace(/midnight/gi, "12am")
     .replace(/beginning/gi, "bgng")
     .replace(/occasional/gi, "ocnl")
-    .replace(/early this eve/gi, "early eve")
+    .replace(/early this (mrng|aftn|eve)/gi, "early $1")
     .replace(/early in the/gi, "early")
     .replace(/late in the/gi, "late");
 
@@ -98,7 +98,8 @@ const removeJoiningWords = (forecast: string) =>
     .replace(/diminishing/gi, "dmnshg")
     .replace(/\sa few/gi, "")
     .replace(/with/gi, "w/")
-    .replace(/([a-z])\sor\s/gi, "$1/");
+    .replace(/([a-z])\sor\s/gi, "$1/")
+    .replace(/and/gi, "&");
 
 const abbreviateLongCompassDirections = (forecast: string) =>
   forecast
@@ -150,9 +151,13 @@ const abbreviateConditions = (forecast: string) =>
     .replace(/showers/gi, "shwrs")
     .replace(/thunderstorm/gi, "tstorm")
     .replace(/partly cloudy/gi, "ptly cldy")
-    .replace(/(a\s)?mix of sun and cloud/gi, "mix sun/cld");
+    .replace(/(a\s)?mix of sun (and|&) cloud/gi, "mix sun/cld");
 
 const abbreviateWinterConditions = (forecast: string) =>
-  forecast.replace(/blowing snow/gi, "blwg snow").replace(/flurries/gi, "flrys");
+  forecast
+    .replace(/blowing snow/gi, "blwg snow")
+    .replace(/flurries/gi, "flrys")
+    .replace(/freezing drizzle/gi, "frzg drzl")
+    .replace(/freezing rain/gi, "frzg");
 
 const finalAbbreviationAttempt = (forecast: string) => forecast.replace(/kmh/gi, "");

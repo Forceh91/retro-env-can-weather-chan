@@ -176,22 +176,27 @@ class HistoricalTempPrecip {
 
     const highTemps: LastMonthDayValue[] = [];
     const lowTemps: LastMonthDayValue[] = [];
+    const meanTemps: LastMonthDayValue[] = [];
     const precipValues: LastMonthDayValue[] = [];
 
     // loop through and grab all of the high/low temps and precip values
     lastMonthData.forEach((dayOfLastMonth) => {
       const maxTemp = Number(dayOfLastMonth.maxtemp._text);
       const minTemp = Number(dayOfLastMonth.mintemp._text);
+      const meanTemp = Number(dayOfLastMonth.meantemp._text);
 
       const day = Number(dayOfLastMonth._attributes.day);
       if (!isNaN(maxTemp)) highTemps.push({ day, value: maxTemp });
       if (!isNaN(minTemp)) lowTemps.push({ day, value: minTemp });
+      if (!isNaN(meanTemp)) meanTemps.push({ day, value: meanTemp });
+
       precipValues.push({ day, value: Number(dayOfLastMonth.totalprecipitation._text ?? 0) });
     });
 
-    // calculate the average high/low
+    // calculate the average high/low and mean
     const averageHigh = highTemps.reduce((acc, curr) => (acc += curr.value), 0) / highTemps.length;
     const averageLow = lowTemps.reduce((acc, curr) => (acc += curr.value), 0) / lowTemps.length;
+    const averageTemp = meanTemps.reduce((acc, curr) => (acc += curr.value), 0) / meanTemps.length;
 
     // calculate the total precip
     const totalPrecip = precipValues.reduce((acc, curr) => (acc += curr.value), 0);
@@ -214,6 +219,7 @@ class HistoricalTempPrecip {
     this._lastMonthSummary = {
       averageHigh,
       averageLow,
+      averageTemp,
       totalPrecip,
       warmestDay,
       coldestDay,

@@ -15,7 +15,10 @@ class ClimateNormals {
   private _apiURL: string;
   private _lastMonthName: string;
   private _normalPrecipForSeason: ClimateNormalSeasonPrecip = { amount: 0, unit: "mm" };
-  private _normalsForLastMonth: ClimateNormalsForMonth = { temperature: { min: 0, max: 0 }, precip: { amount: 0 } };
+  private _normalsForLastMonth: ClimateNormalsForMonth = {
+    temperature: { min: 0, max: 0, mean: 0 },
+    precip: { amount: 0 },
+  };
 
   constructor() {
     if (!config) return;
@@ -130,10 +133,14 @@ class ClimateNormals {
     const minTempElement = tempData.find(
       (tempDataElement) => tempDataElement._attributes.name === `min_temp_dly_${this._lastMonthName}`
     );
+    const meanTempElement = tempData.find(
+      (tempDataElement) => tempDataElement._attributes.name === `avg_temp_dly_${this._lastMonthName}`
+    );
 
     // and store to the normals
     this._normalsForLastMonth.temperature.max = Number(maxTempElement?._attributes.value);
     this._normalsForLastMonth.temperature.min = Number(minTempElement?._attributes.value);
+    this._normalsForLastMonth.temperature.mean = Number(meanTempElement?._attributes.value);
 
     logger.log("Processed normal min/max temps for last month", this._lastMonthName);
   }

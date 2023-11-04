@@ -5,6 +5,7 @@ export type HistoricalDataStat = {
   totalprecipitation: HistoricalDataItem;
   maxtemp: HistoricalDataItem;
   mintemp: HistoricalDataItem;
+  meantemp: HistoricalDataItem;
 };
 
 export type HistoricalDataStats = HistoricalDataStat[];
@@ -32,12 +33,13 @@ export type LastMonthDayValue = {
 
 export type LastMonth = {
   actual: LastMonthSummary;
-  normal: { temperature: { min: number; max: number }; precip: { amount: number } };
+  normal: { temperature: { min: number; max: number; mean: number }; precip: { amount: number } };
 };
 
 export type LastMonthSummary = {
   averageHigh: number;
   averageLow: number;
+  averageTemp: number;
   totalPrecip: number;
   warmestDay: { day: number; value: number };
   coldestDay: { day: number; value: number };

@@ -8,6 +8,7 @@
   "lastMonth": {
     "averageHigh": 27.148387096774197,
     "averageLow": 17.0741935483871,
+    "averageTemp": 22.138709677419357,
     "totalPrecip": 103.80000000000001,
     "warmestDay": { "day": 5, "value": 31.4 },
     "coldestDay": { "day": 12, "value": 12.5 }

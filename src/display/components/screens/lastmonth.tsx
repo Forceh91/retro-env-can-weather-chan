@@ -58,11 +58,11 @@ export function LastMonthScreen(props: LastMonthScreenProps) {
       {/* on the original channel this line mentioned where in records the precip amount came (1st, 3rd, 9th, etc.)*/}
       <div>
         {"Warmest Temp.".padEnd(14)}
-        {formatTemp(lastMonth.actual?.warmestDay.value)} on the {formatDayWithSuffix(lastMonth.actual?.warmestDay.day)}.
+        {formatTemp(lastMonth.actual?.warmestDay.value)} on the {formatDayWithSuffix(lastMonth.actual?.warmestDay.day)}
       </div>
       <div>
         {"Coldest Temp.".padEnd(14)}
-        {formatTemp(lastMonth.actual?.coldestDay.value)} on the {formatDayWithSuffix(lastMonth.actual?.coldestDay.day)}.
+        {formatTemp(lastMonth.actual?.coldestDay.value)} on the {formatDayWithSuffix(lastMonth.actual?.coldestDay.day)}
       </div>
     </div>
   );

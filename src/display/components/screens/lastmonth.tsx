@@ -49,12 +49,17 @@ export function LastMonthScreen(props: LastMonthScreenProps) {
         {formatNumber(lastMonth.normal?.temperature.min)}
       </div>
       <div>
+        {"Mean Temp".padEnd(15)}
+        {formatNumber(lastMonth.actual?.averageTemp)}
+        {"".padStart(4)}
+        {formatNumber(lastMonth.normal?.temperature.mean)}
+      </div>
+      <div>
         {"Precip (MM)".padEnd(15)}
         {formatNumber(lastMonth.actual?.totalPrecip)}
         {"".padStart(4)}
         {formatNumber(lastMonth.normal?.precip.amount)}
       </div>
-      <br />
       {/* on the original channel this line mentioned where in records the precip amount came (1st, 3rd, 9th, etc.)*/}
       <div>
         {"Warmest Temp.".padEnd(14)}

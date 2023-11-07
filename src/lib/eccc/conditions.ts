@@ -20,7 +20,12 @@ import {
   WeekForecast,
 } from "types";
 import { ecccDateStringToTSDate } from "lib/date";
-import { calculateWindchill, abbreviateForecast, harshTruncateConditions } from "lib/conditions";
+import {
+  calculateWindchill,
+  abbreviateForecast,
+  harshTruncateConditions,
+  frontLoadTemperatureOnForecast,
+} from "lib/conditions";
 import {
   FORECAST_THREE_ISH_LINES_WITH_PREFIX_MAX_LENGTH,
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
@@ -315,17 +320,20 @@ class CurrentConditions {
         day,
         textSummary,
         temperatures: {
+          textSummary: temperatureTextSummary,
           temperature: { value: temperatureValue, class: temperatureClass },
         },
         abbreviatedForecast: { textSummary: conditions },
       } = forecast;
       const period = !ix ? (day?.includes("night") ? "Tonight" : "Today") : day;
 
+      const frontLoadedTemperature = frontLoadTemperatureOnForecast(temperatureTextSummary, textSummary);
+
       return {
         period,
         textSummary,
         abbreviatedTextSummary: abbreviateForecast(
-          textSummary,
+          frontLoadedTemperature,
           !ix ? FORECAST_THREE_ISH_LINES_WITH_PREFIX_MAX_LENGTH : FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH
         ),
         temperature: { value: Number(temperatureValue), class: temperatureClass },

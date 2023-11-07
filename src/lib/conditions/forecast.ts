@@ -1,6 +1,6 @@
 import { FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH } from "consts/forecast.consts";
 
-// we use this function to make sure the forecast isn't trailing off the screen (32 chars per line, 8 lines per screen, forecast generally has either 4 lines or ~2 lines)
+// we use this function to make sure the forecast isn't trailing off the screen (32 chars per line, 8 lines per screen, forecast generally has either < 2 lines, 3 lines, or 4 lines)
 export function abbreviateForecast(
   forecastSummary: string,
   maxCharacters: number = FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH
@@ -161,3 +161,6 @@ const abbreviateWinterConditions = (forecast: string) =>
     .replace(/freezing rain/gi, "frzg rain");
 
 const finalAbbreviationAttempt = (forecast: string) => forecast.replace(/kmh/gi, "");
+
+export const frontLoadTemperatureOnForecast = (tempSummary: string, forecast: string) =>
+  `${tempSummary} ${forecast.replace(tempSummary, "").replace(/\s+/gi, " ")}`.trim();

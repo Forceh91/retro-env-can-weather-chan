@@ -72,12 +72,22 @@ export type ECCCForecast = {
   day: string;
   textSummary: string;
   temperatures: ECCCForecastTemperature;
+  windChill: ECCCForecastWindChill;
+  humidex: ECCCForecastHumidex;
   abbreviatedForecast: { textSummary: string };
 };
 
 export type ECCCForecastTemperature = {
   textSummary: string;
   temperature: { unitType: string; units: string; class: string; value: string };
+};
+
+export type ECCCForecastWindChill = {
+  textSummary: string;
+};
+
+export type ECCCForecastHumidex = {
+  textSummary: string;
 };
 
 export type ECCCClimateNormalElement = {

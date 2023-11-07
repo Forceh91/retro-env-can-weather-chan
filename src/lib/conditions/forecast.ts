@@ -163,4 +163,4 @@ const abbreviateWinterConditions = (forecast: string) =>
 const finalAbbreviationAttempt = (forecast: string) => forecast.replace(/kmh/gi, "");
 
 export const frontLoadTemperatureOnForecast = (tempSummary: string, forecast: string) =>
-  `${tempSummary} ${forecast.replace(tempSummary, "").replace(/\s+/gi, " ")}`.trim();
+  `${tempSummary} ${forecast.replace(tempSummary, "")}`.replace(/\s{2,}/gi, " ").trim();

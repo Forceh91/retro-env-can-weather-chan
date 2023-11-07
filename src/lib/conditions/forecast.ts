@@ -94,7 +94,7 @@ const removeGarbageWords = (forecast: string) =>
 const removeJoiningWords = (forecast: string) =>
   forecast
     .replace(/becoming/gi, "bcmg")
-    .replace(/(\s)?increasing/gi, "incr")
+    .replace(/increasing/gi, "incr")
     .replace(/diminishing/gi, "dmnshg")
     .replace(/\sa few/gi, "")
     .replace(/with/gi, "w/")

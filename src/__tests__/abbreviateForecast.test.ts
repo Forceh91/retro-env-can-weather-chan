@@ -11,13 +11,13 @@ describe("Forecast Truncation", () => {
     expect(abbreviateForecast("beginning", forecastLengthWanted)).toStrictEqual("bgng");
     expect(abbreviateForecast("occasional", forecastLengthWanted)).toStrictEqual("ocnl");
     expect(abbreviateForecast("early this evening", forecastLengthWanted)).toStrictEqual("early eve");
-    expect(abbreviateForecast("wind becoming 20kmh early in the morning", forecastLengthWanted)).toStrictEqual(
+    expect(abbreviateForecast("wind becoming 20 km/h early in the morning", forecastLengthWanted)).toStrictEqual(
       "wind bcmg 20 early mrng"
     );
-    expect(abbreviateForecast("wind becoming 30kmh early in the afternoon", forecastLengthWanted)).toStrictEqual(
+    expect(abbreviateForecast("wind becoming 30 km/h early in the afternoon", forecastLengthWanted)).toStrictEqual(
       "wind bcmg 30 early aftn"
     );
-    expect(abbreviateForecast("wind becoming 40kmh early in the evening", forecastLengthWanted)).toStrictEqual(
+    expect(abbreviateForecast("wind becoming 40 km/h early in the evening", forecastLengthWanted)).toStrictEqual(
       "wind bcmg 40 early eve"
     );
     expect(abbreviateForecast("rain showers late in the morning", forecastLengthWanted)).toStrictEqual(
@@ -53,7 +53,7 @@ describe("Forecast Truncation", () => {
   });
 
   test("Wind speed increasing/decreasing", () => {
-    expect(abbreviateForecast("wind north 20 kmh increasing to 50 gusting to 70", forecastLengthWanted)).toStrictEqual(
+    expect(abbreviateForecast("wind north 20 km/h increasing to 50 gusting to 70", forecastLengthWanted)).toStrictEqual(
       "wind N 20 incr to 50g70"
     );
     expect(abbreviateForecast("then diminishing to 30 gusting to 50", forecastLengthWanted)).toStrictEqual(

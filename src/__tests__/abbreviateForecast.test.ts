@@ -145,6 +145,9 @@ describe("Forecast Truncation", () => {
       "100% chnc of flrys"
     );
     expect(abbreviateForecast("5 percent chance of flurries", forecastLengthWanted)).toStrictEqual("5% chnc of flrys");
+    expect(abbreviateForecast("rain mixed with ice pellets", forecastLengthWanted)).toStrictEqual(
+      "rain mixed w/ ice plts"
+    );
   });
 
   test("Compass directions", () => {

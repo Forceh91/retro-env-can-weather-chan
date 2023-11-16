@@ -137,6 +137,7 @@ describe("Forecast Truncation", () => {
       "30% chnc of shwrs/tstorms"
     );
     expect(abbreviateForecast("rain or flurries overnight", forecastLengthWanted)).toStrictEqual("rain/flrys ovrngt");
+    expect(abbreviateForecast("a few clouds overnight", forecastLengthWanted)).toStrictEqual("few clouds ovrngt");
   });
 
   test("Wintery weather", () => {

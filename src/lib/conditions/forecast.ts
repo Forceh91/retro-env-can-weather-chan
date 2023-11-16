@@ -96,7 +96,7 @@ const removeJoiningWords = (forecast: string) =>
     .replace(/becoming/gi, "bcmg")
     .replace(/increasing/gi, "incr")
     .replace(/diminishing/gi, "dmnshg")
-    .replace(/\sa few/gi, "")
+    .replace(/a few/gi, "few")
     .replace(/with/gi, "w/")
     .replace(/([a-z])\sor\s/gi, "$1/")
     .replace(/and/gi, "&");

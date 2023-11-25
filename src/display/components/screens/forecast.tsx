@@ -78,7 +78,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
       `Forecast for ${immediateForecast.period}..${immediateForecast.abbreviatedTextSummary}`,
       alert ? 3 : 4
     );
-  }, [weatherStationResponse?.stationTime?.observedDateTime]);
+  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
 
   // format the first forecast on the current page
   const formattedPageForecast1 = useMemo(() => {

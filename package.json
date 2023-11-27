@@ -30,7 +30,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@release-it/conventional-changelog": "^6.0.0",
+    "@release-it/conventional-changelog": "^8.0.1",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~4.5.19",
     "@vue/cli-plugin-unit-jest": "^4.5.19",
@@ -41,7 +41,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.20.0",
     "jsdom": "^22.1.0",
-    "release-it": "^15.11.0",
+    "release-it": "^17.0.0",
     "sass": "^1.69.5",
     "sass-loader": "^8.0.0",
     "vue-jest": "^5.0.0-alpha.10",

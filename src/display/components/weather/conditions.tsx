@@ -41,7 +41,7 @@ export function Conditions(props: ConditionsProp) {
 
   const formattedTemperature = useMemo(
     () =>
-      (temperatureValue && !isNaN(temperatureValue)
+      (temperatureValue !== null && !isNaN(temperatureValue)
         ? `${Math.round(temperatureValue)} ${temperatureUnits ?? ""}`
         : "N/A"
       ).padStart(5),

@@ -40,7 +40,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.20.0",
-    "jsdom": "^22.1.0",
+    "jsdom": "^23.0.1",
     "release-it": "^15.11.0",
     "sass": "^1.69.5",
     "sass-loader": "^8.0.0",

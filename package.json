@@ -16,7 +16,7 @@
     "bootstrap": "^5.3.2",
     "bootstrap-vue-3": "^0.4.15",
     "cli-select": "^1.1.2",
-    "core-js": "^3.33.3",
+    "core-js": "^3.34.0",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
     "ec-weather-js": "^1.2.0",

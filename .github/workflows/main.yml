@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
+      - name: Use Node.js
         uses: actions/setup-node@v3
       - name: Cache yarn dependencies
         uses: actions/cache@v3
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16.x, 18.x, 20.x, 21.x]
+        node: [18.x, 20.x, 21.x]
     needs: install-cache
     steps:
       - name: Checkout Commit
@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16.x, 18.x, 20.x, 21.x]
+        node: [18.x, 20.x, 21.x]
       fail-fast: false
     needs: unit-test
     steps:

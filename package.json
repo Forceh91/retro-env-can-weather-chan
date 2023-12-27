@@ -12,7 +12,7 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "amqp": "^0.2.7",
-    "axios": "^1.6.0",
+    "axios": "^1.6.3",
     "bootstrap": "^5.3.2",
     "bootstrap-vue-3": "^0.4.15",
     "cli-select": "^1.1.2",

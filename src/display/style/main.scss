@@ -1,0 +1,87 @@
+@import "./vars.scss";
+@import "./theme.scss";
+@import "./conditions.scss";
+@import "./forecast.scss";
+@import "./alerts.scss";
+@import "./fonts/ws4000/star4000.scss";
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 16px;
+  overflow: hidden;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+#weather_channel {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background: #000;
+  color: #fff;
+  font-family: "consolas";
+  font-size: 30px;
+  font-weight: 400;
+  height: $channel_max_height;
+  line-height: 1;
+  overflow: hidden;
+  text-transform: uppercase;
+  white-space: pre;
+  width: $channel_max_width;
+
+  @include ws4000_body;
+
+  #crawler {
+    align-items: flex-end;
+    background: $crawler_bar_background_col;
+    display: flex;
+    font-size: 34px;
+    justify-content: flex-end;
+    height: $crawler_bar_height;
+    overflow: hidden;
+    padding: 0 10%;
+    padding-bottom: 10px;
+    width: 100%;
+
+    .rfm-marquee-container {
+      overflow: hidden;
+
+      .rfm-child {
+        margin-right: $channel_max_width;
+      }
+    }
+  }
+
+  #display {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: $display_area_height;
+    overflow: hidden;
+    padding: 0 10%;
+    width: 100%;
+
+    .centre-align {
+      text-align: center;
+    }
+  }
+
+  #footer_bar {
+    background: $footer_bar_background_col;
+    height: $footer_bar_height;
+    overflow: hidden;
+    padding: 0 10%;
+    text-align: center;
+    width: 100%;
+  }
+}

@@ -6,8 +6,8 @@ on:
       - master
     paths:
       - "**.js"
-      - "**.spec.js"
-      - "**.vue"
+      - "**.ts"
+      - "**.test.ts"
       - "**.json"
       - "**.yml"
       - "yarn.lock"
@@ -16,8 +16,8 @@ on:
       - master
     paths:
       - "**.js"
-      - "**.spec.js"
-      - "**.vue"
+      - "**.ts"
+      - "**.test.ts"
       - "**.json"
       - "**.yml"
       - "yarn.lock"
@@ -30,16 +30,11 @@ jobs:
   install-cache:
     name: "Generate Cache"
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [16.x]
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
+      - name: Use Node.js
         uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
       - name: Cache yarn dependencies
         uses: actions/cache@v3
         id: cache-dependencies
@@ -52,12 +47,13 @@ jobs:
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
           yarn install --force --non-interactive
+
   unit-test:
     name: "Unit Testing"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16.x]
+        node: [18.x, 20.x, 21.x]
     needs: install-cache
     steps:
       - name: Checkout Commit
@@ -77,12 +73,14 @@ jobs:
       - name: Run test
         run: |
           yarn test
+
   build:
     name: "Production Build"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16.x]
+        node: [18.x, 20.x, 21.x]
+      fail-fast: false
     needs: unit-test
     steps:
       - name: Checkout Commit
@@ -101,31 +99,27 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Run build
         run: |
-          yarn build
+          yarn build:display
       - name: Get build version
         run: |
           BUILD_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g')
           echo "build_version=v$BUILD_VERSION" >> $GITHUB_ENV
           echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          mkdir db
-          mkdir music
-          touch alerts/.EMPTY_DIRECTORY
-          touch cfg/.EMPTY_DIRECTORY
-          touch db/.EMPTY_DIRECTORY
-          touch music/.EMPTY_DIRECTORY
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.build_version }}-${{ env.commit_hash }}
+          name: ${{ env.build_version }}-${{ env.commit_hash }}-node-${{ matrix.node }}
           path: |
+            src/api
+            src/consts
+            src/hooks
+            src/lib
+            src/routes
+            src/types
+            src/*.ts
             dist
-            alerts
-            cfg
-            db
-            music
-            config
+            tsconfig.json
             package.json
             yarn.lock
             README.md
-            *.js
           retention-days: 1

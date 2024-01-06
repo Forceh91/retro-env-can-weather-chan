@@ -1,0 +1,16 @@
+{
+  "temperatures": { "max": { "value": 33.9, "unit": "C" }, "min": { "value": 22.8, "unit": "C" } },
+  "precipitation": {
+    "summer": { "amount": 382, "normal": 0, "season": "summer", "type": "rain", "unit": "mm" },
+    "winter": { "amount": 427.9, "normal": 0, "season": "winter", "type": "rain", "unit": "mm" },
+    "yesterday": { "amount": 7, "normal": 0, "type": "rain", "unit": "mm" }
+  },
+  "lastMonth": {
+    "averageHigh": 27.148387096774197,
+    "averageLow": 17.0741935483871,
+    "averageTemp": 22.138709677419357,
+    "totalPrecip": 103.80000000000001,
+    "warmestDay": { "day": 5, "value": 31.4 },
+    "coldestDay": { "day": 12, "value": 12.5 }
+  }
+}

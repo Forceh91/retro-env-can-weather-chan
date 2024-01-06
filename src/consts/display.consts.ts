@@ -1,0 +1,2 @@
+export const DISPLAY_MAX_CHARACTERS_PER_LINE = 32;
+export const DISPLAY_MAX_LINES = 8;

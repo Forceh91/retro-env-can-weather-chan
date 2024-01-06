@@ -1,0 +1,16 @@
+{
+  "primaryLocation": { "province": "ON", "location": "s0000458", "name": "Toronto" },
+  "provinceHighLowEnabled": true,
+  "historicalDataStationID": 51459,
+  "climateNormals": { "stationID": 5051, "climateID": 6158350, "province": "ON" },
+  "lookAndFeel": {},
+  "misc": { "rejectInHourConditionUpdates": true },
+  "provinceStations": [
+    { "name": "Toronto", "code": "ON/s0000458" },
+    { "name": "Ottawa", "code": "ON/s0000623" },
+    { "name": "Hamilton", "code": "ON/s0000549" },
+    { "name": "London", "code": "ON/s0000326" },
+    { "name": "Kitchener", "code": "ON/s0000573" },
+    { "name": "Windsor", "code": "ON/s0000646" }
+  ]
+}

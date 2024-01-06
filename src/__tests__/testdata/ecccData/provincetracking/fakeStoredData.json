@@ -1,0 +1,44 @@
+[
+  {
+    "station": { "name": "Toronto", "code": "ON/s0000458" },
+    "minTemp": 23.4,
+    "maxTemp": 28.4,
+    "displayTemp": 23.4,
+    "yesterdayPrecip": 0
+  },
+  {
+    "station": { "name": "Ottawa", "code": "ON/s0000623" },
+    "minTemp": 22.6,
+    "maxTemp": 22.4,
+    "displayTemp": 22.6,
+    "yesterdayPrecip": 0
+  },
+  {
+    "station": { "name": "Hamilton", "code": "ON/s0000549" },
+    "minTemp": 20.8,
+    "maxTemp": 26.6,
+    "displayTemp": 20.8,
+    "yesterdayPrecip": 0
+  },
+  {
+    "station": { "name": "London", "code": "ON/s0000326" },
+    "minTemp": 22.1,
+    "maxTemp": 25.8,
+    "displayTemp": 22.1,
+    "yesterdayPrecip": 0
+  },
+  {
+    "station": { "name": "Kitchener", "code": "ON/s0000573" },
+    "minTemp": 21.7,
+    "maxTemp": 26.5,
+    "displayTemp": 21.7,
+    "yesterdayPrecip": 0
+  },
+  {
+    "station": { "name": "Windsor", "code": "ON/s0000646" },
+    "minTemp": 22.3,
+    "maxTemp": 26.7,
+    "displayTemp": 22.3,
+    "yesterdayPrecip": 0
+  }
+]

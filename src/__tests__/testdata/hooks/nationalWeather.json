@@ -1,0 +1,155 @@
+{
+  "mb": [
+    {
+      "name": "Portage",
+      "code": "MB/s0000626",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 20.1
+    },
+    {
+      "name": "Brandon",
+      "code": "MB/s0000492",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 18.6
+    },
+    {
+      "name": "Dauphin",
+      "code": "MB/s0000508",
+      "condition": "Cloudy",
+      "abbreviatedCondition": "cloudy",
+      "temperature": 15.3
+    },
+    {
+      "name": "Kenora",
+      "code": "ON/s0000651",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 19.1
+    },
+    {
+      "name": "Thompson",
+      "code": "MB/s0000695",
+      "condition": "Mainly Sunny",
+      "abbreviatedCondition": "mainly sunny",
+      "temperature": 18.4
+    },
+    {
+      "name": "The Pas",
+      "code": "MB/s0000644",
+      "condition": "Partly Cloudy",
+      "abbreviatedCondition": "partly cloudy",
+      "temperature": 15.8
+    },
+    {
+      "name": "Lynn Lake",
+      "code": "MB/s0000777",
+      "condition": "Sunny",
+      "abbreviatedCondition": "sunny",
+      "temperature": 19.7
+    }
+  ],
+  "east": [
+    {
+      "name": "Toronto",
+      "code": "ON/s0000458",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 23.3
+    },
+    {
+      "name": "Ottawa",
+      "code": "ON/s0000623",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 21.4
+    },
+    {
+      "name": "Montreal",
+      "code": "QC/s0000635",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 18.1
+    },
+    {
+      "name": "Quebec City",
+      "code": "QC/s0000620",
+      "condition": "Light Rain",
+      "abbreviatedCondition": "light rain",
+      "temperature": 15.1
+    },
+    {
+      "name": "Fredericton",
+      "code": "NB/s0000250",
+      "condition": "Cloudy",
+      "abbreviatedCondition": "cloudy",
+      "temperature": 17.9
+    },
+    {
+      "name": "Halifax",
+      "code": "NS/s0000318",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 22
+    },
+    {
+      "name": "St. John's",
+      "code": "NL/s0000280",
+      "condition": "Partly Cloudy",
+      "abbreviatedCondition": "partly cloudy",
+      "temperature": 17.1
+    }
+  ],
+  "west": [
+    {
+      "name": "Vancouver",
+      "code": "BC/s0000141",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 19.3
+    },
+    {
+      "name": "Victoria",
+      "code": "BC/s0000775",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 21.9
+    },
+    {
+      "name": "Edmonton",
+      "code": "AB/s0000510",
+      "condition": "Partly Cloudy",
+      "abbreviatedCondition": "partly cloudy",
+      "temperature": 16.7
+    },
+    {
+      "name": "Calgary",
+      "code": "AB/s0000047",
+      "condition": "Partly Cloudy",
+      "abbreviatedCondition": "partly cloudy",
+      "temperature": 19
+    },
+    {
+      "name": "Saskatoon",
+      "code": "SK/s0000797",
+      "condition": "Partly Cloudy",
+      "abbreviatedCondition": "partly cloudy",
+      "temperature": 18
+    },
+    {
+      "name": "Regina",
+      "code": "SK/s0000788",
+      "condition": "Cloudy",
+      "abbreviatedCondition": "cloudy",
+      "temperature": 15.5
+    },
+    {
+      "name": "Thunder Bay",
+      "code": "ON/s0000411",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 21
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "alerts": [
+    {
+      "url": "https://dd.weather.gc.ca/alerts/cap/20230805/LAND/22/T_ONCN00_C_LAND_202308052237_1211373515.cap",
+      "identifier": "urn:oid:2.49.0.1.124.1211373515.2023",
+      "sent": "2023-08-05T22:44:46.000Z",
+      "expires": "2023-08-06T01:36:22.000Z",
+      "headline": "severe thunderstorm warning in effect",
+      "description": "At 5:37 p.m. CDT (6:37 p.m. EDT), Environment Canada meteorologists are tracking a severe thunderstorm capable of producing strong wind gusts and up to nickel size hail.\n\nThis severe thunderstorm is located near Flindt Lake, moving southeast at 30 km/h. \n\nHazard: Strong wind gusts and nickel size hail.\n\nLocations impacted include:\nFlet Lake, Flindt Lake and Allan Water.\n\nAnother thunderstorm is located 5 kilometres southwest of Vincent Lake, moving east at 45 km/h. \n\nHazard: Strong wind gusts and nickel size hail.\n\nLocations impacted include:\nSt. Raphael Lake, Hooker Lake, Vincent Lake and Hill Lake.\n\n###\n\nLarge hail can damage property and cause injury. Strong wind gusts can toss loose objects, damage weak buildings, break branches off trees and overturn large vehicles. Locally heavy rain is also possible.\n\nSevere thunderstorm warnings are issued when imminent or occurring thunderstorms are likely to produce or are producing one or more of the following: large hail, damaging winds, torrential rainfall.",
+      "severity": 2,
+      "urgency": 4
+    }
+  ]
+}

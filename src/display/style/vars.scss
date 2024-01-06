@@ -1,0 +1,15 @@
+$channel_max_width: 640px;
+$channel_max_height: 480px;
+$crawler_bar_height: 75px;
+$footer_bar_height: 100px;
+$display_area_height: $channel_max_height - $crawler_bar_height - $footer_bar_height;
+$font_size_8_lines: calc($display_area_height / 8);
+
+body {
+  --channel-max-width: #{$channel_max_width};
+  --channel-max-height: #{$channel_max_height};
+  --crawler-bar-height: #{$crawler_bar_height};
+  --footer-bar-height: #{$footer_bar_height};
+  --display-area-height: #{$display_area_height};
+  --ideal-font-size: #{$font_size_8_lines};
+}

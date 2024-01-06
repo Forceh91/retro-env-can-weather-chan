@@ -1,137 +1,135 @@
-# v1 will no longer be supported after 2023-12-31
+# Retro Envrionment Canada Weather Channel
 
-Starting from 2024 v1 will no longer receives updates so you should make sure to update your simulator to v2. This will involve redoing you config and you may lose some data during the switch over.
+This project is a simulator of the Environemnt Canada Weather Channel that Winnipeg broadcast via cable from the 80s to the early 2000s. This project aims to recreate the mid-90s version of the channel.
 
-# Retro Environment Canada Weather Channel
+## Features
 
-This project is intended to be a loose recreation of the Environment Canada Weather Channel that was commonly found in Winnipeg in the 80s-90s. This is modeled after the 1995 version. This is the most accurate version of this you will find outside of the original weather channel.
+This project includes all of the features from the original weather channel such as:
 
-All data for the weather channel is sourced from [Environment Canada](https://weather.gc.ca/).
+- Weather alerts/warnings/watches issued by ECCC (based off weather station lat/long)
+- Current conditions and forecast
+- 5 day outlook
+- Temperature records for last year, normal, and all-time
+- Air Quality Health Index readings and warnings
+- Province temperature and precipitation tracking
+- Conditions across Canada (MB, West, East)
+- Conditions across the US
+- Sunspot forecats
+- Stats for the current day (sunrise/set, Canada hot/cold spots) and total precipitation for the current season
+- Stats for last month
+- Windchill (in the old watts per square metre format)
+- Flavours
 
-Once up and running the weather channel will be accessible from your [browser](http://localhost:8600/#/).
+Some of the above features are season/time of month specific and will automatically come and go as required
 
-![forecast](images/forecast.png)
-![outlook](images/outlook.png)
-![almanac](images/almanac-temps.png)
-![province-tracking](images/province-tracking.png)
-![observations](images/observations.png)
-![citystats](images/citystats.png)
+## Project Setup
 
-## Current Features
+### Dependencies
 
-- Air Quality readings
-- Windchill
-- Forecast (+ Current conditions)
-- Outlook
-- Almanac Data (Sunset/Rise, High/Low Temp Records, Last Year Temp)
-- Alerts/Warnings/Watches
-- High/Low/Precip for the day around the province of your choice (config coming soon)
-- Latest Hourly Observation for various cities (Canada/US)
-- Precipitation Amounts per season (Apr 1st - Sept 30th / Oct 1st - Mar 31st)
-- Canada Hot/Cold Spots for the day
-- Last month summary (first 5 days of month)
-- Custom playlist
-- Custom crawler messages for adverts/general info
+This project has a few dependencies that need downloading and installing before you can use it
 
-## Planned Features
+- Internet connection
+- [Node v16 or above](https://nodejs.org/en)
+- [Yarn package manager](https://yarnpkg.com/)
 
-- Customizable screen rotation
+### Installation
 
-## Requirements
-
-To run this project you will need an internet connection and (at least) [Node v14.6.1](https://nodejs.org/en/download/).
-
-NPM will be installed along with Node however I recommend using [Yarn](https://yarnpkg.com/) for this project.
-
-Before continuing along with this guide make sure you run the following to install the project dependencies.
+Once you have download (and extracted) either the repository or the latest release you need to open your terminal window and navigate to the folder this project is based in and install the required Node modules
 
 ```
 yarn install
 ```
 
-## Starting the channel
-
-Before you can configure the channel or even access the channel in your browser, you will need to start the server portion of the application. This is done by running the following command:
-
-```
-node backend.js
-```
-
-If sucessful you should see the following in your command prompt:
-
-```
-Generating crawler from ./cfg/crawl.txt...
-Generating playlist from `music` folder...
-[CONFIG] No config file found, loading defaults
-[CONFIG] Configuration can be set via http://localhost:8600/#/config
-[RECW] Application started, listening on http://localhost:8600
-[ALERT MONITORING] Starting alert monitoring via AMQP...
-[ALERT MONITORING] No stored alerts
-Generated a playlist of 1 files...
-Generated a crawler list of 2 messages
-```
-
-## Server Configuration
-
-You can start the app without configuration if you want to setup a weather channel for Winnipeg, however if you want to customize where the weather channel is located you should head over to the configuration page.
-
-http://localhost:8600/#/config
-
-![config](images/config.png)
-
-## Adding music to your channel
-
-**retro-env-canada-weather-chan** supports adding a playlist of your choosing to be played whilst displaying the channel in the browser.
-
-Playlist creation is done simply by placing `.mp3` files into a `music` folder in this root directory.
-
-When you start the backend you will then see it check and generate a playlist for you based off of the files found in that directory.
-
-The [config](http://localhost:8600/#/config) page has the option to reload the playlist without restarting the backend portion of the application.
-
-```
-Generating playlist from `music` folder...
-Generated a playlist of 62 files...
-```
-
-## Adding crawler messages to your channel
-
-**retro-env-canada-weather-chan** supports adding custom crawler messages along the top bar for adverts and general info.
-
-Crawler messages can be added using the [config](http://localhost:8600/#/config) page and saving the crawler messages will force a reload on the channel within the next 5 minutes.
-
-```
-a small crawler message
-a second small crawler message
-```
-
-When you start the backend you will then see it check and generate your crawler messages for you.
-
-```
-Generating crawler from ./cfg/crawl.txt...
-Generated a crawler list of 2 messages
-```
-
-## Accessing the channel
+## Running the simulator
 
 ### End-users
 
-If you don't intend on doing any development for the project you you need to run the following
+If you have download the project from the releases page then all you need to do is run the following command in your terminal window.
 
 ```
-yarn build
+yarn start
 ```
 
-Once this is done, you can navigate to the channel in your [browser](http://localhost:8600/) as instructed by your terminal window.
+If successful you should see something similar to below in your terminal window
 
-The output will fill your browser however the actual screen area will be limited to 640x480.
+```
+yarn run v1.22.10
+$ tsx src/server.ts
+[2023-10-14 13:34:52] [CONFIG] Loading config file (./cfg/rwc-config.json) ...
+[2023-10-14 13:34:52] [CONFIG] Loaded weather channel. Location: Toronto, ON (s0000458)
+[2023-10-14 13:34:52] [CONFIG] Checking available flavours from cfg/flavours
+[2023-10-14 13:34:52] [CONFIG] Loading flavour (screen rotation) stats
+[2023-10-14 13:34:52] [FLAVOUR_LOADER] Successfully loaded flavour Stats
+[2023-10-14 13:34:52] [CONFIG] Loading crawler messages from ./cfg/crawler.txt
+[2023-10-14 13:34:52] [CONFIG] Loaded 4 crawler messages
+[2023-10-14 13:34:52] [CONFIG] Loading playlist from music
+[2023-10-14 13:34:52] [HISTORICAL_TEMP_PRECIP] Initializing historical data for station ID: 51459
+[2023-10-14 13:34:52] [CLIMATE_NORMALS] Initializing climate normals for station ID: 5051
+[2023-10-14 13:34:52] [CONDITIONS] Started AMQP conditions listener
+[2023-10-14 13:34:53] [PROVINCETRACKING] Loading province tracking from db/province_tracking.json
+[2023-10-14 13:34:53] [PROVINCETRACKING] Loaded province tracking from json
+[2023-10-14 13:34:53] [PROVINCETRACKING] Tracking 6 locations across the province
+[2023-10-14 13:34:53] [PROVINCETRACKING] Switching over tracking and setting display value
+[2023-10-14 13:34:53] [PROVINCETRACKING] Updating data for stations
+[2023-10-14 13:34:53] [ALERT_MONITOR] Started AMQP alerts listener
+[2023-10-14 13:34:53] [ALERT_MONITOR] Loading stored CAP files
+[2023-10-14 13:34:53] [CANADA_HOT_COLD_SPOTS] Updating canada/provincial hot/cold spots
+[2023-10-14 13:34:53] [USA] Fetching latest observations
+[2023-10-14 13:34:53] [AQHI] Air quality will be tracked
+[2023-10-14 13:34:53] [AQHI] Fetching latest AQHI observation
+[2023-10-14 13:34:53] [SERVER] Starting RWC...
+[2023-10-14 13:34:53] [STORAGE] Validating directory structure
+[2023-10-14 13:34:53] [STORAGE] Validated directory structure
+[2023-10-14 13:34:53] [SERVER] Started RWC
+```
 
 ### Developers
 
-Whilst doing any development for the project you can build (and serve) the frontend using the below command.
+For those of you wishing to do development work there is hot-reload available for the simulator. You will need multiple terminal windows open for this.
+
+Backend work:
 
 ```
-yarn serve
+yarn dev
 ```
 
-This will give you access to a hot-reloadable version of the weather channel in your [browser](http://localhost:8080/).
+Display work:
+
+```
+yarn display
+```
+
+### Port configuration
+
+By default the simulator will run on port 8600, however if you find it is already in use you can pass the `--port <port number>` flag when doing either `yarn start` or `yarn dev`.
+
+## Channel Configuration
+
+By default no configuration is required and the simulator will automatically point to Winnipeg as the main weather channel. However if you want to change the main station or go more in-depth and fully utilize the simulator you should navigate to the [configuration screen](http://localhost:8600/config).
+
+This will allow you to setup extra features such as custom screen rotation (flavours), Air Quality readings, rejecting in-hour condition updates, alternative temperature record source, crawler messages, and more.
+
+### Automatic reload
+
+When your config is saved the updated changes should reflect on the display no more than 5 minutes later (including playlist changes).
+
+### Setting up a playlist
+
+When the simulator runs for the first time you will notice that a `music` directory is created for you. If you wish to update your playlist simply add/remove files to the `music` directory add then scroll to "Playlist" in the "Display" tab on the [configuration screen](http://localhost:8600/config). Once there you will see a "Regenerate playlist" button. Depending on the size of your playlist this may take a few seconds.
+
+## Viewing the channel
+
+The output of the simulator can be accessed via [the browser](http://localhost:8600) and for the best experience you should set your browser window to a resolution of 640x480. The simulator will always render at a resolution of 640x480 regardless of browser window size.
+
+## Thanks/Props/Credits
+
+- **Environment and Climate Change Canada** ([Website](https://www.canada.ca/en/services/environment/weather.html)): API, AMQP, and documentation
+- **@wpgne** ([Mastodon](https://mastodon.social/@wpgne), [YouTube](https://www.youtube.com/@wpgne)): Source material and input throughout the development of the project
+- **@drdevlin** ([GitHub](https://github.com/drdevlin)): [ec-weather-js](https://github.com/drdevlin/ec-weather-js) project
+
+## Support the project
+
+- [@matthdn91](https://threads.net/@matthdn91) on Threads
+- Follow us on on Mastodon: [@ecweatherchannel](https://thecanadian.social/@ecweatherchannel), [@forceh91](https://techhub.social/@forceh91)
+- Donations via [ko-fi](https://ko-fi.com/forceh)
+- 24/7 livestreams for Winnipeg and Toronto on [YouTube](https://www.youtube.com/@Forceh91/streams)

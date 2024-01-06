@@ -2,9 +2,8 @@
 node_modules
 /dist
 /music
-/cfg/*.json
-/cfg/crawl.txt
 *.zip
+.parcel*
 
 
 # local env files
@@ -30,5 +29,7 @@ pnpm-debug.log*
 coverage
 
 # REC
+db*
+cfg*
 alerts.txt
-/db
+build*

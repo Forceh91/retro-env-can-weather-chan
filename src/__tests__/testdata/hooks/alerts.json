@@ -1,0 +1,13 @@
+{
+  "alerts": [
+    {
+      "url": "https://dd4.weather.gc.ca/alerts/cap/20230824/CWWG/18/T_WWCN11_C_CWWG_202308241858_3643108834.cap",
+      "identifier": "urn:oid:2.49.0.1.124.3643108834.2023",
+      "sent": "2023-08-24T19:08:06.000Z",
+      "expires": "2023-08-25T02:57:27.000Z",
+      "headline": "severe thunderstorm watch in effect",
+      "description": "Conditions are favourable for the development of severe thunderstorms that may be capable of producing strong wind gusts, large hail and heavy rain. There is also a risk of a tornado.\n\nRapidly destabilizing conditions along with deep layer  wind shear over the Red River Valley, Manitoba interlake, and Riding Mountain regions has cause for concern this afternoon regarding the development of severe thunderstorms. Ongoing elevated convection moving into southwestern Manitoba this afternoon may hinder the development of new thunderstorms, however will bear watching themselves as they move into a more favourable environment.\n\n###\n\nLarge hail can damage property and cause injury. Strong wind gusts can toss loose objects, damage weak buildings, break branches off trees and overturn large vehicles. Heavy downpours are likely to cause flash floods and water pooling on roads.\n\nSevere thunderstorm watches are issued when atmospheric conditions are favourable for the development of thunderstorms that could produce one or more of the following: large hail, damaging winds, torrential rainfall.\n\nPlease continue to monitor alerts and forecasts issued by Environment Canada. To report severe weather, send an email to MBstorm@ec.gc.ca or tweet reports using #MBStorm.",
+      "severity": 2
+    }
+  ]
+}

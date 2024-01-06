@@ -129,6 +129,7 @@ The output of the simulator can be accessed via [the browser](http://localhost:8
 
 ## Support the project
 
+- [@matthdn91](https://threads.net/@matthdn91) on Threads
 - Follow us on on Mastodon: [@ecweatherchannel](https://thecanadian.social/@ecweatherchannel), [@forceh91](https://techhub.social/@forceh91)
 - Donations via [ko-fi](https://ko-fi.com/forceh)
 - 24/7 livestreams for Winnipeg and Toronto on [YouTube](https://www.youtube.com/@Forceh91/streams)

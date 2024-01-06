@@ -42,7 +42,7 @@
     "@types/moxios": "^0.4.17",
     "@types/node": "^20.10.4",
     "@types/point-in-polygon": "^1.1.5",
-    "@types/react": "^18.2.43",
+    "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.17",
     "@types/timezoned-date": "^3.0.2",
     "@types/uuid4": "^2.0.3",

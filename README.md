@@ -29,7 +29,7 @@ Some of the above features are season/time of month specific and will automatica
 This project has a few dependencies that need downloading and installing before you can use it
 
 - Internet connection
-- [Node v16 or above](https://nodejs.org/en)
+- [Node v18 or above](https://nodejs.org/en)
 - [Yarn package manager](https://yarnpkg.com/)
 
 ### Installation

@@ -23,7 +23,8 @@ class HistoricalTempPrecip {
 
   private _lastYearTemperatures: HistoricalTemperatureAlmanac = { min: null, max: null };
   private _seasonPrecipData: HistoricalPrecipData = { amount: 0, normal: 0, unit: "mm", type: "rain" };
-  private _yesterdayPrecipData: HistoricalPrecipData = { amount: 0, normal: 0, unit: "mm", type: "rain" };
+  private _yesterdayPrecipData: HistoricalPrecipData = { amount: null, normal: 0, unit: "mm", type: "rain" };
+  private _yesterdaySnowData: HistoricalPrecipData = { amount: null, normal: 0, unit: "cm", type: "snow" };
   private _lastMonthSummary: LastMonthSummary = null;
 
   constructor() {
@@ -123,6 +124,7 @@ class HistoricalTempPrecip {
     const isWinterSeason = getIsWinterSeason();
     let rainfall = 0;
     let yesterdayRainfall = 0;
+    let yesterdaySnowfall = 0;
     this._historicalData?.forEach((historicalData) => {
       if (!historicalData?._attributes) return;
 
@@ -149,8 +151,12 @@ class HistoricalTempPrecip {
       }
 
       // also store yesterday's precip data, just for reasons
-      if (isYesterday(parseISO(date)))
-        yesterdayRainfall = Number(Number(historicalData?.totalprecipitation?._text ?? 0).toFixed(1));
+      if (isYesterday(parseISO(date))) {
+        yesterdayRainfall = Number(
+          Number(historicalData?.totalrain?._text ?? historicalData.totalprecipitation?._text ?? 0).toFixed(1)
+        );
+        yesterdaySnowfall = Number(Number(historicalData?.totalsnow?._text ?? 0).toFixed(1));
+      }
     });
 
     // now we can store the total amount for the season
@@ -159,6 +165,7 @@ class HistoricalTempPrecip {
 
     // and the total amount for yesterday
     this._yesterdayPrecipData.amount = yesterdayRainfall;
+    this._yesterdaySnowData.amount = yesterdaySnowfall;
 
     logger.log("Calculated precip data for the season/yesterday");
 
@@ -236,6 +243,10 @@ class HistoricalTempPrecip {
 
   public yesterdayPrecipData() {
     return this._yesterdayPrecipData;
+  }
+
+  public yesterdaySnowData() {
+    return this._yesterdaySnowData;
   }
 
   public lastMonthSummary() {

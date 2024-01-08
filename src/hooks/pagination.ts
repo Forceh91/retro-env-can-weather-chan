@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 export function usePagination(
   maxPages: number,
-  onComplete?: Function,
+  onComplete?: () => void,
   displayLength: number = SCREEN_DEFAULT_DISPLAY_LENGTH
 ) {
   const [page, setPage] = useState(1);

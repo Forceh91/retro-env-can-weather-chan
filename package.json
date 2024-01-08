@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "amqp": "^0.2.7",
     "axios": "1.6.5",
@@ -28,7 +28,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-fast-marquee": "^1.6.2",
-    "sass": "^1.69.5",
+    "sass": "^1.69.7",
     "uuid4": "^2.0.3",
     "xml-js": "^1.6.11"
   },
@@ -43,7 +43,7 @@
     "@types/node": "^20.10.6",
     "@types/point-in-polygon": "^1.1.5",
     "@types/react": "^18.2.47",
-    "@types/react-dom": "^18.2.17",
+    "@types/react-dom": "^18.2.18",
     "@types/timezoned-date": "^3.0.2",
     "@types/uuid4": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^6.13.2",

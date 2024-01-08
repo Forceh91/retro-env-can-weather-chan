@@ -6,8 +6,6 @@ const historicalData = initializeHistoricalTempPrecip();
 const climateNormals = initializeClimateNormals();
 
 export function getSeasonData(req: Request, res: Response) {
-  const { season, ...seasonPrecipData } = historicalData.seasonPrecipData();
-
   res.json({
     season: {
       windchill: isWindchillSeason(),
@@ -15,7 +13,7 @@ export function getSeasonData(req: Request, res: Response) {
       winter: getIsWinterSeason(),
     },
     seasonPrecip: {
-      ...seasonPrecipData,
+      ...historicalData.seasonPrecipData(),
       normal: climateNormals.getNormalPrecipForCurrentSeason()?.amount,
     },
   });

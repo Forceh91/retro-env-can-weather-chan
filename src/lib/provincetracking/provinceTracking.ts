@@ -100,13 +100,12 @@ class ProvinceTracking {
             station.station.code === `${config.primaryLocation.province}/${config.primaryLocation.location}`;
 
           // pull in precip values with plenty of fallbacks so we do our best to display a value
-          const yesterdayPrecip =
-            (isLocalStation
-              ? historicalData.yesterdaySnowData().amount ||
-                historicalData.yesterdayPrecipData().amount ||
-                yesterdayConditions.precip?.value
-              : yesterdayConditions.precip?.value) ?? "MISSING";
+          const detailedPrecip = isLocalStation
+            ? historicalData.yesterdaySnowData().amount ?? historicalData.yesterdayPrecipData().amount
+            : null;
 
+          // now store these to the station
+          const yesterdayPrecip = detailedPrecip ?? yesterdayConditions.precip?.value ?? "MISSING";
           station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
           station.yesterdayPrecipUnit =
             isLocalStation && historicalData.yesterdaySnowData().amount > 0 ? "cm snow" : "mm";

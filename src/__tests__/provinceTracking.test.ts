@@ -3,6 +3,7 @@ import axios from "lib/backendAxios";
 
 jest.mock("lib/config/config", () => ({
   initializeConfig: () => ({
+    primaryLocation: { name: "Toronto", province: "ON", location: "s0000458" },
     provinceHighLowEnabled: true,
     provinceStations: [
       { name: "Toronto", code: "ON/s0000458" },
@@ -17,13 +18,11 @@ jest.mock("lib/eccc", () => ({
   }),
   initializeHistoricalTempPrecip: () => ({
     yesterdayPrecipData: jest.fn(() => ({ amount: 23.5 })),
+    yesterdaySnowData: jest.fn(() => ({ amount: null })),
   }),
 }));
 
 jest.mock("fs");
-jest.mock("consts/server.consts", () => ({
-  DEFAULT_WEATHER_STATION_ID: "ON/s0000458",
-}));
 
 import { initializeProvinceTracking } from "lib/provincetracking/provinceTracking";
 import fakeTorontoWeather, {

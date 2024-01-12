@@ -11,6 +11,7 @@ export type ProvinceStationTracking = {
   maxTemp: number | null;
   displayTemp: number | string;
   yesterdayPrecip: number | string | null;
+  yesterdayPrecipUnit: string;
 };
 
 export type ProvinceTracking = {

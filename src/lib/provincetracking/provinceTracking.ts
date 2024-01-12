@@ -1,10 +1,6 @@
 const Weather = require("ec-weather-js");
 import fs from "fs";
-import {
-  DEFAULT_WEATHER_STATION_ID,
-  EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING,
-  PROVINCE_TRACKING_TEMP_TO_TRACK,
-} from "consts";
+import { EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING, PROVINCE_TRACKING_TEMP_TO_TRACK } from "consts";
 import axios from "lib/backendAxios";
 import { initializeConfig } from "lib/config";
 import Logger from "lib/logger";
@@ -63,6 +59,7 @@ class ProvinceTracking {
         maxTemp: Math.max(),
         displayTemp: null,
         yesterdayPrecip: null,
+        yesterdayPrecipUnit: "mm",
       }));
     }
 
@@ -98,12 +95,20 @@ class ProvinceTracking {
         if (station.yesterdayPrecip === null || this.shouldUpdatePrecipData()) {
           const { yesterdayConditions } = weather.all;
 
-          // if winnipeg then use historical data, otherwise we can use the data from the conditions api
-          const yesterdayPrecip =
-            (station.station.code === DEFAULT_WEATHER_STATION_ID
-              ? historicalData.yesterdayPrecipData().amount
-              : yesterdayConditions.precip?.value) ?? "MISSING";
+          // if selected station then use historical data, otherwise we can use the data from the conditions api
+          const isLocalStation =
+            station.station.code === `${config.primaryLocation.province}/${config.primaryLocation.location}`;
+
+          // pull in precip values with plenty of fallbacks so we do our best to display a value
+          const detailedPrecip = isLocalStation
+            ? historicalData.yesterdaySnowData().amount ?? historicalData.yesterdayPrecipData().amount
+            : null;
+
+          // now store these to the station
+          const yesterdayPrecip = detailedPrecip ?? yesterdayConditions.precip?.value ?? "MISSING";
           station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
+          station.yesterdayPrecipUnit =
+            isLocalStation && historicalData.yesterdaySnowData().amount > 0 ? "cm snow" : "mm";
 
           // store what date this data is from
           this._yesterdayPrecipDate = format(subDays(conditions.observedDateTimeAtStation(), 1), "MMM dd").replace(

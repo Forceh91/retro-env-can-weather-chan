@@ -83,6 +83,20 @@ $ tsx src/server.ts
 [2023-10-14 13:34:53] [SERVER] Started RWC
 ```
 
+#### Using Docker
+
+Clone the repo locally, then run:
+
+```bash
+docker-compose up -d
+```
+
+This will use the provided `Dockerfile` to build the container and run the app.
+
+The configuration (cfg) will, by default, be stored within a docker volume. You may update the `docker-compose.yml` file to instead store it in a bind mount (in the host's file system) so that the config is more portable. It is also possible to pass a music directory into the container using the same method. The `docker-compose.yml` file has examples of each.
+
+It is recommended to store these (cfg, music) outside of the cloned respository.
+
 ### Developers
 
 For those of you wishing to do development work there is hot-reload available for the simulator. You will need multiple terminal windows open for this.

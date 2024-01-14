@@ -1,0 +1,21 @@
+version: "3.4"
+services:
+  envcan:
+    build: ./
+    restart: always
+    volumes:
+     - db:/root/retro-env-can-weather-chan/db
+     - cfg:/root/retro-env-can-weather-chan/cfg
+     # Alternative: use bind mount. Remove root `volumes` if using, and update path.
+     # - ./cfg:/root/retro-env-can-weather-chan/cfg
+     #
+     # For music: uncomment the below and update the path as necessary. 
+     # - ./music:/root/retro-env-can-weather-chan/music
+    ports:
+      - 8600:8600
+    environment: 
+      - TZ=America/Winnipeg
+# Remove "cfg" below if using a bind mount to store config in local filesystem.
+volumes:
+  cfg:
+  db:

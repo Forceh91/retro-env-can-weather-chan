@@ -40,7 +40,7 @@
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.11",
     "@types/moxios": "^0.4.17",
-    "@types/node": "^20.11.7",
+    "@types/node": "^20.11.10",
     "@types/point-in-polygon": "^1.1.5",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",

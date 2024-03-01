@@ -50,7 +50,7 @@ export function StatsScreen(props: StatsScreenProps) {
     return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "h:mm");
   }, [sunRiseSet?.set]);
 
-  const generatePrecip = (amount: number) => amount.toFixed(1).toString().padStart(5);
+  const generatePrecip = (amount: number) => amount.toFixed(1).padStart(5);
 
   const generateDotsForPrecipLine = (dataName: string, usedChars = PRECIP_CHARS_USED_OUTSIDE_OF_DOTS) =>
     "".padEnd(DISPLAY_MAX_CHARACTERS_PER_LINE - (dataName.length + usedChars), ".");

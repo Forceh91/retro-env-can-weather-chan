@@ -21,8 +21,7 @@ export function useWeatherEventStream() {
         if (!parsedConditionUpdate) return;
 
         // if its the same observation date (down to the min/sec) then skip updating the state because it'll render too much
-        if (parsedConditionUpdate.stationTime?.observedDateTime === currentConditions?.stationTime?.observedDateTime)
-          return;
+        if (parsedConditionUpdate.observationID === currentConditions?.observationID) return;
 
         // update the state (and eventually cause a re-render)
         setCurrentConditions(parsedConditionUpdate);

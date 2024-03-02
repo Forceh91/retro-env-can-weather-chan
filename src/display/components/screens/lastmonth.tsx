@@ -19,9 +19,9 @@ export function LastMonthScreen(props: LastMonthScreenProps) {
   if (!city?.length || !lastMonth?.actual || !lastMonth?.normal) return <></>;
 
   const month = format(subMonths(new Date(), 1), "MMMM");
-  const formatNumber = (value: number) => (value !== undefined ? value.toFixed(1).toString().padStart(5) : "N/A");
+  const formatNumber = (value: number) => (value !== undefined ? value.toFixed(1).padStart(5) : "N/A");
   const formatTemp = (value: number) =>
-    value !== undefined ? ((value > 0 ? "+" : "") + value.toFixed(1).toString()).padStart(5) : "N/A";
+    value !== undefined ? ((value > 0 ? "+" : "") + value.toFixed(1)).padStart(5) : "N/A";
   const formatDayWithSuffix = (value: number) => {
     const date = subMonths(new Date(), 1);
     date.setDate(value);

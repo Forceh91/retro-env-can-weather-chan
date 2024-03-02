@@ -33,24 +33,24 @@ export function StatsScreen(props: StatsScreenProps) {
     const date = parseDate(hotColdSpots?.lastUpdated);
     if (!isValid(date)) return "";
 
-    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "MMM d");
-  }, [hotColdSpots?.lastUpdated]);
+    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal ?? 0), "MMM d");
+  }, [hotColdSpots?.lastUpdated, weatherStationTime?.stationOffsetMinutesFromLocal]);
 
   const formattedSunrise = useMemo(() => {
     const date = parseDate(sunRiseSet?.rise);
     if (!isValid(date)) return "";
 
-    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "h:mm");
-  }, [sunRiseSet?.rise]);
+    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal ?? 0), "h:mm");
+  }, [sunRiseSet?.rise, weatherStationTime?.stationOffsetMinutesFromLocal]);
 
   const formattedSunset = useMemo(() => {
     const date = parseDate(sunRiseSet?.set);
     if (!isValid(date)) return "";
 
-    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal), "h:mm");
-  }, [sunRiseSet?.set]);
+    return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal ?? 0), "h:mm");
+  }, [sunRiseSet?.set, weatherStationTime?.stationOffsetMinutesFromLocal]);
 
-  const generatePrecip = (amount: number) => amount.toFixed(1).toString().padStart(5);
+  const generatePrecip = (amount: number) => amount.toFixed(1).padStart(5);
 
   const generateDotsForPrecipLine = (dataName: string, usedChars = PRECIP_CHARS_USED_OUTSIDE_OF_DOTS) =>
     "".padEnd(DISPLAY_MAX_CHARACTERS_PER_LINE - (dataName.length + usedChars), ".");

@@ -56,7 +56,7 @@ export function Conditions(props: ConditionsProp) {
     const speed = windSpeedValue ?? "";
     const direction = windDirection.padStart(3);
 
-    // gust is a different format
+    // gust is a different format (omits units)
     if (windGust) return `${direction}  ${speed}G${windGust.value} `;
 
     return `${direction}${`${speed} KMH`.padStart(8)}`;

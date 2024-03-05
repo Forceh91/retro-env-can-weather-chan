@@ -49,15 +49,15 @@ export function Conditions(props: ConditionsProp) {
   );
 
   const formattedWind = useMemo(() => {
+    // handle "calm" or wind less than 2kmh
+    if (!windSpeedValue || windSpeedValue === CONDITIONS_WIND_SPEED_CALM || Number(windSpeedValue) < 2)
+      return CONDITIONS_WIND_SPEED_CALM;
+
     const speed = windSpeedValue ?? "";
     const direction = windDirection.padStart(3);
 
-    // gust is a different format
+    // gust is a different format (omits units)
     if (windGust) return `${direction}  ${speed}G${windGust.value} `;
-
-    // handle "calm" or wind less than 2kmh
-    if (!windSpeedValue || windSpeedValue === CONDITIONS_WIND_SPEED_CALM || Number(windSpeedValue) < 2)
-      return CONDITIONS_WIND_SPEED_CALM.padEnd(11);
 
     return `${direction}${`${speed} KMH`.padStart(8)}`;
   }, [observedDateTime]);

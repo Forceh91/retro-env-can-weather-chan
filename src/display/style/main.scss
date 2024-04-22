@@ -4,6 +4,7 @@
 @import "./forecast.scss";
 @import "./alerts.scss";
 @import "./fonts/ws4000/star4000.scss";
+@import "./fonts/recw/recw.scss";
 
 * {
   box-sizing: border-box;
@@ -62,6 +63,7 @@ ol {
   }
 
   #display {
+    @include recwc_body;
     align-items: center;
     display: flex;
     flex-direction: column;

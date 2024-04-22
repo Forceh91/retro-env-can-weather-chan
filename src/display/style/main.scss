@@ -85,5 +85,9 @@ ol {
     padding: 0 10%;
     text-align: center;
     width: 100%;
+
+    #time_date {
+      @include recwc_body;
+    }
   }
 }

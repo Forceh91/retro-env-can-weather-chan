@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  SCREEN_BACKGROUND_BLUE,
-  SCREEN_BACKGROUND_BLUE_TEXT_COL,
-  SCREEN_BACKGROUND_RED,
-  SCREEN_BACKGROUND_RED_TEXT_COL,
-  Screens,
-} from "consts";
+import { SCREEN_BACKGROUND_BLUE, SCREEN_BACKGROUND_RED, Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
 import {
   AQHIObservationResponse,
@@ -265,10 +259,6 @@ export function ScreenRotator(props: ScreenRotatorProps) {
       id="display"
       style={{
         backgroundColor: backgroundColour,
-        color:
-          backgroundColour === SCREEN_BACKGROUND_BLUE
-            ? SCREEN_BACKGROUND_BLUE_TEXT_COL
-            : SCREEN_BACKGROUND_RED_TEXT_COL,
       }}
     >
       {getComponentForDisplayedScreen()}

@@ -67,8 +67,8 @@ export function OutlookScreen(props: OutlookScreenProps) {
             </li>
           ))}
         <li>
-          Normal Low {almanac?.temperatures?.normalMin?.value?.toFixed(0) ?? ""}. High{" "}
-          {almanac?.temperatures?.normalMax?.value.toFixed(0) ?? ""}.
+          Normal Low {almanac?.temperatures?.normalMin?.value?.toFixed(0) ?? "N/A"}. High{" "}
+          {almanac?.temperatures?.normalMax?.value?.toFixed(0) ?? "N/A"}.
         </li>
       </ol>
     </>

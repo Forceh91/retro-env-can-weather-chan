@@ -26,9 +26,9 @@
     "framer-motion": "^11.1.7",
     "point-in-polygon": "^1.1.0",
     "react": "^18.3.1",
-    "react-dom": "^18.2.0",
+    "react-dom": "^18.3.1",
     "react-fast-marquee": "^1.6.4",
-    "sass": "^1.72.0",
+    "sass": "^1.76.0",
     "uuid4": "^2.0.3",
     "xml-js": "^1.6.11"
   },
@@ -43,7 +43,7 @@
     "@types/node": "^20.12.7",
     "@types/point-in-polygon": "^1.1.5",
     "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.2.25",
+    "@types/react-dom": "^18.3.0",
     "@types/timezoned-date": "^3.0.2",
     "@types/uuid4": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
@@ -63,6 +63,6 @@
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.7.3",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   }
 }

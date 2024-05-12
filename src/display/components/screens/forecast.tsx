@@ -58,10 +58,13 @@ export function ForecastScreen(props: ForecastScreenProps) {
     }
   };
 
-  const formatAlertHeadline = (headline: string) =>
-    headline
+  const formatAlertHeadline = (headline: string) => {
+    const truncated = headline
       ?.replace(/severe thunderstorm/gi, "severe tstorm")
-      .replace(/special weather statement/gi, "special weather stmnt");
+      .replace(/statement/gi, "stmnt")
+      .replace(/air quality/gi, "air qlty");
+    return truncated;
+  };
 
   // get all of the forecasts we'll need
   const [immediateForecast, page1Forecast1, page1Forecast2, page2Forecast1, page2Forecast2] =

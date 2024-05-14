@@ -58,11 +58,11 @@ export const SCREEN_DESCRIPTIONS = {
 
 export const SCREENS_WITH_AUTO_DURATION = [Screens.ALERTS, Screens.FORECAST];
 
-export const SCREEN_DEFAULT_DISPLAY_LENGTH = 20;
-export const SCREEN_MIN_DISPLAY_LENGTH = 10;
-export const SCREEN_ALERT_DISPLAY_LENGTH = 300;
-export const SCREEN_INFO_DISPLAY_LENGTH = 20 * 25;
-export const SCREEN_FORECAST_DISPLAY_LENGTH = 180;
+export const SCREEN_DEFAULT_DISPLAY_LENGTH = 14 as const;
+export const SCREEN_MIN_DISPLAY_LENGTH = 10 as const;
+export const SCREEN_ALERT_DISPLAY_LENGTH = 300 as const;
+export const SCREEN_INFO_DISPLAY_LENGTH = 14 * 25;
+export const SCREEN_FORECAST_DISPLAY_LENGTH = 180 as const;
 
 export const SCREEN_BACKGROUND_BLUE = "rgb(0,0,135)";
 export const SCREEN_BACKGROUND_RED = "#610b00";

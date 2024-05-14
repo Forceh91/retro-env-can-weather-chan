@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { SCREEN_BACKGROUND_BLUE, SCREEN_BACKGROUND_RED, Screens } from "consts";
+import { DEFAULT_WEATHER_STATION_ID, SCREEN_BACKGROUND_BLUE, SCREEN_BACKGROUND_RED, Screens } from "consts";
 import { isAutomaticScreen } from "lib/flavour/utils";
 import {
   AQHIObservationResponse,
@@ -166,7 +166,9 @@ export function ScreenRotator(props: ScreenRotatorProps) {
       case Screens.AQHI_WARNING:
         return (
           <AQHIWarningScreen
-            city={weatherStationResponse?.city}
+            city={
+              weatherStationResponse?.stationID === DEFAULT_WEATHER_STATION_ID ? "WPG" : weatherStationResponse?.city
+            }
             airQuality={airQuality}
             onComplete={switchToNextScreen}
           />

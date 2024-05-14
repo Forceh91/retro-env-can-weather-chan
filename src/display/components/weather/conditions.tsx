@@ -118,7 +118,7 @@ export function Conditions(props: ConditionsProp) {
       </div>
       {showPressure && (
         <div>
-          {"Pressure".padStart(11)} {pressureValue.toFixed(1)} {pressureUnits.padEnd(4)} {pressureTendency}
+          {"Pressure".padStart(11)} {pressureValue.toFixed(1).padStart(5)} {pressureUnits.padEnd(4)} {pressureTendency}
         </div>
       )}
     </div>

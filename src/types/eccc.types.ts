@@ -29,10 +29,15 @@ export type ECCCPressure = {
   tendency: string;
 } & ECCCUnitString;
 
+export type ECCCWindDirection = {
+  qaValue: number;
+  value: string;
+};
+
 export type ECCCWind = {
   speed: ECCCUnitString;
   gust: ECCCUnitString;
-  direction: string;
+  direction: ECCCWindDirection;
 };
 
 export type ECCCSunRiseSet = {

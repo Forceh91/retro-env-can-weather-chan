@@ -226,7 +226,7 @@ class CurrentConditions {
       wind: {
         speed: { value: windSpeedValue, units: windSpeedUnits },
         gust: { value: windGustValue, units: windGustUnits },
-        direction: windDirectionValue,
+        direction: { value: windDirectionValue },
       },
       visibility: { value: visibilityValue, units: visibilityUnits },
     } = conditions;
@@ -279,6 +279,8 @@ class CurrentConditions {
 
     // get the extreme min temp
     const retrieveAlmanacTemp = (tempClass: string, parseYear: boolean = true) => {
+      if (!almanac) return null;
+
       // fetch from the almanac temperatures list
       const extremeTemp: ECCCAlmanacTemp = almanac.temperature.find(
         (temp: ECCCAlmanacTemp) => temp.class === tempClass

@@ -30,10 +30,10 @@ export function AlmanacScreen(props: AlmanacScreenProps) {
 
   const record = {
     hi: `${formatTemperature(almanac?.temperatures?.extremeMax?.value, 6)} in ${
-      almanac?.temperatures?.extremeMax?.year
+      almanac?.temperatures?.extremeMax?.year ?? "N/A"
     }`,
     lo: `${formatTemperature(almanac?.temperatures?.extremeMin?.value, 6)} in ${
-      almanac?.temperatures?.extremeMin?.year
+      almanac?.temperatures?.extremeMin?.year ?? "N/A"
     }`,
   };
 

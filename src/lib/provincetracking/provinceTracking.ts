@@ -105,7 +105,7 @@ class ProvinceTracking {
             : null;
 
           // now store these to the station
-          const yesterdayPrecip = (detailedPrecip || yesterdayConditions.precip?.value) ?? "MISSING";
+          const yesterdayPrecip = (detailedPrecip || yesterdayConditions?.precip?.value) ?? "MISSING";
           station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
           station.yesterdayPrecipUnit =
             isLocalStation && historicalData.yesterdaySnowData().amount > 0 ? "cm snow" : "mm";

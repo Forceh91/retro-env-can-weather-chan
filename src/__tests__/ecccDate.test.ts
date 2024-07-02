@@ -21,6 +21,12 @@ describe("Helpers for ECCC dates", () => {
     expect(ecccDateStringToTSDate(ecccDateString)).toStrictEqual(expectedDate);
   });
 
+  it("parses to a newfoundland date object correctly", () => {
+    const ecccDateString = "Sunday August 13, 2023 at 12:00";
+    expect(ecccDateStringToTSDate(`${ecccDateString} AST`)).toStrictEqual(new Date(2023, 7, 13, 11, 0, 0));
+    expect(ecccDateStringToTSDate(`${ecccDateString} NDT`)).toStrictEqual(new Date(2023, 7, 13, 10, 30, 0));
+  });
+
   it("gets the correct months for the current season", () => {
     jest.useFakeTimers();
 

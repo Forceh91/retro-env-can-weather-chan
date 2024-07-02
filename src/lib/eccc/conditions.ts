@@ -199,7 +199,7 @@ class CurrentConditions {
     const offsetFromUTC = -localDate.getTimezoneOffset();
 
     // get the number of minutes behind taht the station time is from utc
-    const stationOffsetFromUTC = parseInt(date.UTCOffset) * 60;
+    const stationOffsetFromUTC = parseFloat(date.UTCOffset) * 60;
 
     // now we can figure out the difference between these and use it on the ui
     // timezones dont really exist in js so it'll really just end up being the local time
@@ -226,10 +226,14 @@ class CurrentConditions {
       wind: {
         speed: { value: windSpeedValue, units: windSpeedUnits },
         gust: { value: windGustValue, units: windGustUnits },
-        direction: { value: windDirectionValue },
+        direction: windDirection,
       },
-      visibility: { value: visibilityValue, units: visibilityUnits },
+      visibility,
     } = conditions;
+
+    // handle wind direction and visibility potentially being null
+    const { value: windDirectionValue = null } = windDirection ?? {};
+    const { value: visibilityValue = null, units: visibilityUnits = null } = visibility ?? {};
 
     // store it to our conditions
     this._conditions = {

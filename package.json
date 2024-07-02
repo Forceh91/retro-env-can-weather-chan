@@ -1,6 +1,6 @@
 {
   "name": "retro-env-can-weather-chan",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "private": true,
   "scripts": {
     "lint": "eslint .",
@@ -18,17 +18,17 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "amqp": "^0.2.7",
-    "axios": "1.6.8",
+    "axios": "1.7.2",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
     "ec-weather-js": "^1.2.1",
     "express": "^4.19.2",
-    "framer-motion": "^11.2.11",
+    "framer-motion": "^11.2.12",
     "point-in-polygon": "^1.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-fast-marquee": "^1.6.4",
-    "sass": "^1.77.4",
+    "sass": "^1.77.6",
     "uuid4": "^2.0.3",
     "xml-js": "^1.6.11"
   },
@@ -62,7 +62,7 @@
     "ts-jest": "^29.1.5",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.15.6",
+    "tsx": "^4.16.0",
     "typescript": "^5.5.2"
   }
 }

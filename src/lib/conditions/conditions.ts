@@ -15,7 +15,7 @@ export function harshTruncateConditions(
   isUSForecast: boolean = false
 ) {
   // to lowercase
-  condition = condition.toLowerCase();
+  condition = (condition ?? "").toLowerCase();
 
   // handle thunderstorm when its prefaced with light/heavy
   if (condition.includes("light thunderstorm") || condition.includes("heavy thunderstorm"))

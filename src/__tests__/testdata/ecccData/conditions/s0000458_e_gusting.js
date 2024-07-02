@@ -58,7 +58,7 @@ export default `<?xml version="1.0" encoding="UTF-8"?>
       <wind>
          <speed unitType="metric" units="km/h">15</speed>
          <gust unitType="metric" units="km/h">20</gust>
-         <direction>NNW</direction>
+         <direction qaValue="100">NNW</direction>
          <bearing units="degrees">337.0</bearing>
       </wind>
    </currentConditions>

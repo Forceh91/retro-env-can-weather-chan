@@ -199,7 +199,7 @@ class CurrentConditions {
     const offsetFromUTC = -localDate.getTimezoneOffset();
 
     // get the number of minutes behind taht the station time is from utc
-    const stationOffsetFromUTC = parseInt(date.UTCOffset) * 60;
+    const stationOffsetFromUTC = parseFloat(date.UTCOffset) * 60;
 
     // now we can figure out the difference between these and use it on the ui
     // timezones dont really exist in js so it'll really just end up being the local time

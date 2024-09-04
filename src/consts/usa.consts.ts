@@ -7,7 +7,7 @@ export const USA_WEATHER_STATIONS: USAStationConfig[] = [
   { name: "Chicago", code: "KORD" },
   { name: "Las Vegas", code: "KVGT" },
   { name: "Tampa", code: "KTPA" },
-  { name: "Los Angeles", code: "KCQT" },
+  { name: "Los Angeles", code: "FHMC1" },
   { name: "Denver", code: "KBKF", isBackup: true },
   { name: "Detroit", code: "KDET", isBackup: true },
   { name: "New York", code: "KNYC", isBackup: true },

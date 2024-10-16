@@ -14,7 +14,7 @@
     "release": "release-it --ci"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.10.1",
+    "@chakra-ui/react": "^2.10.2",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "amqp": "^0.2.7",
@@ -22,8 +22,8 @@
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
     "ec-weather-js": "^1.2.1",
-    "express": "^4.21.0",
-    "framer-motion": "^11.11.1",
+    "express": "^4.21.1",
+    "framer-motion": "^11.11.8",
     "point-in-polygon": "^1.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -43,7 +43,7 @@
     "@types/node": "^22.7.4",
     "@types/point-in-polygon": "^1.1.5",
     "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
+    "@types/react-dom": "^18.3.1",
     "@types/timezoned-date": "^3.0.2",
     "@types/uuid4": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^7.0.0",

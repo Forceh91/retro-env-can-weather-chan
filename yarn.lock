@@ -422,13 +422,13 @@
     copy-to-clipboard "3.3.3"
     framesync "6.1.2"
 
-"@chakra-ui/react@^2.10.2":
-  version "2.10.2"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/react/-/react-2.10.2.tgz#9fc718ab809d8a8003a8c688b2b6fda44f63741a"
-  integrity sha512-TfIHTqTlxTHYJZBtpiR5EZasPUrLYKJxdbHkdOJb5G1OQ+2c5kKl5XA7c2pMtsEptzb7KxAAIB62t3hxdfWp1w==
+"@chakra-ui/react@^2.10.3":
+  version "2.10.3"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/react/-/react-2.10.3.tgz#8595658890a9558de7eec1a854cb959fc6352e29"
+  integrity sha512-oWmGGzzKWBfoB3hrrQxWwFirlxJXGdk3v4SLnLPPYRy9IMibmQM5rAUJ/NxZum1mrYGP5lo7DHcIWDfV2A3ubw==
   dependencies:
     "@chakra-ui/hooks" "2.4.2"
-    "@chakra-ui/styled-system" "2.11.2"
+    "@chakra-ui/styled-system" "2.12.0"
     "@chakra-ui/theme" "3.4.6"
     "@chakra-ui/utils" "2.2.2"
     "@popperjs/core" "^2.11.8"
@@ -438,10 +438,10 @@
     react-focus-lock "^2.9.6"
     react-remove-scroll "^2.5.7"
 
-"@chakra-ui/styled-system@2.11.2":
-  version "2.11.2"
-  resolved "https://registry.yarnpkg.com/@chakra-ui/styled-system/-/styled-system-2.11.2.tgz#2c0da4653b6b8b6a75ab7362d4d5ca208324747a"
-  integrity sha512-y++z2Uop+hjfZX9mbH88F1ikazPv32asD2er56zMJBemUAzweXnHTpiCQbluEDSUDhqmghVZAdb+5L4XLbsRxA==
+"@chakra-ui/styled-system@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/styled-system/-/styled-system-2.12.0.tgz#72ad933bf11abd37c43086a3cb710e683a08ebc2"
+  integrity sha512-zoqLw1I2y4GlZ0LDoyw8o0JjoDOW6u0IwFPAoHuw0UMbP8glHUGvwEL1STug/i/GzBKw83yoF6ae41HIQvhMww==
   dependencies:
     "@chakra-ui/utils" "2.2.2"
     csstype "^3.1.2"

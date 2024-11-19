@@ -1291,6 +1291,13 @@
   dependencies:
     chalk "^4.1.2"
 
+"@parcel/compressor-raw@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@parcel/compressor-raw/-/compressor-raw-2.11.0.tgz#44ec3484d1276ad5dc37bc59ea61d6176357e71a"
+  integrity sha512-RArhBPRTCfz77soX2IECH09NUd76UBWujXiPRcXGPIHK+C3L1cRuzsNcA39QeSb3thz3b99JcozMJ1nkC2Bsgw==
+  dependencies:
+    chalk "^4.1.2"
+
 "@parcel/compressor-raw@2.13.0":
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/@parcel/compressor-raw/-/compressor-raw-2.13.0.tgz#416f7fdedaa9b0e83971bc5296f9b9b5909d0d3c"
@@ -1455,6 +1462,13 @@
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/@parcel/markdown-ansi/-/markdown-ansi-2.13.0.tgz#1945af2b0cdd68317cdfe787df0d78544ff3791d"
   integrity sha512-kznmctJ7myhu7/JKN9njHudBj4t8bv4oKW4/cvWgzVR7ftsw9oOJ8EE7eqtqOzzInyATZxXmbk+EYX4S04vLUg==
+  dependencies:
+    chalk "^4.1.2"
+
+"@parcel/namer-default@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@parcel/namer-default/-/namer-default-2.11.0.tgz#72ae58dd3f83eacc7ca0b4d3b80a8f87a63fb320"
+  integrity sha512-DEwBSKSClg4DA2xAWimYkw9bFi7MFb9TdT7/TYZStMTsfYHPWOyyjGR7aVr3Ra4wNb+XX6g4rR41yp3HD6KO7A==
   dependencies:
     chalk "^4.1.2"
 
@@ -1673,6 +1687,16 @@
     "@parcel/types-internal" "2.13.0"
     chrome-trace-event "^1.0.2"
 
+"@parcel/reporter-cli@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@parcel/reporter-cli/-/reporter-cli-2.11.0.tgz#727ee271ee5af002d137fa89ca25ccdca0f797fe"
+  integrity sha512-hY0iO0f+LifgJHDUIjGQJnxLFSkk2jlbfy+kIaft5oI3/IM+UljecfGO+14XH8mYlqRXXPsT09TJe8ZKQzp4ZQ==
+  dependencies:
+    "@parcel/diagnostic" "2.13.0"
+    "@parcel/events" "2.13.0"
+    "@parcel/types-internal" "2.13.0"
+    chrome-trace-event "^1.0.2"
+
 "@parcel/reporter-cli@2.13.0":
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/@parcel/reporter-cli/-/reporter-cli-2.13.0.tgz#8f70cdc316a79247d8e1f7bf3d6d7079a6c7067c"
@@ -1884,12 +1908,12 @@
     "@parcel/utils" "2.13.0"
     react-refresh ">=0.9 <=0.14"
 
-"@parcel/transformer-sass@^2.11.0":
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/@parcel/transformer-sass/-/transformer-sass-2.11.0.tgz#8ae922d6af3dca53297ca83c8dc78182994dcdba"
-  integrity sha512-caVIj1UANPgtlZOXcsBrQ++ouAy04hcq+wTwxJrf5t3XA4pdXQmkiLs5WIIUUGBp5hwkV6/BSwc4ht87MunA0g==
+"@parcel/transformer-sass@^2.13.0":
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/@parcel/transformer-sass/-/transformer-sass-2.13.0.tgz#81a6c1a6d4defab25f64b96172f71c0ed287ae23"
+  integrity sha512-juRKB9HJmQvQTrQ1OgT330b4rvTQtYsiDRjGxvFOX3MPoi3Qjwk+J0FobVWP+OpRsOm0+9HYULcIwMR00EbYdQ==
   dependencies:
-    "@parcel/plugin" "2.11.0"
+    "@parcel/plugin" "2.13.0"
     "@parcel/source-map" "^2.1.1"
     sass "^1.38.0"
 

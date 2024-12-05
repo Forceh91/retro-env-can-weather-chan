@@ -31,7 +31,7 @@ class AlertMonitor {
 
     // hook up the amqp listener
     const { connection, emitter: listener } = listen({
-      amqp_subtopic: `alerts.cap.#`,
+      amqp_subtopic: `*.WXO-DD.alerts.cap.#`,
     });
 
     // handle errors and messages

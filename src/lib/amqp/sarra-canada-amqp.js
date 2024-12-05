@@ -17,7 +17,7 @@ export function listen(options) {
   let amqp_port = 5671;
   let amqp_user = "anonymous";
   let amqp_password = "anonymous";
-  let amqp_subtopic = "#";
+  let amqp_subtopic = "*.WXO-DD.#";
   let amqp_queue = null;
   let amqp_expires = 10800000; // three hours in milliseconds
   let amqp_reconnect_limit_ms = 120000;

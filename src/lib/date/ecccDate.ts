@@ -3,7 +3,7 @@ import { getIsWinterSeason } from "./season";
 
 export function ecccDateStringToTSDate(date: string) {
   // JS doesn't see ATS/NDT (newfoundland time) as a valid date for some reason
-  const fixedTimezone = date.replace("AST", "GMT-0300").replace("NDT", "GMT-0230");
+  const fixedTimezone = date.replace("AST", "GMT-0300").replace("NDT", "GMT-0230").replace("NST", "GMT-0330");
   return new Date(fixedTimezone.replace(" at", "").replace(",", ""));
 }
 

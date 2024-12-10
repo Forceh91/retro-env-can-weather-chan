@@ -14,7 +14,7 @@
     "release": "release-it --ci"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.10.4",
+    "@chakra-ui/react": "~2.8.2",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.14.0",
     "amqp": "^0.2.7",
@@ -33,7 +33,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.11.0",
+    "@parcel/transformer-sass": "^2.13.0",
     "@release-it/conventional-changelog": "^7.0.2",
     "@testing-library/react": "^15.0.7",
     "@types/cors": "^2.8.17",
@@ -54,7 +54,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "mockdate": "^3.0.5",
     "moxios": "^0.4.0",
-    "parcel": "^2.11.0",
+    "parcel": "^2.13.0",
     "process": "^0.11.10",
     "release-it": "^16.2.1",
     "stream-browserify": "^3.0.0",

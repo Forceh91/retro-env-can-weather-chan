@@ -33,7 +33,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.13.2",
+    "@parcel/transformer-sass": "^2.13.3",
     "@release-it/conventional-changelog": "^7.0.2",
     "@testing-library/react": "^15.0.7",
     "@types/cors": "^2.8.17",
@@ -54,7 +54,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "mockdate": "^3.0.5",
     "moxios": "^0.4.0",
-    "parcel": "^2.13.2",
+    "parcel": "^2.13.3",
     "process": "^0.11.10",
     "release-it": "^16.2.1",
     "stream-browserify": "^3.0.0",

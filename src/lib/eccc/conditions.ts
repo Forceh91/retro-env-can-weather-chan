@@ -92,7 +92,7 @@ class CurrentConditions {
 
     // hook up the amqp listener
     const { connection, emitter: listener } = listen({
-      amqp_subtopic: `citypage_weather.xml.${config.primaryLocation.province}.#`,
+      amqp_subtopic: `*.WXO-DD.citypage_weather.xml.${config.primaryLocation.province}.#`,
     });
 
     // handle errors and messages
@@ -102,7 +102,7 @@ class CurrentConditions {
         // make sure its relevant to us
         if (!url.includes(`${this._weatherStationID}_e.xml`)) return;
 
-        this.fetchConditions();
+        this.fetchConditions(url);
         logger.log("Received new conditions from AMQP at", date);
       });
 
@@ -112,9 +112,9 @@ class CurrentConditions {
     logger.log("Started AMQP conditions listener");
   }
 
-  private fetchConditions() {
+  private fetchConditions(url: string = this._apiUrl) {
     axios
-      .get(this._apiUrl)
+      .get(url)
       .then((resp) => {
         // parse to weather object
         const weather = new Weather(resp.data);

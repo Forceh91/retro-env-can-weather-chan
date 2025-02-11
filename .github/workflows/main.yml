@@ -129,7 +129,7 @@ jobs:
           echo "build_version=v$BUILD_VERSION" >> $GITHUB_ENV
           echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.build_version }}-${{ env.commit_hash }}-node-${{ matrix.node }}
           path: |

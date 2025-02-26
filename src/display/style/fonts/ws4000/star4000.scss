@@ -1,30 +1,31 @@
 @font-face {
   font-family: "ws4000";
   font-style: normal;
+  font-weight: 400 700;
+  src: url("./fonts/ws4000/ECWCStandard-Regular.woff2");
+}
+
+@font-face {
+  font-family: "ws4000-fallback";
+  font-style: normal;
+  font-weight: 400 700;
+  src: url("./fonts/ws4000/ws4000.ttf");
+}
+
+@font-face {
+  font-family: "gwcv-logo";
+  font-style: normal;
   font-weight: 400;
-  src: url("./fonts/ws4000/ws4000.ttf");
+  src: url("./fonts/ws4000/GWCVLogo-Regular.woff2");
 }
 
 @font-face {
-  font-family: "ws4000";
+  font-family: "gwcv-crawler";
   font-style: normal;
-  font-weight: 500;
-  src: url("./fonts/ws4000/ws4000.ttf");
+  font-weight: 400;
+  src: url("./fonts/ws4000/GWCVCrawler-Regular.woff2");
 }
 
-@font-face {
-  font-family: "ws4000";
-  font-style: normal;
-  font-weight: 600;
-  src: url("./fonts/ws4000/ws4000.ttf");
-}
-
-@font-face {
-  font-family: "ws4000";
-  font-style: normal;
-  font-weight: 700;
-  src: url("./fonts/ws4000/ws4000.ttf");
-}
 
 @mixin ws4000_font {
   font-family: var(--ws4000-font), monospace;
@@ -37,5 +38,7 @@
 }
 
 :root {
-  --ws4000-font: "ws4000";
+  --ws4000-font: "ws4000", "ws4000-fallback";
+  --logo-font: "gwcv-logo";
+  --crawler-font: "gwcv-crawler";
 }

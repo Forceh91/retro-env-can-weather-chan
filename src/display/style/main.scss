@@ -44,13 +44,14 @@ ol {
     align-items: flex-end;
     background: $crawler_bar_background_col;
     display: flex;
-    font-size: 34px;
     justify-content: flex-end;
     height: $crawler_bar_height;
     overflow: hidden;
     padding: 0 10%;
     padding-bottom: 10px;
     width: 100%;
+    font-family: var(--crawler-font);
+    text-transform: none;
 
     .rfm-marquee-container {
       overflow: hidden;
@@ -84,4 +85,11 @@ ol {
     text-align: center;
     width: 100%;
   }
+  
+  #header {
+    font-family: var(--logo-font);
+    text-transform: none;
+    margin-left: 1ch;
+  }
+  
 }

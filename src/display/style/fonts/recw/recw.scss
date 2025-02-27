@@ -2,33 +2,49 @@
   font-family: "recwc-primary";
   font-style: normal;
   font-weight: 400;
-  // src: url("./fonts/recw/ECWCStandard-Regular.woff2");
-  src: url("./fonts/recw/ECWCStandard-Regular.otf");
+  src: url("./fonts/recw/ECWCStandard-Regular_heavier.woff2");
 }
 
 @font-face {
   font-family: "recwc-primary";
   font-style: normal;
   font-weight: 500;
-  // src: url("./fonts/recw/ECWCStandard-Regular.woff2");
-  src: url("./fonts/recw/ECWCStandard-Regular.otf");
+  src: url("./fonts/recw/ECWCStandard-Regular_heavier.woff2");
 }
 
 @font-face {
   font-family: "recwc-primary";
   font-style: normal;
   font-weight: 600;
-  // src: url("./fonts/recw/ECWCStandard-Regular.woff2");
-  src: url("./fonts/recw/ECWCStandard-Regular.otf");
+  src: url("./fonts/recw/ECWCStandard-Regular_heavier.woff2");
 }
 
 @font-face {
   font-family: "recwc-primary";
   font-style: normal;
   font-weight: 700;
-  // src: url("./fonts/recw/ECWCStandard-Regular.woff2");
-  src: url("./fonts/recw/ECWCStandard-Regular.otf");
+  src: url("./fonts/recw/ECWCStandard-Regular_heavier.woff2");
 }
+
+
+
+@font-face {
+  font-family: "gwcv-logo";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./fonts/recw/GWCVLogo-Regular.woff2");
+}
+
+@font-face {
+  font-family: "gwcv-crawler";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./fonts/recw/GWCVCrawler-Regular.woff2");
+}
+
+
+
+
 
 @mixin recwc_font {
   font-family: var(--recwc-font), monospace;
@@ -44,4 +60,6 @@
 
 :root {
   --recwc-font: "recwc-primary";
+  --logo-font: "gwcv-logo";
+  --crawler-font: "gwcv-crawler";
 }

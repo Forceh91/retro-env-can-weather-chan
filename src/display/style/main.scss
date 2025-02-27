@@ -55,7 +55,6 @@ ol {
     font-family: var(--crawler-font);
     text-transform: none;
 
-
     .rfm-marquee-container {
       overflow: hidden;
 
@@ -88,12 +87,13 @@ ol {
     padding: 0 10%;
     text-align: center;
     width: 100%;
-    
-  
+
     font-family: var(--logo-font);
     text-transform: none;
-    padding-left: 1ch;
 
+    #header {
+      margin-left: -1.5ch;
+    }
 
     #time_date {
       @include recwc_body;

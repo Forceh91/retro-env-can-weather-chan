@@ -57,6 +57,9 @@ ol {
 
     .rfm-marquee-container {
       overflow: hidden;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
 
       .rfm-child {
         margin-right: $channel_max_width;

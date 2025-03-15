@@ -18,7 +18,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "amqp": "^0.2.7",
-    "axios": "1.8.1",
+    "axios": "1.8.2",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
     "ec-weather-js": "^1.2.1",
@@ -40,7 +40,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/moxios": "^0.4.17",
-    "@types/node": "^22.13.5",
+    "@types/node": "^22.13.10",
     "@types/point-in-polygon": "^1.1.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -62,7 +62,7 @@
     "ts-jest": "^29.2.6",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.19.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.5.4"
   }
 }

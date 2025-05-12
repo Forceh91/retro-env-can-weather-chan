@@ -36,7 +36,7 @@
     "@parcel/transformer-sass": "^2.14.4",
     "@release-it/conventional-changelog": "^7.0.2",
     "@testing-library/react": "^15.0.7",
-    "@types/cors": "^2.8.17",
+    "@types/cors": "^2.8.18",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/moxios": "^0.4.17",

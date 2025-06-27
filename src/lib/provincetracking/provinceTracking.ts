@@ -8,6 +8,7 @@ import { ProvinceStationTracking, ProvinceStations } from "types";
 import { initializeCurrentConditions, initializeHistoricalTempPrecip } from "lib/eccc";
 import eventbus from "lib/eventbus";
 import { format, subDays } from "date-fns";
+import { GetWeatherFileFromECCC } from "lib/eccc/datamart";
 
 const logger = new Logger("ProvinceTracking");
 const PROVINCE_TRACKING_FILE = "db/province_tracking.json";
@@ -57,8 +58,8 @@ class ProvinceTracking {
         station: provinceStation,
         minTemp: Math.min(),
         maxTemp: Math.max(),
-        displayTemp: null,
-        yesterdayPrecip: null,
+        displayTemp: null as null,
+        yesterdayPrecip: null as null,
         yesterdayPrecipUnit: "mm",
       }));
     }
@@ -83,53 +84,59 @@ class ProvinceTracking {
   private fetchWeatherForStation(station: ProvinceStationTracking) {
     const { name, code } = station.station;
 
-    return axios
-      .get(`https://dd.weather.gc.ca/citypage_weather/xml/${code}_e.xml`)
-      .then((resp) => {
-        const data = resp && resp.data;
-        const weather = new Weather(data);
-        if (!weather) throw "Unable to parse weather data";
+    const [province, stationID] = code.split("/");
+    return GetWeatherFileFromECCC(province, stationID).then((url) => {
+      return (
+        url &&
+        axios
+          .get(url)
+          .then((resp) => {
+            const data = resp && resp.data;
+            const weather = new Weather(data);
+            if (!weather) throw "Unable to parse weather data";
 
-        // store the precip for yesterday if there's no data or its after 2am
-        // 2am seems to be when the api returns yesterday's data
-        if (station.yesterdayPrecip === null || this.shouldUpdatePrecipData()) {
-          const { yesterdayConditions } = weather.all;
+            // store the precip for yesterday if there's no data or its after 2am
+            // 2am seems to be when the api returns yesterday's data
+            if (station.yesterdayPrecip === null || this.shouldUpdatePrecipData()) {
+              const { yesterdayConditions } = weather.all;
 
-          // if selected station then use historical data, otherwise we can use the data from the conditions api
-          const isLocalStation =
-            station.station.code === `${config.primaryLocation.province}/${config.primaryLocation.location}`;
+              // if selected station then use historical data, otherwise we can use the data from the conditions api
+              const isLocalStation =
+                station.station.code === `${config.primaryLocation.province}/${config.primaryLocation.location}`;
 
-          // pull in precip values with plenty of fallbacks so we do our best to display a value
-          const detailedPrecip = isLocalStation
-            ? historicalData.yesterdaySnowData().amount || historicalData.yesterdayPrecipData().amount
-            : null;
+              // pull in precip values with plenty of fallbacks so we do our best to display a value
+              const detailedPrecip = isLocalStation
+                ? historicalData.yesterdaySnowData().amount || historicalData.yesterdayPrecipData().amount
+                : null;
 
-          // now store these to the station
-          const yesterdayPrecip = (detailedPrecip || yesterdayConditions?.precip?.value) ?? "MISSING";
-          station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
-          station.yesterdayPrecipUnit =
-            isLocalStation && historicalData.yesterdaySnowData().amount > 0 ? "cm snow" : "mm";
+              // now store these to the station
+              const yesterdayPrecip = (detailedPrecip || yesterdayConditions?.precip?.value) ?? "MISSING";
+              station.yesterdayPrecip = !isNaN(yesterdayPrecip) ? Number(yesterdayPrecip) : yesterdayPrecip;
+              station.yesterdayPrecipUnit =
+                isLocalStation && historicalData.yesterdaySnowData().amount > 0 ? "cm snow" : "mm";
 
-          // store what date this data is from
-          this._yesterdayPrecipDate = format(subDays(conditions.observedDateTimeAtStation(), 1), "MMM dd").replace(
-            /\s0/i,
-            "  "
-          );
-        }
+              // store what date this data is from
+              this._yesterdayPrecipDate = format(subDays(conditions.observedDateTimeAtStation(), 1), "MMM dd").replace(
+                /\s0/i,
+                "  "
+              );
+            }
 
-        // get the temperature reading
-        const temp = weather.current?.temperature?.value;
-        if (temp === null || temp === undefined || isNaN(temp)) return;
+            // get the temperature reading
+            const temp = weather.current?.temperature?.value;
+            if (temp === null || temp === undefined || isNaN(temp)) return;
 
-        // update corresponding value
-        const tempAsNumber = Number(temp);
-        if (this._tempToTrack === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP) {
-          if (station.minTemp === null || tempAsNumber < station.minTemp) station.minTemp = tempAsNumber;
-        } else if (this._tempToTrack === PROVINCE_TRACKING_TEMP_TO_TRACK.MAX_TEMP) {
-          if (station.maxTemp === null || tempAsNumber > station.maxTemp) station.maxTemp = tempAsNumber;
-        }
-      })
-      .catch((err) => logger.error(name, "failed to fetch data", err));
+            // update corresponding value
+            const tempAsNumber = Number(temp);
+            if (this._tempToTrack === PROVINCE_TRACKING_TEMP_TO_TRACK.MIN_TEMP) {
+              if (station.minTemp === null || tempAsNumber < station.minTemp) station.minTemp = tempAsNumber;
+            } else if (this._tempToTrack === PROVINCE_TRACKING_TEMP_TO_TRACK.MAX_TEMP) {
+              if (station.maxTemp === null || tempAsNumber > station.maxTemp) station.maxTemp = tempAsNumber;
+            }
+          })
+          .catch((err) => logger.error(name, url, "failed to fetch data", err))
+      );
+    });
   }
 
   private resetTracking(resetTemps: boolean) {

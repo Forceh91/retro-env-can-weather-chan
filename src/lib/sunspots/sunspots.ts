@@ -37,10 +37,10 @@ class Sunspots {
       observations.length,
       ...[...stations].map((stationConfig) => ({
         ...stationConfig,
-        forecast: null,
-        abbreviatedForecast: null,
-        highTemp: null,
-        lowTemp: null,
+        forecast: null as null,
+        abbreviatedForecast: null as null,
+        highTemp: null as null,
+        lowTemp: null as null,
       }))
     );
 

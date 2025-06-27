@@ -11,7 +11,6 @@ async function GetWeatherFileFromECCC(province: string, stationID: string): Prom
   // due to this, what we're gonna do is get the current UTC hour, or the previous UTC hour
   const currentUTCHour = new Date().getUTCHours();
   const previousUTCHour = subHours(new Date(), 1).getUTCHours();
-  const utcHoursToCheck = [currentUTCHour, previousUTCHour];
 
   const parser = async (utcHour: number) => {
     const baseURL = `https://dd.weather.gc.ca/citypage_weather/${province}/${utcHour}/`;

@@ -54,14 +54,17 @@ class ProvinceTracking {
 
   private periodicUpdate() {
     if (!this._tracking?.length) {
-      this._tracking = this._stations.map((provinceStation) => ({
-        station: provinceStation,
-        minTemp: Math.min(),
-        maxTemp: Math.max(),
-        displayTemp: null as null,
-        yesterdayPrecip: null as null,
-        yesterdayPrecipUnit: "mm",
-      }));
+      this._tracking = this._stations.map(
+        (provinceStation) =>
+          ({
+            station: provinceStation,
+            minTemp: Math.min(),
+            maxTemp: Math.max(),
+            displayTemp: null as null,
+            yesterdayPrecip: null as null,
+            yesterdayPrecipUnit: "mm",
+          } as ProvinceStationTracking)
+      );
     }
 
     // check what temps to track/display

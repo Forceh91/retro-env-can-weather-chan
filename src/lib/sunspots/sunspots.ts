@@ -35,13 +35,16 @@ class Sunspots {
     observations.splice(
       0,
       observations.length,
-      ...[...stations].map((stationConfig) => ({
-        ...stationConfig,
-        forecast: null as null,
-        abbreviatedForecast: null as null,
-        highTemp: null as null,
-        lowTemp: null as null,
-      }))
+      ...[...stations].map(
+        (stationConfig) =>
+          ({
+            ...stationConfig,
+            forecast: null as null,
+            abbreviatedForecast: null as null,
+            highTemp: null as null,
+            lowTemp: null as null,
+          } as SunspotStationConfig & SunspotStationObservation)
+      )
     );
 
     // loop through stations and get current conditions for them

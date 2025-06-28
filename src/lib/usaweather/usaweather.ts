@@ -55,11 +55,14 @@ class USAWeather {
       observations.splice(
         0,
         observations.length,
-        ...[...stations].map((stationConfig) => ({
-          ...stationConfig,
-          condition: null as null,
-          temperature: null as null,
-        }))
+        ...[...stations].map(
+          (stationConfig) =>
+            ({
+              ...stationConfig,
+              condition: null as null,
+              temperature: null as null,
+            } as USAStationConfig & USAStationObservation)
+        )
       );
     }
 

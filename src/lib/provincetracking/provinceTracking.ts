@@ -8,6 +8,7 @@ import { ProvinceStationTracking, ProvinceStations } from "types";
 import { initializeCurrentConditions, initializeHistoricalTempPrecip } from "lib/eccc";
 import eventbus from "lib/eventbus";
 import { format, subDays } from "date-fns";
+import { GetWeatherFileFromECCC } from "lib/eccc/datamart";
 
 const logger = new Logger("ProvinceTracking");
 const PROVINCE_TRACKING_FILE = "db/province_tracking.json";
@@ -83,11 +84,15 @@ class ProvinceTracking {
     Promise.allSettled(promises).then(() => this.save());
   }
 
-  private fetchWeatherForStation(station: ProvinceStationTracking) {
+  private async fetchWeatherForStation(station: ProvinceStationTracking) {
     const { name, code } = station.station;
 
+    const [province, stationID] = code.split("/");
+    const url = await GetWeatherFileFromECCC(province, stationID);
+    if (!url) return Promise.reject("URL was invalid.");
+
     return axios
-      .get(`https://dd.weather.gc.ca/citypage_weather/xml/${code}_e.xml`)
+      .get(url)
       .then((resp) => {
         const data = resp && resp.data;
         const weather = new Weather(data);
@@ -132,7 +137,7 @@ class ProvinceTracking {
           if (station.maxTemp === null || tempAsNumber > station.maxTemp) station.maxTemp = tempAsNumber;
         }
       })
-      .catch((err) => logger.error(name, "failed to fetch data", err));
+      .catch((err) => logger.error(name, url, "failed to fetch data", err));
   }
 
   private resetTracking(resetTemps: boolean) {

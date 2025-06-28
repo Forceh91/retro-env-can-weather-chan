@@ -33,7 +33,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.15.2",
+    "@parcel/transformer-sass": "^2.15.4",
     "@release-it/conventional-changelog": "^7.0.2",
     "@testing-library/react": "^15.0.7",
     "@types/cors": "^2.8.19",

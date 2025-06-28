@@ -13,7 +13,8 @@ async function GetWeatherFileFromECCC(province: string, stationID: string): Prom
   const previousUTCHour = subHours(new Date(), 1).getUTCHours();
 
   const parser = async (utcHour: number) => {
-    const baseURL = `https://dd.weather.gc.ca/citypage_weather/${province}/${utcHour}/`;
+    const paddedUTCHour = `${utcHour}`.padStart(2, "0");
+    const baseURL = `https://dd.weather.gc.ca/citypage_weather/${province}/${paddedUTCHour}/`;
     try {
       // first we check if the directory exists
       const resp = await axios.get(baseURL);

@@ -17,6 +17,7 @@ export type NationalStationObservations = NationalStationObservation[];
 
 export type NationalWeather = {
   mb: NationalStationObservations;
+  on: NationalStationObservations;
   east: NationalStationObservations;
   west: NationalStationObservations;
 };

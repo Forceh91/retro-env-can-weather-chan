@@ -7,6 +7,7 @@ import {
   MB_WEATHER_STATIONS,
   NATIONAL_WEATHER_FETCH_INTERVAL,
   WEST_WEATHER_STATIONS,
+  ON_WEATHER_STATIONS
 } from "consts";
 import { NationalStationConfig, NationalStationObservation, NationalStationObservations } from "types";
 import Logger from "lib/logger";
@@ -22,6 +23,7 @@ const config = initializeConfig();
 const logger = new Logger("National");
 class NationalWeather {
   private _manitobaStations: NationalStationObservations = [];
+  private _ontarioStations: NationalStationObservations = [];
   private _eastStations: NationalStationObservations = [];
   private _westStations: NationalStationObservations = [];
   private _expectedConditionUUID: string;
@@ -35,6 +37,7 @@ class NationalWeather {
 
   private periodicUpdate(clearExistingData: boolean = false) {
     this.fetchWeatherForStations(MB_WEATHER_STATIONS, this._manitobaStations, clearExistingData);
+    this.fetchWeatherForStations(ON_WEATHER_STATIONS, this._ontarioStations, clearExistingData);
     this.fetchWeatherForStations(EAST_WEATHER_STATIONS, this._eastStations, clearExistingData);
     this.fetchWeatherForStations(WEST_WEATHER_STATIONS, this._westStations, clearExistingData);
   }

@@ -93,10 +93,12 @@ ol {
 
     font-family: var(--logo-font);
     text-transform: none;
+    line-height: 1.2;
 
-    #header {
-      margin-left: -1.5ch;
-    }
+    /* this moves the bottom text for a station bug */
+    /* #header { 
+       margin-left: -1.5ch;
+    } */
 
     #time_date {
       @include recwc_body;

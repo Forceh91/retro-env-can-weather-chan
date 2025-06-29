@@ -101,7 +101,7 @@ class CurrentConditions {
       .on("error", (...error) => logger.error("AMQP error:", error))
       .on("message", (date: string, url: string) => {
         // make sure its relevant to us
-        if (!url.includes(`${this._weatherStationID}`)) return;
+        if (!url.endsWith(`${this._weatherStationID}_en.xml`)) return;
 
         this.fetchConditions(url);
         logger.log("Received new conditions from AMQP at", date);

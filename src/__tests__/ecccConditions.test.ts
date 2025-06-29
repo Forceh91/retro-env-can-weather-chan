@@ -1,8 +1,10 @@
 import moxios from "moxios";
 import axios from "lib/backendAxios";
 import { mockTorontoConfig, mockAMQP } from "../lib/configMocks";
+import { mockGetWeatherFileFromECCC } from "./mocks";
 
 mockTorontoConfig();
+mockGetWeatherFileFromECCC();
 mockAMQP();
 
 import { initializeCurrentConditions } from "lib/eccc/conditions";

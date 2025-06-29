@@ -1,5 +1,6 @@
 import moxios from "moxios";
 import axios from "lib/backendAxios";
+import { mockGetWeatherFileFromECCC } from "./mocks";
 
 jest.mock("lib/config/config", () => ({
   initializeConfig: () => ({
@@ -12,13 +13,15 @@ jest.mock("lib/config/config", () => ({
   }),
 }));
 
+mockGetWeatherFileFromECCC();
+
 jest.mock("lib/eccc", () => ({
   initializeCurrentConditions: () => ({
     observedDateTimeAtStation: jest.fn(() => new Date()),
   }),
   initializeHistoricalTempPrecip: () => ({
     yesterdayPrecipData: jest.fn(() => ({ amount: 23.5 })),
-    yesterdaySnowData: jest.fn(() => ({ amount: null })),
+    yesterdaySnowData: jest.fn(() => ({ amount: null as null })),
   }),
 }));
 
@@ -51,13 +54,8 @@ describe("Provincial temp/precip tracking", () => {
     const saveFileSpy = jest.spyOn(fs, "writeFile");
     const loadFileSpy = jest.spyOn(fs, "readFileSync");
 
-    jest.useFakeTimers();
-    jest.setSystemTime(dayTimeDate);
-
-    const provinceTracking = initializeProvinceTracking();
     moxios.wait(async () => {
       jest.useRealTimers();
-
       await moxios.requests.at(0).respondWith({ status: 200, response: fakeTorontoWeather });
       await moxios.requests.at(1).respondWith({ status: 200, response: fakeOttawaWeather });
 
@@ -70,19 +68,24 @@ describe("Provincial temp/precip tracking", () => {
       loadFileSpy.mockRestore();
       done();
     });
-    jest.advanceTimersToNextTimer();
-  });
 
-  it("fetches data periodically", () => {
     jest.useFakeTimers();
     jest.setSystemTime(dayTimeDate);
 
-    initializeProvinceTracking();
+    const provinceTracking = initializeProvinceTracking();
+    jest.advanceTimersToNextTimer();
+  });
+
+  it("fetches data periodically", (done) => {
     const spy = jest.spyOn(axios, "get");
 
-    jest.advanceTimersToNextTimer();
-    expect(spy).toHaveBeenCalledTimes(2);
-    spy.mockRestore();
+    moxios.wait(() => {
+      expect(spy).toHaveBeenCalledTimes(2);
+      spy.mockRestore();
+      done();
+    });
+
+    initializeProvinceTracking();
   });
 
   it("udpates min/max temps correctly (day time)", (done) => {

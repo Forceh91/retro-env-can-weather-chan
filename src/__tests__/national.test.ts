@@ -8,6 +8,10 @@ jest.mock("consts/national.consts", () => ({
   EAST_WEATHER_STATIONS: [{ name: "Toronto", code: "ON/s0000458" }],
 }));
 
+import { mockGetWeatherFileFromECCC } from "./mocks";
+
+mockGetWeatherFileFromECCC();
+
 import axios from "lib/backendAxios";
 import moxios from "moxios";
 import { initializeNationalWeather } from "lib/national/national";
@@ -19,8 +23,6 @@ describe("National weather station temp/condition", () => {
   afterEach(() => moxios.uninstall(axios));
 
   it("fetches and parses the station data correctly", (done) => {
-    const national = initializeNationalWeather();
-
     moxios.wait(async () => {
       await moxios.requests.at(0).respondWith({ status: 200, response: fakeResponses["MB/s0000626"] });
       await moxios.requests.at(1).respondWith({ status: 200, response: fakeResponses["MB/s0000616"] });
@@ -31,11 +33,11 @@ describe("National weather station temp/condition", () => {
       expect(currentConditions).toStrictEqual(expectedConditions);
       done();
     });
+
+    const national = initializeNationalWeather();
   });
 
   it("filters out stations that aren't reporting correctly", (done) => {
-    const national = initializeNationalWeather();
-
     moxios.wait(async () => {
       await moxios.requests.at(0).respondWith({ status: 200, response: fakeResponses["MB/s0000626"] }); // conditions are "unknown precipitation"
       await moxios.requests.at(1).respondWith({ status: 200, response: fakeResponses["BC/s0000568"] }); // temperature isn't present
@@ -48,5 +50,7 @@ describe("National weather station temp/condition", () => {
       expect(currentConditions.west).toHaveLength(0);
       done();
     });
+
+    const national = initializeNationalWeather();
   });
 });

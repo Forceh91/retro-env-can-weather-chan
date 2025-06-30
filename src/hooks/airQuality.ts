@@ -2,8 +2,8 @@ import axios from "lib/axios";
 import { useEffect, useState } from "react";
 import { AQHIObservationResponse } from "types";
 
-// fetch air quality once every 15mins
-const FETCH_AIR_QUALITY_INTERVAL = 60 * 1000 * 15;
+// fetch air quality once every interval
+const FETCH_AIR_QUALITY_INTERVAL = 60 * 1000 * 5;
 
 export function useAirQuality() {
   const [airQuality, setAirQuality] = useState<AQHIObservationResponse>();

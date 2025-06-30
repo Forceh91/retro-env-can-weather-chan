@@ -2,7 +2,7 @@ import axios from "lib/axios";
 import { useEffect, useState } from "react";
 import { SunspotStationObservations } from "types";
 
-const FETCH_SUNSPOTS_INTERVAL = 60 * 1000 * 1;
+const FETCH_SUNSPOTS_INTERVAL = 60 * 1000 * 5;
 
 export function useSunspots() {
   const [sunspots, setSunspots] = useState<SunspotStationObservations>();

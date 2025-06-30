@@ -2,7 +2,7 @@ import axios from "lib/axios";
 import { useEffect, useState } from "react";
 import { ProvinceTracking } from "types";
 
-const FETCH_PROVINCE_TRACKING_INTERVAL = 60 * 1000 * 1;
+const FETCH_PROVINCE_TRACKING_INTERVAL = 60 * 1000 * 5;
 
 export function useProvinceTracking() {
   const [provinceTracking, setProvinceTracking] = useState<ProvinceTracking>();

@@ -2,9 +2,9 @@ import axios from "lib/axios";
 import { useEffect, useState } from "react";
 import { HotColdSpots } from "types";
 
-const FETCH_HOT_COLD_SPOT_INTERVAL = 60 * 1000 * 30;
+const FETCH_HOT_COLD_SPOT_INTERVAL = 60 * 1000 * 5;
 
-// tell the channel to fetch hot/cold spots once every 30 mins
+// tell the channel to fetch hot/cold spots once every interval
 export function useCanadaHotColdSpots() {
   const [hotColdSpots, setHotColdSpots] = useState<HotColdSpots>();
 

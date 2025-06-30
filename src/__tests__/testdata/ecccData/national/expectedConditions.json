@@ -19,13 +19,23 @@
       "conditionUUID": "2023080921"
     }
   ],
+  "on": [
+    {
+      "name": "Toronto",
+      "code": "ON/s0000458",
+      "condition": "Mostly Cloudy",
+      "abbreviatedCondition": "mostly cloudy",
+      "temperature": 20.2,
+      "conditionUUID": "2023080921"
+    }
+  ],
   "west": [
     {
       "name": "Vancouver",
       "code": "BC/s0000141",
-      "condition": "Mostly Cloudy",
-      "abbreviatedCondition": "mostly cloudy",
-      "temperature": 20.2,
+      "condition": "Partly Cloudy",
+      "abbreviatedCondition": "partly cloudy",
+      "temperature": 28.4,
       "conditionUUID": "2023080921"
     }
   ]

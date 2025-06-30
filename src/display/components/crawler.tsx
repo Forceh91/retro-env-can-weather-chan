@@ -1,19 +1,20 @@
 import Marquee from "react-fast-marquee";
-import { CrawlerMessages } from "types";
 
-type CrawlerMessagesProps = {
-  crawler: CrawlerMessages;
+type CrawlerBarProps = {
+  messages: string[];
+  speed: number;
 };
 
-export function CrawlerMessages({ crawler }: CrawlerMessagesProps) {
-  if (!crawler?.length) return <div id="crawler"></div>;
+
+export function CrawlerBar({ messages, speed }: CrawlerBarProps) {
+  if (!messages?.length) return <div id="crawler"></div>;
 
   return (
     <div id="crawler">
-      <Marquee loop={0} speed={125}>
+      <Marquee loop={0} speed={speed}>
         <div className="message"></div>
-        {crawler.map((message, ix) => (
-          <div className="message" key={`crawler.${ix}`}>
+        {messages.map((message, ix) => (
+          <div className="message" key={`messages.${ix}`}>
             {message}
           </div>
         ))}

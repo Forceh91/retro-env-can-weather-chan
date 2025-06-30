@@ -2,7 +2,6 @@ import axios from "lib/axios";
 import { useEffect, useState } from "react";
 import { ConfigFields } from "types";
 
-// tell the channel to fetch the config once every 15mins
 export function useChannelCurrentConfig() {
   const [config, setConfig] = useState<ConfigFields>();
   const [fetched, setHasFetched] = useState(false);

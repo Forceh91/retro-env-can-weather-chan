@@ -2,7 +2,6 @@ import { CONDITIONS_EVENT_STREAM_CONDITION_UPDATE_EVENT } from "consts";
 import { useEffect, useState } from "react";
 import { WeatherStation } from "types";
 
-// tell the channel to fetch the config once every 15mins
 export function useWeatherEventStream() {
   const [weatherEventStream, setWeatherEventStream] = useState<EventSource>();
   const [currentConditions, setCurrentConditions] = useState<WeatherStation>();

@@ -4,7 +4,7 @@ import { InitChannel } from "types";
 
 const FETCH_CONFIG_INTERVAL = 5 * 60 * 1000;
 
-// tell the channel to fetch the config once every 5mins
+// tell the channel to fetch the config once every interval
 export function useConfig() {
   const [config, setConfig] = useState<InitChannel>();
 
@@ -14,7 +14,6 @@ export function useConfig() {
       .then((resp) => {
         const { data } = resp;
         if (!data) return;
-
         setConfig(data);
       })
       .catch();

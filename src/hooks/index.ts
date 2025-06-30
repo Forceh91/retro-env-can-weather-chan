@@ -10,3 +10,4 @@ export * from "./usa";
 export * from "./sunspots";
 export * from "./config";
 export * from "./saveConfigOption";
+export * from "./crawler";

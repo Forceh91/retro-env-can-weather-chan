@@ -28,10 +28,9 @@ class CanadaProvincialHotColdSpots {
     if (!province) return;
 
     const currentDate = new Date();
-    const date = `${currentDate.getFullYear()}${(currentDate.getMonth() + 1).toString().padStart(2, "0")}${currentDate
-      .getDate()
+    const date = `${currentDate.getUTCFullYear()}${(currentDate.getUTCMonth() + 1)
       .toString()
-      .padStart(2, "0")}`;
+      .padStart(2, "0")}${currentDate.getUTCDate().toString().padStart(2, "0")}`;
 
     this._apiURL = `https://dd.weather.gc.ca/observations/xml/${province.toUpperCase()}/today/today_${province.toLowerCase()}_${date}_e.xml`;
 
@@ -62,19 +61,21 @@ class CanadaProvincialHotColdSpots {
         );
 
         // pull out the values for the temp and province
-        const [hotLocationTempValueObj, hotLocationProvinceValueObj] = hotSpotLocationCanada.qualifier;
+        const [hotLocationTempValueObj, hotLocationProvinceValueObj] = hotSpotLocationCanada?.qualifier ?? [];
 
         // put all of this data together
-        const hotLocationName = hotSpotLocationCanada._attributes.value ?? "";
-        const hotLocationTempValue = hotLocationTempValueObj?._attributes?.value ?? "";
-        const hotLocationProvinceValue = hotLocationProvinceValueObj?._attributes?.uom ?? "";
+        if (hotSpotLocationCanada) {
+          const hotLocationName = hotSpotLocationCanada._attributes.value ?? "";
+          const hotLocationTempValue = hotLocationTempValueObj?._attributes?.value ?? "";
+          const hotLocationProvinceValue = hotLocationProvinceValueObj?._attributes?.uom ?? "";
 
-        // store for later use
-        this._hotColdSpots.hotSpot = {
-          name: hotLocationName,
-          temperature: Number(hotLocationTempValue),
-          province: hotLocationProvinceValue,
-        };
+          // store for later use
+          this._hotColdSpots.hotSpot = {
+            name: hotLocationName,
+            temperature: Number(hotLocationTempValue),
+            province: hotLocationProvinceValue,
+          };
+        }
 
         // this presumes that the first element for `hot/cold_spot_location_canada` is the best for the day
         const coldSpotLocationCanada: ECCCHotColdSpotElement = hotColdSpotData.elements.element.find(
@@ -82,24 +83,26 @@ class CanadaProvincialHotColdSpots {
         );
 
         // pull out the values for the temp and province
-        const [coldLocationTempValueObj, coldLocationProvinceValueObj] = coldSpotLocationCanada.qualifier;
+        const [coldLocationTempValueObj, coldLocationProvinceValueObj] = coldSpotLocationCanada?.qualifier ?? [];
 
         // put all of this data together
-        const coldLocationName = coldSpotLocationCanada._attributes.value ?? "";
-        const coldLocationTempValue = coldLocationTempValueObj?._attributes?.value ?? "";
-        const coldLocationProvinceValue = coldLocationProvinceValueObj?._attributes?.uom ?? "";
+        if (coldSpotLocationCanada) {
+          const coldLocationName = coldSpotLocationCanada._attributes.value ?? "";
+          const coldLocationTempValue = coldLocationTempValueObj?._attributes?.value ?? "";
+          const coldLocationProvinceValue = coldLocationProvinceValueObj?._attributes?.uom ?? "";
 
-        // store for later use
-        this._hotColdSpots.coldSpot = {
-          name: coldLocationName,
-          temperature: Number(coldLocationTempValue),
-          province: coldLocationProvinceValue,
-        };
+          // store for later use
+          this._hotColdSpots.coldSpot = {
+            name: coldLocationName,
+            temperature: Number(coldLocationTempValue),
+            province: coldLocationProvinceValue,
+          };
+        }
 
         // last updated
         this._lastUpdated = new Date();
       })
-      .catch(() => logger.error("Unable to fetch canada/provincial hot/cold spots"));
+      .catch((err) => logger.error("Unable to fetch canada/provincial hot/cold spots", err));
   }
 
   public hotColdSpots() {

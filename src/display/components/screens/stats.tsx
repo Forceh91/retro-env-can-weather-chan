@@ -60,14 +60,14 @@ export function StatsScreen(props: StatsScreenProps) {
   const normalPrecip = generatePrecip(seasonPrecip?.normal || 0);
 
   const { hotSpot, coldSpot } = hotColdSpots ?? {};
-  const truncatedHotSpotName = hotSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "";
-  const truncatedColdSpotName = coldSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "";
+  const truncatedHotSpotName = hotSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "N/A";
+  const truncatedColdSpotName = coldSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "N/A";
 
   const generateDotsForHotColdSpotLine = (prefix: string) =>
     "".padEnd(DISPLAY_MAX_CHARACTERS_PER_LINE - (prefix.length + HOT_COLD_SPOT_CHARS_USED_OUTSIDE_OF_DOTS), ".");
 
-  const formatTempForHotColdSpotLine = (temperature?: number) =>
-    (!isNaN(temperature) ? Math.round(temperature) : "N/A").toString().padStart(3);
+  const formatTempForHotColdSpotLine = (temperature?: number | null) =>
+    (!isNaN(temperature) && temperature != null ? Math.round(temperature) : "N/A").toString().padStart(3);
 
   if (!city || !weatherStationTime?.observedDateTime || !season || !hotColdSpots) return <></>;
 
@@ -102,7 +102,8 @@ export function StatsScreen(props: StatsScreenProps) {
           )}
           {coldSpot && (
             <div>
-              {truncatedColdSpotName}, {coldSpot.province} {generateDotsForHotColdSpotLine(truncatedColdSpotName)}
+              {truncatedColdSpotName}, {coldSpot.province ?? "N/A"}{" "}
+              {generateDotsForHotColdSpotLine(truncatedColdSpotName)}
               {formatTempForHotColdSpotLine(coldSpot.temperature)}
             </div>
           )}

@@ -23,17 +23,27 @@ async function GetWeatherFileFromECCC(province: string, stationID: string): Prom
 
       const data = rawData as string;
       // once we know it does exist we need to parse out the directory structure it gives us
-      const regexPattern = /.*href="([^"]*MSC_CitypageWeather_{STATION_ID}_en\.xml)".*/;
-      const regex = RegExp(`${regexPattern}`.replace("{STATION_ID}", stationID), "i");
-      const [, group1] = data.match(regex);
+      // const regexPattern = ;
+      const regex = RegExp(`href="([^"]*MSC_CitypageWeather_${stationID}_en\.xml)"`, "gi");
 
-      // group1 will always be the bit we need
-      if (group1) return `${baseURL}${group1}`;
+      // see if we get a match in here
+      const matches = [...data.matchAll(regex)].map((m) => m[1]);
+      if (matches) {
+        const latest = matches.sort().at(-1);
+
+        // we need to make sure we get the lastest
+        // as for some reason old data can end up in the new hours directory
+        if (latest) return `${baseURL}${latest}`;
+      }
+
       // otherwise we found no data for this station
-      else return null;
+      return null;
     } catch (err) {
-      logger.error(province, utcHour, "failed to fetch data", err);
+      logger.error(province, paddedUTCHour, "failed to fetch data");
     }
+
+    // final fallback for return value
+    return null;
   };
 
   // we can't async/await a foreach so we've gotta do this manually

@@ -101,7 +101,7 @@ class CurrentConditions {
       .on("error", (...error) => logger.error("AMQP error:", error))
       .on("message", (date: string, url: string) => {
         // make sure its relevant to us
-        if (!url.includes(`${this._weatherStationID}`)) return;
+        if (!url.endsWith(`${this._weatherStationID}_en.xml`)) return;
 
         this.fetchConditions(url);
         logger.log("Received new conditions from AMQP at", date);
@@ -114,10 +114,13 @@ class CurrentConditions {
   }
 
   private async fetchConditions(url?: string) {
+    // if we got a url from amqp then use that, otherwise we need to find the correct one
     const searchedURL =
       url != undefined
         ? url
         : await GetWeatherFileFromECCC(config.primaryLocation.province, config.primaryLocation.location);
+
+    // now that we know we have a file to use, we can go and get it
     searchedURL &&
       axios
         .get(searchedURL)
@@ -174,10 +177,9 @@ class CurrentConditions {
           this.getTempRecordsForDay();
 
           // tell national stations what we're expecting
-          eventbus.emit(
-            EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS,
-            generateConditionsUUID(weather.current?.dateTime[0].timeStamp)
-          );
+          eventbus.emit(EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS, conditionUUID);
+
+          logger.log("Parsed new conditions with UUID of", conditionUUID);
         })
         .catch((err) => {
           logger.error("Unable to retrieve update to conditions from ECCC API", err);

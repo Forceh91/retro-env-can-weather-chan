@@ -16,7 +16,7 @@
   "dependencies": {
     "@chakra-ui/react": "~2.8.2",
     "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "amqp": "^0.2.7",
     "axios": "1.10.0",
     "cors": "^2.8.5",

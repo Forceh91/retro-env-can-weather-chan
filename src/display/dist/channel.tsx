@@ -1,4 +1,4 @@
-import { CrawlerMessages } from "display/components/crawler";
+import { CrawlerBar } from "display/components/crawler";
 import { FooterBar } from "display/components/footerbar";
 import { PlaylistComponent } from "display/components/playlist";
 import { ScreenRotator } from "display/components/screenrotator";
@@ -15,6 +15,7 @@ import {
 } from "hooks";
 import { useAirQuality } from "hooks/airQuality";
 import { useConfig } from "hooks/init";
+import { useCrawlerData } from "hooks/crawler";
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
@@ -30,6 +31,7 @@ function WeatherChannel() {
   const { usaWeather } = useUSAWeather();
   const { sunspots } = useSunspots();
   const { airQuality } = useAirQuality();
+  const { crawlerData } = useCrawlerData();
 
   useEffect(() => {
     fetchSeason();
@@ -37,23 +39,12 @@ function WeatherChannel() {
     fetchNationalWeather();
   }, [currentConditions?.observationID]);
 
-  if (
-    !config &&
-    !currentConditions &&
-    !alertsHook.alerts &&
-    !nationalWeather &&
-    !provinceTracking &&
-    !season &&
-    !hotColdSpots &&
-    !lastMonth &&
-    !usaWeather &&
-    !sunspots
-  )
-    return <>Channel offline</>;
-
   return (
     <>
-      <CrawlerMessages crawler={config?.crawler} />
+      <CrawlerBar
+        messages={crawlerData?.crawlerMessages}
+        speed={crawlerData?.crawlerSpeed}
+      />
       <ScreenRotator
         screens={config?.flavour?.screens}
         weatherStationResponse={currentConditions}

@@ -16,3 +16,4 @@ export * from "./screen.types";
 export * from "./misc.types";
 export * from "./airquality.types";
 export * from "./temprecords.types";
+export * from "./crawler.types";

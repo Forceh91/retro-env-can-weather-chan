@@ -133,6 +133,12 @@ export function postLookAndFeel(req: Request, res: Response) {
   }
 }
 
+export function getCrawlerMessages(req: Request, res: Response) {
+  res.json({
+    crawler: config.crawlerMessages,
+  });
+}
+
 export function postCrawlerMessages(req: Request, res: Response) {
   const {
     body: { crawler },

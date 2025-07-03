@@ -5,6 +5,7 @@ import configRoutes from "./config";
 import seasonRoutes from "./season";
 import flavourRoutes from "./flavour";
 import airQualityRoutes from "./airQuality";
+import crawlerRoutes from "./crawler";
 
 export function initializeRouter(): Router {
   const router = express.Router();
@@ -14,6 +15,7 @@ export function initializeRouter(): Router {
   router.use("/season", seasonRoutes);
   router.use("/flavour", flavourRoutes);
   router.use("/airquality", airQualityRoutes);
+  router.use("/crawler", crawlerRoutes);
 
   return router;
 }

@@ -177,7 +177,7 @@ class CurrentConditions {
           this.getTempRecordsForDay();
 
           // tell national stations what we're expecting
-          eventbus.emit(EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS, conditionUUID);
+          eventbus.emit(EVENT_BUS_MAIN_STATION_UPDATE_NEW_CONDITIONS, weather.current?.dateTime[0].timeStamp);
 
           logger.log("Parsed new conditions with UUID of", conditionUUID);
         })

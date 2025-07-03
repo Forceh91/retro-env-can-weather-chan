@@ -43,7 +43,10 @@ class NationalWeather {
     // update expected condition uuid from main station
     const hadExpectedConditionUUID = !!this._expectedConditionUUID;
     const shouldClear = this._expectedConditionUUID !== conditionUUID;
-    this._expectedConditionUUID = conditionUUID;
+
+    // this._expectedConditionUUID = conditionUUID;
+    // with the June 2025 update they seem to have changed the raw timestamp data
+    this._expectedConditionUUID = conditionUUID.slice(0, -4);
 
     // if we didn't have an expected condition uuid, we dont need to force an update
     if (!hadExpectedConditionUUID) return;

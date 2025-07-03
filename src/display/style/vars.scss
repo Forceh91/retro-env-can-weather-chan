@@ -1,7 +1,8 @@
 $channel_max_width: 640px;
 $channel_max_height: 480px;
-$crawler_bar_height: 75px;
-$footer_bar_height: 100px;
+// $crawler_bar_height: 75px;
+$crawler_bar_height: 105px;
+$footer_bar_height: 90px;
 $display_area_height: $channel_max_height - $crawler_bar_height - $footer_bar_height;
 $font_size_8_lines: calc($display_area_height / 8);
 

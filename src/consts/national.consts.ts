@@ -17,6 +17,23 @@ export const MB_WEATHER_STATIONS: NationalStationConfig[] = [
   { name: "Gillam", code: "MB/s0000543", isBackup: true },
 ];
 
+export const ON_WEATHER_STATIONS: NationalStationConfig[] = [
+  { name: "Toronto", code: "ON/s0000458" },
+  { name: "Oakville", code: "ON/s0000367" },
+  { name: "Hamilton", code: "ON/s0000549" },
+  { name: "Niagara Falls", code: "ON/s0000692" },
+  { name: "Kingston", code: "ON/s0000531" },
+  { name: "Ottawa", code: "ON/s0000430" },
+  { name: "Sudbury", code: "ON/s0000680" },
+  { name: "London", code: "ON/s0000326", isBackup: true },
+  { name: "Windsor", code: "ON/s0000646", isBackup: true },
+  { name: "Kenora", code: "ON/s0000651", isBackup: true },
+  { name: "Timmins", code: "ON/s0000705", isBackup: true },
+  { name: "North Bay", code: "ON/s0000765", isBackup: true },
+  { name: "Windsor", code: "ON/s0000646", isBackup: true },
+  { name: "Wawa", code: "ON/s0000761", isBackup: true },
+];
+
 export const WEST_WEATHER_STATIONS: NationalStationConfig[] = [
   { name: "Vancouver", code: "BC/s0000141" },
   { name: "Victoria", code: "BC/s0000775" },

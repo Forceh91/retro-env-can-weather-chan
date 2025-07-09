@@ -1,11 +1,9 @@
 jest.mock("consts/national.consts", () => ({
   ...jest.requireActual("consts/national.consts"),
-  MB_WEATHER_STATIONS: [
-    { name: "Portage", code: "MB/s0000626" },
-    { name: "Norway House", code: "MB/s0000616" },
-  ],
+  MB_WEATHER_STATIONS: [{ name: "Portage", code: "MB/s0000626" }],
   WEST_WEATHER_STATIONS: [{ name: "Vancouver", code: "BC/s0000141" }],
   EAST_WEATHER_STATIONS: [{ name: "Toronto", code: "ON/s0000458" }],
+  ON_WEATHER_STATIONS: [{ name: "Toronto", code: "ON/s0000458" }],
 }));
 
 import { mockGetWeatherFileFromECCC } from "./mocks";
@@ -25,9 +23,9 @@ describe("National weather station temp/condition", () => {
   it("fetches and parses the station data correctly", (done) => {
     moxios.wait(async () => {
       await moxios.requests.at(0).respondWith({ status: 200, response: fakeResponses["MB/s0000626"] });
-      await moxios.requests.at(1).respondWith({ status: 200, response: fakeResponses["MB/s0000616"] });
+      await moxios.requests.at(1).respondWith({ status: 200, response: fakeResponses["BC/s0000141"] });
       await moxios.requests.at(2).respondWith({ status: 200, response: fakeResponses["ON/s0000458"] });
-      await moxios.requests.at(3).respondWith({ status: 200, response: fakeResponses["BC/s0000141"] });
+      await moxios.requests.at(3).respondWith({ status: 200, response: fakeResponses["ON/s0000458"] });
 
       const currentConditions = national.nationalWeather();
       expect(currentConditions).toStrictEqual(expectedConditions);
@@ -46,8 +44,9 @@ describe("National weather station temp/condition", () => {
 
       const currentConditions = national.nationalWeather();
       expect(currentConditions.mb).toStrictEqual(expectedConditions.mb);
-      expect(currentConditions.east).toHaveLength(0);
       expect(currentConditions.west).toHaveLength(0);
+      expect(currentConditions.east).toHaveLength(0);
+      expect(currentConditions.on).toHaveLength(0);
       done();
     });
 

@@ -8,12 +8,14 @@ import { initializeNationalWeather } from "lib/national";
 import { initializeProvinceTracking } from "lib/provincetracking";
 import { initializeSunspots } from "lib/sunspots";
 import { initializeUSAWeather } from "lib/usaweather";
+import { initializeCrawler } from "lib/crawler";
 
 const logger = new Logger("Server");
 
 logger.log("Starting RWC...");
 validateDirectories();
 initializeConfig();
+initializeCrawler();
 initializeCurrentConditions();
 initializeAlertMonitor();
 initializeAirQuality();

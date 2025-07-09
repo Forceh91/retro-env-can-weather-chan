@@ -28,7 +28,6 @@ describe("Config file loading", () => {
     expect(config.flavour.name).toStrictEqual(FLAVOUR_DEFAULT.name);
     expect(config.flavour.screens).toStrictEqual(FLAVOUR_DEFAULT.screens);
     expect(config.musicPlaylist).toHaveLength(0);
-    expect(config.crawlerMessages).toHaveLength(0);
   });
 
   it("loads from file correctly when primary location is missing", () => {
@@ -167,29 +166,6 @@ describe("Config file loading", () => {
     expect(config.primaryLocation).toStrictEqual(defaultPrimaryLocation);
   });
 
-  it("loads crawler messages from file correctly", () => {
-    const crawlers = ["crawler 1", "crawler 2", "crawler 3"];
-    jest.spyOn(fs, "readFileSync").mockImplementation(() => crawlers.join("\n"));
-
-    const config = initializeConfig();
-    expect(config.crawlerMessages).toStrictEqual(crawlers);
-  });
-
-  it("loads crawler messages from an empty file correctly", () => {
-    jest.spyOn(fs, "readFileSync").mockImplementation(() => "");
-
-    const config = initializeConfig();
-    expect(config.crawlerMessages).toStrictEqual([]);
-  });
-
-  it("handles the crawler messages file not existing", () => {
-    jest.spyOn(fs, "readFileSync").mockImplementation(() => {
-      throw { code: FS_NO_FILE_FOUND };
-    });
-
-    const config = initializeConfig();
-    expect(config.crawlerMessages).toStrictEqual([]);
-  });
 });
 
 describe("Config updating", () => {
@@ -292,19 +268,6 @@ describe("Config updating", () => {
     expect(writeFile).toHaveBeenCalled();
     expect(fn).toHaveBeenCalled();
     expect(config.primaryLocation).toStrictEqual(newLocation);
-  });
-
-  it("updates the crawler messages correctly", () => {
-    const config = initializeConfig();
-    const writeFile = jest.spyOn(fs, "writeFileSync").mockImplementation();
-
-    const newCrawlerMessages = ["a crawler", "and another one", "and a third one"];
-    config.setCrawlerMessages(newCrawlerMessages);
-    expect(config.crawlerMessages).toStrictEqual(newCrawlerMessages);
-
-    config.setCrawlerMessages([...newCrawlerMessages, "   ", ""]);
-    expect(config.crawlerMessages).toStrictEqual(newCrawlerMessages);
-    expect(writeFile).toHaveBeenCalled();
   });
 
   it("updates the air quality station settings correctly", () => {

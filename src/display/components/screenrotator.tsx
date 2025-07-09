@@ -192,6 +192,16 @@ export function ScreenRotator(props: ScreenRotatorProps) {
             onComplete={switchToNextScreen}
           />
         );
+        
+        case Screens.CANADA_TEMP_CONDITIONS_ON:
+          return (
+            <NationalWeatherScreen
+              weatherStationTime={weatherStationResponse?.stationTime}
+              observations={nationalWeather?.on}
+              area="ON"
+              onComplete={switchToNextScreen}
+            />
+          );
 
       case Screens.CANADA_TEMP_CONDITIONS_WEST:
         return (

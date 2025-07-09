@@ -34,11 +34,8 @@ const CONFIG_PATH = {
 const CONFIG_ABSOLUTE_PATH = `${CONFIG_PATH.FOLDER}/${CONFIG_PATH.FILE}`;
 const BAD_CONFIG_FILE_ERROR_MESSAGE = "Unable to load config file, defaults have been loaded";
 
-const CRAWLER_PATH = {
-  FOLDER: "./cfg",
-  FILE: "crawler.txt",
-};
-const CRAWLER_ABSOLUTE_PATH = `${CRAWLER_PATH.FOLDER}/${CRAWLER_PATH.FILE}`;
+import { initializeCrawler } from "lib/crawler";
+
 const MUSIC_DIR = "music";
 
 class Config {
@@ -160,39 +157,24 @@ class Config {
   }
 
   private loadCrawlerMessages() {
-    logger.log("Loading crawler messages from", CRAWLER_ABSOLUTE_PATH);
+    logger.log("Loading crawler messages");
     try {
-      const data = fs.readFileSync(CRAWLER_ABSOLUTE_PATH, "utf8");
-      this.crawlerMessages = data
-        .split("\n")
-        .map((message) => message.trim())
-        .filter((message) => message.length);
-
+      const crawler = initializeCrawler();
+      this.crawlerMessages = crawler.messages;
       logger.log("Loaded", this.crawlerMessages.length, "crawler messages");
     } catch (err) {
-      if (err.code === "ENOENT") {
-        // handle no file found
-        logger.error("No crawler file found");
-      } else {
-        // handle any other error
-        logger.error("Unable to load from crawler file");
-      }
+      logger.error("Unable to call crawler load");
     }
   }
 
   private saveCrawlerMessages() {
-    logger.log("Saving crawler messages to", CRAWLER_ABSOLUTE_PATH);
+    logger.log("Saving crawler messages");
     try {
-      fs.writeFileSync(CRAWLER_ABSOLUTE_PATH, this.crawlerMessages.join("\n"), "utf8");
-      logger.log("Saved", this.crawlerMessages.length, "crawler messages");
+      const crawler = initializeCrawler();
+      crawler.messages = this.crawlerMessages;
+      logger.log("Saved", crawler.messages.length, "crawler messages");
     } catch (err) {
-      if (err.code === "ENOENT") {
-        // handle no file found
-        logger.error("No crawler file found");
-      } else {
-        // handle any other error
-        logger.error("Unable to save to crawler file");
-      }
+      logger.error("Unable to call crawler save");
     }
   }
 

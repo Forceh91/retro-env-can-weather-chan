@@ -107,9 +107,9 @@ export function ForecastScreen(props: ForecastScreenProps) {
       {page === 1 && (
         <>
           <Conditions
-            city={weatherStationResponse.city}
-            conditions={weatherStationResponse.observed}
-            stationTime={weatherStationResponse.stationTime}
+            city={weatherStationResponse?.city}
+            conditions={weatherStationResponse?.observed}
+            stationTime={weatherStationResponse?.stationTime}
             airQuality={airQuality}
           />
           <div className="forecast reload-animation step-7">

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import moxios from "moxios";
 import axios from "lib/axios";
 import { useSaveConfigOption } from "hooks/saveConfigOption";
@@ -30,14 +30,17 @@ describe("Season hook hook", () => {
 
   it("fetches when the saveConfigOption function is called and has an endpoint", () => {
     const { saveConfigOption } = initializeHook("configOption");
-    saveConfigOption({});
+    act(() => {
+      saveConfigOption({});
+    });
     expect(moxios.requests.count()).toBeGreaterThan(0);
   });
 
   it("handles an 2xx state", () => {
     const { saveConfigOption, isSaving, wasSuccess, wasError } = initializeHook();
-    saveConfigOption({});
-
+    act(() => {
+      saveConfigOption({});
+    });
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
       request.respondWith({ status: 200 });
@@ -49,8 +52,9 @@ describe("Season hook hook", () => {
 
   it("handles a 4xx error state", () => {
     const { saveConfigOption, isSaving, wasSuccess, wasError } = initializeHook();
-    saveConfigOption({});
-
+    act(() => {
+      saveConfigOption({});
+    });
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
       request.respondWith({ status: 400 });
@@ -62,8 +66,9 @@ describe("Season hook hook", () => {
 
   it("handles a 5xx error state", () => {
     const { saveConfigOption, isSaving, wasSuccess, wasError } = initializeHook();
-    saveConfigOption({});
-
+    act(() => {
+      saveConfigOption({});
+    });
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
       request.respondWith({ status: 500 });

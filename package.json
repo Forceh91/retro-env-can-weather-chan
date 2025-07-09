@@ -1,6 +1,6 @@
 {
   "name": "retro-env-can-weather-chan",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "private": true,
   "scripts": {
     "lint": "eslint .",
@@ -23,7 +23,7 @@
     "date-fns": "^2.30.0",
     "ec-weather-js": "^1.2.1",
     "express": "^4.21.2",
-    "framer-motion": "^12.16.0",
+    "framer-motion": "^12.23.0",
     "point-in-polygon": "^1.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -33,14 +33,14 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.15.2",
+    "@parcel/transformer-sass": "^2.15.4",
     "@release-it/conventional-changelog": "^7.0.2",
     "@testing-library/react": "^15.0.7",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/moxios": "^0.4.17",
-    "@types/node": "^24.0.7",
+    "@types/node": "^24.0.10",
     "@types/point-in-polygon": "^1.1.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -54,7 +54,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "mockdate": "^3.0.5",
     "moxios": "^0.4.0",
-    "parcel": "^2.15.2",
+    "parcel": "^2.15.4",
     "process": "^0.11.10",
     "release-it": "^16.2.1",
     "stream-browserify": "^3.0.0",

@@ -2013,13 +2013,6 @@
     "@parcel/utils" "2.15.4"
     lmdb "2.8.5"
 
-"@parcel/codeframe@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/codeframe/-/codeframe-2.15.2.tgz#1e5dc21fbdfa6064c2dd790ae1e997b1f26f45d4"
-  integrity sha512-uzcHUXBXV+vUqXE7SR6Et60GauPGTWvc381pVzCzc90VQJyWY/xyRRIgcA+4MLi2+lQj+w4Uq9H9qg+hMx/JFg==
-  dependencies:
-    chalk "^4.1.2"
-
 "@parcel/codeframe@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/codeframe/-/codeframe-2.15.4.tgz#69f00eea86313c5bc5cbe145607ae248803c32be"
@@ -2103,14 +2096,6 @@
     nullthrows "^1.1.1"
     semver "^7.7.1"
 
-"@parcel/diagnostic@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/diagnostic/-/diagnostic-2.15.2.tgz#6f77032bde57a64a345dfe56c466b9a15f45b49c"
-  integrity sha512-lsIF59BgfLzN3SP5VM42pa9lilcotEoF42H2RgnqLe3KACcNcbbtvjyjlvac+iaSRix4gEkuZa6376X6p7DkFQ==
-  dependencies:
-    "@mischnic/json-sourcemap" "^0.1.1"
-    nullthrows "^1.1.1"
-
 "@parcel/diagnostic@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/diagnostic/-/diagnostic-2.15.4.tgz#17393f0fa71da19c84d0668e496e4ca9427e1f77"
@@ -2124,20 +2109,10 @@
   resolved "https://registry.yarnpkg.com/@parcel/error-overlay/-/error-overlay-2.15.4.tgz#bc5a90245a70c7e202dfe43c05112457a772bf58"
   integrity sha512-xxeaWm8fV8Z4uGy/c09mOvmFSHBOgF1gCMQwLCwZvfMLqIWkdZaUQ2cRhWZIS6pOXaRVC7YpcXzk2DOiSUNSbQ==
 
-"@parcel/events@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/events/-/events-2.15.2.tgz#afdf680d04109b48aa0df14821a682b67843e9f1"
-  integrity sha512-CxXVuYz/K3sDIquM+3Pemxhppb8Q/mRayxqxZtXHoKbhiLBeyX+pLz2v9Hr0R7fiN6naV00IG48Zc5aArHXR4w==
-
 "@parcel/events@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/events/-/events-2.15.4.tgz#2a08fb358cff6888bc5151b1aece56671990681d"
   integrity sha512-SBq4zstaFr7XQaXNaQmUuVh1swCUHrhtPCOSofvkJoQGhjsuhQlh4t0NmUikyKNdj7C1j40xCS1kGHuUO29b0g==
-
-"@parcel/feature-flags@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/feature-flags/-/feature-flags-2.15.2.tgz#922eaf9332e04529ec169154dc506e6113d40bac"
-  integrity sha512-6oiuLd3ypk4GY8X9/l/GrngzSddHW8yF8DrYA++TkaPDtTz4llanza/p7RIk/ltdV3hmBxnH4vjWtciJEcbQww==
 
 "@parcel/feature-flags@2.15.4":
   version "2.15.4"
@@ -2164,14 +2139,6 @@
     "@parcel/feature-flags" "2.15.4"
     nullthrows "^1.1.1"
 
-"@parcel/logger@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/logger/-/logger-2.15.2.tgz#e9aae2cd38debdb20c17f2d42c36efbfe971a250"
-  integrity sha512-naF3dXcvO1lZvtCi6kCTaXhB1cqRwWkRifQRfEei+yp0QZqZF9dmWwZzMOefst/PTl3RaW014vrwFtiegdqsbQ==
-  dependencies:
-    "@parcel/diagnostic" "2.15.2"
-    "@parcel/events" "2.15.2"
-
 "@parcel/logger@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/logger/-/logger-2.15.4.tgz#a3a4452167db5ead13942bc1dd0b783ab5a11de9"
@@ -2179,13 +2146,6 @@
   dependencies:
     "@parcel/diagnostic" "2.15.4"
     "@parcel/events" "2.15.4"
-
-"@parcel/markdown-ansi@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/markdown-ansi/-/markdown-ansi-2.15.2.tgz#0836e1b92c50fb2054b8e36696447c0966dc58e7"
-  integrity sha512-qioxe3Gw/khhrZXeF3tmJeChoq70prxGqVhJylsnGimxHbxjLo3i8Jo8Thi36GiGcOTYSeyF/2tMo9BW2t2vqA==
-  dependencies:
-    chalk "^4.1.2"
 
 "@parcel/markdown-ansi@2.15.4":
   version "2.15.4"
@@ -2345,29 +2305,12 @@
   dependencies:
     "@parcel/plugin" "2.15.4"
 
-"@parcel/plugin@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.15.2.tgz#cdc5746084c632631b538372f81486154026c2c2"
-  integrity sha512-5ii1OpD/lGdpvy5AS1jChpCwEZP0eFaucy8szOjmfl4oZIeaHRHbZ5R0/3O1Hy8tY1IJF87HUKd+XV0iyD48zA==
-  dependencies:
-    "@parcel/types" "2.15.2"
-
 "@parcel/plugin@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.15.4.tgz#742c08846d7c0ab174f040beac28c86c460e6220"
   integrity sha512-XVehjmzk8ZDOFf/BXo26L76ZqCGNKIQcN2ngxAnq0KRY/WFanL8yLaL0qQq+c9whlu09hkGz1CuhFBLAIjJMYQ==
   dependencies:
     "@parcel/types" "2.15.4"
-
-"@parcel/profiler@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/profiler/-/profiler-2.15.2.tgz#9b4fe21fc21c513dc2637121dc04b9be11b219e5"
-  integrity sha512-hLTI6TIRr/tGgjTbsCqW4Avl2x8FMAHLDlDhNYjivX6ccfZmilEJnIcdKr2QtdgcaSulfRLTd5bt6uJWJ2ecKg==
-  dependencies:
-    "@parcel/diagnostic" "2.15.2"
-    "@parcel/events" "2.15.2"
-    "@parcel/types-internal" "2.15.2"
-    chrome-trace-event "^1.0.2"
 
 "@parcel/profiler@2.15.4":
   version "2.15.4"
@@ -2455,99 +2398,45 @@
     "@parcel/utils" "2.15.4"
     nullthrows "^1.1.1"
 
-"@parcel/rust-darwin-arm64@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust-darwin-arm64/-/rust-darwin-arm64-2.15.2.tgz#e48e39f9bc3d22c206a40549218b2ab92233674e"
-  integrity sha512-IK5mo/7bNym1ODMWD92D2URGcAq2K/9BasRlfjWI/Gh74l3lH4EFadUfgM88L+MVCV3WTg8ht5ZA0Iyp+IQ1JQ==
-
 "@parcel/rust-darwin-arm64@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/rust-darwin-arm64/-/rust-darwin-arm64-2.15.4.tgz#8716edcee0176394781cff6917f5cd9def77cb0f"
   integrity sha512-cEpNDeEtvM5Nhj0QLN95QbcZ9yY6Z5W3+2OeHvnojEAP8Rp1XGzqVTTZdlyKyN1KTiyfzIOiQJCiEcr+kMc5Nw==
-
-"@parcel/rust-darwin-x64@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust-darwin-x64/-/rust-darwin-x64-2.15.2.tgz#2139173951bd84716de0ab3145b7ebcd4556dc25"
-  integrity sha512-J30ukJXCzXsYNlYvYsaPEAEzfCZGXVIkXtPSVpWPwcaReqFUyT2bm4I8DHoeas0JwMNaeNlJhksaJA/iomqlwA==
 
 "@parcel/rust-darwin-x64@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/rust-darwin-x64/-/rust-darwin-x64-2.15.4.tgz#1556299e41cd3bd67391c613a892f0f5812a454a"
   integrity sha512-jL9i13sXKeBXXz8Z3BNYoScPOi+ljBA0ubAE3PN5DCoAA6wS4/FsAiRSIUw+3uxqASBD7+JvaT5sDUga1Xft5g==
 
-"@parcel/rust-linux-arm-gnueabihf@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust-linux-arm-gnueabihf/-/rust-linux-arm-gnueabihf-2.15.2.tgz#9dad08fff94b702cfc88f570bdda62f938852a0e"
-  integrity sha512-WpPddkviw8IkRRnT/dRyD3Uzvy6Yuoy5vvtDmpnrR2bJnEz5uQI3TlhMtQo7R+j6aIrDsGFJKBeo9Z0ga0ebNQ==
-
 "@parcel/rust-linux-arm-gnueabihf@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/rust-linux-arm-gnueabihf/-/rust-linux-arm-gnueabihf-2.15.4.tgz#514e3c7ae6b1eaca91a345ef5c705e95458f41ea"
   integrity sha512-c8HpVdDugCutlMILoOlkTioih9HGJpQrzS2G3cg/O1a5ZTacooGf3eGJGoh6dUBEv9WEaEb6zsTRwFv2BgtZcA==
-
-"@parcel/rust-linux-arm64-gnu@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust-linux-arm64-gnu/-/rust-linux-arm64-gnu-2.15.2.tgz#023a01dab40374648135758ef7725fae75d54a80"
-  integrity sha512-RzD7Gw0QqyUoWaVrtCU+v5J5pg6bybVNknqlEY4jfcJDgJHsM1V91DwJwxnI4ikG/uMedl0I40dl59x/Vo01Ow==
 
 "@parcel/rust-linux-arm64-gnu@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/rust-linux-arm64-gnu/-/rust-linux-arm64-gnu-2.15.4.tgz#78aaf9aa9be92a764eb76d013c580679eb12b44e"
   integrity sha512-Wcfs/JY4FnuLxQaU+VX2rI4j376Qo2LkZmq4zp9frnsajaAqmloVQfnbUkdnQPEL4I38eHXerzBX3LoXSxnZKA==
 
-"@parcel/rust-linux-arm64-musl@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust-linux-arm64-musl/-/rust-linux-arm64-musl-2.15.2.tgz#0ca91c7c7565c25d2e2c35c7734135bcd4f3da29"
-  integrity sha512-mWoL7kCITrEOO0GQ+LqGUylX+6b3nsV60Lzrz2N0Pgzz3EbGS0d4gDKkjxpi6BoR+h4KL7nLhj4hhbm0OHIc4A==
-
 "@parcel/rust-linux-arm64-musl@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/rust-linux-arm64-musl/-/rust-linux-arm64-musl-2.15.4.tgz#c6d2cde97139d5329288cb44325534fe12a66659"
   integrity sha512-xf9HxosEn3dU5M0zDSXqBaG8rEjLThRdTYqpkxHW/qQGzy0Se+/ntg8PeDHsSG5E9OK8xrcKH46Lhaw0QBF/Zw==
-
-"@parcel/rust-linux-x64-gnu@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust-linux-x64-gnu/-/rust-linux-x64-gnu-2.15.2.tgz#d4b5272c50cf9fc3f7d5317de7147891f2633293"
-  integrity sha512-aI8bKZTEZNYmgURiAfrgpmaoEArnMRvosfsOKnGykTjmHgsBxO/CGguFj5a4wlAZTVWcTGfs4krnUKtF9Hw6Rw==
 
 "@parcel/rust-linux-x64-gnu@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/rust-linux-x64-gnu/-/rust-linux-x64-gnu-2.15.4.tgz#476cbb6544117abca7e6f1b3c84737f2ad7182b4"
   integrity sha512-RigXVCFj6h0AXmkuxU61rfgYuW+PXBR6qSkR2I20yKnAXoMfxLaZy9YJ3sAPMEjT9zXgzGAX+3syItMF+bRjaw==
 
-"@parcel/rust-linux-x64-musl@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust-linux-x64-musl/-/rust-linux-x64-musl-2.15.2.tgz#30cd063b408856c1784676e376f1bf799fbce563"
-  integrity sha512-FpQOraPTjGfbHipjdbYpQLlMIRDoVL+Kl9ak+6mt0SbvP3QaXGosQXyhw0ZoNszqVLjIwC0OHEjAHdtcO6ZUvQ==
-
 "@parcel/rust-linux-x64-musl@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/rust-linux-x64-musl/-/rust-linux-x64-musl-2.15.4.tgz#76b62af4f6d7539f2d6dcaf0e0b84e76065116e2"
   integrity sha512-tHlRgonSr5ca8OvhbGzZUggCgCOirRz5dHhPSCm4ajMxeDMamwprq6lKy0sCNTXht4TXIEyugBcfEuRKEeVIBw==
 
-"@parcel/rust-win32-x64-msvc@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust-win32-x64-msvc/-/rust-win32-x64-msvc-2.15.2.tgz#fd858deb0c4728b1cea53b97bda8db60e69b491f"
-  integrity sha512-aSXkPc+KYAT6MnYgw2urXuDvipPkD90uJBKtSn3MY+fGOfzEluK7j0F5NdH88oTzrGVhRQxnxfe3Fc+IRhsaFQ==
-
 "@parcel/rust-win32-x64-msvc@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/rust-win32-x64-msvc/-/rust-win32-x64-msvc-2.15.4.tgz#f64fade58dffe390754acc641a1a65950104a22e"
   integrity sha512-YsX6vMl/bfyxqZSN7yiaZQKLoJKELSZYcvg8gIv4CF1xkaTdmfr6gvq2iCyoV+bwrodNohN4Xfl8r7Wniu1/UA==
-
-"@parcel/rust@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/rust/-/rust-2.15.2.tgz#5ec0f6a0d83b4ed942ca0efd2d73f9a2673702fb"
-  integrity sha512-6ZIVsSnkwxvDDVaxiYK4bWtVaJBYaFQuRvcxfCMQHEzFpWl9mdZVbCs3+g69Ere7a3e2sk87B41d/FIhoaz5xw==
-  optionalDependencies:
-    "@parcel/rust-darwin-arm64" "2.15.2"
-    "@parcel/rust-darwin-x64" "2.15.2"
-    "@parcel/rust-linux-arm-gnueabihf" "2.15.2"
-    "@parcel/rust-linux-arm64-gnu" "2.15.2"
-    "@parcel/rust-linux-arm64-musl" "2.15.2"
-    "@parcel/rust-linux-x64-gnu" "2.15.2"
-    "@parcel/rust-linux-x64-musl" "2.15.2"
-    "@parcel/rust-win32-x64-msvc" "2.15.2"
 
 "@parcel/rust@2.15.4":
   version "2.15.4"
@@ -2705,16 +2594,6 @@
     "@parcel/plugin" "2.15.4"
     "@parcel/rust" "2.15.4"
 
-"@parcel/types-internal@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/types-internal/-/types-internal-2.15.2.tgz#7dbc632dcb8821d193871e4ddd29f9d7dd2336d3"
-  integrity sha512-nmMpYeG4le49nvr8FsJYGEwhCZxcrm89tvkX8xGod1yXcShEZNWVVY9ezZLKxMrVMdBveqNUW8IZCij5iFDqdQ==
-  dependencies:
-    "@parcel/diagnostic" "2.15.2"
-    "@parcel/feature-flags" "2.15.2"
-    "@parcel/source-map" "^2.1.1"
-    utility-types "^3.11.0"
-
 "@parcel/types-internal@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/types-internal/-/types-internal-2.15.4.tgz#50b192656a2b2b3d9e01d764038101218bd0ae6b"
@@ -2725,14 +2604,6 @@
     "@parcel/source-map" "^2.1.1"
     utility-types "^3.11.0"
 
-"@parcel/types@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/types/-/types-2.15.2.tgz#21d4ef0d83af7dac2d61a7aedf8c6c3c450489df"
-  integrity sha512-APVvBVVG8RIMLN5hERa2POkPkEtrNUqRbQlKpoNYlIYZaYxKzb9+4MH4cVkmkGfYk3FGU3K5RnxSxMMWsu4tdw==
-  dependencies:
-    "@parcel/types-internal" "2.15.2"
-    "@parcel/workers" "2.15.2"
-
 "@parcel/types@2.15.4":
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/@parcel/types/-/types-2.15.4.tgz#736a42f81c3f3e3bd1ab7e3c374c123d60ec05fa"
@@ -2740,20 +2611,6 @@
   dependencies:
     "@parcel/types-internal" "2.15.4"
     "@parcel/workers" "2.15.4"
-
-"@parcel/utils@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/utils/-/utils-2.15.2.tgz#fa5292c17064105e0266c7df5064dc3434532de8"
-  integrity sha512-SQ77yZyeLZf5Teq5aMAViuXKoN7JRnYZ7Pdere1FD8ZuS7E34THA4jjJKxKu9Bqtezgm+gpN1gMbSKMBfbmIZA==
-  dependencies:
-    "@parcel/codeframe" "2.15.2"
-    "@parcel/diagnostic" "2.15.2"
-    "@parcel/logger" "2.15.2"
-    "@parcel/markdown-ansi" "2.15.2"
-    "@parcel/rust" "2.15.2"
-    "@parcel/source-map" "^2.1.1"
-    chalk "^4.1.2"
-    nullthrows "^1.1.1"
 
 "@parcel/utils@2.15.4":
   version "2.15.4"
@@ -2851,18 +2708,6 @@
     "@parcel/watcher-win32-arm64" "2.4.1"
     "@parcel/watcher-win32-ia32" "2.4.1"
     "@parcel/watcher-win32-x64" "2.4.1"
-
-"@parcel/workers@2.15.2":
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/@parcel/workers/-/workers-2.15.2.tgz#f83153399ad560cf072ef4cdc7485c9b64c507b9"
-  integrity sha512-uQWM3Zzkk+vzFYrLQvU/oeM1LC6/EDPvpdgtvdwkUqYC6O1Oei+9cWz6Uv5UDCwizeJKt+3PyE2rB9idbEkmsQ==
-  dependencies:
-    "@parcel/diagnostic" "2.15.2"
-    "@parcel/logger" "2.15.2"
-    "@parcel/profiler" "2.15.2"
-    "@parcel/types-internal" "2.15.2"
-    "@parcel/utils" "2.15.2"
-    nullthrows "^1.1.1"
 
 "@parcel/workers@2.15.4":
   version "2.15.4"
@@ -9269,10 +9114,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typescript@^5.5.4:
-  version "5.5.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.5.4.tgz#d9852d6c82bad2d2eda4fd74a5762a8f5909e9ba"
-  integrity sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==
+typescript@^5.8.3:
+  version "5.8.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.3.tgz#92f8a3e5e3cf497356f4178c34cd65a7f5e8440e"
+  integrity sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==
 
 uglify-js@^3.1.4:
   version "3.17.4"

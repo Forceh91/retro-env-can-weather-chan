@@ -140,10 +140,11 @@ The output of the simulator can be accessed via [the browser](http://localhost:8
 - **Environment and Climate Change Canada** ([Website](https://www.canada.ca/en/services/environment/weather.html)): API, AMQP, and documentation
 - **@wpgne** ([Mastodon](https://mastodon.social/@wpgne), [YouTube](https://www.youtube.com/@wpgne)): Source material and input throughout the development of the project
 - **@drdevlin** ([GitHub](https://github.com/drdevlin)): [ec-weather-js](https://github.com/drdevlin/ec-weather-js) project
+- **@djrrb** ([GitHub](https://github.com/djrrb)): [retro-env-can-weather-chan-fonts](https://github.com/djrrb/retro-env-can-weather-chan-fonts). David created both the main and secondary fonts from scratch based off original source material! You can read more about Slight Chance (the main font) on his [Font of the Month writeup](https://djr.com/notes/slight-chance-font-of-the-month)
 
 ## Support the project
 
 - [@matthdn91](https://threads.net/@matthdn91) on Threads
 - Follow us on on Mastodon: [@ecweatherchannel](https://thecanadian.social/@ecweatherchannel), [@forceh91](https://techhub.social/@forceh91)
 - Donations via [ko-fi](https://ko-fi.com/forceh)
-- 24/7 livestreams for Winnipeg and Toronto on [YouTube](https://www.youtube.com/@Forceh91/streams)
+- 24/7 livestreams for Winnipeg on [YouTube](https://www.youtube.com/@Forceh91/streams)

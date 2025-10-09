@@ -10,7 +10,7 @@ import { ElementCompact, xml2js } from "xml-js";
 
 export async function getECCCWeatherStations(searchTerm: string) {
   const stations = [];
-  const { data } = await axios.get("https://dd.weather.gc.ca/citypage_weather/siteList.xml");
+  const { data } = await axios.get("https://dd.weather.gc.ca/today/citypage_weather/siteList.xml");
   const parsedData: ElementCompact = xml2js(data, { compact: true });
   if (!parsedData || !parsedData["siteList"] || !parsedData["siteList"]["site"]) {
     throw "Unable to parse weather stations";

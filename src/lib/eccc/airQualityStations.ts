@@ -10,7 +10,7 @@ import { ElementCompact, xml2js } from "xml-js";
 
 export async function getECCCAirQualityStations(searchTerm: string) {
   const stations: AirQualityStations = [];
-  const { data } = await axios.get("https://dd.weather.gc.ca/air_quality/doc/AQHI_XML_File_List.xml");
+  const { data } = await axios.get("https://dd.weather.gc.ca/today/air_quality/doc/AQHI_XML_File_List.xml");
   const parsedData: ElementCompact = xml2js(data, { compact: true });
   if (!parsedData || !parsedData["dataFile"] || !parsedData["dataFile"]["EC_administrativeZone"]) {
     throw "Unable to parse air quality stations";

@@ -32,7 +32,7 @@ class CanadaProvincialHotColdSpots {
       .toString()
       .padStart(2, "0")}${currentDate.getUTCDate().toString().padStart(2, "0")}`;
 
-    this._apiURL = `https://dd.weather.gc.ca/observations/xml/${province.toUpperCase()}/today/today_${province.toLowerCase()}_${date}_e.xml`;
+    this._apiURL = `https://dd.weather.gc.ca/today/observations/xml/${province.toUpperCase()}/today/today_${province.toLowerCase()}_${date}_e.xml`;
 
     logger.log("Updating canada/provincial hot/cold spots");
     axios

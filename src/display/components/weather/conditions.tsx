@@ -1,5 +1,6 @@
 import { CONDITIONS_WIND_SPEED_CALM } from "consts";
 import { formatObservedLong } from "lib/date";
+import { isLooseNull } from "lib/isnull";
 import { useMemo } from "react";
 import { AQHIObservationResponse, ObservedConditions, WeatherStationTimeData } from "types";
 
@@ -66,8 +67,8 @@ export function Conditions(props: ConditionsProp) {
 
   const isShowingExtraData = windchill > 0 || airQuality?.value;
   const formattedVisibility = useMemo(() => {
-    if (!visibilityValue) return "";
-    if (visibilityValue < 1) return `${visibilityValue * 1000} M`;
+    if (isLooseNull(visibilityValue)) return "";
+    if (visibilityValue < 1) return `${(visibilityValue * 1000).toString().padStart(4, " ")} M`;
 
     return `${Math.round(visibilityValue)} ${visibilityUnits}`;
   }, [observedDateTime]);

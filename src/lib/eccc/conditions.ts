@@ -42,6 +42,7 @@ import { generateConditionsUUID } from "./utils";
 import eventbus from "lib/eventbus";
 import { getTempRecordForDate } from "lib/temprecords";
 import { GetWeatherFileFromECCC } from "./datamart";
+import { isLooseNull } from "lib/isnull";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -243,6 +244,9 @@ class CurrentConditions {
     const { value: windDirectionValue = null } = windDirection ?? {};
     const { value: visibilityValue = null, units: visibilityUnits = null } = visibility ?? {};
 
+    let massagedVisibilityValue: number | string | null | undefined = visibilityValue;
+    if (!isLooseNull(visibilityValue)) massagedVisibilityValue = Number(visibilityValue);
+
     // store it to our conditions
     this._conditions = {
       condition,
@@ -255,7 +259,7 @@ class CurrentConditions {
         units: pressureUnits,
       },
       humidity: { value: Number(humidityValue), units: humidityUnits },
-      visibility: { value: Number(visibilityValue), units: visibilityUnits },
+      visibility: { value: massagedVisibilityValue as number | null | undefined, units: visibilityUnits },
       wind: {
         speed: {
           value:

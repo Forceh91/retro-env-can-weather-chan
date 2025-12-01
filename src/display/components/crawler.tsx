@@ -13,7 +13,7 @@ export function CrawlerMessages({ crawler }: CrawlerMessagesProps) {
       <Marquee loop={0} speed={125}>
         <div className="message"></div>
         {crawler.map((message, ix) => (
-          <div className="message" key={`crawler.${ix}`}>
+          <div className="message" key={`crawler.${message}.${ix}`}>
             {message}
           </div>
         ))}

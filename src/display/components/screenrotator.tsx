@@ -67,7 +67,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   const [conditionsOrConfigUpdated, setConditionsOrConfigUpdated] = useState(false);
   const [backgroundColour, setBackgroundColour] = useState(SCREEN_BACKGROUND_BLUE);
 
-  let forecastScreenIx = -1;
+  const forecastScreenIxRef = useRef<number>(-1);
   const screenRotatorTimeout = useRef<NodeJS.Timeout>(null);
   const backgroundRotatorTimeout = useRef<NodeJS.Timeout>(null);
 
@@ -76,7 +76,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     if (!screens?.length) return;
 
     // store what index the forecast screen is at
-    forecastScreenIx = screens?.findIndex((screen) => screen.id === Screens.FORECAST);
+    forecastScreenIxRef.current = screens?.findIndex((screen) => screen.id === Screens.FORECAST);
 
     // displayed screen is set to -1 so we need to start displaying something
     if (displayedScreenIx === -1) setDisplayedScreenIx(0);
@@ -96,7 +96,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
 
     setConditionsOrConfigUpdated(true);
-    setDisplayedScreenIx(forecastScreenIx !== -1 ? forecastScreenIx : 0);
+    setDisplayedScreenIx(forecastScreenIxRef.current !== -1 ? forecastScreenIxRef.current : 0);
     setBackgroundColour(SCREEN_BACKGROUND_BLUE);
   }, [weatherStationResponse?.observationID, configVersion]);
 

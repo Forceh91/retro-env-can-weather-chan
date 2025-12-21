@@ -257,7 +257,12 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   };
 
   return (
-    <div id="display" style={{ backgroundColor: backgroundColour }}>
+    <div
+      id="display"
+      style={{
+        backgroundColor: backgroundColour,
+      }}
+    >
       {getComponentForDisplayedScreen()}
     </div>
   );

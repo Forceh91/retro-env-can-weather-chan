@@ -23,7 +23,7 @@
     "date-fns": "^2.30.0",
     "ec-weather-js": "^1.2.1",
     "express": "^4.21.2",
-    "framer-motion": "^12.23.26",
+    "framer-motion": "^12.24.0",
     "point-in-polygon": "^1.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

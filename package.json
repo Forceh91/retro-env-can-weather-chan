@@ -18,7 +18,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "amqp": "^0.2.7",
-    "axios": "1.13.4",
+    "axios": "1.13.5",
     "cors": "^2.8.6",
     "date-fns": "^2.30.0",
     "ec-weather-js": "^1.2.1",

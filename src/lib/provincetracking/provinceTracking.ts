@@ -60,8 +60,8 @@ class ProvinceTracking {
             station: provinceStation,
             minTemp: Math.min(),
             maxTemp: Math.max(),
-            displayTemp: null as null,
-            yesterdayPrecip: null as null,
+            displayTemp: null,
+            yesterdayPrecip: null,
             yesterdayPrecipUnit: "mm",
           } as ProvinceStationTracking)
       );

@@ -26,7 +26,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
       if (page < MAX_FORECAST_PAGES) setPage(page + 1);
       else onComplete();
     }, (page === 1 && isReload ? 50 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
-  }, [page]);
+  }, [page, onComplete, isReload]);
 
   useEffect(() => {
     // if we're past the first page of forecast
@@ -46,18 +46,6 @@ export function ForecastScreen(props: ForecastScreenProps) {
     };
   }, []);
 
-  const getForecastsForPage = () => {
-    // todo:make this much nicer
-    switch (page) {
-      case 1:
-        return [immediateForecast];
-      case 2:
-        return [page1Forecast1, page1Forecast2];
-      case 3:
-        return [page2Forecast1, page2Forecast2];
-    }
-  };
-
   const formatAlertHeadline = (headline: string) => {
     const truncated = headline
       ?.replace(/severe thunderstorm/gi, "severe tstorm")
@@ -70,34 +58,34 @@ export function ForecastScreen(props: ForecastScreenProps) {
   const [immediateForecast, page1Forecast1, page1Forecast2, page2Forecast1, page2Forecast2] =
     weatherStationResponse?.forecast ?? [];
 
-  const forecastsForPage = getForecastsForPage();
-
   // format immediate
   const formattedImmediateForecast = useMemo(() => {
-    if (!weatherStationResponse?.forecast || page !== 1) return "";
+    if (!weatherStationResponse?.forecast || page !== 1 || !immediateForecast) return "";
 
     // by default we're allowed 4 lines for the forecast but if there's a warning/watch showing it'll be 3
     return formatStringTo8x32(
       `Forecast for ${immediateForecast.period}..${immediateForecast.abbreviatedTextSummary}`,
       alert ? 3 : 4
     );
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+  }, [weatherStationResponse?.forecast, immediateForecast, page, alert]);
 
   // format the first forecast on the current page
   const formattedPageForecast1 = useMemo(() => {
     if (page === 1) return "";
 
-    const forecast = forecastsForPage[0];
+    const forecast = page === 2 ? page1Forecast1 : page2Forecast1;
+    if (!forecast) return "";
     return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+  }, [weatherStationResponse?.forecast, page, page1Forecast1, page2Forecast1]);
 
   // format the second forecast on the current page
   const formattedPageForecast2 = useMemo(() => {
     if (page === 1) return "";
 
-    const forecast = forecastsForPage[1];
+    const forecast = page === 2 ? page1Forecast2 : page2Forecast2;
+    if (!forecast) return "";
     return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+  }, [weatherStationResponse?.forecast, page, page1Forecast2, page2Forecast2]);
 
   // no response from weather station so whatever
   if (!weatherStationResponse) return <></>;

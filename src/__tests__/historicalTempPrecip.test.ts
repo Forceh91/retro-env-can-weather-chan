@@ -94,7 +94,7 @@ describe("historical temp/precip", () => {
     });
   });
 
-  it("doesn't generate last month's summary if it's past the start of the month", (done) => {
+  it("generates last month's summary after the first day of the month", (done) => {
     const historicalData = initializeHistoricalTempPrecip();
     historicalData.fetchLastTwoYearsOfData(new Date(2023, 7, 7));
 
@@ -103,7 +103,8 @@ describe("historical temp/precip", () => {
       const request = moxios.requests.mostRecent();
       request?.respondWith({ status: 200, response: historicalData2023 }).then(() => {
         const response = historicalData.lastMonthSummary();
-        expect(response).toStrictEqual(null);
+        expect(response).not.toBeNull();
+        expect(response?.averageHigh).toBeDefined();
         done();
       });
     });

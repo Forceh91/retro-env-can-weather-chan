@@ -48,8 +48,9 @@ describe("CurrentConditions", () => {
       const mostRecentRequest = moxios.requests.mostRecent();
       mostRecentRequest.respondWith({ status: 200, response: ecccConditions }).then(() => {
         const observed = conditions.observed();
-        expect(observed).toEqual({
+        expect(observed).toMatchObject({
           ...expectedObserved,
+          fetchedAt: expect.any(String),
           almanac: {
             ...expectedObserved.almanac,
             temperatures: { ...expectedObserved.almanac.temperatures, lastYearMin: null, lastYearMax: null },

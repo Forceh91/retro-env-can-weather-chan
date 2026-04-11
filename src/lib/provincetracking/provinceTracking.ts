@@ -40,20 +40,16 @@ function parseYesterdayPrecipScalar(
   }
   if (typeof raw === "string") {
     const t = raw.trim();
-    if (t === "" || /^nil|n\/a$/i.test(t)) return { amount: 0, units: defaultUnits };
+    if (t === "" || /^(nil|n\/a)$/i.test(t)) return { amount: 0, units: defaultUnits };
     if (/^trace$/i.test(t)) return { amount: 0, units: defaultUnits };
     const n = Number(t);
     return Number.isFinite(n) ? { amount: n, units: defaultUnits } : null;
   }
   if (typeof raw === "object" && raw !== null && "value" in raw) {
     const o = raw as { value?: unknown; units?: string };
-    const v = o.value;
     const u = (o.units ?? "").toLowerCase();
-    const units: "mm" | "cm" = u === "cm" ? "cm" : defaultUnits;
-    if (v == null || (typeof v === "string" && !v.trim())) return null;
-    const n = typeof v === "number" ? v : Number(String(v).trim());
-    if (!Number.isFinite(n)) return null;
-    return { amount: n, units };
+    const unitsTag: "mm" | "cm" = u === "cm" ? "cm" : defaultUnits;
+    return parseYesterdayPrecipScalar(o.value, unitsTag);
   }
   return null;
 }
@@ -68,7 +64,7 @@ function yesterdayPrecipFromCitypage(yesterdayConditions: unknown): { amount: nu
   }
 
   const liquid = parseYesterdayPrecipScalar(yc.precip, "mm");
-  if (liquid) {
+  if (liquid != null) {
     return { amount: liquid.amount, unit: liquid.units === "cm" ? "cm snow" : "mm" };
   }
 

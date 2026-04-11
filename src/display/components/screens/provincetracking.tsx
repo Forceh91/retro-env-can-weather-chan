@@ -24,14 +24,17 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
   if (!stations?.length) return <></>;
 
   // precip string must be longer than 13 chars
-  const precipString = (precip: string | number, unit: string) => {
+  const precipString = (precip: string | number | null, unit: string) => {
     if (typeof precip === "string") return precip;
 
-    const precipNumber = Number(precip);
-    if (!precipNumber) return "NIL".padStart(5);
+    if (precip == null) return "NIL".padStart(5);
 
-    // less than 0.2mm is trace amounts
-    if (precipNumber < 0.2) return "TRACE";
+    const precipNumber = Number(precip);
+    if (!Number.isFinite(precipNumber)) return "NIL".padStart(5);
+
+    const u = (unit ?? "").toLowerCase();
+    const traceTh = u.includes("snow") ? 0.05 : 0.2;
+    if (precipNumber === 0 || (precipNumber > 0 && precipNumber < traceTh)) return "TRACE";
 
     const noPrecipType = unit.length === 2;
     return `${noPrecipType ? "".padStart(2) : ""}${precipNumber.toFixed(1)} ${unit ?? "mm"}`.toUpperCase();

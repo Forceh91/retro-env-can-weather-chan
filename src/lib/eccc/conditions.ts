@@ -52,6 +52,11 @@ const config = initializeConfig();
 const historicalData = initializeHistoricalTempPrecip();
 const climateNormals = initializeClimateNormals();
 
+/** `forecastGroup.regionalNormals` on citypage `weather.all` (often carries normals when `<almanac>` omits them). */
+type RegionalNormalsFromFeed = {
+  temperature?: ECCCAlmanacTemp | ECCCAlmanacTemp[];
+};
+
 class CurrentConditions {
   private _amqpConnection: Connection;
   private _apiUrl: string;
@@ -167,6 +172,9 @@ class CurrentConditions {
 
           // get the almanac data (normal, records, etc.)
           this.generateAlmanac(allWeather.almanac);
+          this.fillAlmanacNormalsFromRegional(
+            (allWeather as { regionalNormals?: RegionalNormalsFromFeed }).regionalNormals
+          );
 
           // calculate the windchill
           this.generateWindchill(weather.current);
@@ -319,6 +327,30 @@ class CurrentConditions {
     this._almanac.temperatures.normalMax = retrieveAlmanacTemp("normalMax", false);
 
     // last year min/max is done at request time for observed to make sure we have that data
+  }
+
+  /**
+   * Many citypages omit normalMin/normalMax from `<almanac>` but include the same values under
+   * `<forecastGroup><regionalNormals>` (class low / high). Fill gaps so Outlook and Almanac screens work.
+   */
+  private fillAlmanacNormalsFromRegional(regionalNormals: RegionalNormalsFromFeed | null | undefined) {
+    if (!regionalNormals) return;
+    if (this._almanac.temperatures.normalMin != null && this._almanac.temperatures.normalMax != null) return;
+
+    const raw = regionalNormals.temperature;
+    const list: ECCCAlmanacTemp[] = !raw ? [] : Array.isArray(raw) ? raw : [raw];
+
+    for (const t of list) {
+      const v = Number(t.value);
+      if (!Number.isFinite(v)) continue;
+      const unit = t.units ?? "C";
+      if (t.class === "low" && this._almanac.temperatures.normalMin == null) {
+        this._almanac.temperatures.normalMin = { value: v, unit };
+      }
+      if (t.class === "high" && this._almanac.temperatures.normalMax == null) {
+        this._almanac.temperatures.normalMax = { value: v, unit };
+      }
+    }
   }
 
   private generateWindchill(conditions: ECCCConditions) {

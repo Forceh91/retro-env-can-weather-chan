@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_WEATHER_STATION_ID, SCREEN_BACKGROUND_BLUE, SCREEN_BACKGROUND_RED, Screens } from "consts";
+import { filterFlavourScreensForPlayout } from "lib/flavour/lastMonthStatsSchedule";
 import { isAutomaticScreen } from "lib/flavour/utils";
 import {
   AQHIObservationResponse,
@@ -63,25 +64,26 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     configVersion,
   } = props ?? {};
 
+  const playoutScreens = useMemo(
+    () => filterFlavourScreensForPlayout(screens, weatherStationResponse?.stationTime),
+    [screens, weatherStationResponse?.stationTime]
+  );
+
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
   const [conditionsOrConfigUpdated, setConditionsOrConfigUpdated] = useState(false);
   const [backgroundColour, setBackgroundColour] = useState(SCREEN_BACKGROUND_BLUE);
 
-  let forecastScreenIx = -1;
   const screenRotatorTimeout = useRef<NodeJS.Timeout>(null);
   const backgroundRotatorTimeout = useRef<NodeJS.Timeout>(null);
 
   // basic rotation of screens
   useEffect(() => {
-    if (!screens?.length) return;
-
-    // store what index the forecast screen is at
-    forecastScreenIx = screens?.findIndex((screen) => screen.id === Screens.FORECAST);
+    if (!playoutScreens?.length) return;
 
     // displayed screen is set to -1 so we need to start displaying something
     if (displayedScreenIx === -1) setDisplayedScreenIx(0);
     else prepareSwitchToNextScreen();
-  }, [displayedScreenIx, screens.length, configVersion]);
+  }, [displayedScreenIx, playoutScreens.length, configVersion]);
 
   // used to clear the screen switching timeout
   useEffect(() => {
@@ -96,9 +98,10 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
 
     setConditionsOrConfigUpdated(true);
-    setDisplayedScreenIx(forecastScreenIx !== -1 ? forecastScreenIx : 0);
+    const forecastIx = playoutScreens.findIndex((screen) => screen.id === Screens.FORECAST);
+    setDisplayedScreenIx(forecastIx !== -1 ? forecastIx : 0);
     setBackgroundColour(SCREEN_BACKGROUND_BLUE);
-  }, [weatherStationResponse?.observationID, configVersion]);
+  }, [weatherStationResponse?.observationID, configVersion, playoutScreens]);
 
   const switchBackgroundColour = () => {
     // if we have a timer don't do anything
@@ -120,7 +123,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     screenRotatorTimeout.current && clearTimeout(screenRotatorTimeout.current);
 
     // get the data for the screen we want to go to
-    const screen = screens[displayedScreenIx];
+    const screen = playoutScreens[displayedScreenIx];
     if (!screen) return prepareSwitchToNextScreen();
 
     // if it's not an automatic screen (generally have 0s as duration, we need to switch after its duration time)
@@ -134,12 +137,13 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   };
 
   const switchToNextScreen = () => {
-    setDisplayedScreenIx((displayedScreenIx + 1) % screens.length);
+    if (!playoutScreens.length) return;
+    setDisplayedScreenIx((displayedScreenIx + 1) % playoutScreens.length);
     if (conditionsOrConfigUpdated) setConditionsOrConfigUpdated(false);
   };
 
   const getComponentForDisplayedScreen = () => {
-    const screen = screens[displayedScreenIx];
+    const screen = playoutScreens[displayedScreenIx];
     if (!screen) return <></>;
 
     switch (screen.id as Screens) {

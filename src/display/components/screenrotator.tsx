@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_WEATHER_STATION_ID, SCREEN_BACKGROUND_BLUE, SCREEN_BACKGROUND_RED, Screens } from "consts";
-import { filterFlavourScreensForPlayout } from "lib/flavour/lastMonthStatsSchedule";
+import {
+  filterFlavourScreensForPlayout,
+  stationWallClockFromStationTime,
+} from "lib/flavour/lastMonthStatsSchedule";
 import { isAutomaticScreen } from "lib/flavour/utils";
 import {
   AQHIObservationResponse,
@@ -69,6 +72,23 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     [screens, weatherStationResponse?.stationTime]
   );
 
+  /** Stable across object identity churn on `stationTime`; only changes when playout logic would differ. */
+  const playoutResetKey = useMemo(() => {
+    const st = weatherStationResponse?.stationTime;
+    const wall = stationWallClockFromStationTime(st);
+    const dayKey = wall
+      ? `${wall.getFullYear()}-${wall.getMonth() + 1}-${wall.getDate()}`
+      : `${st?.observedDateTime ?? ""}|${st?.stationOffsetMinutesFromLocal ?? ""}`;
+    const screenKey = (screens ?? [])
+      .map((s) => `${s.id}:${s.duration}:${s.lastMonthStatsShowAllMonth ? 1 : 0}`)
+      .join("|");
+    return `${screenKey}|${dayKey}`;
+  }, [
+    screens,
+    weatherStationResponse?.stationTime?.observedDateTime,
+    weatherStationResponse?.stationTime?.stationOffsetMinutesFromLocal,
+  ]);
+
   const [displayedScreenIx, setDisplayedScreenIx] = useState(-1);
   const [conditionsOrConfigUpdated, setConditionsOrConfigUpdated] = useState(false);
   const [backgroundColour, setBackgroundColour] = useState(SCREEN_BACKGROUND_BLUE);
@@ -101,7 +121,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     const forecastIx = playoutScreens.findIndex((screen) => screen.id === Screens.FORECAST);
     setDisplayedScreenIx(forecastIx !== -1 ? forecastIx : 0);
     setBackgroundColour(SCREEN_BACKGROUND_BLUE);
-  }, [weatherStationResponse?.observationID, configVersion, playoutScreens]);
+  }, [weatherStationResponse?.observationID, configVersion, playoutResetKey]);
 
   const switchBackgroundColour = () => {
     // if we have a timer don't do anything

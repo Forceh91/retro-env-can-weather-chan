@@ -35,6 +35,10 @@ function parseYesterdayPrecipScalar(
   defaultUnits: "mm" | "cm"
 ): { amount: number; units: "mm" | "cm" } | null {
   if (raw == null) return null;
+  if (Array.isArray(raw)) {
+    if (!raw.length) return null;
+    return parseYesterdayPrecipScalar(raw[raw.length - 1], defaultUnits);
+  }
   if (typeof raw === "number" && Number.isFinite(raw)) {
     return { amount: raw, units: defaultUnits };
   }
@@ -161,9 +165,12 @@ class ProvinceTracking {
         const weather = new Weather(data);
         if (!weather) throw "Unable to parse weather data";
 
+        const precipStr = typeof station.yesterdayPrecip === "string" ? station.yesterdayPrecip.trim() : "";
         const shouldRefreshPrecip =
           station.yesterdayPrecip === null ||
           station.yesterdayPrecip === "MISSING" ||
+          precipStr === "NIL" ||
+          /^nil$/i.test(precipStr) ||
           this.shouldUpdatePrecipData();
 
         if (shouldRefreshPrecip) {
@@ -186,13 +193,13 @@ class ProvinceTracking {
           const fromApi = yesterdayPrecipFromCitypage(yesterdayConditions);
 
           let resolved: { amount: number; unit: string } | null = fromHistorical;
-          if (!resolved && fromApi) resolved = fromApi;
-          if (!resolved && yesterdayConditions != null) {
+          if (resolved == null && fromApi != null) resolved = fromApi;
+          if (resolved == null && yesterdayConditions != null) {
             resolved = { amount: 0, unit: "mm" };
           }
 
           if (
-            !resolved &&
+            resolved == null &&
             typeof station.station.climateStationId === "number" &&
             Number.isFinite(station.station.climateStationId)
           ) {

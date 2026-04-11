@@ -1,4 +1,5 @@
 import { adjustObservedDateTimeToStationTime } from "lib/date";
+import { formatProvinceYesterdayPrecipDisplay } from "lib/display/provinceYesterdayPrecipDisplay";
 import { useEffect, useMemo } from "react";
 import { ProvinceTracking, WeatherStationTimeData } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
@@ -22,23 +23,6 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
   }, [yesterdayPrecipDate, weatherStationTime?.observedDateTime]);
 
   if (!stations?.length) return <></>;
-
-  // precip string must be longer than 13 chars
-  const precipString = (precip: string | number | null, unit: string) => {
-    if (typeof precip === "string") return precip;
-
-    if (precip == null) return "NIL".padStart(5);
-
-    const precipNumber = Number(precip);
-    if (!Number.isFinite(precipNumber)) return "NIL".padStart(5);
-
-    const u = (unit ?? "").toLowerCase();
-    const traceTh = u.includes("snow") ? 0.05 : 0.2;
-    if (precipNumber === 0 || (precipNumber > 0 && precipNumber < traceTh)) return "TRACE";
-
-    const noPrecipType = unit.length === 2;
-    return `${noPrecipType ? "".padStart(2) : ""}${precipNumber.toFixed(1)} ${unit ?? "mm"}`.toUpperCase();
-  };
 
   const formatTemp = (temp: number | string) => {
     if (typeof temp === "string") return temp;
@@ -65,7 +49,7 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
             <span>{station.station.name.slice(0, 10).replace(/[-_/]/g, "").padEnd(10)}</span>
             <span>{formatTemp(station.displayTemp).padStart(8)}</span>
             <span>{"".padEnd(5)}</span>
-            <span>{precipString(station.yesterdayPrecip, station.yesterdayPrecipUnit)}</span>
+            <span>{formatProvinceYesterdayPrecipDisplay(station.yesterdayPrecip, station.yesterdayPrecipUnit)}</span>
           </li>
         ))}
       </ol>

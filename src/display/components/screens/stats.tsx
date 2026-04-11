@@ -21,6 +21,10 @@ export function StatsScreen(props: StatsScreenProps) {
   const { city, weatherStationTime, season: seasonStats, sunRiseSet, hotColdSpots } = props ?? {};
 
   const { season, seasonPrecip } = seasonStats ?? {};
+  const winterSnowCm =
+    getIsWinterSeason() && seasonPrecip?.snowfallSeasonCm != null && seasonPrecip.snowfallSeasonCm > 0
+      ? seasonPrecip.snowfallSeasonCm
+      : null;
 
   const parseDate = (isoDate: string) => parseISO(isoDate);
 
@@ -91,6 +95,16 @@ export function StatsScreen(props: StatsScreenProps) {
         Normal {generateDotsForPrecipLine("Normal", NORMAL_PRECIP_CHARS_USED_OUTSIDE_OF_DOTS)}
         {normalPrecip} mm
       </div>
+      {winterSnowCm != null && (
+        <>
+          <div>{"".padStart(4)}Total snowfall since</div>
+          <div>
+            {"".padStart(2)}
+            {seasonStartMonth} 1st {generateDotsForPrecipLine(seasonStartMonth)}
+            {generatePrecip(winterSnowCm)} cm
+          </div>
+        </>
+      )}
       {hotColdSpots && (
         <>
           <div>Canadian Hot/Cold Spot - {formattedHotColdSpotDate}</div>

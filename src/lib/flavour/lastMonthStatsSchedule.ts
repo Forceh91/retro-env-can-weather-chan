@@ -4,7 +4,7 @@ import { isStartOfMonth } from "lib/date/utils";
 import type { FlavourScreen } from "types";
 import type { WeatherStationTimeData } from "types/condition.types";
 
-export function stationWallClockFromStationTime(st: WeatherStationTimeData | undefined): Date | null {
+export function stationWallClockFromStationTime(st?: WeatherStationTimeData): Date | null {
   if (!st?.observedDateTime) return null;
   const utc = parseISO(st.observedDateTime);
   if (Number.isNaN(utc.getTime())) return null;
@@ -19,8 +19,8 @@ export function shouldIncludeLastMonthStatsInPlayout(screen: FlavourScreen, stat
 }
 
 export function filterFlavourScreensForPlayout(
-  screens: FlavourScreen[] | undefined,
-  stationTime: WeatherStationTimeData | undefined
+  screens?: FlavourScreen[],
+  stationTime?: WeatherStationTimeData
 ): FlavourScreen[] {
   const list = screens ?? [];
   const local = stationWallClockFromStationTime(stationTime);

@@ -23,7 +23,11 @@ function xmlText(el: unknown): string | undefined {
   return undefined;
 }
 
-/** ECCC bulk row: mm liquid equivalent — prefer `totalprecipitation`, else `totalrain`; trace/missing → 0. */
+/**
+ * ECCC bulk row: mm liquid equivalent — prefer `totalprecipitation`, else `totalrain`.
+ * Trace / missing → 0 so seasonal **numeric totals** stay well-defined (province yesterday UI still shows
+ * literal TRACE/MISSING from citypage elsewhere).
+ */
 function dailyPrecipitationMm(row: { totalprecipitation?: unknown; totalrain?: unknown }): number {
   const raw = xmlText(row.totalprecipitation) ?? xmlText(row.totalrain);
   if (raw == null || raw === "") return 0;
@@ -92,7 +96,7 @@ class HistoricalTempPrecip {
           .get(this._apiURL.replace("$YEAR", year.toString()), { responseType: "text" })
           .then((resp) => {
             const { data } = resp ?? {};
-            if (data == null || data === "") throw new Error("empty body");
+            if (!data?.length) throw new Error("empty body");
 
             const raw = typeof data === "string" ? data : String(data);
             if (!looksLikeClimatedataXml(raw)) {
@@ -171,6 +175,7 @@ class HistoricalTempPrecip {
 
     const isWinterSeason = getIsWinterSeason(currentDate.getMonth() + 1);
     let rainfall = 0;
+    let winterSnowCm = 0;
     let yesterdayRainfall = 0;
     let yesterdaySnowfall = 0;
     this._historicalData?.forEach((historicalData) => {
@@ -189,7 +194,10 @@ class HistoricalTempPrecip {
       if (isSameMonth(parseISO(date), lastMonth)) lastMonthData.push(historicalData);
 
       if (isWinterSeason) {
-        if (isDateInCurrentWinterSeason(date, currentDate)) rainfall += dailyPrecipitationMm(historicalData);
+        if (isDateInCurrentWinterSeason(date, currentDate)) {
+          rainfall += dailyPrecipitationMm(historicalData);
+          winterSnowCm += dailySnowCm(historicalData);
+        }
       } else if (isDateInCurrentSummerSeason(date, currentDate) && isThisYear) {
         rainfall += dailyPrecipitationMm(historicalData);
       }
@@ -202,6 +210,11 @@ class HistoricalTempPrecip {
 
     this._seasonPrecipData.amount = Number(rainfall.toFixed(1));
     this._seasonPrecipData.season = isWinterSeason ? "winter" : "summer";
+    if (isWinterSeason) {
+      this._seasonPrecipData.snowfallSeasonCm = Number(winterSnowCm.toFixed(1));
+    } else {
+      delete this._seasonPrecipData.snowfallSeasonCm;
+    }
 
     this._yesterdayPrecipData.amount = yesterdayRainfall;
     this._yesterdaySnowData.amount = yesterdaySnowfall;

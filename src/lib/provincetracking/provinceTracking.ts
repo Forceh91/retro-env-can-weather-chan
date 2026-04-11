@@ -50,7 +50,7 @@ function parseYesterdayPrecipScalar(
     const v = o.value;
     const u = (o.units ?? "").toLowerCase();
     const units: "mm" | "cm" = u === "cm" ? "cm" : defaultUnits;
-    if (v == null || v === "") return null;
+    if (v == null || (typeof v === "string" && !v.trim())) return null;
     const n = typeof v === "number" ? v : Number(String(v).trim());
     if (!Number.isFinite(n)) return null;
     return { amount: n, units };
@@ -63,7 +63,7 @@ function yesterdayPrecipFromCitypage(yesterdayConditions: unknown): { amount: nu
   const yc = yesterdayConditions as Record<string, unknown>;
 
   const snow = parseYesterdayPrecipScalar(yc.snow, "cm");
-  if (snow && snow.amount > 0) {
+  if ((snow?.amount ?? 0) > 0) {
     return { amount: snow.amount, unit: "cm snow" };
   }
 

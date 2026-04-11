@@ -131,7 +131,7 @@ class ClimateNormals {
       .get(this._apiURL, { responseType: "text" })
       .then((resp) => {
         const data = resp?.data;
-        if (data == null || data === "") throw new Error("empty body");
+        if (!data?.length) throw new Error("empty body");
 
         const raw = typeof data === "string" ? data : String(data);
         if (!looksLikeClimateNormalsCsv(raw)) {

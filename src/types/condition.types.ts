@@ -62,6 +62,8 @@ export type HistoricalPrecipData = {
   season?: string;
   unit: string;
   type: string;
+  /** Winter bulk: sum of `totalsnow` (cm) for the current winter season window; omitted in summer. */
+  snowfallSeasonCm?: number;
 };
 
 export type Forecast = {

@@ -43,6 +43,7 @@ import eventbus from "lib/eventbus";
 import { getTempRecordForDate } from "lib/temprecords";
 import { GetWeatherFileFromECCC } from "./datamart";
 import { isLooseNull } from "lib/isnull";
+import { parseAlmanacExtremesFromCitypageXml } from "./almanacExtremesFromCitypageXml";
 
 const ECCC_BASE_API_URL = "https://dd.weather.gc.ca/citypage_weather/xml/";
 const ECCC_API_ENGLISH_SUFFIX = "_e.xml";
@@ -131,6 +132,7 @@ class CurrentConditions {
       axios
         .get(searchedURL)
         .then((resp) => {
+          const rawXml = typeof resp.data === "string" ? resp.data : String(resp.data ?? "");
           // parse to weather object
           const weather = new Weather(resp.data);
           if (!weather) return;
@@ -175,6 +177,7 @@ class CurrentConditions {
           this.fillAlmanacNormalsFromRegional(
             (allWeather as { regionalNormals?: RegionalNormalsFromFeed }).regionalNormals
           );
+          this.fillAlmanacExtremesFromRawCitypageXml(rawXml);
 
           // calculate the windchill
           this.generateWindchill(weather.current);
@@ -298,35 +301,57 @@ class CurrentConditions {
     if (sunset) this._sunRiseSet.set = ecccDateStringToTSDate(sunset.textSummary).toISOString();
   }
 
-  private generateAlmanac(almanac: ECCCAlmanac) {
-    // TODO: fetch records from alternate source
+  private mergedAlmanacTemperatures() {
+    return {
+      ...this._almanac.temperatures,
+      lastYearMin: historicalData.lastYearTemperatures().min,
+      lastYearMax: historicalData.lastYearTemperatures().max,
+    };
+  }
 
-    // get the extreme min temp
+  private generateAlmanac(almanac: ECCCAlmanac | null | undefined) {
+    const temps: ECCCAlmanacTemp[] = !almanac?.temperature
+      ? []
+      : Array.isArray(almanac.temperature)
+        ? almanac.temperature
+        : [almanac.temperature];
+
     const retrieveAlmanacTemp = (tempClass: string, parseYear: boolean = true) => {
-      if (!almanac) return null;
+      if (!temps.length || !tempClass) return null;
 
-      // fetch from the almanac temperatures list
-      const extremeTemp: ECCCAlmanacTemp = almanac.temperature.find(
-        (temp: ECCCAlmanacTemp) => temp.class === tempClass
+      const needle = tempClass.toLowerCase();
+      const entry = temps.find(
+        (temp: ECCCAlmanacTemp) => temp.class != null && String(temp.class).toLowerCase() === needle
       );
+      if (!entry) return null;
 
-      // if nothing return null
-      if (!tempClass) return null;
+      const num = Number(entry.value);
+      if (!Number.isFinite(num)) return null;
 
-      // otherwise parse it out and return
-      const { value, year, units } = extremeTemp;
-      return { value: Number(value), year: parseYear ? parseInt(year) : undefined, unit: units };
+      const y = entry.year != null ? parseInt(String(entry.year), 10) : NaN;
+      return {
+        value: num,
+        year: parseYear && Number.isFinite(y) ? y : undefined,
+        unit: entry.units ?? "C",
+      };
     };
 
-    // extreme min/max
     this._almanac.temperatures.extremeMin = retrieveAlmanacTemp("extremeMin");
     this._almanac.temperatures.extremeMax = retrieveAlmanacTemp("extremeMax");
 
-    // normal min/max
     this._almanac.temperatures.normalMin = retrieveAlmanacTemp("normalMin", false);
     this._almanac.temperatures.normalMax = retrieveAlmanacTemp("normalMax", false);
+  }
 
-    // last year min/max is done at request time for observed to make sure we have that data
+  /** When structured parse drops record highs/lows, recover from `<almanac>` in the raw citypage XML. */
+  private fillAlmanacExtremesFromRawCitypageXml(xml: string) {
+    const { extremeMax, extremeMin } = parseAlmanacExtremesFromCitypageXml(xml);
+    if (this._almanac.temperatures.extremeMax == null && extremeMax != null) {
+      this._almanac.temperatures.extremeMax = extremeMax;
+    }
+    if (this._almanac.temperatures.extremeMin == null && extremeMin != null) {
+      this._almanac.temperatures.extremeMin = extremeMin;
+    }
   }
 
   /**
@@ -415,11 +440,7 @@ class CurrentConditions {
       observed: { ...this._conditions, windchill: this._windchill },
       almanac: {
         ...this._almanac,
-        temperatures: {
-          ...this._almanac.temperatures,
-          lastYearMin: historicalData.lastYearTemperatures().min,
-          lastYearMax: historicalData.lastYearTemperatures().max,
-        },
+        temperatures: this.mergedAlmanacTemperatures(),
         sunRiseSet: this._sunRiseSet,
       },
       forecast: this._forecast,
@@ -442,7 +463,11 @@ class CurrentConditions {
       city: this._weatherStationCityName,
       stationTime: this._weatherStationTimeData,
       stationID: this._weatherStationID,
-      almanac: { ...this._almanac, sunRiseSet: this._sunRiseSet },
+      almanac: {
+        ...this._almanac,
+        temperatures: this.mergedAlmanacTemperatures(),
+        sunRiseSet: this._sunRiseSet,
+      },
     };
   }
 

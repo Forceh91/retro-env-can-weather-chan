@@ -26,9 +26,21 @@ function stationFromConfigForCode(stations: ProvinceStations, code: string): Pro
   return stations.find((s) => normalizeProvinceStationCode(s.code) === key);
 }
 
+/** True when MSC / ec-weather-js carries an explicit trace token (not a numeric zero). */
+function fieldExplicitTrace(raw: unknown): boolean {
+  if (raw == null) return false;
+  if (typeof raw === "string") return /^trace$/i.test(raw.trim());
+  if (Array.isArray(raw)) return raw.some((x) => fieldExplicitTrace(x));
+  if (typeof raw === "object" && "value" in raw) {
+    return fieldExplicitTrace((raw as { value?: unknown }).value);
+  }
+  return false;
+}
+
 /**
  * ec-weather-js `simplify()` turns `<precip>2.4</precip>` into a string; with attributes it stays `{ value, units }`.
  * Reading only `.value` misses the common text-only form and left every station on "MISSING".
+ * Literal "Trace" is not returned as amount 0 — use {@link fieldExplicitTrace} + `"TRACE"` in {@link yesterdayPrecipFromCitypage}.
  */
 function parseYesterdayPrecipScalar(
   raw: unknown,
@@ -45,7 +57,7 @@ function parseYesterdayPrecipScalar(
   if (typeof raw === "string") {
     const t = raw.trim();
     if (t === "" || /^(nil|n\/a)$/i.test(t)) return { amount: 0, units: defaultUnits };
-    if (/^trace$/i.test(t)) return { amount: 0, units: defaultUnits };
+    if (/^trace$/i.test(t)) return null;
     const n = Number(t);
     return Number.isFinite(n) ? { amount: n, units: defaultUnits } : null;
   }
@@ -58,13 +70,21 @@ function parseYesterdayPrecipScalar(
   return null;
 }
 
-function yesterdayPrecipFromCitypage(yesterdayConditions: unknown): { amount: number; unit: string } | null {
+function yesterdayPrecipFromCitypage(
+  yesterdayConditions: unknown
+): { amount: number; unit: string } | "TRACE" | null {
   if (yesterdayConditions == null || typeof yesterdayConditions !== "object") return null;
   const yc = yesterdayConditions as Record<string, unknown>;
 
   const snow = parseYesterdayPrecipScalar(yc.snow, "cm");
   if ((snow?.amount ?? 0) > 0) {
     return { amount: snow.amount, unit: "cm snow" };
+  }
+  if (fieldExplicitTrace(yc.snow)) {
+    return "TRACE";
+  }
+  if (fieldExplicitTrace(yc.precip)) {
+    return "TRACE";
   }
 
   const liquid = parseYesterdayPrecipScalar(yc.precip, "mm");
@@ -165,12 +185,9 @@ class ProvinceTracking {
         const weather = new Weather(data);
         if (!weather) throw "Unable to parse weather data";
 
-        const precipStr = typeof station.yesterdayPrecip === "string" ? station.yesterdayPrecip.trim() : "";
         const shouldRefreshPrecip =
           station.yesterdayPrecip === null ||
           station.yesterdayPrecip === "MISSING" ||
-          precipStr === "NIL" ||
-          /^nil$/i.test(precipStr) ||
           this.shouldUpdatePrecipData();
 
         if (shouldRefreshPrecip) {
@@ -191,15 +208,19 @@ class ProvinceTracking {
                 : null;
 
           const fromApi = yesterdayPrecipFromCitypage(yesterdayConditions);
+          const apiTrace = fromApi === "TRACE";
 
           let resolved: { amount: number; unit: string } | null = fromHistorical;
-          if (resolved == null && fromApi != null) resolved = fromApi;
-          if (resolved == null && yesterdayConditions != null) {
+          if (resolved == null && !apiTrace && typeof fromApi === "object" && fromApi != null) {
+            resolved = fromApi;
+          }
+          if (resolved == null && !apiTrace && yesterdayConditions != null) {
             resolved = { amount: 0, unit: "mm" };
           }
 
           if (
             resolved == null &&
+            !apiTrace &&
             typeof station.station.climateStationId === "number" &&
             Number.isFinite(station.station.climateStationId)
           ) {
@@ -210,13 +231,17 @@ class ProvinceTracking {
             if (climateRow) resolved = climateRow;
           }
 
-          if (resolved) {
+          const precipDateLine = () =>
+            format(subDays(conditions.observedDateTimeAtStation(), 1), "MMM dd").replace(/\s0/i, "  ");
+
+          if (apiTrace) {
+            station.yesterdayPrecip = "TRACE";
+            station.yesterdayPrecipUnit = "mm";
+            this._yesterdayPrecipDate = precipDateLine();
+          } else if (resolved) {
             station.yesterdayPrecip = resolved.amount;
             station.yesterdayPrecipUnit = resolved.unit;
-            this._yesterdayPrecipDate = format(subDays(conditions.observedDateTimeAtStation(), 1), "MMM dd").replace(
-              /\s0/i,
-              "  "
-            );
+            this._yesterdayPrecipDate = precipDateLine();
           } else {
             station.yesterdayPrecip = "MISSING";
             station.yesterdayPrecipUnit = "mm";

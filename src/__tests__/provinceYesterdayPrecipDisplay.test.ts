@@ -6,10 +6,14 @@ describe("formatProvinceYesterdayPrecipDisplay", () => {
     expect(formatProvinceYesterdayPrecipDisplay(0.15, "mm")).toBe("  NIL");
   });
 
-  it("shows NIL for string nil / n/a from citypage or persistence", () => {
+  it("shows NIL for string NIL only (no detectable precip token)", () => {
     expect(formatProvinceYesterdayPrecipDisplay("NIL", "mm")).toBe("  NIL");
     expect(formatProvinceYesterdayPrecipDisplay("nil", "mm")).toBe("  NIL");
-    expect(formatProvinceYesterdayPrecipDisplay("N/A", "mm")).toBe("  NIL");
+  });
+
+  it("shows MISSING for N/A (not available, not the same as NIL)", () => {
+    expect(formatProvinceYesterdayPrecipDisplay("N/A", "mm")).toBe("MISSING");
+    expect(formatProvinceYesterdayPrecipDisplay("n/a", "mm")).toBe("MISSING");
   });
 
   it("shows TRACE only for explicit trace string", () => {
@@ -22,6 +26,7 @@ describe("formatProvinceYesterdayPrecipDisplay", () => {
     expect(formatProvinceYesterdayPrecipDisplay(Number.NaN, "mm")).toBe("MISSING");
     expect(formatProvinceYesterdayPrecipDisplay("MISSING", "mm")).toBe("MISSING");
     expect(formatProvinceYesterdayPrecipDisplay("M", "mm")).toBe("MISSING");
+    expect(formatProvinceYesterdayPrecipDisplay("", "mm")).toBe("MISSING");
   });
 
   it("formats measurable rain and snow", () => {

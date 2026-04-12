@@ -56,7 +56,8 @@ function parseYesterdayPrecipScalar(
   }
   if (typeof raw === "string") {
     const t = raw.trim();
-    if (t === "" || /^(nil|n\/a)$/i.test(t)) return { amount: 0, units: defaultUnits };
+    if (t === "" || /^n\/a$/i.test(t)) return null;
+    if (/^nil$/i.test(t)) return { amount: 0, units: defaultUnits };
     if (/^trace$/i.test(t)) return null;
     const n = Number(t);
     return Number.isFinite(n) ? { amount: n, units: defaultUnits } : null;

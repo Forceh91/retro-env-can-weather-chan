@@ -86,6 +86,8 @@ export type WeatherStation = {
   city: string;
   stationTime: WeatherStationTimeData;
   stationID: string;
+  /** ISO time of last successful citypage parse (null before first fetch). */
+  fetchedAt?: string | null;
   observed: ObservedConditions & { windchill: number | null };
   almanac: Almanac & { sunRiseSet: SunRiseSet };
   forecast: WeekForecast;

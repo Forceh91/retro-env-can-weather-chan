@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { aqhiHourTo24 } from "lib/airquality/aqhiDateTime";
 import { getAQHIRisk, getAQHIWarningMessage } from "lib/airquality/utils";
 import { useEffect, useMemo } from "react";
 import { AQHIObservationResponse, AutomaticScreenProps } from "types";
@@ -12,11 +13,13 @@ export function AQHIWarningScreen({ city, airQuality, onComplete }: AQHIWarningS
   const observedDateTime = useMemo(() => {
     if (!airQuality) return;
 
-    return format(
-      new Date(2023, airQuality?.month - 1, airQuality?.day, airQuality.hour + (airQuality.isPM ? 12 : 0)),
-      "hh aa MMM dd"
-    ).replace(/0(\d)/g, " $1");
-  }, [airQuality, airQuality?.day, airQuality?.month, airQuality?.hour]);
+    const y = new Date().getFullYear();
+    const hour24 = aqhiHourTo24(airQuality.hour, airQuality.isPM, airQuality.clock12h !== false);
+    let dt = new Date(y, airQuality.month - 1, airQuality.day, hour24);
+    if (dt.getTime() > Date.now()) dt = new Date(y - 1, airQuality.month - 1, airQuality.day, hour24);
+
+    return format(dt, "h:mm aa MMM dd").replace(/0(\d)/g, " $1");
+  }, [airQuality, airQuality?.day, airQuality?.month, airQuality?.hour, airQuality?.isPM, airQuality?.clock12h]);
 
   useEffect(() => {
     if (!airQuality || !airQuality.value || !airQuality.showWarning) return onComplete();

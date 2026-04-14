@@ -41,6 +41,7 @@ describe("seasons", () => {
   it("isDateInWinterSeason: detects a date is in winter season correctly", () => {
     expect(isDateInWinterSeason(new Date(2023, 0, 13).toISOString())).toBeTruthy();
     expect(isDateInWinterSeason(new Date(2023, 5, 13).toISOString())).toBeFalsy();
+    expect(isDateInWinterSeason(new Date(2023, 9, 15).toISOString())).toBeTruthy();
   });
 
   it("isDateInCurrentWinterSeason: makes sure the passed date is in the current winter season", () => {

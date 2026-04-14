@@ -12,7 +12,11 @@ export function useWeatherEventStream() {
     if (weatherEventStream) return;
 
     // setup the weather event stream
-    const eventStream = new EventSource("api/v1/weather/live");
+    const eventStream = new EventSource(
+      typeof window !== "undefined"
+        ? new URL("api/v1/weather/live", window.location.origin).toString()
+        : "api/v1/weather/live"
+    );
 
     // add an event listener for condition_update
     eventStream &&

@@ -14,12 +14,13 @@ jest.mock("date-fns", () => ({
 }));
 
 import { initializeHistoricalTempPrecip } from "lib/eccc/historicalTempPrecip";
-import * as season from "lib/date/season";
 import historicalData2022 from "./testdata/ecccData/historicaltempprecip/TO-2022-data";
 import historicalData2023 from "./testdata/ecccData/historicaltempprecip/TO-2023-data";
 import expectedTO2022 from "./testdata/ecccData/historicaltempprecip/TO-2022-expected.json";
 
 const SUMMER_2023_DATE = new Date(2023, 7, 7);
+/** Mid-winter asOf yields the same Oct 2→Apr 1 bulk window as a forced-winter summer date (#854). */
+const WINTER_2023_DATE = new Date(2023, 1, 15);
 
 describe("historical temp/precip", () => {
   beforeEach(() => moxios.install(axios));
@@ -61,8 +62,6 @@ describe("historical temp/precip", () => {
   });
 
   it("retrieves season precip data correctly (winter)", (done) => {
-    jest.spyOn(season, "getIsWinterSeason").mockReturnValueOnce(true);
-
     moxios.wait(async () => {
       jest.advanceTimersByTimeAsync(500);
       await moxios.requests.at(0).respondWith({ status: 200, response: historicalData2022 });
@@ -73,10 +72,10 @@ describe("historical temp/precip", () => {
     });
 
     jest.useFakeTimers();
-    jest.setSystemTime(SUMMER_2023_DATE);
+    jest.setSystemTime(WINTER_2023_DATE);
 
     const historicalData = initializeHistoricalTempPrecip();
-    historicalData.fetchLastTwoYearsOfData(SUMMER_2023_DATE);
+    historicalData.fetchLastTwoYearsOfData(WINTER_2023_DATE);
   });
 
   it("retrieves yesterday precip data correctly", (done) => {

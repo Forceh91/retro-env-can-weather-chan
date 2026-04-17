@@ -101,16 +101,10 @@ export function ScreenRotator(props: ScreenRotatorProps) {
   }, [weatherStationResponse?.observationID, configVersion]);
 
   const switchBackgroundColour = () => {
-    // if we have a timer don't do anything
     if (backgroundRotatorTimeout.current) return;
 
-    // create 20ms timer to switch background
     backgroundRotatorTimeout.current = setTimeout(() => {
-      // alternate between blue/red
-      if (backgroundColour !== SCREEN_BACKGROUND_BLUE) setBackgroundColour(SCREEN_BACKGROUND_BLUE);
-      else setBackgroundColour(SCREEN_BACKGROUND_RED);
-
-      // clear the existing timer we knew about
+      setBackgroundColour((c) => (c === SCREEN_BACKGROUND_BLUE ? SCREEN_BACKGROUND_RED : SCREEN_BACKGROUND_BLUE));
       backgroundRotatorTimeout.current = null;
     }, 20);
   };
@@ -153,6 +147,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
             alert={alerts?.mostImportantAlert}
             isReload={conditionsOrConfigUpdated}
             airQuality={airQuality}
+            onForecastContinuationEntered={switchBackgroundColour}
             onComplete={switchToNextScreen}
           />
         );

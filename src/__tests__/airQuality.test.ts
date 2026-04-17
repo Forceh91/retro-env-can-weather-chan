@@ -88,6 +88,7 @@ describe("AQHI Observation", () => {
             hour: NaN,
             month: NaN,
             isPM: false,
+            clock12h: true,
             value: null,
           });
           done();

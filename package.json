@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint .",
     "dev": "ts-node-dev -r tsconfig-paths/register src/server.ts",
-    "start": "tsx src/server.ts",
+    "start": "node --import tsx src/server.ts",
     "display": "yarn parcel watch src/display/**/*.html --dist-dir dist/ --public-url ../ --no-source-maps",
     "test": "env NODE_ENV=test jest --forceExit",
     "test:coverage": "env NODE_ENV=test jest --collectCoverage=true",

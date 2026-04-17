@@ -1,6 +1,8 @@
 export type ProvinceStation = {
   name: string;
   code: string;
+  /** ECCC climate `stationID` for daily bulk fallback when citypage yesterday precip is absent. */
+  climateStationId?: number;
 };
 
 export type ProvinceStations = ProvinceStation[];

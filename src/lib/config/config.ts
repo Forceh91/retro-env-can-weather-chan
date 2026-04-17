@@ -27,6 +27,27 @@ import {
 import eventbus from "lib/eventbus";
 
 const logger = new Logger("config");
+
+function normalizeProvinceStationCode(code: string): string {
+  return code.replace(/\s/g, "").toUpperCase();
+}
+
+/** Apply known `climateStationId` defaults when JSON config omits them (same `code` as shipped Manitoba list). */
+function mergeProvinceStationClimateDefaults(stations: ProvinceStation[]): ProvinceStation[] {
+  const defaultsByCode = new Map(
+    PROVINCE_TRACKING_DEFAULT_STATIONS.map((s) => [normalizeProvinceStationCode(s.code), s.climateStationId])
+  );
+  return stations.map((row) => {
+    if (typeof row.climateStationId === "number" && Number.isFinite(row.climateStationId)) {
+      return row;
+    }
+    const id = defaultsByCode.get(normalizeProvinceStationCode(row.code));
+    if (typeof id === "number" && Number.isFinite(id)) {
+      return { ...row, climateStationId: id };
+    }
+    return row;
+  });
+}
 const CONFIG_PATH = {
   FOLDER: "./cfg",
   FILE: "rwc-config.json",
@@ -135,8 +156,9 @@ class Config {
       this.climateNormals = { ...this.climateNormals, ...climateNormals };
       this.lookAndFeel = { ...this.lookAndFeel, ...lookAndFeel };
       this.misc = { ...this.misc, ...misc };
-      this.provinceStations =
+      const rawProvinceStations =
         provinceHighLowEnabled && provinceStations?.length ? provinceStations : PROVINCE_TRACKING_DEFAULT_STATIONS;
+      this.provinceStations = mergeProvinceStationClimateDefaults(rawProvinceStations);
       this.airQualityStation = airQualityStation ?? AIR_QUALITY_DEFAULT_STATION;
 
       logger.log("Loaded weather channel. Location:", `${name}, ${province}`, `(${location})`);
@@ -272,7 +294,7 @@ class Config {
 
   public setProvinceStations(isEnabled: boolean, stations: ProvinceStations) {
     this.provinceHighLowEnabled = isEnabled;
-    if (stations?.length) this.provinceStations = stations;
+    if (stations?.length) this.provinceStations = mergeProvinceStationClimateDefaults(stations);
 
     eventbus.emit(EVENT_BUS_CONFIG_CHANGE_PROVINCE_TRACKING, true);
   }

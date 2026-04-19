@@ -11,6 +11,8 @@ export type Flavour = {
 export type FlavourScreen = {
   id: Screens;
   duration: number;
+  /** When true, last-month stats stay in rotation all month (default matches ECCC: days 1–5 only). */
+  lastMonthStatsShowAllMonth?: boolean;
 };
 
 export type Flavours = Flavour[];

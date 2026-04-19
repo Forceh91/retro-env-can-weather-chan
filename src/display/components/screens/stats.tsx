@@ -21,6 +21,10 @@ export function StatsScreen(props: StatsScreenProps) {
   const { city, weatherStationTime, season: seasonStats, sunRiseSet, hotColdSpots } = props ?? {};
 
   const { season, seasonPrecip } = seasonStats ?? {};
+  const winterSnowCm =
+    getIsWinterSeason() && seasonPrecip?.snowfallSeasonCm != null && seasonPrecip.snowfallSeasonCm > 0
+      ? seasonPrecip.snowfallSeasonCm
+      : null;
 
   const parseDate = (isoDate: string) => parseISO(isoDate);
 
@@ -56,8 +60,10 @@ export function StatsScreen(props: StatsScreenProps) {
     "".padEnd(DISPLAY_MAX_CHARACTERS_PER_LINE - (dataName.length + usedChars), ".");
 
   const seasonStartMonth = getIsWinterSeason() ? "October" : "April";
-  const actualPrecip = generatePrecip(seasonPrecip?.amount || 0);
   const normalPrecip = generatePrecip(seasonPrecip?.normal || 0);
+  /** When bulk winter snow exists, MSC-style plate uses snow as the seasonal total (not liquid + snow). */
+  const showSnowfallAsSeasonalTotal = winterSnowCm != null;
+  const actualPrecip = generatePrecip(seasonPrecip?.amount || 0);
 
   const { hotSpot, coldSpot } = hotColdSpots ?? {};
   const truncatedHotSpotName = hotSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "N/A";
@@ -80,12 +86,26 @@ export function StatsScreen(props: StatsScreenProps) {
       <div>
         Sunrise..{formattedSunrise} am Sunset..{formattedSunset} pm
       </div>
-      <div>{"".padStart(4)}Total precipitation since</div>
-      <div>
-        {"".padStart(2)}
-        {seasonStartMonth} 1st {generateDotsForPrecipLine(seasonStartMonth)}
-        {actualPrecip} mm
-      </div>
+      {!showSnowfallAsSeasonalTotal && (
+        <>
+          <div>{"".padStart(4)}Total precipitation since</div>
+          <div>
+            {"".padStart(2)}
+            {seasonStartMonth} 1st {generateDotsForPrecipLine(seasonStartMonth)}
+            {actualPrecip} mm
+          </div>
+        </>
+      )}
+      {showSnowfallAsSeasonalTotal && (
+        <>
+          <div>{"".padStart(4)}Total snowfall since</div>
+          <div>
+            {"".padStart(2)}
+            {seasonStartMonth} 1st {generateDotsForPrecipLine(seasonStartMonth)}
+            {generatePrecip(winterSnowCm)} cm
+          </div>
+        </>
+      )}
       <div>
         {"".padStart(2)}
         Normal {generateDotsForPrecipLine("Normal", NORMAL_PRECIP_CHARS_USED_OUTSIDE_OF_DOTS)}

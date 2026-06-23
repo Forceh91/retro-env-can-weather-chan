@@ -65,4 +65,6 @@ export const SCREEN_INFO_DISPLAY_LENGTH = 14 * 25;
 export const SCREEN_FORECAST_DISPLAY_LENGTH = 180 as const;
 
 export const SCREEN_BACKGROUND_BLUE = "rgb(0,0,135)";
+export const SCREEN_BACKGROUND_BLUE_TEXT_COL = "rgb(193,192,250)";
 export const SCREEN_BACKGROUND_RED = "#610b00";
+export const SCREEN_BACKGROUND_RED_TEXT_COL = "rgb(227,168,139)";

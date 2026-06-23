@@ -57,11 +57,7 @@ class USAWeather {
         observations.length,
         ...[...stations].map(
           (stationConfig) =>
-            ({
-              ...stationConfig,
-              condition: null as null,
-              temperature: null as null,
-            } as USAStationConfig & USAStationObservation)
+            ({ ...stationConfig, condition: null, temperature: null } as USAStationConfig & USAStationObservation)
         )
       );
     }

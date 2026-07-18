@@ -123,4 +123,39 @@ describe("historical temp/precip", () => {
       });
     });
   });
+
+  it("uses prior leap Feb 29 temps for last-year almanac (#671)", (done) => {
+    const climateXml = (year: number, rows: string) =>
+      `<?xml version="1.0"?><climatedata><stationdata day="28" month="2" year="${year}"><maxtemp>9.9</maxtemp><mintemp>-9.9</mintemp></stationdata>${rows}</climatedata>`;
+
+    const leap2020 = climateXml(
+      2020,
+      `<stationdata day="29" month="2" year="2020"><maxtemp>0.1</maxtemp><mintemp>-7.5</mintemp></stationdata>`
+    );
+    const y2023 = climateXml(2023, "");
+    const y2024 = climateXml(2024, "");
+
+    moxios.wait(async () => {
+      // years fetched sorted: 2020, 2023, 2024
+      expect(moxios.requests.count()).toBe(3);
+      const byYear = [0, 1, 2].map((i) => {
+        const url = moxios.requests.at(i).url ?? "";
+        const m = url.match(/Year=(\d+)/);
+        return { i, year: Number(m?.[1]) };
+      });
+      expect(byYear.map((r) => r.year).sort()).toEqual([2020, 2023, 2024]);
+
+      const bodyFor = (year: number) => (year === 2020 ? leap2020 : year === 2023 ? y2023 : y2024);
+      await Promise.all(byYear.map(({ i, year }) => moxios.requests.at(i).respondWith({ status: 200, response: bodyFor(year) })));
+
+      expect(historicalData.lastYearTemperatures()).toStrictEqual({
+        max: { value: 0.1, unit: "C" },
+        min: { value: -7.5, unit: "C" },
+      });
+      done();
+    });
+
+    const historicalData = initializeHistoricalTempPrecip();
+    historicalData.fetchLastTwoYearsOfData(new Date(2024, 1, 29));
+  });
 });

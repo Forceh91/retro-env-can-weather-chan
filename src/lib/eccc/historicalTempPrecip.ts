@@ -49,6 +49,18 @@ function dailySnowCm(row: { totalsnow?: unknown }): number {
 const logger = new Logger("Historical_Temp_Precip");
 const config = initializeConfig();
 
+function isGregorianLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+/** Most recent Gregorian leap year strictly before `year` (for Feb 29 almanac lookup, #671). */
+function previousLeapYear(year: number): number | null {
+  for (let ly = year - (year % 4 || 4); ly >= year - 16; ly -= 4) {
+    if (ly < year && isGregorianLeapYear(ly)) return ly;
+  }
+  return null;
+}
+
 class HistoricalTempPrecip {
   private _apiURL: string;
   private _historicalData: any[] = [];
@@ -83,6 +95,12 @@ class HistoricalTempPrecip {
 
     const currentYear = currentDate.getFullYear();
     const yearsToFetch = [currentYear - 1, currentYear];
+    // Feb 29 almanac needs the prior leap year’s bulk row (often 4 years back), not y−1 (#671).
+    if (currentDate.getMonth() === 1 && currentDate.getDate() === 29) {
+      const leapYear = previousLeapYear(currentYear);
+      if (leapYear != null && !yearsToFetch.includes(leapYear)) yearsToFetch.push(leapYear);
+    }
+    yearsToFetch.sort((a, b) => a - b);
     logger.log("Preparing to fetch historical data for years", yearsToFetch.join());
 
     this._historicalData.splice(0, this._historicalData.length);
@@ -153,20 +171,16 @@ class HistoricalTempPrecip {
     const y = currentDate.getFullYear();
     const candidates: Date[] = [];
 
-    // Feb 29: prefer the most recent Feb 29 in bulk (e.g. 2020) over Feb 28 of a non-leap year (#671).
+    // Feb 29: prefer prior leap Feb 29 (e.g. 2020) — JS Date(y-1, 1, 29) overflows to Mar 1 on non-leap years (#671).
     if (currentDate.getMonth() === 1 && currentDate.getDate() === 29) {
-      for (let ly = y - 4; ly >= y - 200; ly -= 4) {
-        if (!this.isGregorianLeapYear(ly)) continue;
-        const leapDay = new Date(ly, 1, 29);
-        if (leapDay.getFullYear() === ly && leapDay.getMonth() === 1 && leapDay.getDate() === 29) {
-          candidates.push(leapDay);
-        }
+      const leapYear = previousLeapYear(y);
+      if (leapYear != null) candidates.push(new Date(leapYear, 1, 29));
+      candidates.push(new Date(y - 1, 1, 28));
+    } else {
+      const base = new Date(y - 1, currentDate.getMonth(), currentDate.getDate());
+      if (isValid(base)) {
+        candidates.push(base, subDays(base, 1), addDays(base, 1));
       }
-    }
-
-    const base = new Date(y - 1, currentDate.getMonth(), currentDate.getDate());
-    if (isValid(base)) {
-      candidates.push(base, subDays(base, 1), addDays(base, 1));
     }
 
     const seen = new Set<number>();
@@ -190,10 +204,6 @@ class HistoricalTempPrecip {
       this._lastYearTemperatures.min = Number.isFinite(minV) ? { value: minV, unit: "C" } : null;
       return;
     }
-  }
-
-  private isGregorianLeapYear(year: number): boolean {
-    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
   }
 
   private parseSeasonalPrecip(currentDate: Date) {

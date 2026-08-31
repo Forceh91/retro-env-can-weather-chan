@@ -39,10 +39,10 @@ class Sunspots {
         (stationConfig) =>
           ({
             ...stationConfig,
-            forecast: null as null,
-            abbreviatedForecast: null as null,
-            highTemp: null as null,
-            lowTemp: null as null,
+            forecast: null,
+            abbreviatedForecast: null,
+            highTemp: null,
+            lowTemp: null,
           } as SunspotStationConfig & SunspotStationObservation)
       )
     );

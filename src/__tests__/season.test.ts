@@ -41,6 +41,7 @@ describe("seasons", () => {
   it("isDateInWinterSeason: detects a date is in winter season correctly", () => {
     expect(isDateInWinterSeason(new Date(2023, 0, 13).toISOString())).toBeTruthy();
     expect(isDateInWinterSeason(new Date(2023, 5, 13).toISOString())).toBeFalsy();
+    expect(isDateInWinterSeason(new Date(2023, 9, 15).toISOString())).toBeTruthy();
   });
 
   it("isDateInCurrentWinterSeason: makes sure the passed date is in the current winter season", () => {
@@ -68,5 +69,31 @@ describe("seasons", () => {
     const dateOutsideOfSummer = new Date(2023, 10, 22);
     jest.setSystemTime(dateOutsideOfSummer);
     expect(isDateInCurrentSummerSeason(dateOutsideOfSummer.toISOString())).toBeFalsy();
+  });
+
+  it("season rollover is Apr 2 / Oct 2 so changeover days keep prior-season totals (#854)", () => {
+    const apr1 = new Date(2023, 3, 1);
+    jest.setSystemTime(apr1);
+    expect(getIsWinterSeason()).toBe(true);
+    expect(isDateInCurrentWinterSeason(apr1.toISOString(), apr1)).toBe(true);
+    expect(isDateInCurrentSummerSeason(apr1.toISOString(), apr1)).toBe(false);
+
+    const apr2 = new Date(2023, 3, 2);
+    jest.setSystemTime(apr2);
+    expect(getIsWinterSeason()).toBe(false);
+    expect(isDateInCurrentWinterSeason(apr2.toISOString(), apr2)).toBe(false);
+    expect(isDateInCurrentSummerSeason(apr2.toISOString(), apr2)).toBe(true);
+
+    const oct1 = new Date(2023, 9, 1);
+    jest.setSystemTime(oct1);
+    expect(getIsWinterSeason()).toBe(false);
+    expect(isDateInCurrentWinterSeason(oct1.toISOString(), oct1)).toBe(false);
+    expect(isDateInCurrentSummerSeason(oct1.toISOString(), oct1)).toBe(true);
+
+    const oct2 = new Date(2023, 9, 2);
+    jest.setSystemTime(oct2);
+    expect(getIsWinterSeason()).toBe(true);
+    expect(isDateInCurrentWinterSeason(oct2.toISOString(), oct2)).toBe(true);
+    expect(isDateInCurrentSummerSeason(oct2.toISOString(), oct2)).toBe(false);
   });
 });

@@ -57,10 +57,15 @@ class AirQuality {
         this._aqhiObservation.day = Number(conditionAirQuality["dateStamp"]["day"]?._text);
         this._aqhiObservation.month = Number(conditionAirQuality["dateStamp"]["month"]?._text);
 
-        // hour info
+        // hour info (12h + ampm vs 24h clock — #997)
         const hour: ElementCompact = conditionAirQuality["dateStamp"]["hour"];
+        const clockRaw = String(hour?._attributes?.clock ?? "12h").toLowerCase();
+        const clock12h = clockRaw !== "24h" && clockRaw !== "24";
+        const ampmRaw = hour?._attributes?.ampm;
+        const isPM = typeof ampmRaw === "string" && ampmRaw.trim().toUpperCase() === "PM";
         this._aqhiObservation.hour = Number(hour?._text);
-        this._aqhiObservation.isPM = hour?._attributes?.ampm === "PM";
+        this._aqhiObservation.isPM = isPM;
+        this._aqhiObservation.clock12h = clock12h;
 
         // aqhi reading
         this._aqhiObservation.value = Number(conditionAirQuality["airQualityHealthIndex"]._text);

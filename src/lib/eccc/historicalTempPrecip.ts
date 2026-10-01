@@ -10,8 +10,8 @@ import {
   LastMonthDayValue,
   LastMonthSummary,
 } from "types";
-import { isSameMonth, isValid, isYesterday, parseISO, subMonths } from "date-fns";
-import { isDateInCurrentWinterSeason, getIsWinterSeason, isDateInCurrentSummerSeason } from "lib/date";
+import { addDays, isSameMonth, isValid, isYesterday, parseISO, subDays, subMonths } from "date-fns";
+import { isDateInCurrentWinterSeason, isDateInCurrentSummerSeason } from "lib/date";
 import eventbus from "lib/eventbus";
 import { EVENT_BUS_CONFIG_CHANGE_HISTORICAL_TEMP_PRECIP } from "consts";
 
@@ -49,6 +49,18 @@ function dailySnowCm(row: { totalsnow?: unknown }): number {
 const logger = new Logger("Historical_Temp_Precip");
 const config = initializeConfig();
 
+function isGregorianLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+/** Most recent Gregorian leap year strictly before `year` (for Feb 29 almanac lookup, #671). */
+function previousLeapYear(year: number): number | null {
+  for (let ly = year - (year % 4 || 4); ly >= year - 16; ly -= 4) {
+    if (ly < year && isGregorianLeapYear(ly)) return ly;
+  }
+  return null;
+}
+
 class HistoricalTempPrecip {
   private _apiURL: string;
   private _historicalData: any[] = [];
@@ -83,6 +95,12 @@ class HistoricalTempPrecip {
 
     const currentYear = currentDate.getFullYear();
     const yearsToFetch = [currentYear - 1, currentYear];
+    // Feb 29 almanac needs the prior leap year’s bulk row (often 4 years back), not y−1 (#671).
+    if (currentDate.getMonth() === 1 && currentDate.getDate() === 29) {
+      const leapYear = previousLeapYear(currentYear);
+      if (leapYear != null && !yearsToFetch.includes(leapYear)) yearsToFetch.push(leapYear);
+    }
+    yearsToFetch.sort((a, b) => a - b);
     logger.log("Preparing to fetch historical data for years", yearsToFetch.join());
 
     this._historicalData.splice(0, this._historicalData.length);
@@ -146,21 +164,46 @@ class HistoricalTempPrecip {
 
   private parseLastYearTemperatures(currentDate: Date) {
     if (!this._historicalData?.length) return;
-
     if (!isValid(currentDate)) return;
 
-    const todayLastYear = this._historicalData.find(
-      (stationData) =>
-        Number(stationData._attributes.day) === currentDate.getDate() &&
-        Number(stationData._attributes.month) === currentDate.getMonth() + 1 &&
-        Number(stationData._attributes.year) === currentDate.getFullYear() - 1
-    );
-    if (!todayLastYear) return;
+    this._lastYearTemperatures = { min: null, max: null };
 
-    const maxV = Number(xmlText(todayLastYear.maxtemp) ?? NaN);
-    const minV = Number(xmlText(todayLastYear.mintemp) ?? NaN);
-    this._lastYearTemperatures.max = Number.isFinite(maxV) ? { value: maxV, unit: "C" } : null;
-    this._lastYearTemperatures.min = Number.isFinite(minV) ? { value: minV, unit: "C" } : null;
+    const y = currentDate.getFullYear();
+    const candidates: Date[] = [];
+
+    // Feb 29: prefer prior leap Feb 29 (e.g. 2020) — JS Date(y-1, 1, 29) overflows to Mar 1 on non-leap years (#671).
+    if (currentDate.getMonth() === 1 && currentDate.getDate() === 29) {
+      const leapYear = previousLeapYear(y);
+      if (leapYear != null) candidates.push(new Date(leapYear, 1, 29));
+      candidates.push(new Date(y - 1, 1, 28));
+    } else {
+      const base = new Date(y - 1, currentDate.getMonth(), currentDate.getDate());
+      if (isValid(base)) {
+        candidates.push(base, subDays(base, 1), addDays(base, 1));
+      }
+    }
+
+    const seen = new Set<number>();
+    for (const cand of candidates) {
+      if (!isValid(cand)) continue;
+      const t = cand.getTime();
+      if (seen.has(t)) continue;
+      seen.add(t);
+
+      const row = this._historicalData.find(
+        (stationData) =>
+          Number(stationData._attributes.day) === cand.getDate() &&
+          Number(stationData._attributes.month) === cand.getMonth() + 1 &&
+          Number(stationData._attributes.year) === cand.getFullYear()
+      );
+      if (!row) continue;
+
+      const maxV = Number(xmlText(row.maxtemp) ?? NaN);
+      const minV = Number(xmlText(row.mintemp) ?? NaN);
+      this._lastYearTemperatures.max = Number.isFinite(maxV) ? { value: maxV, unit: "C" } : null;
+      this._lastYearTemperatures.min = Number.isFinite(minV) ? { value: minV, unit: "C" } : null;
+      return;
+    }
   }
 
   private parseSeasonalPrecip(currentDate: Date) {
@@ -173,7 +216,11 @@ class HistoricalTempPrecip {
     const lastMonthData: HistoricalDataStats = [];
     const lastMonth = subMonths(currentDate, 1);
 
-    const isWinterSeason = getIsWinterSeason(currentDate.getMonth() + 1);
+    // Day-aware (#854): winter Oct 2–Apr 1 so Apr 1 / Oct 1 keep prior-season totals instead of 0.
+    const asOfIso = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(
+      currentDate.getDate()
+    ).padStart(2, "0")}`;
+    const isWinterSeason = isDateInCurrentWinterSeason(asOfIso, currentDate);
     let rainfall = 0;
     let winterSnowCm = 0;
     let yesterdayRainfall = 0;

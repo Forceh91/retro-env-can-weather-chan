@@ -4,6 +4,7 @@
 @import "./forecast.scss";
 @import "./alerts.scss";
 @import "./fonts/ws4000/star4000.scss";
+@import "./fonts/recw/recw.scss";
 
 * {
   box-sizing: border-box;
@@ -51,9 +52,14 @@ ol {
     padding: 0 10%;
     padding-bottom: 10px;
     width: 100%;
+    font-family: var(--crawler-font);
+    text-transform: none;
 
     .rfm-marquee-container {
       overflow: hidden;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
 
       .rfm-child {
         margin-right: $channel_max_width;
@@ -62,6 +68,7 @@ ol {
   }
 
   #display {
+    @include recwc_body;
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -83,5 +90,16 @@ ol {
     padding: 0 10%;
     text-align: center;
     width: 100%;
+
+    font-family: var(--logo-font);
+    text-transform: none;
+
+    #header {
+      margin-left: -1.5ch;
+    }
+
+    #time_date {
+      @include recwc_body;
+    }
   }
 }

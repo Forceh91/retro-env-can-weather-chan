@@ -125,7 +125,6 @@ export function ForecastScreen(props: ForecastScreenProps) {
       {page > 1 && (
         <div>
           <div className="centre-align">{weatherStationResponse.city} forecast cont..</div>
-          <br />
           <div>{formattedPageForecast1}</div>
           <br />
           <div>{formattedPageForecast2}</div>

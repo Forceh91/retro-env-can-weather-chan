@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AQHIObservationResponse, CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
@@ -16,9 +16,21 @@ type ForecastScreenProps = {
 const MAX_FORECAST_PAGES = 2;
 
 export function ForecastScreen(props: ForecastScreenProps) {
-  const { onComplete, weatherStationResponse, alert, isReload, airQuality } = props ?? {};
+  const { onComplete, weatherStationResponse, alert, isReload, airQuality, onForecastContinuationEntered } =
+    props ?? {};
   const [page, setPage] = useState(1);
   const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
+  const continuationEnteredRef = useRef(false);
+
+  useLayoutEffect(() => {
+    if (page <= 1) {
+      continuationEnteredRef.current = false;
+      return;
+    }
+    if (continuationEnteredRef.current) return;
+    continuationEnteredRef.current = true;
+    onForecastContinuationEntered?.();
+  }, [page, onForecastContinuationEntered]);
 
   useEffect(() => {
     // handle page change as normal

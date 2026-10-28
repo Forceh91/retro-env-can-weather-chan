@@ -7,7 +7,8 @@ export function ecccDateStringToTSDate(date: string) {
     .replace("ADT", "GMT-0300")
     .replace("AST", "GMT-0400")
     .replace("NDT", "GMT-0230")
-    .replace("NST", "GMT-0330");
+    .replace("NST", "GMT-0330")
+    .replace("MBT", "GMT-0500"); // new manitoba timezone after they got rid of daylight savings
 
   return new Date(fixedTimezone.replace(" at", "").replace(",", ""));
 }

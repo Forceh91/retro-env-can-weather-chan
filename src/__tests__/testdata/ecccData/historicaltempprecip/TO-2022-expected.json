@@ -1,9 +1,9 @@
 {
   "temperatures": { "max": { "value": 33.9, "unit": "C" }, "min": { "value": 22.8, "unit": "C" } },
   "precipitation": {
-    "summer": { "amount": 382, "normal": 0, "season": "summer", "type": "rain", "unit": "mm" },
+    "summer": { "amount": 364.8, "normal": 0, "season": "summer", "type": "rain", "unit": "mm" },
     "winter": {
-      "amount": 427.9,
+      "amount": 445.1,
       "normal": 0,
       "season": "winter",
       "snowfallSeasonCm": 136.7,

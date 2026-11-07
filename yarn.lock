@@ -9156,10 +9156,10 @@ safe-regex-test@^1.0.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sass@^1.105.2, sass@^1.88.0:
-  version "1.105.2"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.105.2.tgz#81e25b304e086832b1ba8095db48614970f14d1c"
-  integrity sha512-KxW6ZKZiBKWK3ziQ4YZ3cpqo8/1TlHXE8t9nBNvGDZFoBFbk2MD7RacxYFs8zy8hzeFwpFYkVyAhboi47uYPEQ==
+sass@^1.107.0, sass@^1.88.0:
+  version "1.107.0"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.107.0.tgz#2fc0e6fb63fcddb478bd9a7b05cfe7c08a2d3e5e"
+  integrity sha512-+whPilvVNoAD57xvdIPLQT0gXo4RD1lHYw+Uw8zYHlojaeaMDxK14tc0JmEsz/XMns48h3lpypisMP+3E8eHQA==
   dependencies:
     chokidar "^5.0.0"
     immutable "^5.1.5"

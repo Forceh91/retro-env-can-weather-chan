@@ -4,7 +4,7 @@ import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
 import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
 import { formatStringTo8x32 } from "lib/display";
-import { shouldAlertFlash } from "lib/cap-cp";
+import { normalizeAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 
 type ForecastScreenProps = {
   weatherStationResponse: WeatherStation;
@@ -59,8 +59,8 @@ export function ForecastScreen(props: ForecastScreenProps) {
   };
 
   const formatAlertHeadline = (headline: string) => {
-    const truncated = headline
-      ?.replace(/severe thunderstorm/gi, "severe tstorm")
+    const truncated = normalizeAlertHeadline(headline)
+      .replace(/severe thunderstorm/gi, "severe tstorm")
       .replace(/statement/gi, "stmnt")
       .replace(/air quality/gi, "air qlty");
     return truncated;

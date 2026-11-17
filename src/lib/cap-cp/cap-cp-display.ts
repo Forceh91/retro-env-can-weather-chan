@@ -10,12 +10,26 @@ export function shouldAlertFlash(alert: CAPObject) {
   return alert.severity >= CAPSeverity.MODERATE;
 }
 
+// ECCC colour-coded alerts now arrive as "<colour> <level> - <type> - <status>" (e.g. "yellow warning - snowfall - in effect")
+// the simulator-era format is "<type> <level> <status>" (e.g. "snowfall warning in effect") so we convert it back
+const COLOUR_CODED_HEADLINE = /^\s*(?:yellow|orange|red)\s+(watch|warning|advisory)\s*[-–—]\s*(.+?)\s*[-–—]\s*(in effect|ended)\s*$/i;
+
+export function normalizeAlertHeadline(headline: string) {
+  if (!headline?.length) return "";
+
+  const match = headline.match(COLOUR_CODED_HEADLINE);
+  if (!match) return headline;
+
+  const [, level, type, status] = match;
+  return `${type.trim()} ${level} ${status}`;
+}
+
 export function cleanupAlertHeadline(headline: string) {
   if (!headline?.length) return "";
 
-  return headline.replace(/\sin effect/gi, "");
+  return normalizeAlertHeadline(headline).replace(/\sin effect/gi, "");
 }
 
 export function isWarningSevereThunderstormWatch(headline: string) {
-  return (headline ?? "").toLowerCase() === "severe thunderstorm watch in effect";
+  return normalizeAlertHeadline(headline).toLowerCase() === "severe thunderstorm watch in effect";
 }

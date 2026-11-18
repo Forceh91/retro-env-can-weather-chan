@@ -1,13 +1,17 @@
 import { compareAsc, compareDesc, parseISO } from "date-fns";
 
-export function getIsWinterSeason(month?: number) {
-  const date: Date = new Date();
+/**
+ * Winter precip season is **Oct 2 → Apr 1** (#854). When `day` is known (always the case when using the clock) the
+ * changeover days belong to the season that is ending; with just a `month` it is the plain Oct–Mar split.
+ */
+export function getIsWinterSeason(month?: number, day?: number) {
   if (month === undefined) {
-    // Day-aware when using the clock (#854): winter precip UI is Oct 2 → Apr 1 inclusive.
-    const m = date.getMonth() + 1;
-    const d = date.getDate();
-    return m > 10 || (m === 10 && d >= 2) || m < 4 || (m === 4 && d <= 1);
+    const date: Date = new Date();
+    month = date.getMonth() + 1;
+    day = date.getDate();
   }
+
+  if (day !== undefined) return month > 10 || (month === 10 && day >= 2) || month < 4 || (month === 4 && day <= 1);
 
   return month >= 10 || month <= 3;
 }

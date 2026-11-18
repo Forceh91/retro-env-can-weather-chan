@@ -11,6 +11,8 @@ type ForecastScreenProps = {
   alert?: CAPObject;
   isReload?: boolean;
   airQuality: AQHIObservationResponse;
+  /** called once when the forecast moves past its first page, so the rotator can flip the background colour (#853) */
+  onForecastContinuationEntered?: () => void;
 } & AutomaticScreenProps;
 
 const MAX_FORECAST_PAGES = 2;

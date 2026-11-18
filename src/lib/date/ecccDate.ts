@@ -14,7 +14,8 @@ export function ecccDateStringToTSDate(date: string) {
 
 export function getShorthandMonthNamesForSeason(stopAtCurrentMonth: boolean, date: Date = new Date()) {
   let months = ["apr", "may", "jun", "jul", "aug", "sep"];
-  if (getIsWinterSeason(date.getMonth() + 1)) months = ["oct", "nov", "dec", "jan", "feb", "mar"];
+  // day-aware so Oct 1 / Apr 1 use the same (ending) season as the actual totals do (#854)
+  if (getIsWinterSeason(date.getMonth() + 1, date.getDate())) months = ["oct", "nov", "dec", "jan", "feb", "mar"];
 
   if (stopAtCurrentMonth) {
     const currMonth = format(date.getTime(), "MMM").toLowerCase();

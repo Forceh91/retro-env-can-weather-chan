@@ -46,4 +46,18 @@ describe("Helpers for ECCC dates", () => {
     jest.setSystemTime(new Date(2023, 11, 13));
     expect(getShorthandMonthNamesForSeason(true)).toStrictEqual(winterMonths.slice(0, 3));
   });
+
+  it("uses the ending season's months on the Oct 1 / Apr 1 changeover days (#854)", () => {
+    jest.restoreAllMocks();
+
+    const summerMonths = ["apr", "may", "jun", "jul", "aug", "sep"];
+    const winterMonths = ["oct", "nov", "dec", "jan", "feb", "mar"];
+
+    // Oct 1 and Apr 1 still show the previous season's totals, so the normal has to cover that same season
+    expect(getShorthandMonthNamesForSeason(true, new Date(2026, 9, 1))).toStrictEqual(summerMonths);
+    expect(getShorthandMonthNamesForSeason(true, new Date(2026, 3, 1))).toStrictEqual(winterMonths);
+
+    expect(getShorthandMonthNamesForSeason(true, new Date(2026, 9, 2))).toStrictEqual(["oct"]);
+    expect(getShorthandMonthNamesForSeason(true, new Date(2026, 3, 2))).toStrictEqual(["apr"]);
+  });
 });

@@ -38,6 +38,18 @@ describe("seasons", () => {
     notSunspotMonths.forEach((month) => expect(isSunSpotSeason(month)).toBe(false));
   });
 
+  it("getIsWinterSeason: month + day is Oct 2 → Apr 1 (#854), month alone is Oct → Mar", () => {
+    expect(getIsWinterSeason(10, 1)).toBe(false);
+    expect(getIsWinterSeason(10, 2)).toBe(true);
+    expect(getIsWinterSeason(4, 1)).toBe(true);
+    expect(getIsWinterSeason(4, 2)).toBe(false);
+    expect(getIsWinterSeason(7, 15)).toBe(false);
+    expect(getIsWinterSeason(1, 15)).toBe(true);
+
+    expect(getIsWinterSeason(10)).toBe(true);
+    expect(getIsWinterSeason(4)).toBe(false);
+  });
+
   it("isDateInWinterSeason: detects a date is in winter season correctly", () => {
     expect(isDateInWinterSeason(new Date(2023, 0, 13).toISOString())).toBeTruthy();
     expect(isDateInWinterSeason(new Date(2023, 5, 13).toISOString())).toBeFalsy();

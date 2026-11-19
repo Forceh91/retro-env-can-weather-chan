@@ -3,7 +3,7 @@ import { AQHIObservationResponse, CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
 import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
-import { centreOnGrid, formatStringTo8x32 } from "lib/display";
+import { applyTypedRowTimings, centreOnGrid, formatStringTo8x32 } from "lib/display";
 import { normalizeAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 
 type ForecastScreenProps = {
@@ -23,6 +23,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
   const [page, setPage] = useState(1);
   const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
   const continuationEnteredRef = useRef(false);
+  const screenRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (page <= 1) {
@@ -113,11 +114,16 @@ export function ForecastScreen(props: ForecastScreenProps) {
     return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
   }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
 
+  // on a reload the first page is typed out a row at a time (#998), so each row needs to know when to start
+  useLayoutEffect(() => {
+    if (isReload && page === 1) applyTypedRowTimings(screenRef.current);
+  }, [isReload, page, weatherStationResponse?.observationID, formattedImmediateForecast, alert?.headline]);
+
   // no response from weather station so whatever
   if (!weatherStationResponse) return <></>;
 
   return (
-    <div id="forecast_screen" className={isReload ? "has-reloaded" : ""}>
+    <div id="forecast_screen" className={isReload ? "has-reloaded" : ""} ref={screenRef}>
       {page === 1 && (
         <>
           <Conditions
@@ -126,13 +132,19 @@ export function ForecastScreen(props: ForecastScreenProps) {
             stationTime={weatherStationResponse.stationTime}
             airQuality={airQuality}
           />
-          <div className="forecast reload-animation step-7">
+          <div className="forecast">
             {alert && (
-              <div className={`forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
-                {centreOnGrid(formatAlertHeadline(alert.headline))}
+              <div className="grid-row">
+                <div className={`forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
+                  {centreOnGrid(formatAlertHeadline(alert.headline))}
+                </div>
               </div>
             )}
-            <div>{formattedImmediateForecast}</div>
+            {formattedImmediateForecast.split("\n").map((line, ix) => (
+              <div className="grid-row" key={ix}>
+                {line}
+              </div>
+            ))}
           </div>
         </>
       )}

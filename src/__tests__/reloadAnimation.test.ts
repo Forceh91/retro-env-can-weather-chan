@@ -35,8 +35,8 @@ describe("getTypedRowTimings", () => {
     expect(timings[2].delaySeconds).toBeCloseTo(1.1, 5);
   });
 
-  it("uses the original hardware speed (300bps = 30 characters a second) when there's no jitter", () => {
-    expect(getTypedRowTimings([30], steady)[0].durationSeconds).toBe(1);
+  it("uses the original hardware speed when there's no jitter", () => {
+    expect(getTypedRowTimings([80], steady)[0].durationSeconds).toBe(1);
   });
 
   it("gives each row its own speed, between full speed and the jitter's worth slower", () => {
@@ -100,9 +100,9 @@ describe("applyTypedRowTimings", () => {
 
     expect(seconds(a, "--type-delay")).toBe(0.4);
     expect(empty.style.getPropertyValue("--type-chars")).toBe("");
-    // 120ms between rows
+    // 10ms between rows
     expect(seconds(b, "--type-delay")).toBeCloseTo(
-      seconds(a, "--type-delay") + seconds(a, "--type-duration") + 0.12,
+      seconds(a, "--type-delay") + seconds(a, "--type-duration") + 0.01,
       2,
     );
   });

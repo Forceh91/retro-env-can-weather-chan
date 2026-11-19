@@ -9,3 +9,6 @@ export const DISPLAY_MAX_LINES = 8;
 export const RELOAD_CHARS_PER_SECOND = 80;
 export const RELOAD_CLEAR_SCREEN_MS = 400;
 export const RELOAD_ROW_PAUSE_MS = 10;
+// add some jitter to the reload speed to simulate an actual network connection
+// 0.4 means somewhere between 60% and 100% of RELOAD_CHARS_PER_SECOND
+export const RELOAD_SPEED_JITTER = 0.4;

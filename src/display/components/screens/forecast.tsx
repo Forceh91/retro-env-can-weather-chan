@@ -116,7 +116,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
 
   // on a reload the first page is typed out a row at a time (#998), so each row needs to know when to start
   useLayoutEffect(() => {
-    if (isReload && page === 1) applyTypedRowTimings(screenRef.current);
+    if (isReload && page === 1) applyTypedRowTimings(screenRef.current, weatherStationResponse?.observationID);
   }, [isReload, page, weatherStationResponse?.observationID, formattedImmediateForecast, alert?.headline]);
 
   // no response from weather station so whatever

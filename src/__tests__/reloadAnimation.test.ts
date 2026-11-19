@@ -3,13 +3,20 @@
  */
 import { createElement as h } from "react";
 import { cleanup, render } from "@testing-library/react";
-import { applyTypedRowTimings, getTypedRowTimings } from "lib/display";
+import { applyTypedRowTimings, getTypedRowTimings, seededRandom } from "lib/display";
 import { ForecastScreen } from "../display/components/screens";
 
 describe("getTypedRowTimings", () => {
+  const steady = { speedJitter: 0 };
+
   it("types characters one after another at the given speed, after the screen has been cleared", () => {
     // 30 cps, blank for 400ms, 100ms between rows
-    const [first, second, third] = getTypedRowTimings([30, 15, 60], 30, 400, 100);
+    const [first, second, third] = getTypedRowTimings([30, 15, 60], {
+      ...steady,
+      charsPerSecond: 30,
+      clearScreenMs: 400,
+      rowPauseMs: 100,
+    });
 
     expect(first).toStrictEqual({ chars: 30, delaySeconds: 0.4, durationSeconds: 1 });
     expect(second).toStrictEqual({ chars: 15, delaySeconds: 0.4 + 1 + 0.1, durationSeconds: 0.5 });
@@ -17,14 +24,57 @@ describe("getTypedRowTimings", () => {
   });
 
   it("skips empty rows without spending any time on them", () => {
-    const timings = getTypedRowTimings([30, 0, 30], 30, 0, 100);
+    const timings = getTypedRowTimings([30, 0, 30], {
+      ...steady,
+      charsPerSecond: 30,
+      clearScreenMs: 0,
+      rowPauseMs: 100,
+    });
 
     expect(timings[1]).toBeNull();
     expect(timings[2].delaySeconds).toBeCloseTo(1.1, 5);
   });
 
-  it("uses the original hardware speed (300bps = 30 characters a second) by default", () => {
-    expect(getTypedRowTimings([30])[0].durationSeconds).toBe(1);
+  it("uses the original hardware speed (300bps = 30 characters a second) when there's no jitter", () => {
+    expect(getTypedRowTimings([30], steady)[0].durationSeconds).toBe(1);
+  });
+
+  it("gives each row its own speed, between full speed and the jitter's worth slower", () => {
+    // random() of 0 is a row at full speed, and just under 1 is the slowest it can get
+    const [fast, slowest, middle] = (() => {
+      const values = [0, 0.999999, 0.5];
+      return getTypedRowTimings([30, 30, 30], { charsPerSecond: 30, speedJitter: 0.4, random: () => values.shift() });
+    })();
+
+    expect(fast.durationSeconds).toBeCloseTo(1, 5); // 30 cps
+    expect(slowest.durationSeconds).toBeCloseTo(30 / (30 * 0.6), 3); // 18 cps
+    expect(middle.durationSeconds).toBeCloseTo(30 / (30 * 0.8), 5); // 24 cps
+  });
+
+  it("never gets faster than the line speed or slower than the jitter allows, whatever the random numbers are", () => {
+    const rows = Array.from({ length: 200 }, () => 30);
+    const timings = getTypedRowTimings(rows, { charsPerSecond: 30, speedJitter: 0.4, random: seededRandom("a") });
+
+    timings.forEach((timing) => {
+      expect(timing.durationSeconds).toBeGreaterThanOrEqual(1);
+      expect(timing.durationSeconds).toBeLessThanOrEqual(30 / (30 * 0.6) + 1e-9);
+    });
+    expect(new Set(timings.map((timing) => timing.durationSeconds)).size).toBeGreaterThan(50);
+  });
+});
+
+describe("seededRandom", () => {
+  it("gives the same numbers for the same seed, different ones for another, always between 0 and 1", () => {
+    const first = Array.from({ length: 5 }, seededRandom("obs-1"));
+    const again = Array.from({ length: 5 }, seededRandom("obs-1"));
+    const other = Array.from({ length: 5 }, seededRandom("obs-2"));
+
+    expect(first).toStrictEqual(again);
+    expect(first).not.toStrictEqual(other);
+    [...first, ...other].forEach((n) => {
+      expect(n).toBeGreaterThanOrEqual(0);
+      expect(n).toBeLessThan(1);
+    });
   });
 });
 
@@ -46,12 +96,31 @@ describe("applyTypedRowTimings", () => {
     const [a, empty, b] = rowsOf(
       `<div class="grid-row">${"a".repeat(30)}</div><div class="grid-row"></div><div class="grid-row">${"b".repeat(15)}</div>`,
     );
+    const seconds = (row: HTMLElement, name: string) => parseFloat(row.style.getPropertyValue(name));
 
-    expect(a.style.getPropertyValue("--type-delay")).toBe("0.4s");
-    expect(a.style.getPropertyValue("--type-duration")).toBe("1s");
+    expect(seconds(a, "--type-delay")).toBe(0.4);
     expect(empty.style.getPropertyValue("--type-chars")).toBe("");
-    expect(b.style.getPropertyValue("--type-delay")).toBe("1.52s");
-    expect(b.style.getPropertyValue("--type-duration")).toBe("0.5s");
+    // 120ms between rows
+    expect(seconds(b, "--type-delay")).toBeCloseTo(
+      seconds(a, "--type-delay") + seconds(a, "--type-duration") + 0.12,
+      2,
+    );
+  });
+
+  it("varies the speed with the seed, and a given seed always gives the same timings", () => {
+    const html = Array.from({ length: 6 }, () => `<div class="grid-row">${"x".repeat(30)}</div>`).join("");
+    const durations = (seed: string) => {
+      document.body.innerHTML = `<div id="screen">${html}</div>`;
+      const screen = document.getElementById("screen");
+      applyTypedRowTimings(screen, seed);
+      return Array.from(screen.querySelectorAll<HTMLElement>(".grid-row")).map((row) =>
+        row.style.getPropertyValue("--type-duration"),
+      );
+    };
+
+    expect(durations("1")).toStrictEqual(durations("1"));
+    expect(durations("1")).not.toStrictEqual(durations("2"));
+    expect(new Set(durations("1")).size).toBeGreaterThan(1);
   });
 
   it("doesn't mind there being no screen", () => {

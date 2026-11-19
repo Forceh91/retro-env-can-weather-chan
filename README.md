@@ -18,6 +18,7 @@ This project includes all of the features from the original weather channel such
 - Stats for the current day (sunrise/set, Canada hot/cold spots) and total precipitation for the current season
 - Stats for last month
 - Windchill (in the old watts per square metre format)
+- Info screens (custom text only screens, like a holiday message)
 - Flavours
 
 Some of the above features are season/time of month specific and will automatically come and go as required
@@ -126,6 +127,10 @@ This will allow you to setup extra features such as custom screen rotation (flav
 ### Automatic reload
 
 When your config is saved the updated changes should reflect on the display no more than 5 minutes later (including playlist changes).
+
+### Info screens
+
+Info screens are custom text only screens, for things like a holiday message. Add them on the "Info Screens" tab of the [configuration screen](http://localhost:8600/config). Each one is up to 8 lines of 32 characters, with every line centred on the display (a blank line stays blank), and can optionally have a first and last day it is shown. They are saved in `cfg/info-screens.json`.
 
 ### Setting up a playlist
 

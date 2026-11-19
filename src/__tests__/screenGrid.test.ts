@@ -9,6 +9,7 @@ import {
   AlmanacScreen,
   AQHIWarningScreen,
   ForecastScreen,
+  InfoScreen,
   LastMonthScreen,
   NationalWeatherScreen,
   OutlookScreen,
@@ -331,6 +332,17 @@ describe("every screen fits the 8x32 grid", () => {
       );
       checkRender(`aqhi ${date}`, h(AQHIWarningScreen, { city: "Winnipeg", airQuality, onComplete: noop }));
     }
+
+    expect(offenders).toEqual([]);
+  });
+
+  it("info screens, including one that uses every column and row", () => {
+    const widest = Array(DISPLAY_MAX_LINES).fill("x".repeat(DISPLAY_MAX_CHARACTERS_PER_LINE)).join("\n");
+    const messages = ["HAPPY HOLIDAYS\n\nFROM\nENVIRONMENT CANADA\nAND SHAW.", "ODD\nEVEN\nODDER\nEVENER", widest];
+
+    messages.forEach((message, ix) =>
+      checkRender(`info ${ix}`, h(InfoScreen, { infoScreens: [{ id: "1", message }], onComplete: noop }))
+    );
 
     expect(offenders).toEqual([]);
   });

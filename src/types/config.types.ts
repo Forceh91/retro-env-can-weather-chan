@@ -1,4 +1,5 @@
 import { Flavour, FlavourNames } from "./flavour.types";
+import { InfoScreenEntry } from "./infoscreen.types";
 import { ProvinceStation } from "./provincetracking.types";
 
 export type ConfigFields = {
@@ -13,6 +14,7 @@ export type ConfigFields = {
   provinceStations: ProvinceStation[];
   airQualityStation: string;
   crawler: string[];
+  infoScreens: InfoScreenEntry[];
   music: string[];
 };
 
@@ -41,6 +43,8 @@ export type MiscConfig = {
 export type InitChannel = {
   config: { font: string; provinceHighLowEnabled: boolean; configVersion?: string };
   crawler: CrawlerMessages;
+  /** only the ones that should be shown today */
+  infoScreens: InfoScreenEntry[];
   flavour: Flavour;
   music: string[];
 };

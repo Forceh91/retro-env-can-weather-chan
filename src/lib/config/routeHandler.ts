@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { initializeConfig } from "./config";
+import { parseInfoScreens } from "lib/infoscreen";
 import { getECCCWeatherStations } from "lib/eccc/weatherStations";
 
 const config = initializeConfig();
@@ -20,6 +21,7 @@ export function getInitHandler(req: Request, res: Response) {
       configVersion: config.configVersion,
     },
     crawler: config.crawlerMessages,
+    infoScreens: config.activeInfoScreens,
     flavour: config.flavour,
     music: config.musicPlaylist ?? [],
   });
@@ -145,6 +147,27 @@ export function postCrawlerMessages(req: Request, res: Response) {
     res.sendStatus(200);
   } catch (e) {
     res.status(500).json({ error: e });
+  }
+}
+
+export function postInfoScreens(req: Request, res: Response) {
+  const {
+    body: { infoScreens },
+  } = req ?? {};
+
+  try {
+    const { entries, errors } = parseInfoScreens(infoScreens);
+    if (errors.length) {
+      res.status(400).json({ error: errors.join(". ") });
+      return;
+    }
+
+    config.setInfoScreens(entries);
+
+    // send them back as saved, because any that didn't have an id have been given one
+    res.json({ infoScreens: config.infoScreens });
+  } catch (e) {
+    res.status(500).json({ error: "Unable to save info screens" });
   }
 }
 

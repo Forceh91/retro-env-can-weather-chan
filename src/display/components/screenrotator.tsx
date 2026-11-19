@@ -10,6 +10,7 @@ import {
   CAPObject,
   FlavourScreen,
   HotColdSpots,
+  InfoScreenEntry,
   LastMonth,
   NationalWeather,
   ProvinceTracking,
@@ -30,6 +31,7 @@ import {
   SunspotScreen,
   WindchillEffectScreen,
   AQHIWarningScreen,
+  InfoScreen,
 } from "./screens";
 
 type ScreenRotatorProps = {
@@ -48,6 +50,7 @@ type ScreenRotatorProps = {
   usaWeather: USAStationObservations;
   sunspots: SunspotStationObservations;
   airQuality: AQHIObservationResponse;
+  infoScreens: InfoScreenEntry[];
   configVersion: string;
 };
 
@@ -64,6 +67,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     usaWeather,
     sunspots,
     airQuality,
+    infoScreens,
     configVersion,
   } = props ?? {};
 
@@ -258,6 +262,10 @@ export function ScreenRotator(props: ScreenRotatorProps) {
         return (
           <LastMonthScreen city={weatherStationResponse?.city} lastMonth={lastMonth} onComplete={switchToNextScreen} />
         );
+
+      case Screens.INFO:
+        // keyed because it keeps its own pages, so two of these in a row has to start over rather than reuse the first
+        return <InfoScreen key={displayedScreenIx} infoScreens={infoScreens} onComplete={switchToNextScreen} />;
 
       case Screens.SUNSPOTS:
         return (

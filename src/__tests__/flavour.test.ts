@@ -86,7 +86,7 @@ describe("Flavour loading", () => {
 
 describe("Flavour utils", () => {
   it("detectes auto-duration screens correctly", () => {
-    const autoDurationScreens = [Screens.ALERTS, Screens.FORECAST];
+    const autoDurationScreens = [Screens.ALERTS, Screens.FORECAST, Screens.INFO];
     const manualDurationScreens = [
       Screens.ALMANAC,
       Screens.CANADA_TEMP_CONDITIONS_EAST,

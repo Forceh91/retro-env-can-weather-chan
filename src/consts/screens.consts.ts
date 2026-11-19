@@ -56,7 +56,7 @@ export const SCREEN_DESCRIPTIONS = {
   [Screens.WINDCHILL]: "Explains the windchill numbers",
 };
 
-export const SCREENS_WITH_AUTO_DURATION = [Screens.ALERTS, Screens.FORECAST];
+export const SCREENS_WITH_AUTO_DURATION = [Screens.ALERTS, Screens.FORECAST, Screens.INFO];
 
 export const SCREEN_DEFAULT_DISPLAY_LENGTH = 14 as const;
 export const SCREEN_MIN_DISPLAY_LENGTH = 10 as const;

@@ -12,7 +12,8 @@ module.exports = {
     "node_modules/(?!(xml-js)/)",
   ],
   transform: {
-    "^.+\\.tsx?$": ["ts-jest", { useESM: true }],
+    // the display components are tsx, which the main tsconfig leaves as jsx for the bundler to handle
+    "^.+\\.tsx?$": ["ts-jest", { useESM: true, tsconfig: "tsconfig.jest.json" }],
     "^.+\\.ts?$": ["ts-jest", { useESM: true }],
   },
   collectCoverageFrom: [

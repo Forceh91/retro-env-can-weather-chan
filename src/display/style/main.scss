@@ -78,28 +78,42 @@ ol {
     padding: 0 10%;
     width: 100%;
 
-    .centre-align {
-      text-align: center;
+    // every screen is laid out on the same 32 column x 8 row grid, so they all get a box that is exactly 32 columns
+    // wide. otherwise each one is shrink-wrapped and centred on its own, and the columns drift by up to half a
+    // character from screen to screen (and from the footer)
+    #screen_grid {
+      flex: none;
+      width: 32ch;
     }
   }
 
   #footer_bar {
     background: $footer_bar_background_col;
+    display: flex;
     height: $footer_bar_height;
+    justify-content: center;
     overflow: hidden;
-    padding: 0 10%;
-    text-align: center;
     width: 100%;
 
     font-family: var(--logo-font);
     text-transform: none;
 
-    #header {
-      margin-left: -1.5ch;
+    // the block is as wide as its widest line and sits in the middle of the bar. both lines are left to right on the
+    // same character grid (the original had the last line right-aligned with the time/date, not centred)
+    #footer_grid {
+      width: fit-content;
     }
 
     #time_date {
       @include recwc_body;
+      text-align: left;
+    }
+
+    #header {
+      font-size: 31px;
+      // the logo font's columns are 15.81px wide against 16.06px for the body font, this makes them the same width
+      letter-spacing: 0.0081em;
+      text-align: right;
     }
   }
 }

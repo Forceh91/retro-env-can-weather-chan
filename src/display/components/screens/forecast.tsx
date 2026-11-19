@@ -3,7 +3,7 @@ import { AQHIObservationResponse, CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
 import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
-import { formatStringTo8x32 } from "lib/display";
+import { centreOnGrid, formatStringTo8x32 } from "lib/display";
 import { normalizeAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 
 type ForecastScreenProps = {
@@ -128,8 +128,8 @@ export function ForecastScreen(props: ForecastScreenProps) {
           />
           <div className="forecast reload-animation step-7">
             {alert && (
-              <div className={`centre-align forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
-                {formatAlertHeadline(alert.headline)}
+              <div className={`forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
+                {centreOnGrid(formatAlertHeadline(alert.headline))}
               </div>
             )}
             <div>{formattedImmediateForecast}</div>
@@ -138,7 +138,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
       )}
       {page > 1 && (
         <div>
-          <div className="centre-align">{weatherStationResponse.city} forecast cont..</div>
+          <div>{centreOnGrid(`${weatherStationResponse.city} forecast cont..`)}</div>
           <div>{formattedPageForecast1}</div>
           <br />
           <div>{formattedPageForecast2}</div>

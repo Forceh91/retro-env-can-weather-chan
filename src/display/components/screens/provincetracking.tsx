@@ -35,12 +35,12 @@ export function ProvinceTrackingScreen(props: ProvinceTrackingProps) {
     <div id="province_tracking_screen">
       <div>
         {(isOvernight ? "Overnight" : "High").padStart(19)}
-        {"".padStart(3)}
+        {"".padStart(1)}
         24-Hr Precip
       </div>
       <div>
         {(isOvernight ? "Low:" : stationTime?.getHours() < 20 ? "Yesterday:" : "Today:").padStart(19)}
-        {"".padStart(4)}
+        {"".padStart(2)}
         for {yesterdayPrecipDate}
       </div>
       <ol>

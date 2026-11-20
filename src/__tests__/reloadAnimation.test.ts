@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 import { createElement as h } from "react";
-import { cleanup, render } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import { applyTypedRowTimings, getTypedRowTimings, seededRandom } from "lib/display";
+import { RELOAD_FIRST_PAGE_DISPLAY_LENGTH, SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
 import { ForecastScreen } from "../display/components/screens";
 
 describe("getTypedRowTimings", () => {
@@ -184,5 +185,135 @@ describe("forecast screen reload", () => {
 
     expect(container.querySelector("#forecast_screen").classList.contains("has-reloaded")).toBe(false);
     expect(rows.every((row) => !row.style.getPropertyValue("--type-chars"))).toBe(true);
+  });
+});
+
+describe("forecast screen page change timer", () => {
+  const entry = (period: string) => ({
+    period,
+    textSummary: "",
+    abbreviatedTextSummary: "Cloudy with sunny periods. High minus 3.",
+    temperature: { value: -3, class: "high" },
+    conditions: "Cloudy",
+  });
+
+  const response = (observationID: string): any => ({
+    city: "Winnipeg",
+    observationID,
+    stationTime: { observedDateTime: "2026-02-18T13:00:00", stationOffsetMinutesFromLocal: 0, timezone: "CST" },
+    observed: {
+      abbreviatedCondition: "Cloudy",
+      temperature: { value: -5, units: "C" },
+      humidity: { value: 80, units: "%" },
+      visibility: { value: 24, units: "km" },
+      wind: { speed: { value: "10" }, gust: { value: 0 }, direction: "N" },
+      pressure: { value: 101.3, units: "kPa", tendency: "rising", change: 1 },
+    },
+    forecast: ["today", "tonight", "thursday", "thursday night", "friday"].map(entry),
+  });
+
+  const PAGE_MS = SCREEN_DEFAULT_DISPLAY_LENGTH * 1000;
+  const RELOAD_PAGE_MS = RELOAD_FIRST_PAGE_DISPLAY_LENGTH * 1000;
+  const onComplete = jest.fn();
+  const onContinuation = jest.fn();
+
+  const forecast = (observationID: string, isReload: boolean) =>
+    h(ForecastScreen, {
+      weatherStationResponse: response(observationID),
+      airQuality: {} as any,
+      isReload,
+      onComplete,
+      onForecastContinuationEntered: onContinuation,
+    } as any);
+
+  const isOnContinuation = (container: HTMLElement) => container.textContent.includes("forecast cont..");
+  const advance = (ms: number) =>
+    act(() => {
+      jest.advanceTimersByTime(ms);
+    });
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    onComplete.mockClear();
+    onContinuation.mockClear();
+  });
+
+  afterEach(() => {
+    cleanup();
+    jest.useRealTimers();
+  });
+
+  it("moves to the continuation page, then completes, after the normal time", () => {
+    const { container } = render(forecast("1", false));
+
+    advance(PAGE_MS - 1);
+    expect(isOnContinuation(container)).toBe(false);
+    advance(1);
+    expect(isOnContinuation(container)).toBe(true);
+    expect(onComplete).not.toHaveBeenCalled();
+
+    advance(PAGE_MS);
+    expect(onComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it("doesn't move to the continuation page on the old timer when new conditions arrive on the first page", () => {
+    const { container, rerender } = render(forecast("1", false));
+    advance(PAGE_MS - 4000);
+
+    // the rotator flags the reload (and the animation starts) whilst the forecast is already on screen
+    rerender(forecast("2", true));
+    advance(5000);
+
+    // this is past when the first page would have changed over without the new conditions
+    expect(isOnContinuation(container)).toBe(false);
+    expect(onContinuation).not.toHaveBeenCalled();
+
+    // but it still moves on eventually, so the screen doesn't get stuck on the first page
+    advance(PAGE_MS * 10);
+    expect(isOnContinuation(container)).toBe(true);
+  });
+
+  it("restarts the timer for every new set of conditions that arrives whilst on the first page", () => {
+    const { container, rerender } = render(forecast("1", false));
+    advance(1000);
+
+    // the reload is already flagged by the time the next conditions arrive, so only the observation changes
+    rerender(forecast("2", true));
+    advance(RELOAD_PAGE_MS - 1000);
+    rerender(forecast("3", true));
+
+    // the timer from the second set of conditions would have finished by now, the third's hasn't
+    advance(2000);
+    expect(isOnContinuation(container)).toBe(false);
+
+    advance(RELOAD_PAGE_MS);
+    expect(isOnContinuation(container)).toBe(true);
+  });
+
+  it("goes back to the first page when new conditions arrive on the continuation page, and times that too", () => {
+    const { container, rerender } = render(forecast("1", false));
+    advance(PAGE_MS);
+    expect(isOnContinuation(container)).toBe(true);
+
+    rerender(forecast("2", true));
+    expect(isOnContinuation(container)).toBe(false);
+
+    // the continuation page's timer must not complete the screen early
+    advance(PAGE_MS);
+    expect(onComplete).not.toHaveBeenCalled();
+    expect(isOnContinuation(container)).toBe(false);
+
+    advance(PAGE_MS * 10);
+    expect(isOnContinuation(container)).toBe(true);
+    advance(PAGE_MS);
+    expect(onComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it("doesn't leave a timer running once it's gone", () => {
+    const { unmount } = render(forecast("1", false));
+    unmount();
+
+    advance(PAGE_MS * 10);
+    expect(onComplete).not.toHaveBeenCalled();
   });
 });

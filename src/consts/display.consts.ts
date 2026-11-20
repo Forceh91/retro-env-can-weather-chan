@@ -12,3 +12,5 @@ export const RELOAD_ROW_PAUSE_MS = 10;
 // add some jitter to the reload speed to simulate an actual network connection
 // 0.4 means somewhere between 60% and 100% of RELOAD_CHARS_PER_SECOND
 export const RELOAD_SPEED_JITTER = 0.4;
+// how long the first page of the forecast stays up for when it's been typed out by a reload, before the next page
+export const RELOAD_FIRST_PAGE_DISPLAY_LENGTH = 50;

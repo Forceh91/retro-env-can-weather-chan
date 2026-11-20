@@ -13,11 +13,13 @@ import {
   PROVINCE_TRACKING_DEFAULT_STATIONS,
 } from "consts";
 import { FlavourLoader } from "lib/flavour";
+import { getActiveInfoScreens, parseInfoScreens } from "lib/infoscreen";
 import Logger from "lib/logger";
 import {
   ClimateNormals,
   ECCCWeatherStation,
   Flavour,
+  InfoScreenEntry,
   LookAndFeel,
   MiscConfig,
   PrimaryLocation,
@@ -60,6 +62,11 @@ const CRAWLER_PATH = {
   FILE: "crawler.txt",
 };
 const CRAWLER_ABSOLUTE_PATH = `${CRAWLER_PATH.FOLDER}/${CRAWLER_PATH.FILE}`;
+const INFO_SCREENS_PATH = {
+  FOLDER: "./cfg",
+  FILE: "info-screens.json",
+};
+const INFO_SCREENS_ABSOLUTE_PATH = `${INFO_SCREENS_PATH.FOLDER}/${INFO_SCREENS_PATH.FILE}`;
 const MUSIC_DIR = "music";
 
 class Config {
@@ -81,6 +88,7 @@ class Config {
     alternateRecordsSource: undefined, // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json
   };
   crawlerMessages: string[] = [];
+  infoScreens: InfoScreenEntry[] = []; // custom text only screens, shown by the info screen
   musicPlaylist: string[] = []; // what music files are available
   flavour: Flavour;
   flavours: string[] = []; // what flavours are available
@@ -93,6 +101,7 @@ class Config {
     this.checkFlavoursDirectory();
     this.loadFlavour();
     this.loadCrawlerMessages();
+    this.loadInfoScreens();
     this.checkMusicDirectory();
     this.generateConfigVersion();
   }
@@ -110,6 +119,7 @@ class Config {
       flavours: this.flavours,
       airQualityStation: this.airQualityStation,
       crawler: this.crawlerMessages,
+      infoScreens: this.infoScreens,
       music: this.musicPlaylist ?? [],
     };
   }
@@ -119,6 +129,7 @@ class Config {
     delete config.flavour;
     delete config.flavours;
     delete config.crawler;
+    delete config.infoScreens;
     return config;
   }
 
@@ -215,6 +226,40 @@ class Config {
         // handle any other error
         logger.error("Unable to save to crawler file");
       }
+    }
+  }
+
+  private loadInfoScreens() {
+    logger.log("Loading info screens from", INFO_SCREENS_ABSOLUTE_PATH);
+    try {
+      const { infoScreens } = JSON.parse(fs.readFileSync(INFO_SCREENS_ABSOLUTE_PATH, "utf8"));
+
+      // anything that doesn't fit on the display is left out (and says why) rather than throwing the whole file away
+      const { entries, errors } = parseInfoScreens(infoScreens);
+      errors.forEach((error) => logger.error("Skipped an info screen:", error));
+
+      this.infoScreens = entries;
+      logger.log("Loaded", this.infoScreens.length, "info screens");
+    } catch (err) {
+      if (err.code === FS_NO_FILE_FOUND) {
+        // handle no file found
+        logger.log("No info screens file found");
+      } else {
+        // handle any other error
+        logger.error("Unable to load from info screens file");
+      }
+    }
+  }
+
+  private saveInfoScreens() {
+    logger.log("Saving info screens to", INFO_SCREENS_ABSOLUTE_PATH);
+    try {
+      // pretty printed since this file is meant to be easy to edit by hand too
+      fs.writeFileSync(INFO_SCREENS_ABSOLUTE_PATH, JSON.stringify({ infoScreens: this.infoScreens }, null, 2), "utf8");
+      logger.log("Saved", this.infoScreens.length, "info screens");
+    } catch (err) {
+      logger.error("Unable to save to info screens file");
+      throw err;
     }
   }
 
@@ -350,6 +395,25 @@ class Config {
       ...crawler.map((message) => message.trim()).filter((message) => message.length)
     );
     this.saveCrawlerMessages();
+  }
+
+  /** Replaces all of the info screens. Expects them to have been through `parseInfoScreens` already. */
+  public setInfoScreens(infoScreens: InfoScreenEntry[]) {
+    const previousInfoScreens = this.infoScreens;
+    this.infoScreens = infoScreens;
+
+    try {
+      this.saveInfoScreens();
+    } catch (err) {
+      // what's in memory should be what's on disk
+      this.infoScreens = previousInfoScreens;
+      throw err;
+    }
+  }
+
+  /** The info screens that should be on the display today (not scheduled for later, not expired). */
+  get activeInfoScreens(): InfoScreenEntry[] {
+    return getActiveInfoScreens(this.infoScreens);
   }
 
   public async regeneratePlaylist() {

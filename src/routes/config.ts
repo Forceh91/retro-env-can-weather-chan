@@ -9,6 +9,7 @@ import {
   postMisc,
   postLookAndFeel,
   postCrawlerMessages,
+  postInfoScreens,
   postAirQualityStation,
   postPlaylist,
 } from "lib/config";
@@ -28,6 +29,7 @@ router.post("/misc", postMisc);
 router.post("/lookAndFeel", postLookAndFeel);
 router.post("/airQuality", postAirQualityStation);
 router.post("/crawler", postCrawlerMessages);
+router.post("/infoScreens", postInfoScreens);
 router.post("/playlist", async (req: Request, res: Response) => await postPlaylist(req, res));
 
 export default router;

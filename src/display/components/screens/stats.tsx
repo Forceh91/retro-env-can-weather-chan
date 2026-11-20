@@ -54,6 +54,14 @@ export function StatsScreen(props: StatsScreenProps) {
     return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal ?? 0), "h:mm");
   }, [sunRiseSet?.set, weatherStationTime?.stationOffsetMinutesFromLocal]);
 
+  // "Sunrise..6:10 am Sunset..10:25 pm" is 33 columns so when it's too long the am/pm gets tucked in against the time
+  const sunriseSunsetLine = () => {
+    const line = `Sunrise..${formattedSunrise} am Sunset..${formattedSunset} pm`;
+    if (line.length <= DISPLAY_MAX_CHARACTERS_PER_LINE) return line;
+
+    return `Sunrise..${formattedSunrise}am Sunset..${formattedSunset}pm`;
+  };
+
   const generatePrecip = (amount: number) => amount.toFixed(1).padStart(5);
 
   const generateDotsForPrecipLine = (dataName: string, usedChars = PRECIP_CHARS_USED_OUTSIDE_OF_DOTS) =>
@@ -83,9 +91,7 @@ export function StatsScreen(props: StatsScreenProps) {
         {"".padStart(2)}
         {city.slice(0, 10)} statistics - {formattedDate}
       </div>
-      <div>
-        Sunrise..{formattedSunrise} am Sunset..{formattedSunset} pm
-      </div>
+      <div>{sunriseSunsetLine()}</div>
       {!showSnowfallAsSeasonalTotal && (
         <>
           <div>{"".padStart(4)}Total precipitation since</div>

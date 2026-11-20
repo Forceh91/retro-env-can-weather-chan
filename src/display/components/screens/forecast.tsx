@@ -2,9 +2,9 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AQHIObservationResponse, CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
-import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
-import { formatStringTo8x32 } from "lib/display";
-import { shouldAlertFlash } from "lib/cap-cp";
+import { RELOAD_FIRST_PAGE_DISPLAY_LENGTH, SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
+import { applyTypedRowTimings, centreOnGrid, formatStringTo8x32 } from "lib/display";
+import { normalizeAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 
 type ForecastScreenProps = {
   weatherStationResponse: WeatherStation;
@@ -21,8 +21,8 @@ export function ForecastScreen(props: ForecastScreenProps) {
   const { onComplete, weatherStationResponse, alert, isReload, airQuality, onForecastContinuationEntered } =
     props ?? {};
   const [page, setPage] = useState(1);
-  const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
   const continuationEnteredRef = useRef(false);
+  const screenRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (page <= 1) {
@@ -35,30 +35,27 @@ export function ForecastScreen(props: ForecastScreenProps) {
   }, [page, onForecastContinuationEntered]);
 
   useEffect(() => {
-    // handle page change as normal
-    pageChangeTimeout.current = setTimeout(() => {
+    // the first page stays up for longer when it's being typed out by a reload (#998)
+    const pageLength = page === 1 && isReload ? RELOAD_FIRST_PAGE_DISPLAY_LENGTH : SCREEN_DEFAULT_DISPLAY_LENGTH;
+
+    const pageChangeTimeout = setTimeout(() => {
       if (page < MAX_FORECAST_PAGES) setPage(page + 1);
       else onComplete();
-    }, (page === 1 && isReload ? 50 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
-  }, [page]);
+    }, pageLength * 1000);
+
+    // new conditions can arrive whilst this page is already showing. the rotator doesn't remount the screen for that, it
+    // just flags the reload, so the timer has to start again for the reload instead of carrying on with the old one and
+    // changing page part way through the animation. this also clears it when the page changes and when we're unmounted
+    return () => clearTimeout(pageChangeTimeout);
+  }, [page, isReload, weatherStationResponse?.observationID]);
 
   useEffect(() => {
-    // if we're past the first page of forecast
+    // when a reload occurs and we're past the first page of forecast, send the user back to the first page (changing
+    // page is what restarts the page change timer)
     if (page === 1) return;
 
-    // when a reload occurs, then clear the timeout for page change
-    pageChangeTimeout.current && clearTimeout(pageChangeTimeout.current);
-
-    // and send the user back to the first page
     setPage(1);
   }, [weatherStationResponse?.observationID]);
-
-  // used to clear the page switching timeout
-  useEffect(() => {
-    return () => {
-      pageChangeTimeout.current && clearTimeout(pageChangeTimeout.current);
-    };
-  }, []);
 
   const getForecastsForPage = () => {
     // todo:make this much nicer
@@ -73,8 +70,8 @@ export function ForecastScreen(props: ForecastScreenProps) {
   };
 
   const formatAlertHeadline = (headline: string) => {
-    const truncated = headline
-      ?.replace(/severe thunderstorm/gi, "severe tstorm")
+    const truncated = normalizeAlertHeadline(headline)
+      .replace(/severe thunderstorm/gi, "severe tstorm")
       .replace(/statement/gi, "stmnt")
       .replace(/air quality/gi, "air qlty");
     return truncated;
@@ -113,11 +110,16 @@ export function ForecastScreen(props: ForecastScreenProps) {
     return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
   }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
 
+  // on a reload the first page is typed out a row at a time (#998), so each row needs to know when to start
+  useLayoutEffect(() => {
+    if (isReload && page === 1) applyTypedRowTimings(screenRef.current, weatherStationResponse?.observationID);
+  }, [isReload, page, weatherStationResponse?.observationID, formattedImmediateForecast, alert?.headline]);
+
   // no response from weather station so whatever
   if (!weatherStationResponse) return <></>;
 
   return (
-    <div id="forecast_screen" className={isReload ? "has-reloaded" : ""}>
+    <div id="forecast_screen" className={isReload ? "has-reloaded" : ""} ref={screenRef}>
       {page === 1 && (
         <>
           <Conditions
@@ -126,20 +128,25 @@ export function ForecastScreen(props: ForecastScreenProps) {
             stationTime={weatherStationResponse.stationTime}
             airQuality={airQuality}
           />
-          <div className="forecast reload-animation step-7">
+          <div className="forecast">
             {alert && (
-              <div className={`centre-align forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
-                {formatAlertHeadline(alert.headline)}
+              <div className="grid-row">
+                <div className={`forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
+                  {centreOnGrid(formatAlertHeadline(alert.headline))}
+                </div>
               </div>
             )}
-            <div>{formattedImmediateForecast}</div>
+            {formattedImmediateForecast.split("\n").map((line, ix) => (
+              <div className="grid-row" key={ix}>
+                {line}
+              </div>
+            ))}
           </div>
         </>
       )}
       {page > 1 && (
         <div>
-          <div className="centre-align">{weatherStationResponse.city} forecast cont..</div>
-          <br />
+          <div>{centreOnGrid(`${weatherStationResponse.city} forecast cont..`)}</div>
           <div>{formattedPageForecast1}</div>
           <br />
           <div>{formattedPageForecast2}</div>

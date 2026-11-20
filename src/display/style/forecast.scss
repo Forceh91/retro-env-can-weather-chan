@@ -1,50 +1,19 @@
-@keyframes reloadscreen {
-  to {
-    visibility: visible;
+// the data refresh animation (#998): the screen is cleared and then every row is typed back in a character at a time.
+// each row gets how many characters it has, when it starts and how long it takes from applyTypedRowTimings
+@keyframes typerow {
+  from {
+    width: 0;
   }
 }
 
 #forecast_screen {
   &.has-reloaded {
-    .reload-animation {
-      visibility: hidden;
-      animation: reloadscreen 222ms forwards;
-
-      &.step-1 {
-        animation-delay: 222ms;
-      }
-
-      &.step-2 {
-        animation-delay: 444ms;
-      }
-
-      &.step-3 {
-        animation-delay: 666ms;
-      }
-
-      &.step-4 {
-        animation-delay: 888ms;
-      }
-
-      &.step-5 {
-        animation-delay: 1100ms;
-      }
-
-      &.step-6 {
-        animation-delay: 1332ms;
-      }
-
-      &.step-7 {
-        animation-delay: 1554ms;
-      }
-
-      &.step-8 {
-        animation-delay: 1776ms;
-      }
-
-      &.step-9 {
-        animation-delay: 1998ms;
-      }
+    .grid-row {
+      animation: typerow var(--type-duration, 0s) steps(var(--type-chars, 1), end) var(--type-delay, 0s) both;
+      display: block;
+      overflow: hidden;
+      // the font is monospace so every character is 1ch, which is what makes typing it a width change work
+      width: calc(var(--type-chars, 1) * 1ch);
     }
   }
 }

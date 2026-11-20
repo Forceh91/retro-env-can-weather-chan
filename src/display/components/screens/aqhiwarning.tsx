@@ -29,7 +29,7 @@ export function AQHIWarningScreen({ city, airQuality, onComplete }: AQHIWarningS
   if (!airQuality?.value || !airQuality?.showWarning) return <></>;
 
   return (
-    <div style={{ textAlign: "left" }}>
+    <div>
       <div>{city.slice(0, 3)} air quality health index at</div>
       <div>
         {observedDateTime} is {Math.round(airQuality.value).toString().padStart(2)}-{getAQHIRisk(airQuality.value)} risk

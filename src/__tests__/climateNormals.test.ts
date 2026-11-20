@@ -175,4 +175,34 @@ describe("climate normals (MSC CSV API)", () => {
         });
     });
   });
+
+  // every month has 300 mm so the sums are easy to read: full season = 6 x 300, one elapsed day = 300 / days in month
+  const EVERY_MONTH_300_CSV = [
+    CSV_COLUMNS.join(","),
+    ...Array.from({ length: 12 }, (_, i) =>
+      makeCsvRow({ CURRENT_FLAG: "Y", NORMAL_CODE: "A", NORMAL_ID: "56", MONTH: String(i + 1), VALUE: "300" })
+    ),
+  ].join("\n");
+
+  it.each([
+    ["Oct 1 still covers the whole summer (Apr-Sep)", new Date(2026, 9, 1), 1800],
+    ["Apr 1 still covers the whole winter (Oct-Mar)", new Date(2026, 3, 1), 1800],
+    ["Oct 2 is the first winter day (1 elapsed day of Oct)", new Date(2026, 9, 2), 9.7],
+    ["Apr 2 is the first summer day (1 elapsed day of Apr)", new Date(2026, 3, 2), 10],
+  ])("seasonal normal changeover: %s (#854)", (_name, date, expected) => {
+    const normals = initializeClimateNormals(true);
+    normals.fetchClimateNormals(date);
+
+    return new Promise<void>((resolve) => {
+      moxios.wait(() => {
+        moxios.requests
+          .mostRecent()
+          ?.respondWith({ status: 200, response: EVERY_MONTH_300_CSV })
+          .then(() => {
+            expect(normals.getNormalPrecipForCurrentSeason().amount).toBe(expected);
+            resolve();
+          });
+      });
+    });
+  });
 });

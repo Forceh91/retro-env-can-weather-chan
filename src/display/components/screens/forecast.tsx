@@ -110,9 +110,9 @@ export function ForecastScreen(props: ForecastScreenProps) {
     return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
   }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
 
-  // on a reload the first page is typed out a row at a time (#998), so each row needs to know when to start
+  // on a reload the first page arrives in bursts, a row at a time (#998), so each row needs to know when they happen
   useLayoutEffect(() => {
-    if (isReload && page === 1) applyTypedRowTimings(screenRef.current, weatherStationResponse?.observationID);
+    if (isReload && page === 1) applyTypedRowTimings(screenRef.current);
   }, [isReload, page, weatherStationResponse?.observationID, formattedImmediateForecast, alert?.headline]);
 
   // no response from weather station so whatever

@@ -3,78 +3,149 @@
  */
 import { createElement as h } from "react";
 import { act, cleanup, render } from "@testing-library/react";
-import { applyTypedRowTimings, getTypedRowTimings, seededRandom } from "lib/display";
-import { RELOAD_FIRST_PAGE_DISPLAY_LENGTH, SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
+import { applyTypedRowTimings, getTypedRowSteps, TYPED_ROW_MAX_STEPS, TypedRowKind } from "lib/display";
+import {
+  RELOAD_CLEAR_SCREEN_FRAMES,
+  RELOAD_FIRST_PAGE_DISPLAY_LENGTH,
+  RELOAD_FRAME_MS,
+  SCREEN_DEFAULT_DISPLAY_LENGTH,
+} from "consts";
 import { ForecastScreen } from "../display/components/screens";
 
-describe("getTypedRowTimings", () => {
-  const steady = { speedJitter: 0 };
+// frames are counted from when the screen was cleared, which is how the recording of the original was numbered
+const seconds = (frame: number) => (frame * RELOAD_FRAME_MS) / 1000;
+const rows = (kind: TypedRowKind, ...chars: number[]) => chars.map((length) => ({ chars: length, kind }));
+const asFrames = (steps: { chars: number; atSeconds: number }[]) =>
+  steps.map(({ chars, atSeconds }) => [chars, Math.round((atSeconds * 1000) / RELOAD_FRAME_MS)]);
 
-  it("types characters one after another at the given speed, after the screen has been cleared", () => {
-    // 30 cps, blank for 400ms, 100ms between rows
-    const [first, second, third] = getTypedRowTimings([30, 15, 60], {
-      ...steady,
-      charsPerSecond: 30,
-      clearScreenMs: 400,
-      rowPauseMs: 100,
-    });
+describe("getTypedRowSteps", () => {
+  it("waits for the screen to have been blank for as long as the original before the first burst", () => {
+    const [[first]] = getTypedRowSteps(rows("conditions", 31));
 
-    expect(first).toStrictEqual({ chars: 30, delaySeconds: 0.4, durationSeconds: 1 });
-    expect(second).toStrictEqual({ chars: 15, delaySeconds: 0.4 + 1 + 0.1, durationSeconds: 0.5 });
-    expect(third).toStrictEqual({ chars: 60, delaySeconds: 0.4 + 1 + 0.1 + 0.5 + 0.1, durationSeconds: 2 });
+    expect(RELOAD_CLEAR_SCREEN_FRAMES).toBe(26);
+    expect(first.atSeconds).toBeCloseTo(seconds(26), 5);
   });
 
-  it("skips empty rows without spending any time on them", () => {
-    const timings = getTypedRowTimings([30, 0, 30], {
-      ...steady,
-      charsPerSecond: 30,
-      clearScreenMs: 0,
-      rowPauseMs: 100,
-    });
+  it("sends conditions in bursts of 8 characters, in pairs a frame apart", () => {
+    const [first] = getTypedRowSteps(rows("conditions", 31));
 
-    expect(timings[1]).toBeNull();
-    expect(timings[2].delaySeconds).toBeCloseTo(1.1, 5);
+    // WINNIPEG / 11 PM / CST DEC / 31/98 arrived on frames 26, 27, 29 and 30 of the recording
+    expect(asFrames(first)).toStrictEqual([
+      [9, 26],
+      [17, 27],
+      [25, 29],
+      [31, 30],
+    ]);
   });
 
-  it("uses the original hardware speed when there's no jitter", () => {
-    expect(getTypedRowTimings([80], steady)[0].durationSeconds).toBe(1);
+  it("carries on from the row above, so a row starts with a single character from the last burst of the one before", () => {
+    const [, second] = getTypedRowSteps(rows("conditions", 31, 32));
+
+    expect(asFrames(second)).toStrictEqual([
+      [1, 30],
+      [9, 32],
+      [17, 33],
+      [25, 35],
+      [32, 36],
+    ]);
   });
 
-  it("gives each row its own speed, between full speed and the jitter's worth slower", () => {
-    // random() of 0 is a row at full speed, and just under 1 is the slowest it can get
-    const [fast, slowest, middle] = (() => {
-      const values = [0, 0.999999, 0.5];
-      return getTypedRowTimings([30, 30, 30], { charsPerSecond: 30, speedJitter: 0.4, random: () => values.shift() });
-    })();
+  it("slows the pairs of bursts from every 3 frames to every 4", () => {
+    const steps = getTypedRowSteps(rows("conditions", 32, 32, 32, 32)).flat();
+    const frames = [...new Set(asFrames(steps).map(([, frame]) => frame))].sort((a, b) => a - b);
 
-    expect(fast.durationSeconds).toBeCloseTo(1, 5); // 30 cps
-    expect(slowest.durationSeconds).toBeCloseTo(30 / (30 * 0.6), 3); // 18 cps
-    expect(middle.durationSeconds).toBeCloseTo(30 / (30 * 0.8), 5); // 24 cps
+    expect(frames).toStrictEqual([26, 27, 29, 30, 32, 33, 35, 36, 39, 40, 43, 44, 47, 48, 51, 52]);
   });
 
-  it("never gets faster than the line speed or slower than the jitter allows, whatever the random numbers are", () => {
-    const rows = Array.from({ length: 200 }, () => 30);
-    const timings = getTypedRowTimings(rows, { charsPerSecond: 30, speedJitter: 0.4, random: seededRandom("a") });
+  it("sends the forecast in its own columns, and skips the first burst of every other row", () => {
+    const [, , , , ...forecast] = getTypedRowSteps([
+      ...rows("conditions", 31, 32, 28, 30),
+      ...rows("forecast", 30, 20, 27, 27),
+    ]);
 
-    timings.forEach((timing) => {
-      expect(timing.durationSeconds).toBeGreaterThanOrEqual(1);
-      expect(timing.durationSeconds).toBeLessThanOrEqual(30 / (30 * 0.6) + 1e-9);
-    });
-    expect(new Set(timings.map((timing) => timing.durationSeconds)).size).toBeGreaterThan(50);
+    // FORECAST FOR TONIGHT..LOW -32. / MAINLY CLEAR. / WIND LIGHT AND VARIABLE. / WINDCHILL AT TIMES 1800.
+    expect(forecast.map(asFrames)).toStrictEqual([
+      [
+        [4, 55],
+        [16, 56],
+        [20, 59],
+        [30, 60],
+      ],
+      [
+        [16, 64],
+        [20, 67],
+      ],
+      [
+        [4, 71],
+        [16, 72],
+        [20, 75],
+        [27, 76],
+      ],
+      [
+        [16, 80],
+        [20, 83],
+        [27, 84],
+      ],
+    ]);
   });
-});
 
-describe("seededRandom", () => {
-  it("gives the same numbers for the same seed, different ones for another, always between 0 and 1", () => {
-    const first = Array.from({ length: 5 }, seededRandom("obs-1"));
-    const again = Array.from({ length: 5 }, seededRandom("obs-1"));
-    const other = Array.from({ length: 5 }, seededRandom("obs-2"));
+  it("matches the recording for the rest of the conditions", () => {
+    const conditions = getTypedRowSteps([...rows("conditions", 31, 32, 28, 30), ...rows("forecast", 30)]).slice(2, 4);
 
-    expect(first).toStrictEqual(again);
-    expect(first).not.toStrictEqual(other);
-    [...first, ...other].forEach((n) => {
-      expect(n).toBeGreaterThanOrEqual(0);
-      expect(n).toBeLessThan(1);
+    expect(conditions.map(asFrames)).toStrictEqual([
+      [
+        [1, 36],
+        [9, 39],
+        [17, 40],
+        [25, 43],
+        [28, 44],
+      ],
+      [
+        [1, 44],
+        [9, 47],
+        [17, 48],
+        [25, 51],
+        [30, 52],
+      ],
+    ]);
+  });
+
+  it("finishes a short row in an earlier burst without holding up the rows after it", () => {
+    const withShortRow = getTypedRowSteps(rows("forecast", 30, 5, 27));
+    const withFullRow = getTypedRowSteps(rows("forecast", 30, 32, 27));
+
+    expect(withShortRow[1]).toHaveLength(1);
+    expect(withShortRow[2]).toStrictEqual(withFullRow[2]);
+  });
+
+  it("keeps the place of an empty row in what is being sent, but doesn't give it anything to reveal", () => {
+    const [, empty, after] = getTypedRowSteps(rows("conditions", 30, 0, 30));
+    const [, , expected] = getTypedRowSteps(rows("conditions", 30, 32, 30));
+
+    expect(empty).toStrictEqual([]);
+    expect(after).toStrictEqual(expected);
+  });
+
+  it("is done sooner when the forecast is shorter, as there is less of it to send", () => {
+    const lastBurst = (lines: number) => {
+      const steps = getTypedRowSteps([
+        ...rows("conditions", 31, 32, 28, 30),
+        ...rows("forecast", ...Array(lines).fill(30)),
+      ]);
+      return Math.max(...steps.flat().map(({ atSeconds }) => atSeconds));
+    };
+
+    expect(lastBurst(1)).toBeLessThan(lastBurst(2));
+    expect(lastBurst(2)).toBeLessThan(lastBurst(4));
+    expect(lastBurst(4)).toBeCloseTo(seconds(84), 5);
+  });
+
+  it("never shows more than a row's worth, and never needs more bursts than the css has room for", () => {
+    const all = getTypedRowSteps([...rows("conditions", 99, 99, 99, 99, 99), ...rows("forecast", 99, 99, 99, 99)]);
+
+    all.forEach((steps) => {
+      expect(steps.length).toBeLessThanOrEqual(TYPED_ROW_MAX_STEPS);
+      expect(steps[steps.length - 1].chars).toBe(32);
     });
   });
 });
@@ -86,42 +157,45 @@ describe("applyTypedRowTimings", () => {
     applyTypedRowTimings(screen);
     return Array.from(screen.querySelectorAll<HTMLElement>(".grid-row"));
   };
+  const get = (row: HTMLElement, name: string) => row.style.getPropertyValue(name);
 
   it("measures what is on each row, however it was put together, and ignores trailing spaces", () => {
     const [row] = rowsOf(`<div class="grid-row"><span>Temp&nbsp;</span><span>-35 C</span>      </div>`);
 
-    expect(row.style.getPropertyValue("--type-chars")).toBe("10");
+    // 10 characters, the first burst has 9 in it and the second finishes the row
+    expect(get(row, "--type-w0")).toBe("9");
+    expect(get(row, "--type-w1")).toBe("10");
+    expect(get(row, `--type-w${TYPED_ROW_MAX_STEPS - 1}`)).toBe("10");
+    expect(get(row, "--type-t0")).toBe(`${Math.round(seconds(26) * 1000) / 1000}s`);
   });
 
-  it("starts each row after the last one finished and leaves empty rows alone", () => {
-    const [a, empty, b] = rowsOf(
-      `<div class="grid-row">${"a".repeat(30)}</div><div class="grid-row"></div><div class="grid-row">${"b".repeat(15)}</div>`,
-    );
-    const seconds = (row: HTMLElement, name: string) => parseFloat(row.style.getPropertyValue(name));
+  it("gives every burst a width and a time, repeating the last one for rows that need less", () => {
+    const [row] = rowsOf(`<div class="grid-row">${"a".repeat(31)}</div>`);
 
-    expect(seconds(a, "--type-delay")).toBe(0.4);
-    expect(empty.style.getPropertyValue("--type-chars")).toBe("");
-    // 10ms between rows
-    expect(seconds(b, "--type-delay")).toBeCloseTo(
-      seconds(a, "--type-delay") + seconds(a, "--type-duration") + 0.01,
-      2,
-    );
+    expect(Array.from({ length: TYPED_ROW_MAX_STEPS }, (_, ix) => get(row, `--type-w${ix}`))).toStrictEqual([
+      "9",
+      "17",
+      "25",
+      "31",
+      "31",
+    ]);
+    expect(get(row, "--type-t4")).toBe(get(row, "--type-t3"));
   });
 
-  it("varies the speed with the seed, and a given seed always gives the same timings", () => {
-    const html = Array.from({ length: 6 }, () => `<div class="grid-row">${"x".repeat(30)}</div>`).join("");
-    const durations = (seed: string) => {
-      document.body.innerHTML = `<div id="screen">${html}</div>`;
-      const screen = document.getElementById("screen");
-      applyTypedRowTimings(screen, seed);
-      return Array.from(screen.querySelectorAll<HTMLElement>(".grid-row")).map((row) =>
-        row.style.getPropertyValue("--type-duration"),
-      );
-    };
+  it("treats rows in the forecast differently to the rest", () => {
+    const [conditions, forecast] = rowsOf(
+      `<div id="conditions"><div class="grid-row">${"a".repeat(30)}</div></div><div class="forecast"><div class="grid-row">${"b".repeat(30)}</div></div>`
+    );
 
-    expect(durations("1")).toStrictEqual(durations("1"));
-    expect(durations("1")).not.toStrictEqual(durations("2"));
-    expect(new Set(durations("1")).size).toBeGreaterThan(1);
+    expect(get(conditions, "--type-w0")).toBe("9");
+    expect(get(forecast, "--type-w0")).toBe("4");
+  });
+
+  it("leaves empty rows alone", () => {
+    const [empty] = rowsOf(`<div class="grid-row"></div>`);
+
+    expect(get(empty, "--type-w0")).toBe("");
+    expect(get(empty, "--type-t0")).toBe("");
   });
 
   it("doesn't mind there being no screen", () => {
@@ -133,7 +207,11 @@ describe("forecast screen reload", () => {
   const response: any = {
     city: "Winnipeg",
     observationID: "1",
-    stationTime: { observedDateTime: "2026-02-18T13:00:00", stationOffsetMinutesFromLocal: 0, timezone: "CST" },
+    stationTime: {
+      observedDateTime: "2026-02-18T13:00:00",
+      stationOffsetMinutesFromLocal: 0,
+      timezone: "CST",
+    },
     observed: {
       abbreviatedCondition: "Cloudy",
       temperature: { value: -5, units: "C" },
@@ -160,7 +238,7 @@ describe("forecast screen reload", () => {
         airQuality: {} as any,
         isReload,
         onComplete: () => {},
-      } as any),
+      } as any)
     );
     const rows = Array.from(container.querySelectorAll<HTMLElement>(".grid-row"));
     return { container, rows };
@@ -168,23 +246,22 @@ describe("forecast screen reload", () => {
 
   afterEach(cleanup);
 
-  it("gives every row with text a start time that is later than the one before it", () => {
+  it("starts every row after the clear, and never before the row above it", () => {
     const { container, rows } = typedRows(true);
-    const timed = rows.filter((row) => row.style.getPropertyValue("--type-chars"));
-    const delays = timed.map((row) => parseFloat(row.style.getPropertyValue("--type-delay")));
+    const timed = rows.filter((row) => row.style.getPropertyValue("--type-w0"));
+    const starts = timed.map((row) => parseFloat(row.style.getPropertyValue("--type-t0")));
 
     expect(container.querySelector("#forecast_screen").classList.contains("has-reloaded")).toBe(true);
     expect(timed.length).toBeGreaterThanOrEqual(5);
-    expect(delays[0]).toBe(0.4);
-    expect([...delays].sort((x, y) => x - y)).toStrictEqual(delays);
-    expect(new Set(delays).size).toBe(delays.length);
+    expect(starts[0]).toBeCloseTo(seconds(26), 2);
+    expect([...starts].sort((x, y) => x - y)).toStrictEqual(starts);
   });
 
   it("doesn't time anything when it isn't a reload", () => {
     const { container, rows } = typedRows(false);
 
     expect(container.querySelector("#forecast_screen").classList.contains("has-reloaded")).toBe(false);
-    expect(rows.every((row) => !row.style.getPropertyValue("--type-chars"))).toBe(true);
+    expect(rows.every((row) => !row.style.getPropertyValue("--type-w0"))).toBe(true);
   });
 });
 
@@ -200,7 +277,11 @@ describe("forecast screen page change timer", () => {
   const response = (observationID: string): any => ({
     city: "Winnipeg",
     observationID,
-    stationTime: { observedDateTime: "2026-02-18T13:00:00", stationOffsetMinutesFromLocal: 0, timezone: "CST" },
+    stationTime: {
+      observedDateTime: "2026-02-18T13:00:00",
+      stationOffsetMinutesFromLocal: 0,
+      timezone: "CST",
+    },
     observed: {
       abbreviatedCondition: "Cloudy",
       temperature: { value: -5, units: "C" },

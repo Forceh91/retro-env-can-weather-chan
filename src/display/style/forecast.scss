@@ -1,19 +1,32 @@
-// the data refresh animation (#998): the screen is cleared and then every row is typed back in a character at a time.
-// each row gets how many characters it has, when it starts and how long it takes from applyTypedRowTimings
-@keyframes typerow {
-  from {
-    width: 0;
+// the data refresh animation (#998): the screen is cleared and then every row comes back in short bursts, like it did on
+// the original hardware. applyTypedRowTimings gives each row how much of it is showing after each burst (--type-w0 to
+// --type-w4, in characters) and when each of them arrives (--type-t0 to --type-t4)
+$type-steps: 5;
+
+@for $step from 0 to $type-steps {
+  @keyframes type-step-#{$step} {
+    to {
+      width: calc(var(--type-w#{$step}, 0) * 1ch);
+    }
   }
 }
 
 #forecast_screen {
   &.has-reloaded {
     .grid-row {
-      animation: typerow var(--type-duration, 0s) steps(var(--type-chars, 1), end) var(--type-delay, 0s) both;
+      // each burst is its own instant jump to a new width, kept once it has happened. they're in the order they arrive in
+      // so the latest one that has happened is the one that wins. the zero duration is on purpose: chromium never applies
+      // the fill of a 1ms steps() animation that starts and ends between two frames, which left the rows blank
+      animation:
+        type-step-0 0s linear var(--type-t0, 0s) forwards,
+        type-step-1 0s linear var(--type-t1, 0s) forwards,
+        type-step-2 0s linear var(--type-t2, 0s) forwards,
+        type-step-3 0s linear var(--type-t3, 0s) forwards,
+        type-step-4 0s linear var(--type-t4, 0s) forwards;
       display: block;
       overflow: hidden;
-      // the font is monospace so every character is 1ch, which is what makes typing it a width change work
-      width: calc(var(--type-chars, 1) * 1ch);
+      // the font is monospace so every character is 1ch, which is what makes revealing it a width change work
+      width: 0;
     }
   }
 }

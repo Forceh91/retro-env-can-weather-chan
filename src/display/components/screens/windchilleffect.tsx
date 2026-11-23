@@ -29,12 +29,12 @@ export function WindchillEffectScreen(props: WindchillEffectScreenProps) {
           <span>{"".padStart(10)}in a few minutes</span>
         </li>
         <li>
-          <span>2000-2300 Exposed skin freezes</span>
+          <span>2000-2200 Exposed skin freezes</span>
           <br />
           <span>{"".padStart(10)}in one minute</span>
         </li>
         <li>
-          <span>Over 2300 Hazardous conditions</span>
+          <span>Over 2200 Hazardous conditions</span>
         </li>
       </ol>
     </div>

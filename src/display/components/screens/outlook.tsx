@@ -4,6 +4,9 @@ import { getDaysAheadFromObserved } from "lib/date";
 import { useMemo } from "react";
 import { Forecast, OutlookForecast, WeatherStation } from "types";
 
+// the original had one space on the condition line, under the second letter of the day (not 5)
+const OUTLOOK_CONDITION_INDENT = 1;
+
 type OutlookScreenProps = {
   weatherStationResponse: WeatherStation;
 };
@@ -46,11 +49,6 @@ export function OutlookScreen(props: OutlookScreenProps) {
     return outlookForEachDay;
   }, [forecast]);
 
-  const longestDayName = useMemo(
-    () => Math.max(...outlook.map((forecast) => forecast?.period?.length || 0)),
-    [outlook]
-  );
-
   if (!forecast?.length) return <>No outlook available</>;
 
   return (
@@ -60,9 +58,9 @@ export function OutlookScreen(props: OutlookScreenProps) {
         {outlook?.length &&
           outlook.map((forecast: OutlookForecast, index) => (
             <li key={`outlook.${index}`}>
-              {forecast.period.padEnd(longestDayName, ".")}..Low {forecast.low}.&nbsp;&nbsp;High {forecast.high}.
+              {forecast.period}..Low {forecast.low}. High {forecast.high}.
               <br />
-              {"".padStart(5)}
+              {"".padStart(OUTLOOK_CONDITION_INDENT)}
               {forecast.condition}.
             </li>
           ))}

@@ -29,7 +29,7 @@ describe("info screen", () => {
       "",
       `${" ".repeat(14)}FROM`,
       `${" ".repeat(7)}ENVIRONMENT CANADA`,
-      `${" ".repeat(11)}AND SHAW.`,
+      `${" ".repeat(12)}AND SHAW.`,
     ]);
   });
 

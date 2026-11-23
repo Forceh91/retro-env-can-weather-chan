@@ -29,7 +29,8 @@ export function formatStringTo8x32(text: string, maxLines: number) {
  * Centres each line of text on the character grid instead of using `text-align: center`.
  * CSS centring puts a line with an odd number of characters over a line with an even number on a half column, so the
  * lines no longer sit on top of each other. Padding with whole spaces keeps every character on a column. When there's an
- * odd space left over it goes on the right (the line is outdented by half a column rather than pushed off the grid)
+ * odd space left over it goes on the left, which is what the original channel did (e.g. the 25 character
+ * "BRANDON REGIONAL FORECAST" starts on column 4 of 32, not 3)
  */
 export function centreOnGrid(text: string, columns: number = DISPLAY_MAX_CHARACTERS_PER_LINE) {
   if (!text?.length) return "";
@@ -40,7 +41,7 @@ export function centreOnGrid(text: string, columns: number = DISPLAY_MAX_CHARACT
       const trimmed = line.trim();
       if (!trimmed.length) return "";
 
-      return "".padStart(Math.max(0, Math.floor((columns - trimmed.length) / 2))) + trimmed;
+      return "".padStart(Math.max(0, Math.ceil((columns - trimmed.length) / 2))) + trimmed;
     })
     .join("\n");
 }

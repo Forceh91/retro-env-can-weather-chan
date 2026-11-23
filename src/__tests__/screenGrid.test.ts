@@ -381,9 +381,9 @@ describe("every screen fits the 8x32 grid", () => {
     ]);
     cleanup();
 
-    // every alert line sits on a whole column, with an even gap or the odd one outdented to the left
+    // every alert line sits on a whole column, with an even gap or the odd one on the left (like the original)
     const [headline] = measured["alert"];
-    expect(headline.length - headline.trimStart().length).toBe(Math.floor((32 - headline.trim().length) / 2));
+    expect(headline.length - headline.trimStart().length).toBe(Math.ceil((32 - headline.trim().length) / 2));
 
     expect(offenders).toEqual([]);
   });

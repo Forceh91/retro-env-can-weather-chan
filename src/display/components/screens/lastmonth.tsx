@@ -1,7 +1,11 @@
 import { format, isValid, subMonths } from "date-fns";
 import { useEffect } from "react";
+import { centreOnGrid } from "lib/display";
 import { LastMonth } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
+
+// the values are right aligned and the first one ends on column 21, the normals on column 30 (reference screen 12)
+const LABEL_COLUMNS = 16;
 
 type LastMonthScreenProps = {
   city: string;
@@ -32,30 +36,31 @@ export function LastMonthScreen(props: LastMonthScreenProps) {
 
   return (
     <div id="lastmonth_screen">
-      <div>Weather Statistics for {month}</div>
+      <div>{centreOnGrid(`Weather Statistics for ${month}`)}</div>
       <div>
-        &nbsp;{city.slice(0, 11).padEnd(11)}&nbsp;This Year{"".padStart(2)}Normal
+        {"".padStart(2)}
+        {city.slice(0, 11).padEnd(12)}This Year{"".padStart(2)}Normal
       </div>
       <div>
-        {"Average High".padEnd(15)}
+        {"Average High".padEnd(LABEL_COLUMNS)}
         {formatNumber(lastMonth.actual?.averageHigh)}
         {"".padStart(4)}
         {formatNumber(lastMonth.normal?.temperature.max)}
       </div>
       <div>
-        {"Average Low".padEnd(15)}
+        {"Average Low".padEnd(LABEL_COLUMNS)}
         {formatNumber(lastMonth.actual?.averageLow)}
         {"".padStart(4)}
         {formatNumber(lastMonth.normal?.temperature.min)}
       </div>
       <div>
-        {"Mean Temp".padEnd(15)}
+        {"Mean Temp".padEnd(LABEL_COLUMNS)}
         {formatNumber(lastMonth.actual?.averageTemp)}
         {"".padStart(4)}
         {formatNumber(lastMonth.normal?.temperature.mean)}
       </div>
       <div>
-        {"Precip (MM)".padEnd(15)}
+        {"Precip (MM)".padEnd(LABEL_COLUMNS)}
         {formatNumber(lastMonth.actual?.totalPrecip)}
         {"".padStart(4)}
         {formatNumber(lastMonth.normal?.precip.amount)}

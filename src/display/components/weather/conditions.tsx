@@ -4,6 +4,9 @@ import { isLooseNull } from "lib/isnull";
 import { useMemo } from "react";
 import { AQHIObservationResponse, ObservedConditions, WeatherStationTimeData } from "types";
 
+// the original showed pressure to 2 decimals (100.17), we only get 1, so the space the second one would take is kept
+const PRESSURE_SECOND_DECIMAL_GAP = 1;
+
 type ConditionsProp = {
   city: string;
   conditions: ObservedConditions;
@@ -106,7 +109,7 @@ export function Conditions(props: ConditionsProp) {
             </span>
             <span>{"".padEnd(5)}</span>
             <span>
-              {windchill > 0 && <span>Wind Chill {windchill}</span>}
+              {windchill > 0 && <span>Windchill {windchill}</span>}
               {!windchill && airQuality?.value && <span>Air Quality {airQuality.textValue}</span>}
             </span>
           </>
@@ -119,7 +122,8 @@ export function Conditions(props: ConditionsProp) {
       </div>
       {showPressure && (
         <div className="grid-row">
-          {"Pressure".padStart(11)} {pressureValue.toFixed(1).padStart(5)} {pressureUnits.padEnd(4)} {pressureTendency}
+          {"Pressure".padStart(11)} {pressureValue.toFixed(1).padStart(5)}
+          {"".padStart(PRESSURE_SECOND_DECIMAL_GAP)} {pressureUnits} {pressureTendency}
         </div>
       )}
     </div>

@@ -27,6 +27,7 @@ import {
   frontLoadTemperatureOnForecast,
 } from "lib/conditions";
 import {
+  FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH,
   FORECAST_THREE_ISH_LINES_WITH_PREFIX_MAX_LENGTH,
   FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH,
 } from "consts/forecast.consts";
@@ -54,9 +55,7 @@ const historicalData = initializeHistoricalTempPrecip();
 const climateNormals = initializeClimateNormals();
 
 /** `forecastGroup.regionalNormals` on citypage `weather.all` (often carries normals when `<almanac>` omits them). */
-type RegionalNormalsFromFeed = {
-  temperature?: ECCCAlmanacTemp | ECCCAlmanacTemp[];
-};
+type RegionalNormalsFromFeed = { temperature?: ECCCAlmanacTemp | ECCCAlmanacTemp[] };
 
 class CurrentConditions {
   private _amqpConnection: Connection;
@@ -147,7 +146,8 @@ class CurrentConditions {
           // generate uuid for these conditions and reject if a config option is on
           const conditionUUID = generateConditionsUUID(weather.current?.dateTime[1].timeStamp ?? "");
           if (config.misc.rejectInHourConditionUpdates && conditionUUID === this._conditionUUID) {
-            // update the forecast at least but reject the rest of it
+            // the forecast (and alerts) aren't conditions, so keep them fresh and reject the rest of it
+            if (weather.weekly) this.generateForecast(weather.weekly);
             logger.log("Rejecting in-hour conditions update as", conditionUUID, "was already parsed");
             return;
           }
@@ -407,14 +407,20 @@ class CurrentConditions {
       return {
         period,
         textSummary,
-        abbreviatedTextSummary: abbreviateForecast(
-          frontLoadedTemperature,
-          !ix ? FORECAST_THREE_ISH_LINES_WITH_PREFIX_MAX_LENGTH : FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH
-        ),
+        abbreviatedTextSummary: abbreviateForecast(frontLoadedTemperature, this.forecastMaxLength(ix)),
         temperature: { value: Number(temperatureValue), class: temperatureClass },
         conditions,
       };
     });
+  }
+
+  /**
+   * how long (excluding the "period.." prefix) a forecast may be. the "forecast cont.." pages show two forecasts,
+   * the upper 12 hour one (odd index) may use 4 lines and the lower one (even index) 2-3, see `allocateForecastContinuationLines`
+   */
+  private forecastMaxLength(ix: number) {
+    if (!ix) return FORECAST_THREE_ISH_LINES_WITH_PREFIX_MAX_LENGTH;
+    return ix % 2 ? FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH : FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH;
   }
 
   private async getTempRecordsForDay() {

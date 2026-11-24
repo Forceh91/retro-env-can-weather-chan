@@ -41,6 +41,7 @@ const ConfigScreen = () => {
                 <DisplayConfig
                   alternateRecordsSource={config.misc.alternateRecordsSource}
                   rejectInHourConditionUpdates={config.misc.rejectInHourConditionUpdates}
+                  refreshMode={config.misc.refreshMode}
                   flavour={config.lookAndFeel.flavour}
                   flavours={config.flavours}
                   playlist={config.music}

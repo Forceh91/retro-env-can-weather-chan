@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { initializeConfig } from "./config";
 import { parseInfoScreens } from "lib/infoscreen";
+import { REFRESH_MODES } from "consts/refresh.consts";
 import { getECCCWeatherStations } from "lib/eccc/weatherStations";
 
 const config = initializeConfig();
@@ -19,6 +20,7 @@ export function getInitHandler(req: Request, res: Response) {
       font: config.lookAndFeel.font,
       provinceHighLowEnabled: config.provinceHighLowEnabled,
       configVersion: config.configVersion,
+      refreshMode: config.misc?.refreshMode,
     },
     crawler: config.crawlerMessages,
     infoScreens: config.activeInfoScreens,
@@ -103,15 +105,17 @@ export function postClimateNormals(req: Request, res: Response) {
 
 export function postMisc(req: Request, res: Response) {
   const {
-    body: { rejectInHourConditionUpdates, alternateRecordsSource },
+    body: { rejectInHourConditionUpdates, alternateRecordsSource, refreshMode = config.misc.refreshMode },
   } = req ?? {};
 
   try {
     if (typeof rejectInHourConditionUpdates !== "boolean") throw "`rejectInHourConditionUpdates` must be true/false";
     if (typeof alternateRecordsSource !== "string") throw "`alternateRecordsSource` must be a string";
 
+    if (!REFRESH_MODES.some((mode) => mode.value === refreshMode)) throw "`refreshMode` is not a valid refresh mode";
+
     config.updateAndSaveConfigOption(() =>
-      config.setMiscSettings(rejectInHourConditionUpdates, alternateRecordsSource)
+      config.setMiscSettings(rejectInHourConditionUpdates, alternateRecordsSource, refreshMode)
     );
     res.sendStatus(200);
   } catch (e) {

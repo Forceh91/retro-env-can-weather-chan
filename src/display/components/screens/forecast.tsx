@@ -3,13 +3,16 @@ import { AQHIObservationResponse, CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
 import { RELOAD_FIRST_PAGE_DISPLAY_LENGTH, SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
-import { applyTypedRowTimings, centreOnGrid, formatStringTo8x32 } from "lib/display";
+import { allocateForecastContinuationLines, applyTypedRowTimings, centreOnGrid, formatStringTo8x32 } from "lib/display";
+import { forecastSignature } from "lib/refresh";
 import { normalizeAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 
 type ForecastScreenProps = {
   weatherStationResponse: WeatherStation;
   alert?: CAPObject;
   isReload?: boolean;
+  /** changes whenever the channel refreshes; falls back to the observation ID */
+  refreshID?: number | string;
   airQuality: AQHIObservationResponse;
   /** called once when the forecast moves past its first page, so the rotator can flip the background colour (#853) */
   onForecastContinuationEntered?: () => void;
@@ -18,7 +21,7 @@ type ForecastScreenProps = {
 const MAX_FORECAST_PAGES = 2;
 
 export function ForecastScreen(props: ForecastScreenProps) {
-  const { onComplete, weatherStationResponse, alert, isReload, airQuality, onForecastContinuationEntered } =
+  const { onComplete, weatherStationResponse, alert, isReload, refreshID, airQuality, onForecastContinuationEntered } =
     props ?? {};
   const [page, setPage] = useState(1);
   const continuationEnteredRef = useRef(false);
@@ -47,7 +50,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
     // just flags the reload, so the timer has to start again for the reload instead of carrying on with the old one and
     // changing page part way through the animation. this also clears it when the page changes and when we're unmounted
     return () => clearTimeout(pageChangeTimeout);
-  }, [page, isReload, weatherStationResponse?.observationID]);
+  }, [page, isReload, refreshID ?? weatherStationResponse?.observationID]);
 
   useEffect(() => {
     // when a reload occurs and we're past the first page of forecast, send the user back to the first page (changing
@@ -55,7 +58,7 @@ export function ForecastScreen(props: ForecastScreenProps) {
     if (page === 1) return;
 
     setPage(1);
-  }, [weatherStationResponse?.observationID]);
+  }, [refreshID ?? weatherStationResponse?.observationID]);
 
   const getForecastsForPage = () => {
     // todo:make this much nicer
@@ -83,6 +86,9 @@ export function ForecastScreen(props: ForecastScreenProps) {
 
   const forecastsForPage = getForecastsForPage();
 
+  // the forecast text itself can change without a new observation, so key the formatting off the text
+  const forecastKey = forecastSignature(weatherStationResponse?.forecast);
+
   // format immediate
   const formattedImmediateForecast = useMemo(() => {
     if (!weatherStationResponse?.forecast || page !== 1) return "";
@@ -92,28 +98,28 @@ export function ForecastScreen(props: ForecastScreenProps) {
       `Forecast for ${immediateForecast.period}..${immediateForecast.abbreviatedTextSummary}`,
       alert ? 3 : 4
     );
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+  }, [forecastKey, page, !!alert]);
 
-  // format the first forecast on the current page
-  const formattedPageForecast1 = useMemo(() => {
-    if (page === 1) return "";
+  // the upper 12 hour forecast can use up to 4 lines, the lower one up to 3, or the space is shared out by length
+  const continuationLayout = useMemo(() => {
+    if (page === 1) return null;
 
-    const forecast = forecastsForPage[0];
-    return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+    const [upper, lower] = forecastsForPage;
+    const upperText = upper ? `${upper.period}..${upper.abbreviatedTextSummary}` : "";
+    const lowerText = lower ? `${lower.period}..${lower.abbreviatedTextSummary}` : "";
+    const layout = allocateForecastContinuationLines(upperText, lowerText);
 
-  // format the second forecast on the current page
-  const formattedPageForecast2 = useMemo(() => {
-    if (page === 1) return "";
-
-    const forecast = forecastsForPage[1];
-    return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+    return {
+      ...layout,
+      upper: formatStringTo8x32(upperText, layout.upperLines || 1),
+      lower: formatStringTo8x32(lowerText, layout.lowerLines || 1),
+    };
+  }, [forecastKey, page]);
 
   // on a reload the first page arrives in bursts, a row at a time (#998), so each row needs to know when they happen
   useLayoutEffect(() => {
     if (isReload && page === 1) applyTypedRowTimings(screenRef.current);
-  }, [isReload, page, weatherStationResponse?.observationID, formattedImmediateForecast, alert?.headline]);
+  }, [isReload, page, refreshID ?? weatherStationResponse?.observationID, formattedImmediateForecast, alert?.headline]);
 
   // no response from weather station so whatever
   if (!weatherStationResponse) return <></>;
@@ -147,9 +153,9 @@ export function ForecastScreen(props: ForecastScreenProps) {
       {page > 1 && (
         <div>
           <div>{centreOnGrid(`${weatherStationResponse.city} forecast cont..`)}</div>
-          <div>{formattedPageForecast1}</div>
-          <br />
-          <div>{formattedPageForecast2}</div>
+          <div>{continuationLayout?.upper}</div>
+          {continuationLayout?.separator && <br />}
+          <div>{continuationLayout?.lower}</div>
         </div>
       )}
     </div>

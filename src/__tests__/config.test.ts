@@ -24,7 +24,11 @@ describe("Config file loading", () => {
     expect(config.historicalDataStationID).toStrictEqual(exampleConfig.historicalDataStationID);
     expect(config.climateNormals).toStrictEqual(exampleConfig.climateNormals);
     expect(config.lookAndFeel).toStrictEqual({ font: "vt323", flavour: FLAVOUR_DEFAULT.name });
-    expect(config.misc).toStrictEqual({ ...exampleConfig.misc, alternateRecordsSource: undefined });
+    expect(config.misc).toStrictEqual({
+      ...exampleConfig.misc,
+      refreshMode: "observation",
+      alternateRecordsSource: undefined,
+    });
     expect(config.flavour.name).toStrictEqual(FLAVOUR_DEFAULT.name);
     expect(config.flavour.screens).toStrictEqual(FLAVOUR_DEFAULT.screens);
     expect(config.musicPlaylist).toHaveLength(0);
@@ -118,10 +122,8 @@ describe("Config file loading", () => {
   });
 
   it("loads from file correctly when misc is missing", () => {
-    const defaultMisc: { rejectInHourConditionUpdates: boolean; alternateRecordsSource?: string } = {
-      rejectInHourConditionUpdates: false,
-      alternateRecordsSource: undefined,
-    };
+    const defaultMisc: { rejectInHourConditionUpdates: boolean; refreshMode: string; alternateRecordsSource?: string } =
+      { rejectInHourConditionUpdates: false, refreshMode: "observation", alternateRecordsSource: undefined };
     jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => JSON.stringify({ ...exampleConfig, misc: undefined }));
 
     let config = initializeConfig();
@@ -255,13 +257,14 @@ describe("Config updating", () => {
   it("updates the misc settings correctly", () => {
     const config = initializeConfig();
     [
-      { reject: true, url: "http://example.com" },
-      { reject: false, url: "" },
-      { reject: true, url: "" },
-      { reject: false, url: "http://exampe.com" },
+      { reject: true, url: "http://example.com", mode: "ten-minute" as const },
+      { reject: false, url: "", mode: "ten-minute-alerts" as const },
+      { reject: true, url: "", mode: "observation-changes" as const },
+      { reject: false, url: "http://exampe.com", mode: "observation" as const },
     ].forEach((update) => {
-      config.setMiscSettings(update.reject, update.url);
+      config.setMiscSettings(update.reject, update.url, update.mode);
       expect(config.misc).toStrictEqual({
+        refreshMode: update.mode,
         rejectInHourConditionUpdates: update.reject,
         alternateRecordsSource: update.url,
       });

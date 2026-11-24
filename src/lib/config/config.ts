@@ -22,6 +22,7 @@ import {
   InfoScreenEntry,
   LookAndFeel,
   MiscConfig,
+  RefreshMode,
   PrimaryLocation,
   ProvinceStation,
   ProvinceStations,
@@ -85,6 +86,7 @@ class Config {
   lookAndFeel: LookAndFeel = { font: "vt323", flavour: "default" };
   misc: MiscConfig = {
     rejectInHourConditionUpdates: false, // whether we should only update conditions once an hour
+    refreshMode: "observation", // when the channel refreshes: "observation" | "observation-changes" | "ten-minute" | "ten-minute-alerts"
     alternateRecordsSource: undefined, // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json
   };
   crawlerMessages: string[] = [];
@@ -370,7 +372,12 @@ class Config {
     this.checkFlavoursDirectory();
   }
 
-  public setMiscSettings(rejectInHourConditionUpdates: boolean, alternateRecordsSource: string) {
+  public setMiscSettings(
+    rejectInHourConditionUpdates: boolean,
+    alternateRecordsSource: string,
+    refreshMode: RefreshMode = this.misc.refreshMode ?? "observation"
+  ) {
+    this.misc.refreshMode = refreshMode;
     this.misc.alternateRecordsSource = alternateRecordsSource;
     this.misc.rejectInHourConditionUpdates = rejectInHourConditionUpdates;
   }

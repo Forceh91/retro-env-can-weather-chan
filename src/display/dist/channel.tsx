@@ -10,6 +10,7 @@ import {
   useProvinceTracking,
   useSeason,
   useWeatherEventStream,
+  useRefreshGate,
   useNationalWeather,
   useSunspots,
 } from "hooks";
@@ -17,11 +18,18 @@ import { useAirQuality } from "hooks/airQuality";
 import { useConfig } from "hooks/init";
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
+import { normaliseRefreshMode } from "lib/refresh";
 
 function WeatherChannel() {
   const { config } = useConfig();
-  const { currentConditions } = useWeatherEventStream();
-  const alertsHook = useAlerts();
+  const { currentConditions: liveConditions } = useWeatherEventStream();
+  const liveAlertsHook = useAlerts();
+  const {
+    conditions: currentConditions,
+    alerts: gatedAlerts,
+    refreshID,
+  } = useRefreshGate(normaliseRefreshMode(config?.config?.refreshMode), liveConditions, liveAlertsHook.alerts);
+  const alertsHook = { ...liveAlertsHook, alerts: gatedAlerts, mostImportantAlert: gatedAlerts?.[0] ?? null };
   const { nationalWeather, fetchNationalWeather } = useNationalWeather();
   const { provinceTracking } = useProvinceTracking();
   const { season, fetchSeason } = useSeason();
@@ -68,6 +76,7 @@ function WeatherChannel() {
         airQuality={airQuality}
         infoScreens={config?.infoScreens}
         configVersion={config?.config.configVersion}
+        refreshID={refreshID}
       />
       <FooterBar timeOffset={currentConditions?.stationTime?.stationOffsetMinutesFromLocal ?? 0} />
       <PlaylistComponent playlist={config?.music} />

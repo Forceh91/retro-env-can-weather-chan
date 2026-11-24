@@ -37,11 +37,7 @@ import {
 type ScreenRotatorProps = {
   screens: FlavourScreen[];
   weatherStationResponse: WeatherStation;
-  alerts: {
-    alerts: CAPObject[];
-    mostImportantAlert: CAPObject;
-    hasFetched: boolean;
-  };
+  alerts: { alerts: CAPObject[]; mostImportantAlert: CAPObject; hasFetched: boolean };
   nationalWeather: NationalWeather;
   provinceTracking: ProvinceTracking;
   season: Season;
@@ -52,6 +48,8 @@ type ScreenRotatorProps = {
   airQuality: AQHIObservationResponse;
   infoScreens: InfoScreenEntry[];
   configVersion: string;
+  /** changes whenever the channel should replay its reload; falls back to the observation ID */
+  refreshID?: number | string;
 };
 
 export function ScreenRotator(props: ScreenRotatorProps) {
@@ -69,6 +67,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     airQuality,
     infoScreens,
     configVersion,
+    refreshID,
   } = props ?? {};
 
   const playoutScreens = useMemo(
@@ -125,7 +124,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
     const forecastIx = playoutScreens.findIndex((screen) => screen.id === Screens.FORECAST);
     setDisplayedScreenIx(forecastIx !== -1 ? forecastIx : 0);
     setBackgroundColour(SCREEN_BACKGROUND_BLUE);
-  }, [weatherStationResponse?.observationID, configVersion, playoutResetKey]);
+  }, [refreshID ?? weatherStationResponse?.observationID, configVersion, playoutResetKey]);
 
   const switchBackgroundColour = () => {
     if (backgroundRotatorTimeout.current) return;
@@ -174,6 +173,7 @@ export function ScreenRotator(props: ScreenRotatorProps) {
             weatherStationResponse={weatherStationResponse}
             alert={alerts?.mostImportantAlert}
             isReload={conditionsOrConfigUpdated}
+            refreshID={refreshID}
             airQuality={airQuality}
             onForecastContinuationEntered={switchBackgroundColour}
             onComplete={switchToNextScreen}

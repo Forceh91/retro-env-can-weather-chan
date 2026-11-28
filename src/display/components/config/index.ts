@@ -7,3 +7,4 @@ export * from "./flavours";
 export * from "./display";
 export * from "./crawler";
 export * from "./airQuality";
+export * from "./infoScreens";

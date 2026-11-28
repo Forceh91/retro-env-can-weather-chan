@@ -1,50 +1,32 @@
-@keyframes reloadscreen {
-  to {
-    visibility: visible;
+// the data refresh animation (#998): the screen is cleared and then every row comes back in short bursts, like it did on
+// the original hardware. applyTypedRowTimings gives each row how much of it is showing after each burst (--type-w0 to
+// --type-w4, in characters) and when each of them arrives (--type-t0 to --type-t4)
+$type-steps: 5;
+
+@for $step from 0 to $type-steps {
+  @keyframes type-step-#{$step} {
+    to {
+      width: calc(var(--type-w#{$step}, 0) * 1ch);
+    }
   }
 }
 
 #forecast_screen {
   &.has-reloaded {
-    .reload-animation {
-      visibility: hidden;
-      animation: reloadscreen 222ms forwards;
-
-      &.step-1 {
-        animation-delay: 222ms;
-      }
-
-      &.step-2 {
-        animation-delay: 444ms;
-      }
-
-      &.step-3 {
-        animation-delay: 666ms;
-      }
-
-      &.step-4 {
-        animation-delay: 888ms;
-      }
-
-      &.step-5 {
-        animation-delay: 1100ms;
-      }
-
-      &.step-6 {
-        animation-delay: 1332ms;
-      }
-
-      &.step-7 {
-        animation-delay: 1554ms;
-      }
-
-      &.step-8 {
-        animation-delay: 1776ms;
-      }
-
-      &.step-9 {
-        animation-delay: 1998ms;
-      }
+    .grid-row {
+      // each burst is its own instant jump to a new width, kept once it has happened. they're in the order they arrive in
+      // so the latest one that has happened is the one that wins. the zero duration is on purpose: chromium never applies
+      // the fill of a 1ms steps() animation that starts and ends between two frames, which left the rows blank
+      animation:
+        type-step-0 0s linear var(--type-t0, 0s) forwards,
+        type-step-1 0s linear var(--type-t1, 0s) forwards,
+        type-step-2 0s linear var(--type-t2, 0s) forwards,
+        type-step-3 0s linear var(--type-t3, 0s) forwards,
+        type-step-4 0s linear var(--type-t4, 0s) forwards;
+      display: block;
+      overflow: hidden;
+      // the font is monospace so every character is 1ch, which is what makes revealing it a width change work
+      width: 0;
     }
   }
 }

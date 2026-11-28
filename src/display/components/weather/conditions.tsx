@@ -4,6 +4,9 @@ import { isLooseNull } from "lib/isnull";
 import { useMemo } from "react";
 import { AQHIObservationResponse, ObservedConditions, WeatherStationTimeData } from "types";
 
+// the original showed pressure to 2 decimals (100.17), we only get 1, so the space the second one would take is kept
+const PRESSURE_SECOND_DECIMAL_GAP = 1;
+
 type ConditionsProp = {
   city: string;
   conditions: ObservedConditions;
@@ -75,51 +78,52 @@ export function Conditions(props: ConditionsProp) {
 
   return (
     <div id="conditions">
-      <div className="reload-animation step-1">{title}</div>
-      <div>
-        <span className="reload-animation step-2">
+      <div className="grid-row">{title}</div>
+      <div className="grid-row">
+        <span>
           <span>Temp&nbsp;</span>
           <span>{formattedTemperature}</span>
         </span>
         <span>{"".padEnd(6)}</span>
-        <span className="reload-animation step-3">
+        <span>
           <span>Wind&nbsp;</span>
           <span>{formattedWind}</span>
         </span>
       </div>
-      <div>
-        <span className="reload-animation step-4">
+      <div className="grid-row">
+        <span>
           <span>Hum&nbsp;&nbsp;</span>
           <span>{formattedHumidity}</span>
         </span>
         <span>{"".padEnd(6)}</span>
-        <span className="reload-animation step-5">
+        <span>
           <span>{abbreviatedCondition ?? ""}</span>
         </span>
       </div>
-      <div>
+      <div className="grid-row">
         {isShowingExtraData && (
           <>
-            <span className="reload-animation step-6">
+            <span>
               <span>Vsby&nbsp;</span>
               <span>{formattedVisibility.padStart(6)}</span>
             </span>
             <span>{"".padEnd(5)}</span>
-            <span className="reload-animation step-7">
-              {windchill > 0 && <span>Wind Chill {windchill}</span>}
+            <span>
+              {windchill > 0 && <span>Windchill {windchill}</span>}
               {!windchill && airQuality?.value && <span>Air Quality {airQuality.textValue}</span>}
             </span>
           </>
         )}
         {!isShowingExtraData && (
-          <span className="reload-animation step-6">
+          <span>
             {"Visibility".padStart(16)}&nbsp;&nbsp;{formattedVisibility}
           </span>
         )}
       </div>
       {showPressure && (
-        <div>
-          {"Pressure".padStart(11)} {pressureValue.toFixed(1).padStart(5)} {pressureUnits.padEnd(4)} {pressureTendency}
+        <div className="grid-row">
+          {"Pressure".padStart(11)} {pressureValue.toFixed(1).padStart(5)}
+          {"".padStart(PRESSURE_SECOND_DECIMAL_GAP)} {pressureUnits} {pressureTendency}
         </div>
       )}
     </div>

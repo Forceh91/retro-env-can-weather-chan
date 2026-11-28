@@ -18,6 +18,7 @@ This project includes all of the features from the original weather channel such
 - Stats for the current day (sunrise/set, Canada hot/cold spots) and total precipitation for the current season
 - Stats for last month
 - Windchill (in the old watts per square metre format)
+- Info screens (custom text only screens, like a holiday message)
 - Flavours
 
 Some of the above features are season/time of month specific and will automatically come and go as required
@@ -127,6 +128,10 @@ This will allow you to setup extra features such as custom screen rotation (flav
 
 When your config is saved the updated changes should reflect on the display no more than 5 minutes later (including playlist changes).
 
+### Info screens
+
+Info screens are custom text only screens, for things like a holiday message. Add them on the "Info Screens" tab of the [configuration screen](http://localhost:8600/config). Each one is up to 8 lines of 32 characters, with every line centred on the display (a blank line stays blank), and can optionally have a first and last day it is shown. They are saved in `cfg/info-screens.json`.
+
 ### Setting up a playlist
 
 When the simulator runs for the first time you will notice that a `music` directory is created for you. If you wish to update your playlist simply add/remove files to the `music` directory add then scroll to "Playlist" in the "Display" tab on the [configuration screen](http://localhost:8600/config). Once there you will see a "Regenerate playlist" button. Depending on the size of your playlist this may take a few seconds.
@@ -140,10 +145,11 @@ The output of the simulator can be accessed via [the browser](http://localhost:8
 - **Environment and Climate Change Canada** ([Website](https://www.canada.ca/en/services/environment/weather.html)): API, AMQP, and documentation
 - **@wpgne** ([Mastodon](https://mastodon.social/@wpgne), [YouTube](https://www.youtube.com/@wpgne)): Source material and input throughout the development of the project
 - **@drdevlin** ([GitHub](https://github.com/drdevlin)): [ec-weather-js](https://github.com/drdevlin/ec-weather-js) project
+- **@djrrb** ([GitHub](https://github.com/djrrb)): [retro-env-can-weather-chan-fonts](https://github.com/djrrb/retro-env-can-weather-chan-fonts). David created both the main and secondary fonts from scratch based off original source material! You can read more about Slight Chance (the main font) on his [Font of the Month writeup](https://djr.com/notes/slight-chance-font-of-the-month)
 
 ## Support the project
 
 - [@matthdn91](https://threads.net/@matthdn91) on Threads
 - Follow us on on Mastodon: [@ecweatherchannel](https://thecanadian.social/@ecweatherchannel), [@forceh91](https://techhub.social/@forceh91)
 - Donations via [ko-fi](https://ko-fi.com/forceh)
-- 24/7 livestreams for Winnipeg and Toronto on [YouTube](https://www.youtube.com/@Forceh91/streams)
+- 24/7 livestreams for Winnipeg on [YouTube](https://www.youtube.com/@Forceh91/streams)

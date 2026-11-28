@@ -10,3 +10,8 @@ export const FORECAST_THREE_ISH_LINES_WITH_PREFIX_MAX_LENGTH =
 export const FORECAST_THREE_LINE_WITH_PREFIX_MAX_LENGTH = FORECAST_THREE_LINE_MAX_LENGTH - FORECAST_PREFIX_MAX_LENGTH;
 export const FORECAST_FOUR_LINE_WITH_PREFIX_MAX_LENGTH = FORECAST_FOUR_LINE_MAX_LENGTH - FORECAST_PREFIX_MAX_LENGTH;
 export const FORECAST_TWO_LINE_WITH_PREFIX_MAX_LENGTH = FORECAST_TWO_LINE_MAX_LENGTH - FORECAST_PREFIX_MAX_LENGTH;
+
+/** "forecast cont.." pages: the most lines a single 12 hour forecast may use */
+export const FORECAST_CONTINUATION_MAX_LINES = 4;
+/** "forecast cont.." pages: text lines shared by the two forecasts when there's no blank separator line between them */
+export const FORECAST_CONTINUATION_SHARED_LINES = 7;

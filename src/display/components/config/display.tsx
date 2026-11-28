@@ -13,12 +13,15 @@ import {
 } from "@chakra-ui/react";
 import { useSaveConfigOption } from "hooks";
 import { FormEvent, useEffect, useState } from "react";
-import { FlavourNames, LookAndFeel, MiscConfig } from "types";
+import { FlavourNames, LookAndFeel, MiscConfig, RefreshMode } from "types";
+import { REFRESH_MODES } from "consts/refresh.consts";
+import { normaliseRefreshMode } from "lib/refresh";
 
 type DisplayConfigProps = {
   flavour: string;
   flavours: FlavourNames;
   rejectInHourConditionUpdates: boolean;
+  refreshMode?: RefreshMode;
   alternateRecordsSource: string;
   playlist: string[];
 };
@@ -31,12 +34,14 @@ export function DisplayConfig({
   flavour,
   flavours,
   rejectInHourConditionUpdates,
+  refreshMode,
   alternateRecordsSource,
   playlist,
 }: DisplayConfigProps) {
   const toast = useToast();
   const [mutableRejectInHourConditionUpdates, setMutableRejectInHourConditionUpdates] =
     useState(rejectInHourConditionUpdates);
+  const [mutableRefreshMode, setMutableRefreshMode] = useState<RefreshMode>(normaliseRefreshMode(refreshMode));
   const [mutableAlternateRecordsSource, setMutableAlternateRecordsSource] = useState(alternateRecordsSource ?? "");
   const [mutableFlavour, setMutableFlavour] = useState(flavour ?? "");
   const [mutablePlaylist, setMutablePlaylist] = useState(playlist);
@@ -50,6 +55,7 @@ export function DisplayConfig({
 
     await miscSaveConfigOption.saveConfigOption({
       rejectInHourConditionUpdates: mutableRejectInHourConditionUpdates,
+      refreshMode: mutableRefreshMode,
       alternateRecordsSource: mutableAlternateRecordsSource,
     });
 
@@ -135,6 +141,29 @@ export function DisplayConfig({
               <FormHelperText>
                 ECCC may send multiple updates during each hour. The original channel only received one update at the
                 start of the hour. Enabling this gives a more authentic feeling to the channel
+              </FormHelperText>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel htmlFor="refreshMode">When should the channel refresh?</FormLabel>
+              <Select
+                id="refreshMode"
+                isDisabled={miscSaveConfigOption.isSaving}
+                value={mutableRefreshMode}
+                onChange={(e) => setMutableRefreshMode(e.target.value as RefreshMode)}
+              >
+                {REFRESH_MODES.map((mode) => (
+                  <option key={mode.value} value={mode.value}>
+                    {mode.label}
+                  </option>
+                ))}
+              </Select>
+              <FormHelperText>
+                {REFRESH_MODES.find((mode) => mode.value === mutableRefreshMode)?.description} A refresh is when the
+                channel jumps back to the forecast and replays the reload animation. The original channel refreshed
+                every ten minutes (forecasts and alerts included), with the observation itself only changing once an
+                hour at about :10. Combine with the option above to keep conditions at once an hour - forecasts and
+                alerts are updated either way.
               </FormHelperText>
             </FormControl>
 

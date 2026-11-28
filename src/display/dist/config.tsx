@@ -9,6 +9,7 @@ import {
   DisplayConfig,
   FlavoursConfig,
   HistoricalDataStationIDConfig,
+  InfoScreensConfig,
   ProvinceTempPrecipConfig,
   WeatherStationConfig,
 } from "display/components/config";
@@ -31,6 +32,7 @@ const ConfigScreen = () => {
               <Tab>Climate Normals</Tab>
               <Tab>Air Quality</Tab>
               <Tab>Flavours</Tab>
+              <Tab>Info Screens</Tab>
               <Tab>Crawler</Tab>
             </TabList>
 
@@ -39,6 +41,7 @@ const ConfigScreen = () => {
                 <DisplayConfig
                   alternateRecordsSource={config.misc.alternateRecordsSource}
                   rejectInHourConditionUpdates={config.misc.rejectInHourConditionUpdates}
+                  refreshMode={config.misc.refreshMode}
                   flavour={config.lookAndFeel.flavour}
                   flavours={config.flavours}
                   playlist={config.music}
@@ -67,6 +70,10 @@ const ConfigScreen = () => {
 
               <TabPanel>
                 <FlavoursConfig currentFlavours={config.flavours} />
+              </TabPanel>
+
+              <TabPanel>
+                <InfoScreensConfig infoScreens={config.infoScreens} />
               </TabPanel>
 
               <TabPanel>

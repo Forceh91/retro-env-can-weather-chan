@@ -1,6 +1,7 @@
 import { DISPLAY_MAX_CHARACTERS_PER_LINE } from "consts";
 import { addMinutes, format, isValid, parseISO } from "date-fns";
 import { formatObservedMonthDate, getIsWinterSeason } from "lib/date";
+import { centreOnGrid } from "lib/display";
 import { useMemo } from "react";
 import { HotColdSpots, Season, SunRiseSet, WeatherStationTimeData } from "types";
 
@@ -12,10 +13,13 @@ type StatsScreenProps = {
   hotColdSpots: HotColdSpots;
 };
 
-const PRECIP_CHARS_USED_OUTSIDE_OF_DOTS = 16;
-const NORMAL_PRECIP_CHARS_USED_OUTSIDE_OF_DOTS = 12;
-const HOT_COLD_SPOT_CHARS_USED_OUTSIDE_OF_DOTS = 9;
-const HOT_COLD_SPOT_MAX_NAME_LENGTH = 20;
+// the dotted precip lines run to the last column of the grid on the original
+const PRECIP_CHARS_USED_OUTSIDE_OF_DOTS = 15;
+const NORMAL_PRECIP_CHARS_USED_OUTSIDE_OF_DOTS = 11;
+// the hot/cold spot lines use the whole width of the grid, the temperature ending on the last column
+const HOT_COLD_SPOT_START_COLUMN = 0;
+const HOT_COLD_SPOT_END_COLUMN = DISPLAY_MAX_CHARACTERS_PER_LINE;
+const HOT_COLD_SPOT_TEMPERATURE_LENGTH = 3;
 
 export function StatsScreen(props: StatsScreenProps) {
   const { city, weatherStationTime, season: seasonStats, sunRiseSet, hotColdSpots } = props ?? {};
@@ -32,6 +36,18 @@ export function StatsScreen(props: StatsScreenProps) {
     () => weatherStationTime?.observedDateTime && formatObservedMonthDate(weatherStationTime, true),
     [weatherStationTime?.observedDateTime]
   );
+
+  const formattedShortDate = useMemo(
+    () => weatherStationTime?.observedDateTime && formatObservedMonthDate(weatherStationTime),
+    [weatherStationTime?.observedDateTime]
+  );
+
+  // the month is spelled out like the original ("MARCH 26") unless that doesn't fit on the line ("SEPTEMBER 28")
+  const titleLine = () => {
+    const city10 = city.slice(0, 10);
+    const long = `${city10} statistics - ${formattedDate}`;
+    return long.length <= DISPLAY_MAX_CHARACTERS_PER_LINE ? long : `${city10} statistics - ${formattedShortDate}`;
+  };
 
   const formattedHotColdSpotDate = useMemo(() => {
     const date = parseDate(hotColdSpots?.lastUpdated);
@@ -54,6 +70,14 @@ export function StatsScreen(props: StatsScreenProps) {
     return format(addMinutes(date, weatherStationTime?.stationOffsetMinutesFromLocal ?? 0), "h:mm");
   }, [sunRiseSet?.set, weatherStationTime?.stationOffsetMinutesFromLocal]);
 
+  // "Sunrise..6:10 am Sunset..10:25 pm" is 33 columns so when it's too long the am/pm gets tucked in against the time
+  const sunriseSunsetLine = () => {
+    const line = `Sunrise..${formattedSunrise} am Sunset..${formattedSunset} pm`;
+    if (line.length <= DISPLAY_MAX_CHARACTERS_PER_LINE) return line;
+
+    return `Sunrise..${formattedSunrise}am Sunset..${formattedSunset}pm`;
+  };
+
   const generatePrecip = (amount: number) => amount.toFixed(1).padStart(5);
 
   const generateDotsForPrecipLine = (dataName: string, usedChars = PRECIP_CHARS_USED_OUTSIDE_OF_DOTS) =>
@@ -66,29 +90,36 @@ export function StatsScreen(props: StatsScreenProps) {
   const actualPrecip = generatePrecip(seasonPrecip?.amount || 0);
 
   const { hotSpot, coldSpot } = hotColdSpots ?? {};
-  const truncatedHotSpotName = hotSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "N/A";
-  const truncatedColdSpotName = coldSpot?.name?.slice(0, HOT_COLD_SPOT_MAX_NAME_LENGTH) ?? "N/A";
-
-  const generateDotsForHotColdSpotLine = (prefix: string) =>
-    "".padEnd(DISPLAY_MAX_CHARACTERS_PER_LINE - (prefix.length + HOT_COLD_SPOT_CHARS_USED_OUTSIDE_OF_DOTS), ".");
 
   const formatTempForHotColdSpotLine = (temperature?: number | null) =>
-    (!isNaN(temperature) && temperature != null ? Math.round(temperature) : "N/A").toString().padStart(3);
+    (!isNaN(temperature) && temperature != null ? Math.round(temperature) : "N/A").toString();
+
+  // "Name, PR ........-42". both lines are the same width, from the start column to the end column,
+  // with the dots running right up to the temperature. the name is cut (and any dangling " /" or "," dropped) so that
+  // there's room for the province, one dot and the widest temperature
+  const formatHotColdSpotLine = (name: string, province: string, temperature?: number | null) => {
+    const suffix = `, ${province} `;
+    const width = HOT_COLD_SPOT_END_COLUMN - HOT_COLD_SPOT_START_COLUMN;
+    const maxName = width - suffix.length - 1 - HOT_COLD_SPOT_TEMPERATURE_LENGTH;
+    // two towns ("St. Catharines / Niagara District Airport") are cut back to the first one
+    const firstTown = (name ?? "N/A").split(" /")[0].trim();
+    const shortName = firstTown.slice(0, maxName).replace(/[\s/,\-]+$/, "");
+
+    const temp = formatTempForHotColdSpotLine(temperature);
+    const dots = "".padEnd(width - shortName.length - suffix.length - temp.length, ".");
+
+    return `${"".padStart(HOT_COLD_SPOT_START_COLUMN)}${shortName}${suffix}${dots}${temp}`;
+  };
 
   if (!city || !weatherStationTime?.observedDateTime || !season || !hotColdSpots) return <></>;
 
   return (
     <div id="stats_screen">
-      <div>
-        {"".padStart(2)}
-        {city.slice(0, 10)} statistics - {formattedDate}
-      </div>
-      <div>
-        Sunrise..{formattedSunrise} am Sunset..{formattedSunset} pm
-      </div>
+      <div>{centreOnGrid(titleLine())}</div>
+      <div>{sunriseSunsetLine()}</div>
       {!showSnowfallAsSeasonalTotal && (
         <>
-          <div>{"".padStart(4)}Total precipitation since</div>
+          <div>{centreOnGrid("Total precipitation since")}</div>
           <div>
             {"".padStart(2)}
             {seasonStartMonth} 1st {generateDotsForPrecipLine(seasonStartMonth)}
@@ -98,7 +129,7 @@ export function StatsScreen(props: StatsScreenProps) {
       )}
       {showSnowfallAsSeasonalTotal && (
         <>
-          <div>{"".padStart(4)}Total snowfall since</div>
+          <div>{centreOnGrid("Total snowfall since")}</div>
           <div>
             {"".padStart(2)}
             {seasonStartMonth} 1st {generateDotsForPrecipLine(seasonStartMonth)}
@@ -114,18 +145,9 @@ export function StatsScreen(props: StatsScreenProps) {
       {hotColdSpots && (
         <>
           <div>Canadian Hot/Cold Spot - {formattedHotColdSpotDate}</div>
-          {hotSpot && (
-            <div>
-              {truncatedHotSpotName}, {hotSpot.province} {generateDotsForHotColdSpotLine(truncatedHotSpotName)}
-              {formatTempForHotColdSpotLine(hotSpot.temperature)}
-            </div>
-          )}
+          {hotSpot && <div>{formatHotColdSpotLine(hotSpot.name, hotSpot.province, hotSpot.temperature)}</div>}
           {coldSpot && (
-            <div>
-              {truncatedColdSpotName}, {coldSpot.province ?? "N/A"}{" "}
-              {generateDotsForHotColdSpotLine(truncatedColdSpotName)}
-              {formatTempForHotColdSpotLine(coldSpot.temperature)}
-            </div>
+            <div>{formatHotColdSpotLine(coldSpot.name, coldSpot.province ?? "N/A", coldSpot.temperature)}</div>
           )}
         </>
       )}

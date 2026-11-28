@@ -60,10 +60,10 @@ export function formatObservedMonthDate(date: WeatherStationTimeData, isLongMont
   if (!date?.observedDateTime) return "";
 
   const parsedDate = adjustObservedDateTimeToStationTime(date);
-  const dateString = isValid(parsedDate) && format(parsedDate, "MMM d");
-  if (!isLongMonths) return dateString;
+  if (!isValid(parsedDate)) return false;
 
-  return dateString;
+  // the original spelled the month out where it fitted ("MARCH 26")
+  return format(parsedDate, isLongMonths ? "MMMM d" : "MMM d");
 }
 
 export function formatSunspotDate(date: WeatherStationTimeData) {

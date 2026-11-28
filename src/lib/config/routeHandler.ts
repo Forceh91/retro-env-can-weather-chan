@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-import { initializeConfig } from "./config";
+import { initializeConfig, isValidPrimaryLocation } from "./config";
+import { parseInfoScreens } from "lib/infoscreen";
+import { REFRESH_MODES } from "consts/refresh.consts";
 import { getECCCWeatherStations } from "lib/eccc/weatherStations";
 
 const config = initializeConfig();
@@ -18,8 +20,10 @@ export function getInitHandler(req: Request, res: Response) {
       font: config.lookAndFeel.font,
       provinceHighLowEnabled: config.provinceHighLowEnabled,
       configVersion: config.configVersion,
+      refreshMode: config.misc?.refreshMode,
     },
     crawler: config.crawlerMessages,
+    infoScreens: config.activeInfoScreens,
     flavour: config.flavour,
     music: config.musicPlaylist ?? [],
   });
@@ -44,6 +48,11 @@ export function postPrimaryLocation(req: Request, res: Response) {
 
   try {
     if (!station) throw "Missing `station` parameter";
+    // validate before anything is changed or saved, a bad value here ends up on disk and stops the config from loading
+    if (!isValidPrimaryLocation(station)) {
+      res.status(400).json({ error: "Invalid `station` parameter, expected { province, location, name }" });
+      return;
+    }
 
     config.updateAndSaveConfigOption(() => config.setPrimaryLocation(station));
     res.sendStatus(200);
@@ -101,15 +110,17 @@ export function postClimateNormals(req: Request, res: Response) {
 
 export function postMisc(req: Request, res: Response) {
   const {
-    body: { rejectInHourConditionUpdates, alternateRecordsSource },
+    body: { rejectInHourConditionUpdates, alternateRecordsSource, refreshMode = config.misc.refreshMode },
   } = req ?? {};
 
   try {
     if (typeof rejectInHourConditionUpdates !== "boolean") throw "`rejectInHourConditionUpdates` must be true/false";
     if (typeof alternateRecordsSource !== "string") throw "`alternateRecordsSource` must be a string";
 
+    if (!REFRESH_MODES.some((mode) => mode.value === refreshMode)) throw "`refreshMode` is not a valid refresh mode";
+
     config.updateAndSaveConfigOption(() =>
-      config.setMiscSettings(rejectInHourConditionUpdates, alternateRecordsSource)
+      config.setMiscSettings(rejectInHourConditionUpdates, alternateRecordsSource, refreshMode)
     );
     res.sendStatus(200);
   } catch (e) {
@@ -145,6 +156,27 @@ export function postCrawlerMessages(req: Request, res: Response) {
     res.sendStatus(200);
   } catch (e) {
     res.status(500).json({ error: e });
+  }
+}
+
+export function postInfoScreens(req: Request, res: Response) {
+  const {
+    body: { infoScreens },
+  } = req ?? {};
+
+  try {
+    const { entries, errors } = parseInfoScreens(infoScreens);
+    if (errors.length) {
+      res.status(400).json({ error: errors.join(". ") });
+      return;
+    }
+
+    config.setInfoScreens(entries);
+
+    // send them back as saved, because any that didn't have an id have been given one
+    res.json({ infoScreens: config.infoScreens });
+  } catch (e) {
+    res.status(500).json({ error: "Unable to save info screens" });
   }
 }
 

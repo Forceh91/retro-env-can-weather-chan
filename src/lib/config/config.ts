@@ -13,13 +13,16 @@ import {
   PROVINCE_TRACKING_DEFAULT_STATIONS,
 } from "consts";
 import { FlavourLoader } from "lib/flavour";
+import { getActiveInfoScreens, parseInfoScreens } from "lib/infoscreen";
 import Logger from "lib/logger";
 import {
   ClimateNormals,
   ECCCWeatherStation,
   Flavour,
+  InfoScreenEntry,
   LookAndFeel,
   MiscConfig,
+  RefreshMode,
   PrimaryLocation,
   ProvinceStation,
   ProvinceStations,
@@ -48,6 +51,20 @@ function mergeProvinceStationClimateDefaults(stations: ProvinceStation[]): Provi
     return row;
   });
 }
+/** Whether `value` is a usable primary location: an object with non-empty string `province` and `location`, and a string `name`. */
+export function isValidPrimaryLocation(value: unknown): value is PrimaryLocation {
+  if (!value || typeof value !== "object") return false;
+
+  const { province, location, name } = value as Record<string, unknown>;
+  return (
+    typeof province === "string" &&
+    province.trim().length > 0 &&
+    typeof location === "string" &&
+    location.trim().length > 0 &&
+    typeof name === "string"
+  );
+}
+
 const CONFIG_PATH = {
   FOLDER: "./cfg",
   FILE: "rwc-config.json",
@@ -60,6 +77,11 @@ const CRAWLER_PATH = {
   FILE: "crawler.txt",
 };
 const CRAWLER_ABSOLUTE_PATH = `${CRAWLER_PATH.FOLDER}/${CRAWLER_PATH.FILE}`;
+const INFO_SCREENS_PATH = {
+  FOLDER: "./cfg",
+  FILE: "info-screens.json",
+};
+const INFO_SCREENS_ABSOLUTE_PATH = `${INFO_SCREENS_PATH.FOLDER}/${INFO_SCREENS_PATH.FILE}`;
 const MUSIC_DIR = "music";
 
 class Config {
@@ -78,9 +100,11 @@ class Config {
   lookAndFeel: LookAndFeel = { font: "vt323", flavour: "default" };
   misc: MiscConfig = {
     rejectInHourConditionUpdates: false, // whether we should only update conditions once an hour
+    refreshMode: "observation", // when the channel refreshes: "observation" | "observation-changes" | "ten-minute" | "ten-minute-alerts"
     alternateRecordsSource: undefined, // if you want to supply your own record data to override what ECCC has, you can do it here with a JSON file at http(s)://example.com/records.json
   };
   crawlerMessages: string[] = [];
+  infoScreens: InfoScreenEntry[] = []; // custom text only screens, shown by the info screen
   musicPlaylist: string[] = []; // what music files are available
   flavour: Flavour;
   flavours: string[] = []; // what flavours are available
@@ -93,6 +117,7 @@ class Config {
     this.checkFlavoursDirectory();
     this.loadFlavour();
     this.loadCrawlerMessages();
+    this.loadInfoScreens();
     this.checkMusicDirectory();
     this.generateConfigVersion();
   }
@@ -110,6 +135,7 @@ class Config {
       flavours: this.flavours,
       airQualityStation: this.airQualityStation,
       crawler: this.crawlerMessages,
+      infoScreens: this.infoScreens,
       music: this.musicPlaylist ?? [],
     };
   }
@@ -119,6 +145,8 @@ class Config {
     delete config.flavour;
     delete config.flavours;
     delete config.crawler;
+    delete config.infoScreens;
+    delete config.music; // regenerated from the music directory on startup, doesn't belong in the config file
     return config;
   }
 
@@ -131,12 +159,11 @@ class Config {
 
       // parse the json from the config file
       const parsedConfig = JSON.parse(data);
-      if (!parsedConfig) throw "Bad config data";
+      if (!parsedConfig || typeof parsedConfig !== "object") throw "Bad config data";
 
       // now assign our values from what we had in the config file
       const {
         primaryLocation,
-        primaryLocation: { name, province, location },
         provinceHighLowEnabled,
         historicalDataStationID,
         climateNormals,
@@ -146,11 +173,17 @@ class Config {
         airQualityStation,
       } = parsedConfig;
 
-      // but first we make sure that we have at least the province info
-      if (!location?.length || !province?.length) throw "Bad primary location data";
+      // a bad primary location only costs us the primary location, everything else in the file is still good. if we threw
+      // here the whole file would be discarded and the next save from the config screen would overwrite it with defaults
+      if (isValidPrimaryLocation(primaryLocation)) {
+        const { province, location, name } = primaryLocation;
+        this.primaryLocation = { province, location, name };
+      } else {
+        logger.error("Primary location in the config file is missing or invalid, using the default instead");
+        this.backupConfigFile();
+      }
 
       // now we just copy our config file over to our class (with fallbacks to the original)
-      this.primaryLocation = primaryLocation ?? this.primaryLocation;
       this.provinceHighLowEnabled = provinceHighLowEnabled ?? this.provinceHighLowEnabled;
       this.historicalDataStationID = historicalDataStationID ?? this.historicalDataStationID;
       this.climateNormals = { ...this.climateNormals, ...climateNormals };
@@ -161,6 +194,7 @@ class Config {
       this.provinceStations = mergeProvinceStationClimateDefaults(rawProvinceStations);
       this.airQualityStation = airQualityStation ?? AIR_QUALITY_DEFAULT_STATION;
 
+      const { name, province, location } = this.primaryLocation;
       logger.log("Loaded weather channel. Location:", `${name}, ${province}`, `(${location})`);
     } catch (err) {
       if (err.code === FS_NO_FILE_FOUND) {
@@ -169,8 +203,21 @@ class Config {
         logger.error("Configuration can be set via http://localhost:8600/#/config");
       } else {
         // handle any other error
-        logger.error(BAD_CONFIG_FILE_ERROR_MESSAGE);
+        logger.error(BAD_CONFIG_FILE_ERROR_MESSAGE, `(${err instanceof Error ? err.message : err})`);
+        this.backupConfigFile();
       }
+    }
+  }
+
+  /** Keeps a copy of a config file we couldn't fully use, as the next save from the config screen replaces it. */
+  private backupConfigFile() {
+    const backupPath = `${CONFIG_ABSOLUTE_PATH}.bak`;
+
+    try {
+      fs.copyFileSync(CONFIG_ABSOLUTE_PATH, backupPath);
+      logger.log("A copy of the config file as it was has been kept at", backupPath);
+    } catch (err) {
+      logger.error("Unable to keep a copy of the config file");
     }
   }
 
@@ -215,6 +262,40 @@ class Config {
         // handle any other error
         logger.error("Unable to save to crawler file");
       }
+    }
+  }
+
+  private loadInfoScreens() {
+    logger.log("Loading info screens from", INFO_SCREENS_ABSOLUTE_PATH);
+    try {
+      const { infoScreens } = JSON.parse(fs.readFileSync(INFO_SCREENS_ABSOLUTE_PATH, "utf8"));
+
+      // anything that doesn't fit on the display is left out (and says why) rather than throwing the whole file away
+      const { entries, errors } = parseInfoScreens(infoScreens);
+      errors.forEach((error) => logger.error("Skipped an info screen:", error));
+
+      this.infoScreens = entries;
+      logger.log("Loaded", this.infoScreens.length, "info screens");
+    } catch (err) {
+      if (err.code === FS_NO_FILE_FOUND) {
+        // handle no file found
+        logger.log("No info screens file found");
+      } else {
+        // handle any other error
+        logger.error("Unable to load from info screens file");
+      }
+    }
+  }
+
+  private saveInfoScreens() {
+    logger.log("Saving info screens to", INFO_SCREENS_ABSOLUTE_PATH);
+    try {
+      // pretty printed since this file is meant to be easy to edit by hand too
+      fs.writeFileSync(INFO_SCREENS_ABSOLUTE_PATH, JSON.stringify({ infoScreens: this.infoScreens }, null, 2), "utf8");
+      logger.log("Saved", this.infoScreens.length, "info screens");
+    } catch (err) {
+      logger.error("Unable to save to info screens file");
+      throw err;
     }
   }
 
@@ -285,9 +366,14 @@ class Config {
   }
 
   public setPrimaryLocation(station: ECCCWeatherStation) {
-    if (!station) return;
+    if (!isValidPrimaryLocation(station)) {
+      logger.error("Refusing to set an invalid primary location");
+      return;
+    }
 
-    this.primaryLocation = station;
+    // only keep the fields we know about
+    const { province, location, name } = station;
+    this.primaryLocation = { province, location, name };
 
     eventbus.emit(EVENT_BUS_CONFIG_CHANGE_PRIMARY_LOCATION, true);
   }
@@ -325,7 +411,12 @@ class Config {
     this.checkFlavoursDirectory();
   }
 
-  public setMiscSettings(rejectInHourConditionUpdates: boolean, alternateRecordsSource: string) {
+  public setMiscSettings(
+    rejectInHourConditionUpdates: boolean,
+    alternateRecordsSource: string,
+    refreshMode: RefreshMode = this.misc.refreshMode ?? "observation"
+  ) {
+    this.misc.refreshMode = refreshMode;
     this.misc.alternateRecordsSource = alternateRecordsSource;
     this.misc.rejectInHourConditionUpdates = rejectInHourConditionUpdates;
   }
@@ -350,6 +441,25 @@ class Config {
       ...crawler.map((message) => message.trim()).filter((message) => message.length)
     );
     this.saveCrawlerMessages();
+  }
+
+  /** Replaces all of the info screens. Expects them to have been through `parseInfoScreens` already. */
+  public setInfoScreens(infoScreens: InfoScreenEntry[]) {
+    const previousInfoScreens = this.infoScreens;
+    this.infoScreens = infoScreens;
+
+    try {
+      this.saveInfoScreens();
+    } catch (err) {
+      // what's in memory should be what's on disk
+      this.infoScreens = previousInfoScreens;
+      throw err;
+    }
+  }
+
+  /** The info screens that should be on the display today (not scheduled for later, not expired). */
+  get activeInfoScreens(): InfoScreenEntry[] {
+    return getActiveInfoScreens(this.infoScreens);
   }
 
   public async regeneratePlaylist() {

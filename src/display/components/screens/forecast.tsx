@@ -2,14 +2,17 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AQHIObservationResponse, CAPObject, WeatherStation } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
 import { Conditions } from "../weather";
-import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
-import { formatStringTo8x32 } from "lib/display";
-import { shouldAlertFlash } from "lib/cap-cp";
+import { RELOAD_FIRST_PAGE_DISPLAY_LENGTH, SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
+import { allocateForecastContinuationLines, applyTypedRowTimings, centreOnGrid, formatStringTo8x32 } from "lib/display";
+import { forecastSignature } from "lib/refresh";
+import { normalizeAlertHeadline, shouldAlertFlash } from "lib/cap-cp";
 
 type ForecastScreenProps = {
   weatherStationResponse: WeatherStation;
   alert?: CAPObject;
   isReload?: boolean;
+  /** changes whenever the channel refreshes; falls back to the observation ID */
+  refreshID?: number | string;
   airQuality: AQHIObservationResponse;
   /** called once when the forecast moves past its first page, so the rotator can flip the background colour (#853) */
   onForecastContinuationEntered?: () => void;
@@ -18,11 +21,11 @@ type ForecastScreenProps = {
 const MAX_FORECAST_PAGES = 2;
 
 export function ForecastScreen(props: ForecastScreenProps) {
-  const { onComplete, weatherStationResponse, alert, isReload, airQuality, onForecastContinuationEntered } =
+  const { onComplete, weatherStationResponse, alert, isReload, refreshID, airQuality, onForecastContinuationEntered } =
     props ?? {};
   const [page, setPage] = useState(1);
-  const pageChangeTimeout = useRef<NodeJS.Timeout>(null);
   const continuationEnteredRef = useRef(false);
+  const screenRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (page <= 1) {
@@ -35,30 +38,27 @@ export function ForecastScreen(props: ForecastScreenProps) {
   }, [page, onForecastContinuationEntered]);
 
   useEffect(() => {
-    // handle page change as normal
-    pageChangeTimeout.current = setTimeout(() => {
+    // the first page stays up for longer when it's being typed out by a reload (#998)
+    const pageLength = page === 1 && isReload ? RELOAD_FIRST_PAGE_DISPLAY_LENGTH : SCREEN_DEFAULT_DISPLAY_LENGTH;
+
+    const pageChangeTimeout = setTimeout(() => {
       if (page < MAX_FORECAST_PAGES) setPage(page + 1);
       else onComplete();
-    }, (page === 1 && isReload ? 50 : SCREEN_DEFAULT_DISPLAY_LENGTH) * 1000);
-  }, [page]);
+    }, pageLength * 1000);
+
+    // new conditions can arrive whilst this page is already showing. the rotator doesn't remount the screen for that, it
+    // just flags the reload, so the timer has to start again for the reload instead of carrying on with the old one and
+    // changing page part way through the animation. this also clears it when the page changes and when we're unmounted
+    return () => clearTimeout(pageChangeTimeout);
+  }, [page, isReload, refreshID ?? weatherStationResponse?.observationID]);
 
   useEffect(() => {
-    // if we're past the first page of forecast
+    // when a reload occurs and we're past the first page of forecast, send the user back to the first page (changing
+    // page is what restarts the page change timer)
     if (page === 1) return;
 
-    // when a reload occurs, then clear the timeout for page change
-    pageChangeTimeout.current && clearTimeout(pageChangeTimeout.current);
-
-    // and send the user back to the first page
     setPage(1);
-  }, [weatherStationResponse?.observationID]);
-
-  // used to clear the page switching timeout
-  useEffect(() => {
-    return () => {
-      pageChangeTimeout.current && clearTimeout(pageChangeTimeout.current);
-    };
-  }, []);
+  }, [refreshID ?? weatherStationResponse?.observationID]);
 
   const getForecastsForPage = () => {
     // todo:make this much nicer
@@ -73,8 +73,8 @@ export function ForecastScreen(props: ForecastScreenProps) {
   };
 
   const formatAlertHeadline = (headline: string) => {
-    const truncated = headline
-      ?.replace(/severe thunderstorm/gi, "severe tstorm")
+    const truncated = normalizeAlertHeadline(headline)
+      .replace(/severe thunderstorm/gi, "severe tstorm")
       .replace(/statement/gi, "stmnt")
       .replace(/air quality/gi, "air qlty");
     return truncated;
@@ -86,6 +86,9 @@ export function ForecastScreen(props: ForecastScreenProps) {
 
   const forecastsForPage = getForecastsForPage();
 
+  // the forecast text itself can change without a new observation, so key the formatting off the text
+  const forecastKey = forecastSignature(weatherStationResponse?.forecast);
+
   // format immediate
   const formattedImmediateForecast = useMemo(() => {
     if (!weatherStationResponse?.forecast || page !== 1) return "";
@@ -95,29 +98,34 @@ export function ForecastScreen(props: ForecastScreenProps) {
       `Forecast for ${immediateForecast.period}..${immediateForecast.abbreviatedTextSummary}`,
       alert ? 3 : 4
     );
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+  }, [forecastKey, page, !!alert]);
 
-  // format the first forecast on the current page
-  const formattedPageForecast1 = useMemo(() => {
-    if (page === 1) return "";
+  // the upper 12 hour forecast can use up to 4 lines, the lower one up to 3, or the space is shared out by length
+  const continuationLayout = useMemo(() => {
+    if (page === 1) return null;
 
-    const forecast = forecastsForPage[0];
-    return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+    const [upper, lower] = forecastsForPage;
+    const upperText = upper ? `${upper.period}..${upper.abbreviatedTextSummary}` : "";
+    const lowerText = lower ? `${lower.period}..${lower.abbreviatedTextSummary}` : "";
+    const layout = allocateForecastContinuationLines(upperText, lowerText);
 
-  // format the second forecast on the current page
-  const formattedPageForecast2 = useMemo(() => {
-    if (page === 1) return "";
+    return {
+      ...layout,
+      upper: formatStringTo8x32(upperText, layout.upperLines || 1),
+      lower: formatStringTo8x32(lowerText, layout.lowerLines || 1),
+    };
+  }, [forecastKey, page]);
 
-    const forecast = forecastsForPage[1];
-    return formatStringTo8x32(`${forecast.period}..${forecast.abbreviatedTextSummary}`, 3);
-  }, [weatherStationResponse?.stationTime?.observedDateTime, page]);
+  // on a reload the first page arrives in bursts, a row at a time (#998), so each row needs to know when they happen
+  useLayoutEffect(() => {
+    if (isReload && page === 1) applyTypedRowTimings(screenRef.current);
+  }, [isReload, page, refreshID ?? weatherStationResponse?.observationID, formattedImmediateForecast, alert?.headline]);
 
   // no response from weather station so whatever
   if (!weatherStationResponse) return <></>;
 
   return (
-    <div id="forecast_screen" className={isReload ? "has-reloaded" : ""}>
+    <div id="forecast_screen" className={isReload ? "has-reloaded" : ""} ref={screenRef}>
       {page === 1 && (
         <>
           <Conditions
@@ -126,23 +134,28 @@ export function ForecastScreen(props: ForecastScreenProps) {
             stationTime={weatherStationResponse.stationTime}
             airQuality={airQuality}
           />
-          <div className="forecast reload-animation step-7">
+          <div className="forecast">
             {alert && (
-              <div className={`centre-align forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
-                {formatAlertHeadline(alert.headline)}
+              <div className="grid-row">
+                <div className={`forecast-alert ${shouldAlertFlash(alert) ? "flash" : ""}`}>
+                  {centreOnGrid(formatAlertHeadline(alert.headline))}
+                </div>
               </div>
             )}
-            <div>{formattedImmediateForecast}</div>
+            {formattedImmediateForecast.split("\n").map((line, ix) => (
+              <div className="grid-row" key={ix}>
+                {line}
+              </div>
+            ))}
           </div>
         </>
       )}
       {page > 1 && (
         <div>
-          <div className="centre-align">{weatherStationResponse.city} forecast cont..</div>
-          <br />
-          <div>{formattedPageForecast1}</div>
-          <br />
-          <div>{formattedPageForecast2}</div>
+          <div>{centreOnGrid(`${weatherStationResponse.city} forecast cont..`)}</div>
+          <div>{continuationLayout?.upper}</div>
+          {continuationLayout?.separator && <br />}
+          <div>{continuationLayout?.lower}</div>
         </div>
       )}
     </div>

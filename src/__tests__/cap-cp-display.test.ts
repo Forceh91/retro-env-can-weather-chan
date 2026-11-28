@@ -1,4 +1,9 @@
-import { shouldAlertFlash, cleanupAlertHeadline, isWarningSevereThunderstormWatch } from "lib/cap-cp/cap-cp-display";
+import {
+  shouldAlertFlash,
+  cleanupAlertHeadline,
+  isWarningSevereThunderstormWatch,
+  normalizeAlertHeadline,
+} from "lib/cap-cp/cap-cp-display";
 import { CAPObject, CAPSeverity, CAPUrgency } from "types/cap-cp.types";
 
 const baseCAPObject = {
@@ -43,6 +48,19 @@ describe("alert display helpers", () => {
     expect(cleanupAlertHeadline("special weather statement in effect")).toBe("special weather statement");
   });
 
+  it("converts colour-coded headlines back to the simulator-era format", () => {
+    expect(normalizeAlertHeadline(null)).toBe("");
+    expect(normalizeAlertHeadline("snowfall warning in effect")).toBe("snowfall warning in effect");
+    expect(normalizeAlertHeadline("yellow warning - snowfall - in effect")).toBe("snowfall warning in effect");
+    expect(normalizeAlertHeadline("Orange Advisory - Freezing-rain - In Effect")).toBe("Freezing-rain Advisory In Effect");
+    expect(normalizeAlertHeadline("red warning - tornado - ended")).toBe("tornado warning ended");
+    expect(normalizeAlertHeadline("yellow watch - severe thunderstorm - in effect")).toBe(
+      "severe thunderstorm watch in effect"
+    );
+    expect(cleanupAlertHeadline("yellow warning - snowfall - in effect")).toBe("snowfall warning");
+    expect(cleanupAlertHeadline("red warning - tornado - ended")).toBe("tornado warning ended");
+  });
+
   it("detect that a severe thunderstorm watch is in effect correctly", () => {
     expect(isWarningSevereThunderstormWatch(null)).toBe(false);
     expect(isWarningSevereThunderstormWatch("weather alert in effect")).toBe(false);
@@ -51,5 +69,7 @@ describe("alert display helpers", () => {
     expect(isWarningSevereThunderstormWatch("severe thunderstorm warning in effect")).toBe(false);
     expect(isWarningSevereThunderstormWatch("tornada watch in effect")).toBe(false);
     expect(isWarningSevereThunderstormWatch("severe thunderstorm watch in effect")).toBe(true);
+    expect(isWarningSevereThunderstormWatch("yellow watch - severe thunderstorm - in effect")).toBe(true);
+    expect(isWarningSevereThunderstormWatch("yellow warning - severe thunderstorm - in effect")).toBe(false);
   });
 });

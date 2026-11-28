@@ -1,6 +1,6 @@
-import { SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
+import { DISPLAY_MAX_LINES, SCREEN_DEFAULT_DISPLAY_LENGTH } from "consts";
 import { cleanupAlertHeadline, isWarningSevereThunderstormWatch, shouldAlertFlash } from "lib/cap-cp";
-import { formatStringTo8x32 } from "lib/display";
+import { centreOnGrid, formatStringTo8x32 } from "lib/display";
 import { useEffect, useRef, useState } from "react";
 import { CAPObject } from "types";
 import { AutomaticScreenProps } from "types/screen.types";
@@ -14,19 +14,11 @@ type FakeAlertScreen = {
   isSevereTStormExplanation?: boolean;
 } & Partial<CAPObject>;
 
+const SEVERE_TSTORM_EXPLANATION =
+  "a severe thunderstorm watch is an alert of possible thndrstrms large hail, intense lightning, locally heavy rain or damaging winds in and close to the watch area. persons in and near these areas should be on the lookout for severe weather conditions";
+
 function SevereTStormExplanationScreen() {
-  return (
-    <div id="stw_explanation">
-      <div>a severe thunderstorm watch is</div>
-      <div>an alert of possible thndrstrms</div>
-      <div>large hail, intense lightning,</div>
-      <div>locally heavy rain or damaging</div>
-      <div>winds in and close to the watch</div>
-      <div>area. persons in and near these</div>
-      <div>areas should be on the lookout</div>
-      <div>for severe weather conditions</div>
-    </div>
-  );
+  return <div id="stw_explanation">{formatStringTo8x32(SEVERE_TSTORM_EXPLANATION, DISPLAY_MAX_LINES)}</div>;
 }
 
 export function AlertScreen(props: AlertScreenProps) {
@@ -92,14 +84,14 @@ export function AlertScreen(props: AlertScreenProps) {
   if (!displayAlerts?.length) return <></>;
 
   return (
-    <div id="alert_screen" className={!displayedAlert?.isSevereTStormExplanation && "centre-align"}>
+    <div id="alert_screen">
       {displayedAlert?.isSevereTStormExplanation && <SevereTStormExplanationScreen />}
       {displayedAlert && !displayedAlert.isSevereTStormExplanation && (
         <>
           <div className={shouldAlertFlash(displayedAlert as CAPObject) ? "flash" : ""}>
-            {cleanupAlertHeadline(displayedAlert.headline)}
+            {centreOnGrid(cleanupAlertHeadline(displayedAlert.headline))}
           </div>
-          <div>{getShortDescriptionForAlert(displayedAlert.description)}</div>
+          <div>{centreOnGrid(getShortDescriptionForAlert(displayedAlert.description))}</div>
         </>
       )}
     </div>

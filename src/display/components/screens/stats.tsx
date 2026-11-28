@@ -16,9 +16,9 @@ type StatsScreenProps = {
 // the dotted precip lines run to the last column of the grid on the original
 const PRECIP_CHARS_USED_OUTSIDE_OF_DOTS = 15;
 const NORMAL_PRECIP_CHARS_USED_OUTSIDE_OF_DOTS = 11;
-// the hot/cold spot lines are a block that starts on column 2 and has the temperature ending on column 27
-const HOT_COLD_SPOT_START_COLUMN = 2;
-const HOT_COLD_SPOT_END_COLUMN = 27;
+// the hot/cold spot lines use the whole width of the grid, the temperature ending on the last column
+const HOT_COLD_SPOT_START_COLUMN = 0;
+const HOT_COLD_SPOT_END_COLUMN = DISPLAY_MAX_CHARACTERS_PER_LINE;
 const HOT_COLD_SPOT_TEMPERATURE_LENGTH = 3;
 
 export function StatsScreen(props: StatsScreenProps) {
@@ -94,14 +94,16 @@ export function StatsScreen(props: StatsScreenProps) {
   const formatTempForHotColdSpotLine = (temperature?: number | null) =>
     (!isNaN(temperature) && temperature != null ? Math.round(temperature) : "N/A").toString();
 
-  // "  Name, PR ......-42". like the original both lines are the same width, from the start column to the end column,
+  // "Name, PR ........-42". both lines are the same width, from the start column to the end column,
   // with the dots running right up to the temperature. the name is cut (and any dangling " /" or "," dropped) so that
   // there's room for the province, one dot and the widest temperature
   const formatHotColdSpotLine = (name: string, province: string, temperature?: number | null) => {
     const suffix = `, ${province} `;
     const width = HOT_COLD_SPOT_END_COLUMN - HOT_COLD_SPOT_START_COLUMN;
     const maxName = width - suffix.length - 1 - HOT_COLD_SPOT_TEMPERATURE_LENGTH;
-    const shortName = (name ?? "N/A").slice(0, maxName).replace(/[\s/,\-]+$/, "");
+    // two towns ("St. Catharines / Niagara District Airport") are cut back to the first one
+    const firstTown = (name ?? "N/A").split(" /")[0].trim();
+    const shortName = firstTown.slice(0, maxName).replace(/[\s/,\-]+$/, "");
 
     const temp = formatTempForHotColdSpotLine(temperature);
     const dots = "".padEnd(width - shortName.length - suffix.length - temp.length, ".");

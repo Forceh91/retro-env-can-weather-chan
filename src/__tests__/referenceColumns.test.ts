@@ -156,7 +156,7 @@ describe("screens sit on the same columns as the original", () => {
     });
   });
 
-  it("stats: headings centred, dotted lines end on the last column, hot/cold block runs from 2 to 27 (screen 10)", () => {
+  it("stats: headings centred, dotted lines end on the last column, hot/cold lines use all 32 columns (screen 10)", () => {
     const rows = rowsFor(
       h(StatsScreen, {
         city: "Winnipeg",
@@ -182,8 +182,8 @@ describe("screens sit on the same columns as the original", () => {
     expect(rows[4].length).toBe(32);
 
     [rows[6], rows[7]].forEach((row) => {
-      expect(row.length).toBe(27);
-      expect(row.indexOf(row.trim())).toBe(2);
+      expect(row.length).toBe(32);
+      expect(row.indexOf(row.trim())).toBe(0);
     });
     expect(rows[6].endsWith("..19")).toBe(true);
     expect(rows[7].endsWith("-42")).toBe(true);
@@ -238,7 +238,7 @@ describe("screens sit on the same columns as the original", () => {
     expect(row.length).toBe(30);
   });
 
-  it("stats: long hot/cold spot names are cut so both lines are the same width (the November 22 data)", () => {
+  it("stats: hot/cold spot lines are the same full width and names are only cut when needed (the November 22 data)", () => {
     const rows = rowsFor(
       h(StatsScreen, {
         city: "Winnipeg",
@@ -249,7 +249,7 @@ describe("screens sit on the same columns as the original", () => {
         } as any,
         sunRiseSet: { rise: `${DATE}T08:52:00`, set: `${DATE}T17:37:00`, timezone: "CST" } as any,
         hotColdSpots: {
-          hotSpot: { name: "St. Catharines / Nia", province: "ON", temperature: 19 },
+          hotSpot: { name: "St. Catharines / Niagara District Airport", province: "ON", temperature: 19 },
           coldSpot: { name: "Key Lake", province: "SK", temperature: -32 },
           lastUpdated: `${DATE}T13:00:00`,
         },
@@ -257,9 +257,9 @@ describe("screens sit on the same columns as the original", () => {
     );
     const [hot, cold] = rows.slice(-2);
 
-    expect(hot).toBe("  St. Catharines, ON ....19");
-    expect(cold).toBe("  Key Lake, SK .........-32");
-    expect(hot.length).toBe(27);
-    expect(cold.length).toBe(27);
+    expect(hot).toBe("St. Catharines, ON ...........19");
+    expect(cold).toBe("Key Lake, SK ................-32");
+    expect(hot.length).toBe(32);
+    expect(cold.length).toBe(32);
   });
 });

@@ -51,6 +51,20 @@ function mergeProvinceStationClimateDefaults(stations: ProvinceStation[]): Provi
     return row;
   });
 }
+/** Whether `value` is a usable primary location: an object with non-empty string `province` and `location`, and a string `name`. */
+export function isValidPrimaryLocation(value: unknown): value is PrimaryLocation {
+  if (!value || typeof value !== "object") return false;
+
+  const { province, location, name } = value as Record<string, unknown>;
+  return (
+    typeof province === "string" &&
+    province.trim().length > 0 &&
+    typeof location === "string" &&
+    location.trim().length > 0 &&
+    typeof name === "string"
+  );
+}
+
 const CONFIG_PATH = {
   FOLDER: "./cfg",
   FILE: "rwc-config.json",
@@ -132,6 +146,7 @@ class Config {
     delete config.flavours;
     delete config.crawler;
     delete config.infoScreens;
+    delete config.music; // regenerated from the music directory on startup, doesn't belong in the config file
     return config;
   }
 
@@ -144,12 +159,11 @@ class Config {
 
       // parse the json from the config file
       const parsedConfig = JSON.parse(data);
-      if (!parsedConfig) throw "Bad config data";
+      if (!parsedConfig || typeof parsedConfig !== "object") throw "Bad config data";
 
       // now assign our values from what we had in the config file
       const {
         primaryLocation,
-        primaryLocation: { name, province, location },
         provinceHighLowEnabled,
         historicalDataStationID,
         climateNormals,
@@ -159,11 +173,17 @@ class Config {
         airQualityStation,
       } = parsedConfig;
 
-      // but first we make sure that we have at least the province info
-      if (!location?.length || !province?.length) throw "Bad primary location data";
+      // a bad primary location only costs us the primary location, everything else in the file is still good. if we threw
+      // here the whole file would be discarded and the next save from the config screen would overwrite it with defaults
+      if (isValidPrimaryLocation(primaryLocation)) {
+        const { province, location, name } = primaryLocation;
+        this.primaryLocation = { province, location, name };
+      } else {
+        logger.error("Primary location in the config file is missing or invalid, using the default instead");
+        this.backupConfigFile();
+      }
 
       // now we just copy our config file over to our class (with fallbacks to the original)
-      this.primaryLocation = primaryLocation ?? this.primaryLocation;
       this.provinceHighLowEnabled = provinceHighLowEnabled ?? this.provinceHighLowEnabled;
       this.historicalDataStationID = historicalDataStationID ?? this.historicalDataStationID;
       this.climateNormals = { ...this.climateNormals, ...climateNormals };
@@ -174,6 +194,7 @@ class Config {
       this.provinceStations = mergeProvinceStationClimateDefaults(rawProvinceStations);
       this.airQualityStation = airQualityStation ?? AIR_QUALITY_DEFAULT_STATION;
 
+      const { name, province, location } = this.primaryLocation;
       logger.log("Loaded weather channel. Location:", `${name}, ${province}`, `(${location})`);
     } catch (err) {
       if (err.code === FS_NO_FILE_FOUND) {
@@ -182,8 +203,21 @@ class Config {
         logger.error("Configuration can be set via http://localhost:8600/#/config");
       } else {
         // handle any other error
-        logger.error(BAD_CONFIG_FILE_ERROR_MESSAGE);
+        logger.error(BAD_CONFIG_FILE_ERROR_MESSAGE, `(${err instanceof Error ? err.message : err})`);
+        this.backupConfigFile();
       }
+    }
+  }
+
+  /** Keeps a copy of a config file we couldn't fully use, as the next save from the config screen replaces it. */
+  private backupConfigFile() {
+    const backupPath = `${CONFIG_ABSOLUTE_PATH}.bak`;
+
+    try {
+      fs.copyFileSync(CONFIG_ABSOLUTE_PATH, backupPath);
+      logger.log("A copy of the config file as it was has been kept at", backupPath);
+    } catch (err) {
+      logger.error("Unable to keep a copy of the config file");
     }
   }
 
@@ -332,9 +366,14 @@ class Config {
   }
 
   public setPrimaryLocation(station: ECCCWeatherStation) {
-    if (!station) return;
+    if (!isValidPrimaryLocation(station)) {
+      logger.error("Refusing to set an invalid primary location");
+      return;
+    }
 
-    this.primaryLocation = station;
+    // only keep the fields we know about
+    const { province, location, name } = station;
+    this.primaryLocation = { province, location, name };
 
     eventbus.emit(EVENT_BUS_CONFIG_CHANGE_PRIMARY_LOCATION, true);
   }

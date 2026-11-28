@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { initializeConfig } from "./config";
+import { initializeConfig, isValidPrimaryLocation } from "./config";
 import { parseInfoScreens } from "lib/infoscreen";
 import { REFRESH_MODES } from "consts/refresh.consts";
 import { getECCCWeatherStations } from "lib/eccc/weatherStations";
@@ -48,6 +48,11 @@ export function postPrimaryLocation(req: Request, res: Response) {
 
   try {
     if (!station) throw "Missing `station` parameter";
+    // validate before anything is changed or saved, a bad value here ends up on disk and stops the config from loading
+    if (!isValidPrimaryLocation(station)) {
+      res.status(400).json({ error: "Invalid `station` parameter, expected { province, location, name }" });
+      return;
+    }
 
     config.updateAndSaveConfigOption(() => config.setPrimaryLocation(station));
     res.sendStatus(200);

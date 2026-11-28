@@ -91,7 +91,7 @@ class CurrentConditions {
 
     this.startAMQPConnection();
     this._apiUrl = `${ECCC_BASE_API_URL}${config.primaryLocation.province}/${this._weatherStationID}${ECCC_API_ENGLISH_SUFFIX}`;
-    this.fetchConditions();
+    this.fetchConditions().catch((err) => logger.error("Unable to fetch conditions", err));
   }
 
   private startAMQPConnection() {
@@ -109,7 +109,7 @@ class CurrentConditions {
         // make sure its relevant to us
         if (!url.endsWith(`${this._weatherStationID}_en.xml`)) return;
 
-        this.fetchConditions(url);
+        this.fetchConditions(url).catch((err) => logger.error("Unable to fetch conditions", err));
         logger.log("Received new conditions from AMQP at", date);
       });
 

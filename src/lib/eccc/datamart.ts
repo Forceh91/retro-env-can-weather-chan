@@ -12,6 +12,12 @@ function escapeForRegexLiteral(s: string): string {
 }
 
 async function GetWeatherFileFromECCC(province: string, stationID: string): Promise<string | null> {
+  // callers build these from config/station codes, so make sure they're real before they get anywhere near a regex
+  if (typeof province !== "string" || !province.length || typeof stationID !== "string" || !stationID.length) {
+    logger.error("Invalid province/station ID, unable to find weather file", { province, stationID });
+    return null;
+  }
+
   // ECCC has massively changed the format of the data structure now so as of June 2025, the new format is as follows:
   // https://dd.weather.gc.ca/citypage_weather/PROVINCE/UTC_HOUR/TIMEDATE_STAMP_MSC_CitypageWeather_STATION_CODE_en.xml
   // https://dd.weather.gc.ca/citypage_weather/MB/18/20250627T180206.714Z_MSC_CitypageWeather_s0000193_en.xml
